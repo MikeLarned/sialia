@@ -1,15 +1,28 @@
 var express = require('express');
 var app = express();
-var multer = require('multer');
-var upload = multer();
+var fs = require('fs');
+var path = require('path');
 
-app.post('/', upload.single(), function(req,res,next) {
-	console.log(req.body);
-	res.end('ok');
+app.use(function (req, res, next) {
+
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+  res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+  res.setHeader('Access-Control-Allow-Credentials', true);
+  next();
+});
+
+app.get('/', function (req, res) {
+  function bufferFile(relPath) {
+    var p = path.join(__dirname, relPath);
+    console.log(p);
+    return fs.readFileSync(p,{ encoding: 'utf8' });
+  }
+
+  var BUFFER = bufferFile('../docs/CCD - Missy Sue TAYLOR.xml');
+  res.send(BUFFER);
 });
 
 app.listen(3000, function () {
   console.log('Example app listening on port 3000!');
 });
-
-// curl -H "Content-Type: text/xml" -d "@C:\git\work\ccdaview\docs\C-CDA_R2_Care_Plan.xml" -X POST http://localhost:3000
