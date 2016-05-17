@@ -1,0 +1,62 @@
+@import "../../bower_components/bootstrap-sass/assets/stylesheets/bootstrap";
+
+$body-bg: #f2f2f2;
+
+body {
+    background-color: $body-bg;
+}
+
+main > .row {
+    padding-top: 80px;    
+}
+
+header {
+    position: fixed;
+    z-index: 1;
+    width: 98%;
+    background-color: $body-bg;
+}
+
+h1 {
+    margin-bottom: 20px;
+    color: #666;
+}
+
+@media (min-width: $screen-sm-min) {
+    #left {
+        padding-right: 8px;
+    }
+
+    #right {
+        padding-left: 7px;
+    }
+}
+
+#demographics-summary {
+    
+    .panel-heading {
+        .dob .fa {
+            margin-right: 3px;
+        }
+    }
+    
+    .panel-body {
+        padding-left: 35px;
+        
+        p, address {
+            position: relative;
+            margin-bottom: 10px;
+            
+            .fa {
+                position: absolute;
+                top: 0.2em;
+                left: -20px;
+            }
+        }
+    }
+}
+
+#menu .overflow-nav .dropdown-menu {
+    left: auto;
+    right: 0;
+}

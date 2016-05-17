@@ -8,16 +8,48 @@
   <title>HL7 CCDA Viewer</title>
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/css/bootstrap.css">
   <link rel="stylesheet" href="styles/styles.css">
 </head>
 
 <body>
-  <main class="container-fluid" id="top">
-    <h1>Isabella Jone's Medical Records</h1>
+  <main class="container-fluid">
+
+    <header>
+      <h1>
+        <span>Isabella Jone's Medical Records</span>
+        
+        <div class="dropdown pull-right">
+          <button class="btn btn-default dropdown-toggle" type="button" id="jump" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+            Jump to...
+            <span class="caret"></span>
+          </button>
+          <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="jump">
+            <li><a href="#">Top</a></li>
+            <li><a href="#document">Document</a></li>
+            <li><a href="#demographics">Demographics</a></li>
+            <li><a href="#allergies">Allergies</a></li>
+            <li><a href="#care-plan">Care Plan</a></li>
+            <li><a href="#chief-complaint">Chief Complaint</a></li>
+            <li><a href="#encounters">Encounters</a></li>
+            <li><a href="#functional-status">Functional Status</a></li>
+            <li><a href="#immunizations">Immunizations</a></li>
+            <li><a href="#declined-immunizations">Declined Immunizations</a></li>
+            <li><a href="#patient-instructions">Patient Instructions</a></li>
+            <li><a href="#medications">Medications</a></li>
+            <li><a href="#problems">Problems</a></li>
+            <li><a href="#procedures">Procedures</a></li>
+            <li><a href="#results-labs">Results (Labs)</a></li>
+            <li><a href="#smoking-status">Smoking Status</a></li>
+            <li><a href="#vitals">Vitals</a></li>
+          </ul>
+        </div>
+      </h1>
+    </header>
+
     <div class="row">
-      <div class="col-lg-3 col-sm-4">
-        <div class="panel panel-default">
+      <div class="col-lg-3 col-sm-4" id="left">
+
+        <div class="panel panel-default" id="demographics-summary">
           <div class="panel-heading">
             <h2>Isabella Jones</h2>
             <span class="dob">
@@ -27,26 +59,24 @@
           </div>
           <div class="panel-body">
             <p class="demographics-narrative">
-              <i class="fa fa-female" title="Demographics narrative"></i> Isabella is a married white female who observes
-              Christianity and speaks English.
+              <i class="fa fa-female" title="Demographics"></i> Isabella is a married white female who observes Christianity
+              and speaks English.
             </p>
             <p class="smoking-status">
               <i class="fa fa-fire" title="Smoking status"></i> Former smoker
             </p>
             <address class="address">
-              <i class="fa fa-map-marker" aria-hidden="true" title="Address"></i>
-              <strong>Address</strong><br>
+              <i class="fa fa-map-marker" title="Address"></i>
               1357 Amber Drive<br>
               Beaverton, OR 97867
             </address>
-            <address class="phone">
-              <i class="fa fa-phone" aria-hidden="true" title="Phone"></i>
-              <strong>Telephone</strong><br>
+            <address class="address">
+              <i class="fa fa-phone" title="Phone"></i>
               (816) 276-6909
             </address>
           </div>
         </div>
-        <div class="panel panel-default">
+        <div class="panel panel-default" id="allergies-summary">
           <div class="panel-heading">
             <h3 class="panel-title">
               Allergies Summary
@@ -55,46 +85,14 @@
           <div class="panel-body">
           </div>
         </div>
+
       </div>
-      <div class="col-lg-9 col-sm-8">
-        
-        <nav class="navbar navbar-default">
-          <div class="container-fluid">
-            <div class="navbar-header">
-              <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="navbar-collapse-1"
-                aria-expanded="false">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-              </button>
-            </div>
-            <div class="collapse navbar-collapse" id="navbar-collapse-1">
-              <ul class="nav navbar-nav" id="menu">
-                <li><a href="#document">Document</a></li>
-                <li><a href="#demographics">Demographics</a></li>
-                <li><a href="#allergies">Allergies</a></li>
-                <li><a href="#careplan">Care Plan</a></li>
-                <li><a href="#chiefcomplaint">Chief Complaint</a></li>
-                <li><a href="#encounters">Encounters</a></li>
-                <li><a href="#functionalstatus">Functional Status</a></li>
-                <li><a href="#immunizations">Immunizations</a></li>
-                <li><a href="#declinedimmunizations">Declined Immunizations</a></li>
-                <li><a href="#patientinstructions">Patient Instructions</a></li>
-                <li><a href="#medications">Medications</a></li>
-                <li><a href="#problems">Problems</a></li>
-                <li><a href="#procedures">Procedures</a></li>
-                <li><a href="#resultslabs">Results (Labs)</a></li>
-                <li><a href="#smokingstatus">Smoking Status</a></li>
-                <li><a href="#vitals">Vitals</a></li>
-              </ul>
-            </div>
-          </div>
-        </nav>
-        
+      <div class="col-lg-9 col-sm-8" id="right">
+
         <div class="panel panel-default" id="document">
           <div class="panel-heading">
             <h3 class="panel-title">
+              <i class="fa fa-file-text-o" aria-hidden="true"></i>
               Document
             </h3>
           </div>
@@ -104,6 +102,7 @@
         <div class="panel panel-default" id="demographics">
           <div class="panel-heading">
             <h3 class="panel-title">
+              <i class="fa fa-user" aria-hidden="true"></i>
               Demographics
             </h3>
           </div>
@@ -113,24 +112,27 @@
         <div class="panel panel-default" id="allergies">
           <div class="panel-heading">
             <h3 class="panel-title">
+              <i class="fa fa-pagelines" aria-hidden="true"></i>
               Allergies
             </h3>
           </div>
           <div class="panel-body">
           </div>
         </div>
-        <div class="panel panel-default" id="careplan">
+        <div class="panel panel-default" id="care-plan">
           <div class="panel-heading">
             <h3 class="panel-title">
+              <i class="fa fa-sticky-note-o" aria-hidden="true"></i>
               Care Plan
             </h3>
           </div>
           <div class="panel-body">
           </div>
         </div>
-        <div class="panel panel-default" id="chiefcomplaint">
+        <div class="panel panel-default" id="chief-complaint">
           <div class="panel-heading">
             <h3 class="panel-title">
+              <i class="fa fa-bullhorn" aria-hidden="true"></i>
               Chief Complaint
             </h3>
           </div>
@@ -140,15 +142,17 @@
         <div class="panel panel-default" id="encounters">
           <div class="panel-heading">
             <h3 class="panel-title">
+              <i class="fa fa-stethoscope" aria-hidden="true"></i>
               Encounters
             </h3>
           </div>
           <div class="panel-body">
           </div>
         </div>
-        <div class="panel panel-default" id="functionalstatus">
+        <div class="panel panel-default" id="functional-status">
           <div class="panel-heading">
             <h3 class="panel-title">
+              <i class="fa fa-wheelchair " aria-hidden="true"></i>
               Functional Status
             </h3>
           </div>
@@ -158,24 +162,27 @@
         <div class="panel panel-default" id="immunizations">
           <div class="panel-heading">
             <h3 class="panel-title">
+              <i class="fa fa-eyedropper" aria-hidden="true"></i>
               Immunizations
             </h3>
           </div>
           <div class="panel-body">
           </div>
         </div>
-        <div class="panel panel-default" id="declinedimmunizations">
+        <div class="panel panel-default" id="declined-immunizations">
           <div class="panel-heading">
             <h3 class="panel-title">
+              <i class="fa fa-ban" aria-hidden="true"></i>
               Declined Immunizations
             </h3>
           </div>
           <div class="panel-body">
           </div>
         </div>
-        <div class="panel panel-default" id="patientinstructions">
+        <div class="panel panel-default" id="patient-instructions">
           <div class="panel-heading">
             <h3 class="panel-title">
+              <i class="fa fa-user-md" aria-hidden="true"></i>
               Patient Instructions
             </h3>
           </div>
@@ -185,6 +192,7 @@
         <div class="panel panel-default" id="medications">
           <div class="panel-heading">
             <h3 class="panel-title">
+              <i class="fa fa-medkit" aria-hidden="true"></i>
               Medications
             </h3>
           </div>
@@ -194,6 +202,7 @@
         <div class="panel panel-default" id="problems">
           <div class="panel-heading">
             <h3 class="panel-title">
+              <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
               Problems
             </h3>
           </div>
@@ -203,24 +212,27 @@
         <div class="panel panel-default" id="procedures">
           <div class="panel-heading">
             <h3 class="panel-title">
+              <i class="fa fa-hospital-o" aria-hidden="true"></i>
               Procedures
             </h3>
           </div>
           <div class="panel-body">
           </div>
         </div>
-        <div class="panel panel-default" id="resultslabs">
+        <div class="panel panel-default" id="results-labs">
           <div class="panel-heading">
             <h3 class="panel-title">
+              <i class="fa fa-flask" aria-hidden="true"></i>
               Results (Labs)
             </h3>
           </div>
           <div class="panel-body">
           </div>
         </div>
-        <div class="panel panel-default" id="smokingstatus">
+        <div class="panel panel-default" id="smoking-status">
           <div class="panel-heading">
             <h3 class="panel-title">
+              <i class="fa fa-fire" aria-hidden="true"></i>
               Smoking Status
             </h3>
           </div>
@@ -230,6 +242,7 @@
         <div class="panel panel-default" id="vitals">
           <div class="panel-heading">
             <h3 class="panel-title">
+              <i class="fa fa-heartbeat" aria-hidden="true"></i>
               Vitals
             </h3>
           </div>

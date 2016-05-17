@@ -1,0 +1,35 @@
+{
+  "name": "ccdaview",
+  "version": "1.0.0",
+  "description": "CCDA Rendering Tool",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MikeLarned/ccdaview.git"
+  },
+  "keywords": [
+    "ccda",
+    "xml",
+    "json",
+    "viewer"
+  ],
+  "contributors": [
+    "Doug Ludlow <doug.ludlow@gmail.com>",
+    "Mike Larned <mike@riamobilesolutions.com>"
+  ],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/MikeLarned/ccdaview/issues"
+  },
+  "homepage": "https://github.com/MikeLarned/ccdaview#readme",
+  "devDependencies": {
+    "bower": "^1.7.9",
+    "gulp": "^3.9.1",
+    "gulp-sass": "^2.3.1"
+  }
+}
