@@ -3,17 +3,7 @@
 $body-bg: #f2f2f2;
 
 body {
-    background-color: $body-bg;
-}
-
-main > .row {
-    padding-top: 80px;    
-}
-
-header {
-    position: fixed;
-    z-index: 1;
-    width: 98%;
+    padding-top: 65px;    
     background-color: $body-bg;
 }
 
@@ -54,9 +44,4 @@ h1 {
             }
         }
     }
-}
-
-#menu .overflow-nav .dropdown-menu {
-    left: auto;
-    right: 0;
 }

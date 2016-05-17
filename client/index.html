@@ -12,40 +12,54 @@
 </head>
 
 <body>
-  <main class="container-fluid">
+  
+  <nav class="navbar navbar-default navbar-fixed-top">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse-1" aria-expanded="false">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+          <a class="navbar-brand" href="#">Isabella Jone's Medical Records</a>
+        </div>
 
-    <header>
-      <h1>
-        <span>Isabella Jone's Medical Records</span>
-        
-        <div class="dropdown pull-right">
-          <button class="btn btn-default dropdown-toggle" type="button" id="jump" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-            Jump to...
-            <span class="caret"></span>
-          </button>
-          <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="jump">
-            <li><a href="#">Top</a></li>
-            <li><a href="#document">Document</a></li>
-            <li><a href="#demographics">Demographics</a></li>
-            <li><a href="#allergies">Allergies</a></li>
-            <li><a href="#care-plan">Care Plan</a></li>
-            <li><a href="#chief-complaint">Chief Complaint</a></li>
-            <li><a href="#encounters">Encounters</a></li>
-            <li><a href="#functional-status">Functional Status</a></li>
-            <li><a href="#immunizations">Immunizations</a></li>
-            <li><a href="#declined-immunizations">Declined Immunizations</a></li>
-            <li><a href="#patient-instructions">Patient Instructions</a></li>
-            <li><a href="#medications">Medications</a></li>
-            <li><a href="#problems">Problems</a></li>
-            <li><a href="#procedures">Procedures</a></li>
-            <li><a href="#results-labs">Results (Labs)</a></li>
-            <li><a href="#smoking-status">Smoking Status</a></li>
-            <li><a href="#vitals">Vitals</a></li>
+        <div class="collapse navbar-collapse" id="navbar-collapse-1">
+          <ul class="nav navbar-nav navbar-right">
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" id="jump" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                Jump to
+                <span class="caret"></span>
+              </a>
+              <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="jump">
+                <li><a href="#">Top</a></li>
+                <li role="separator" class="divider"></li>
+                <li><a href="#document"><i class="fa fa-file-text-o" aria-hidden="true"></i> Document</a></li>
+                <li><a href="#demographics"><i class="fa fa-user" aria-hidden="true"></i> Demographics</a></li>
+                <li><a href="#allergies"><i class="fa fa-pagelines" aria-hidden="true"></i> Allergies</a></li>
+                <li><a href="#care-plan"><i class="fa fa-sticky-note-o" aria-hidden="true"></i> Care Plan</a></li>
+                <li><a href="#chief-complaint"><i class="fa fa-bullhorn" aria-hidden="true"></i> Chief Complaint</a></li>
+                <li><a href="#encounters"><i class="fa fa-stethoscope" aria-hidden="true"></i> Encounters</a></li>
+                <li><a href="#functional-status"><i class="fa fa-wheelchair" aria-hidden="true"></i> Functional Status</a></li>
+                <li><a href="#immunizations"><i class="fa fa-eyedropper" aria-hidden="true"></i> Immunizations</a></li>
+                <li><a href="#declined-immunizations"><i class="fa fa-ban" aria-hidden="true"></i> Declined Immunizations</a></li>
+                <li><a href="#patient-instructions"><i class="fa fa-user-md" aria-hidden="true"></i> Patient Instructions</a></li>
+                <li><a href="#medications"><i class="fa fa-medkit" aria-hidden="true"></i> Medications</a></li>
+                <li><a href="#problems"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> Problems</a></li>
+                <li><a href="#procedures"><i class="fa fa-hospital-o" aria-hidden="true"></i> Procedures</a></li>
+                <li><a href="#results-labs"><i class="fa fa-flask" aria-hidden="true"></i> Results (Labs)</a></li>
+                <li><a href="#smoking-status"><i class="fa fa-fire" aria-hidden="true"></i> Smoking Status</a></li>
+                <li><a href="#vitals"><i class="fa fa-heartbeat" aria-hidden="true"></i> Vitals</a></li>
+              </ul>
+            </li>
+            <li><a href="#"><i class="fa fa-cog fa-lg" title="Settings"></i></a></li>
           </ul>
         </div>
-      </h1>
-    </header>
-
+      </div>
+    </nav>
+  
+  <main class="container-fluid">
     <div class="row">
       <div class="col-lg-3 col-sm-4" id="left">
 
@@ -152,7 +166,7 @@
         <div class="panel panel-default" id="functional-status">
           <div class="panel-heading">
             <h3 class="panel-title">
-              <i class="fa fa-wheelchair " aria-hidden="true"></i>
+              <i class="fa fa-wheelchair" aria-hidden="true"></i>
               Functional Status
             </h3>
           </div>
