@@ -6,46 +6,50 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>HL7 CCDA Viewer</title>
-  
+
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/css/bootstrap.css">
   <link rel="stylesheet" href="styles/styles.css">
 </head>
 
 <body>
-  <main class="container-fluid">
+  <main class="container-fluid" id="top">
     <h1>Isabella Jone's Medical Records</h1>
     <div class="row">
       <div class="col-lg-3 col-sm-4">
         <div class="panel panel-default">
+          <div class="panel-heading">
+            <h2>Isabella Jones</h2>
+            <span class="dob">
+                <i class="fa fa-birthday-cake" title="DOB"></i>
+                May 5, 1975
+              </span>
+          </div>
           <div class="panel-body">
-            <div class="panel-heading">
-              <h2>Isabella Jones</h2>
-            </div>
+            <p class="demographics-narrative">
+              <i class="fa fa-female" title="Demographics narrative"></i> Isabella is a married white female who observes
+              Christianity and speaks English.
+            </p>
+            <p class="smoking-status">
+              <i class="fa fa-fire" title="Smoking status"></i> Former smoker
+            </p>
+            <address class="address">
+              <i class="fa fa-map-marker" aria-hidden="true" title="Address"></i>
+              <strong>Address</strong><br>
+              1357 Amber Drive<br>
+              Beaverton, OR 97867
+            </address>
+            <address class="phone">
+              <i class="fa fa-phone" aria-hidden="true" title="Phone"></i>
+              <strong>Telephone</strong><br>
+              (816) 276-6909
+            </address>
           </div>
         </div>
         <div class="panel panel-default">
           <div class="panel-heading">
             <h3 class="panel-title">
-              Demographics
-            </h3>
-          </div>
-          <div class="panel-body">
-          </div>
-        </div>
-        <div class="panel panel-default">
-          <div class="panel-heading">
-            <h3 class="panel-title">
-              Allergies
-            </h3>
-          </div>
-          <div class="panel-body">
-          </div>
-        </div>
-        <div class="panel panel-default">
-          <div class="panel-heading">
-            <h3 class="panel-title">
-              Smoking Status
+              Allergies Summary
             </h3>
           </div>
           <div class="panel-body">
@@ -53,7 +57,42 @@
         </div>
       </div>
       <div class="col-lg-9 col-sm-8">
-        <div class="panel panel-default">
+        
+        <nav class="navbar navbar-default">
+          <div class="container-fluid">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="navbar-collapse-1"
+                aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar-collapse-1">
+              <ul class="nav navbar-nav" id="menu">
+                <li><a href="#document">Document</a></li>
+                <li><a href="#demographics">Demographics</a></li>
+                <li><a href="#allergies">Allergies</a></li>
+                <li><a href="#careplan">Care Plan</a></li>
+                <li><a href="#chiefcomplaint">Chief Complaint</a></li>
+                <li><a href="#encounters">Encounters</a></li>
+                <li><a href="#functionalstatus">Functional Status</a></li>
+                <li><a href="#immunizations">Immunizations</a></li>
+                <li><a href="#declinedimmunizations">Declined Immunizations</a></li>
+                <li><a href="#patientinstructions">Patient Instructions</a></li>
+                <li><a href="#medications">Medications</a></li>
+                <li><a href="#problems">Problems</a></li>
+                <li><a href="#procedures">Procedures</a></li>
+                <li><a href="#resultslabs">Results (Labs)</a></li>
+                <li><a href="#smokingstatus">Smoking Status</a></li>
+                <li><a href="#vitals">Vitals</a></li>
+              </ul>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="panel panel-default" id="document">
           <div class="panel-heading">
             <h3 class="panel-title">
               Document
@@ -62,7 +101,25 @@
           <div class="panel-body">
           </div>
         </div>
-        <div class="panel panel-default">
+        <div class="panel panel-default" id="demographics">
+          <div class="panel-heading">
+            <h3 class="panel-title">
+              Demographics
+            </h3>
+          </div>
+          <div class="panel-body">
+          </div>
+        </div>
+        <div class="panel panel-default" id="allergies">
+          <div class="panel-heading">
+            <h3 class="panel-title">
+              Allergies
+            </h3>
+          </div>
+          <div class="panel-body">
+          </div>
+        </div>
+        <div class="panel panel-default" id="careplan">
           <div class="panel-heading">
             <h3 class="panel-title">
               Care Plan
@@ -71,7 +128,7 @@
           <div class="panel-body">
           </div>
         </div>
-        <div class="panel panel-default">
+        <div class="panel panel-default" id="chiefcomplaint">
           <div class="panel-heading">
             <h3 class="panel-title">
               Chief Complaint
@@ -80,7 +137,7 @@
           <div class="panel-body">
           </div>
         </div>
-        <div class="panel panel-default">
+        <div class="panel panel-default" id="encounters">
           <div class="panel-heading">
             <h3 class="panel-title">
               Encounters
@@ -89,7 +146,7 @@
           <div class="panel-body">
           </div>
         </div>
-        <div class="panel panel-default">
+        <div class="panel panel-default" id="functionalstatus">
           <div class="panel-heading">
             <h3 class="panel-title">
               Functional Status
@@ -98,7 +155,7 @@
           <div class="panel-body">
           </div>
         </div>
-        <div class="panel panel-default">
+        <div class="panel panel-default" id="immunizations">
           <div class="panel-heading">
             <h3 class="panel-title">
               Immunizations
@@ -107,7 +164,7 @@
           <div class="panel-body">
           </div>
         </div>
-        <div class="panel panel-default">
+        <div class="panel panel-default" id="declinedimmunizations">
           <div class="panel-heading">
             <h3 class="panel-title">
               Declined Immunizations
@@ -116,7 +173,7 @@
           <div class="panel-body">
           </div>
         </div>
-        <div class="panel panel-default">
+        <div class="panel panel-default" id="patientinstructions">
           <div class="panel-heading">
             <h3 class="panel-title">
               Patient Instructions
@@ -125,7 +182,7 @@
           <div class="panel-body">
           </div>
         </div>
-        <div class="panel panel-default">
+        <div class="panel panel-default" id="medications">
           <div class="panel-heading">
             <h3 class="panel-title">
               Medications
@@ -134,7 +191,7 @@
           <div class="panel-body">
           </div>
         </div>
-        <div class="panel panel-default">
+        <div class="panel panel-default" id="problems">
           <div class="panel-heading">
             <h3 class="panel-title">
               Problems
@@ -143,7 +200,7 @@
           <div class="panel-body">
           </div>
         </div>
-        <div class="panel panel-default">
+        <div class="panel panel-default" id="procedures">
           <div class="panel-heading">
             <h3 class="panel-title">
               Procedures
@@ -152,7 +209,7 @@
           <div class="panel-body">
           </div>
         </div>
-        <div class="panel panel-default">
+        <div class="panel panel-default" id="resultslabs">
           <div class="panel-heading">
             <h3 class="panel-title">
               Results (Labs)
@@ -161,7 +218,16 @@
           <div class="panel-body">
           </div>
         </div>
-        <div class="panel panel-default">
+        <div class="panel panel-default" id="smokingstatus">
+          <div class="panel-heading">
+            <h3 class="panel-title">
+              Smoking Status
+            </h3>
+          </div>
+          <div class="panel-body">
+          </div>
+        </div>
+        <div class="panel panel-default" id="vitals">
           <div class="panel-heading">
             <h3 class="panel-title">
               Vitals
@@ -175,6 +241,12 @@
   </main>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.3/jquery.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/js/bootstrap.js"></script>
+  <script src="https://rawgit.com/tomiford/bootstrap-overflow-navs/master/bootstrap-overflow-navs.js"></script>
+  <script>
+    $("#menu").overflowNavs({
+        "more" : "More"
+    });
+  </script>
 </body>
 
 </html>
