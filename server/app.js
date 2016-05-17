@@ -2,6 +2,7 @@ var express = require('express');
 var app = express();
 var fs = require('fs');
 var path = require('path');
+var parser = require('xml2json');
 
 app.use(function (req, res, next) {
 
@@ -21,7 +22,8 @@ app.get('/', function (req, res) {
 
   var BUFFER = bufferFile('../docs/C-CDA_R2_Care_Plan.xml');
   //var BUFFER = bufferFile('../docs/CCD - Missy Sue TAYLOR.xml');
-  console.log(BUFFER)
+  var json = parser.toJSON(BUFFER);
+  console.log(json);
   res.send(BUFFER);
 });
 
