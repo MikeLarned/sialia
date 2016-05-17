@@ -1,4 +1,6 @@
-@import "../../bower_components/bootstrap-sass/assets/stylesheets/bootstrap";
+@import "../../bower_components/bootswatch/cosmo/variables";
+@import "../../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap";
+@import "../../bower_components/bootswatch/cosmo/bootswatch";
 
 $body-bg: #f2f2f2;
 
@@ -23,25 +25,11 @@ h1 {
 }
 
 #demographics-summary {
-    
-    .panel-heading {
-        .dob .fa {
-            margin-right: 3px;
-        }
+    .fa-ul {
+        margin-left: 20px;
     }
     
-    .panel-body {
-        padding-left: 35px;
-        
-        p, address {
-            position: relative;
-            margin-bottom: 10px;
-            
-            .fa {
-                position: absolute;
-                top: 0.2em;
-                left: -20px;
-            }
-        }
+    address {
+        margin-bottom: 10px;
     }
 }
