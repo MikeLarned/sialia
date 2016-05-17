@@ -19,7 +19,9 @@ app.get('/', function (req, res) {
     return fs.readFileSync(p,{ encoding: 'utf8' });
   }
 
-  var BUFFER = bufferFile('../docs/CCD - Missy Sue TAYLOR.xml');
+  var BUFFER = bufferFile('../docs/C-CDA_R2_Care_Plan.xml');
+  //var BUFFER = bufferFile('../docs/CCD - Missy Sue TAYLOR.xml');
+  console.log(BUFFER)
   res.send(BUFFER);
 });
 
