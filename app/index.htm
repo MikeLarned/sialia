@@ -13,11 +13,31 @@
     <div id="header" class="header"></div>
     <div class="container-fluid">
       <div class="row">
-        <div class="col-sm-4 col-md-3 sidebar">
-          <div id="patient-card">
+        <!-- sidebar -->
+        <div class="col-sm-3 col-md-3 sidebar">
+          <div id="patient-card"></div>
+          <div id="nav"></div>
+          <div id="highlight-sections">
 
           </div>
-          <div id="nav"></div>
+        </div>
+        <div class="col-sm-9 col-sm-offset-3">
+          <div class="chief-complaint" id="chief-complaint">
+
+          </div>
+          <div class="tag-list" id="tag-list">
+
+          </div>
+          <div class="panel-container">
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <h3 class="panel-title">Panel title</h3>
+              </div>
+              <div class="panel-body">
+                Panel content
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -26,7 +46,6 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.5/handlebars.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
 <script>document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1"></' + 'script>')</script>
 
 <script type="text/javascript">
@@ -39,30 +58,104 @@
     $(target).html(html);
   };
 
+  var sections = [
+    {key: "allergies", display: "Allergies"},
+    {key: "care_plan", display: "Care Plan"},
+    {key: "chief_complaint", display: "Chief Complaint"},
+    {key: "immunization_declines", display: "Immunization Declines"},
+    {key: "immunizations", display: "Immunization"},
+    {key: "instructions", display: "Instructions"},
+    {key: "medications", display: "Medications"},
+    {key: "problems", display: "Problems"},
+    {key: "procedures", display: "Procedures"},
+    {key: "results", display: "Results"},
+    {key: "smoking_status", display: "Smoking Status"},
+    {key: "vitals", display: "Vitals"},
+  ];
+
+  // TODO: Maybe we filter based on document template type (summary, discharge, etc)
+  var filter = {
+    user: {
+      sections: ["allergies", "results", "vitals"]
+    },
+    patient: {
+      sections: ["immunizations"]
+    }
+  };
+
+  var getSections = function(bb) {
+    var ignoreSections = [
+      {key: "document", display: "Document"},
+      {key: "json", display: "Document"},
+      {key: "demographics", display: "Document"},
+    ];
+
+    var keys = [];
+    var ignore = _.map(ignoreSections, function(kvp) {return kvp.key });
+
+    _.each(bb.data, function( val, key ) {
+      if (val) {
+        if(ignore.indexOf(key) == -1)
+          keys.push(key);
+      }
+    });
+
+    //TODO: Filter by clinician preference
+    var allSections = [];
+    _.each(keys, function(key) {
+      var match = _.find(sections, function(s){ return s.key == key; });
+      if(match) allSections.push(match)
+      else allSections.push({ key: key, display: key });
+    });
+
+    var userSections = _.filter(allSections, function(a){
+      var m = filter.user.sections.indexOf(a.key) > -1;
+      return m;
+    });
+
+    return {
+      user: _.sortBy(userSections, 'key'),
+      all: _.sortBy(allSections, 'key')
+    }
+  };
+
   var nav = function(bb) {
 
-    var sections = [
-      {key: "allergies", display: "Allergies"},
-      {key: "care_plan", display: "Care Plan"},
-      {key: "chief_complaint", display: "Chief Complaint"},
-      {key: "immunization_declines", display: "Immunization Declines"},
-      {key: "immunizations", display: "Immunization"},
-      {key: "instructions", display: "Instructions"},
-      {key: "medications", display: "Medications"},
-      {key: "problems", display: "Problems"},
-      {key: "procedures", display: "Procedures"},
-      {key: "results", display: "Results"},
-      {key: "smoking_status", display: "Smoking Status"},
-      {key: "vitals", display: "Vitals"},
-    ]
+    var sec = getSections(bb);
 
     var nav = {
       s: bb.data,
-      sections: sections
-    }
+      sections: sec
+    };
 
     template("#section-nav-template", nav, "#nav");
-  }
+  };
+
+  var tags = function(bb) {
+    var ignoreSections = [
+      {key: "document", display: "Document"},
+      {key: "json", display: "Document"},
+      {key: "demographics", display: "Document"},
+    ];
+
+    var model = {
+      sections: getSections(bb)
+    };
+
+    template("#tag-list-template", model, "#tag-list");
+  };
+
+  var chief = function(bb) {
+    if(bb.data.chief_complaint && bb.data.chief_complaint.text) {
+    console.log("chief")
+      var model = {
+        s: bb.data.chief_complaint
+      };
+
+      template("#p-chief_complaint-template", model, "#chief-complaint");
+    }
+
+  };
 
   var render = function(bb) {
 
@@ -78,12 +171,17 @@
     template("#header-template", header, "#header");
 
     nav(bb);
+    tags(bb);
+    chief(bb);
 
     // Header
     var patientCard = {
       s: source.demographics,
       street: source.demographics.address.street[0],
       providerStreet: source.demographics.provider.address.street[0],
+      first: source.demographics.name.given[0],
+      middle:  source.demographics.name.given[1],
+      title: source.document.title
     };
 
     template("#patient-card-template", patientCard, "#patient-card");
@@ -95,29 +193,44 @@
     $xml = $(xmlDoc);
     console.log(xmlDoc);
 
-//    var bb = BlueButton(data);
-//    console.log(bb);
-//    $("#pre").text(JSON.stringify(bb, null, 4));
-//    render(bb);
+    var bb = BlueButton(data);
+    console.log(bb);
+    $("#pre").text(JSON.stringify(bb, null, 4));
+    render(bb);
 
   };
 
   $.get(fileUrl, load);
+  
+</script>
 
+<script id="p-allergen-template" type="text/x-handlebars-template">
+</script>
 
+<script id="p-chief_complaint-template" type="text/x-handlebars-template">
+  <div class="chief-title">Chief Complaint</div>
+  <div class="chief-text">{{ s.text }}</div>
+</script>
 
-
+<script id="hl-allergen-template" type="text/x-handlebars-template">
 
 </script>
 
-  <script id="patient-card-template" type="text/x-handlebars-template">
+<script id="tag-list-template" type="text/x-handlebars-template">
+  <span class="label label-primary">Viewing</span>
+  {{#each sections.user }}
+    <span class="label label-default tag">{{this.display}}</span>
+  {{/each}}
+</script>
+
+<script id="patient-card-template" type="text/x-handlebars-template">
     <div class="patient-card-pic">
       <div class="pic">
         <span class="glyphicon glyphicon-user pic-user" aria-hidden="true"></span>
       </div>
       <div class="name">
         <!--<span class="sex">F</span>-->
-        <span class="fullname">Missy Sue Taylor</span>
+        <span class="fullname">{{ first }} {{ middle }} {{ s.name.family }}</span>
         <span class="birth">
           Sept 15,1982
           <span class="info-pill">DOB</span>
@@ -139,15 +252,35 @@
       <span class="info">{{ providerStreet }}</span>
       <span class="info">{{ s.provider.address.city }}, {{ s.provider.address.state }} {{ s.provider.address.zip }}</span>
     </div>
-  </script>
+</script>
 
-  <script id="section-nav-template" type="text/x-handlebars-template">
-    <ul class="nav nav-sidebar">
-      {{#each sections}}
-        <li><a href="#{{this.key}}">{{this.display}}</a></li>
-      {{/each}}
-    </ul>
-  </script>
+<script id="section-nav-template" type="text/x-handlebars-template">
+  <div class="panel-container">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title">My Sections</h3>
+      </div>
+      <div class="panel-body">
+        {{#each sections.user}}
+          <a href="#{{this.key}}">{{this.display}}</a><br />
+        {{/each}}
+      </div>
+    </div>
+  </div>
+
+  <div class="panel-container">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title">All Sections</h3>
+      </div>
+      <div class="panel-body">
+        {{#each sections.all }}
+        <a href="#{{this.key}}">{{this.display}}</a><br />
+        {{/each}}
+      </div>
+    </div>
+  </div>
+</script>
 
   <script id="header-template" type="text/x-handlebars-template">
     <nav class="navbar navbar-inverse navbar-fixed-top">
@@ -159,7 +292,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="#">{{ s.name.family }}, {{ first }} {{ middle }}</a>
+          <a class="navbar-brand" href="#">{{ s.name.family }}, {{ first }} {{ middle }} - {{ title }} </a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">

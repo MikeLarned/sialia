@@ -1,3 +1,7 @@
+.panel-container {
+    margin-top: 22px;
+}
+
 .up {
     margin-top: -5px;
 }
@@ -96,6 +100,30 @@ body {
     font-size: 85%;
     padding-left: .5em;
 }
+
+.chief-complaint {
+    margin-top: 20px;
+}
+
+.tag {
+    display: inline-block;
+}
+
+.chief-title {
+    font-weight: bold;
+    font-size: 1.4em;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 5px;
+}
+
+.chief-text {
+    padding: 15px;
+    font-size: 1.1em;
+    border-bottom: 1px solid #eee;
+    margin-bottom: 10px;
+}
+
+
 
 @media (min-width: 768px) {
     .sidebar {

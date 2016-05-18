@@ -20,10 +20,12 @@ app.get('/', function (req, res) {
     return fs.readFileSync(p,{ encoding: 'utf8' });
   }
 
-  var BUFFER = bufferFile('../docs/C-CDA_R2_Care_Plan.xml');
+  //var BUFFER = bufferFile('../docs/C-CDA_R2_Care_Plan.xml');
   //var BUFFER = bufferFile('../docs/CCD - Missy Sue TAYLOR.xml');
-  var json = parser.toJSON(BUFFER);
-  console.log(json);
+  // var BUFFER = bufferFile('../docs/Consult 1.xml');
+  var BUFFER = bufferFile('../docs/Discharge Summary 1.xml');
+  console.log(BUFFER);
+  //var json = parser.toJson(BUFFER);
   res.send(BUFFER);
 });
 
