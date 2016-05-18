@@ -3,6 +3,8 @@
 @import "../../bower_components/bootswatch/cosmo/bootswatch";
 
 $body-bg: #f2f2f2;
+$mild: #ffdc67;
+//$mild: #ffea18;
 
 body {
     padding-top: 65px;    
@@ -14,6 +16,24 @@ h1 {
     color: #666;
 }
 
+.panel-heading h2 {
+    margin: 10px 0 15px;
+}
+
+.panel-success {
+    .toggle-body {
+        color: #fff;
+    }
+    
+    .text-muted {
+        color: #ddd;
+    }
+}
+
+.alert-mild {
+    @include alert-variant($mild, $mild, #000);
+}
+
 @media (min-width: $screen-sm-min) {
     #left {
         padding-right: 8px;
@@ -21,6 +41,10 @@ h1 {
 
     #right {
         padding-left: 7px;
+    }
+    
+    #jump-nav {
+        margin-right: 15px;
     }
 }
 
@@ -31,5 +55,27 @@ h1 {
     
     address {
         margin-bottom: 10px;
+    }
+}
+
+.panel-heading {
+    position: relative;
+    
+    .toggle-body {
+        position: absolute;
+        bottom: 11px;
+        right: 15px;
+    }
+}
+
+.panel-heading, .panel-body {
+     & > *:last-child {
+        margin-bottom: 0;
+    }
+}
+
+.panel-body > ul:last-child > li:last-child > *:last-child {
+    &, #demographics-summary & {
+        margin-bottom: 0;
     }
 }
