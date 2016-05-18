@@ -20,6 +20,9 @@
           <div id="highlight-sections">
 
           </div>
+          <div id="doc-links">
+
+          </div>
         </div>
         <div class="col-sm-9 col-sm-offset-3">
           <div class="chief-complaint" id="chief-complaint">
@@ -50,6 +53,8 @@
 
 <script type="text/javascript">
   var fileUrl = 'http://localhost:3000';
+  var docsUrl = 'http://localhost:3000/docs';
+  var selectedDoc = 1;
 
   var template = function(template, context, target) {
     var source   = $(template).html();
@@ -82,6 +87,8 @@
       sections: ["immunizations"]
     }
   };
+
+  var currentSections = ["allergies", "results", "vitals"]
 
   var getSections = function(bb) {
     var ignoreSections = [
@@ -147,14 +154,22 @@
 
   var chief = function(bb) {
     if(bb.data.chief_complaint && bb.data.chief_complaint.text) {
-    console.log("chief")
       var model = {
         s: bb.data.chief_complaint
       };
 
       template("#p-chief_complaint-template", model, "#chief-complaint");
     }
+  };
 
+  var renderPanels = function(bb) {
+    _.each(currentSections, function(c) {
+        var data = bb.data[c];
+        var model = {
+          hasData : data.length > 0,
+          data : data
+        };
+    });
   };
 
   var render = function(bb) {
@@ -173,6 +188,7 @@
     nav(bb);
     tags(bb);
     chief(bb);
+    renderPanels(bb);
 
     // Header
     var patientCard = {
@@ -200,11 +216,48 @@
 
   };
 
-  $.get(fileUrl, load);
-  
+  var url = fileUrl + '/' + selectedDoc;
+  $.get(url, load);
+
+  var loadDocs = function() {
+    $.get(docsUrl, function(data) {
+      var model = {
+        links: data
+      }
+      template("#doclinks-template", model, "#doc-links");
+      $(".doclink").click(function() {
+        var url = fileUrl + '/' + event.target.id;
+        $.get(url, load);
+      });
+    });
+  };
+
+  loadDocs();
+
+</script>
+
+<script id="doclinks-template" type="text/x-handlebars-template">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">Test Files</h3>
+        </div>
+        <div class="panel-body">
+          {{#each links }}
+          <a class="doclink" href="#" id="{{ this.id }}" onclick="">{{ this.name }}</a><br />
+          {{/each}}
+        </div>
+      </div>
 </script>
 
 <script id="p-allergen-template" type="text/x-handlebars-template">
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h3 class="panel-title">Panel title</h3>
+    </div>
+    <div class="panel-body">
+      Panel content
+    </div>
+  </div>
 </script>
 
 <script id="p-chief_complaint-template" type="text/x-handlebars-template">
