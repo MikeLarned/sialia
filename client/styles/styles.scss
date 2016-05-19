@@ -1,13 +1,13 @@
-@import "../../bower_components/bootswatch/cosmo/variables";
-@import "../../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap";
-@import "../../bower_components/bootswatch/cosmo/bootswatch";
+@import "../../node_modules/bootswatch/cosmo/variables";
+@import "../../node_modules/bootstrap-sass/assets/stylesheets/bootstrap";
+@import "../../node_modules/bootswatch/cosmo/bootswatch";
 
 $body-bg: #f2f2f2;
 $mild: #ffdc67;
 //$mild: #ffea18;
 
 body {
-    padding-top: 65px;    
+    padding-top: 65px;
     background-color: $body-bg;
 }
 
@@ -24,7 +24,7 @@ h1 {
     .toggle-body {
         color: #fff;
     }
-    
+
     .text-muted {
         color: #ddd;
     }
@@ -42,7 +42,7 @@ h1 {
     #right {
         padding-left: 7px;
     }
-    
+
     #jump-nav {
         margin-right: 15px;
     }
@@ -52,7 +52,7 @@ h1 {
     .fa-ul {
         margin-left: 20px;
     }
-    
+
     address {
         margin-bottom: 10px;
     }
@@ -60,7 +60,7 @@ h1 {
 
 .panel-heading {
     position: relative;
-    
+
     .toggle-body {
         position: absolute;
         bottom: 11px;
