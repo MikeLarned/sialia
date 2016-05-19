@@ -10,7 +10,7 @@
     }
 }(this, function() {
 
-/* BlueButton.js -- 0.4.2 */
+/* BlueButton.js -- 0.4.3 */
 
 /*
  * ...
@@ -1037,6 +1037,8 @@ var Documents = (function () {
       return 'c32';
     } else if(!data.template('2.16.840.1.113883.10.20.22.1.1').isEmpty()) {
       return 'ccda';
+    } else if(!data.template('2.16.840.1.113883.10.20.22.1.15').isEmpty()) {
+      return 'ccdar2';
     }
   };
   
@@ -3979,6 +3981,10 @@ var BlueButton = function (source, opts) {
         break;
       case 'ccda':
         parsedData = Documents.CCDA.process(parsedData);
+        parsedDocument = Parsers.CCDA.run(parsedData);
+        break;
+      case 'ccdar2':
+        console.log("R2DOC");
         parsedDocument = Parsers.CCDA.run(parsedData);
         break;
       case 'json':
