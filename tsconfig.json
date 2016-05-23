@@ -7,5 +7,7 @@
     },
     "exclude": [
         "node_modules"
-    ]
+    ],
+    // Atom settings
+    "compileOnSave": false
 }

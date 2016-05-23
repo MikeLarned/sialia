@@ -8,8 +8,10 @@
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
         </button>
-        <a class="navbar-brand" href="#"><name name={ opts.demographics.name } possesive={ true } />
-          Medical Records</a>
+        <a class="navbar-brand" href="#">
+          { opts.data.document.title } -
+          <name name={ opts.data.demographics.name } class="text-muted" />
+        </a>
       </div>
 
       <div class="collapse navbar-collapse" id="navbar-collapse-1">
@@ -36,7 +38,7 @@
                 <a href="#">Top</a>
               </li>
               <li role="separator" class="divider"></li>
-              <li each={ sections }>
+              <li each={ opts.sections }>
                 <a href="#{ key }">
                   <i class="fa fa-{ icon }" aria-hidden="true"></i>
                   { display }
@@ -49,9 +51,5 @@
       </div>
     </div>
   </nav>
-
-  <script>
-    console.log(opts);
-  </script>
 
 </header>

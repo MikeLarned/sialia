@@ -1,5 +1,5 @@
 <demographics>
-  <div class="panel panel-success" id="demographics">
+  <div class="panel panel-default" id="demographics">
     <div class="panel-heading">
       <h2><name name={ opts.demographics.name } /></h2>
       <a href="#" class="toggle-body">

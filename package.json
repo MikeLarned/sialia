@@ -6,7 +6,8 @@
     "doc": "docs"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "postinstall": "jspm install"
   },
   "repository": {
     "type": "git",
@@ -28,7 +29,6 @@
   },
   "homepage": "https://github.com/MikeLarned/ccdaview#readme",
   "devDependencies": {
-    "bower": "^1.7.9",
     "gulp": "^3.9.1",
     "gulp-clean-css": "^2.0.7",
     "gulp-sass": "^2.3.1",
@@ -37,25 +37,15 @@
   },
   "dependencies": {},
   "jspm": {
-    "name": "ccdaview",
-    "main": "app/app",
-    "directories": {
-      "packages": "client/jspm_packages"
-    },
-    "configFiles": {
-      "jspm:browser": "client/jspm.browser.js",
-      "jspm": "client/jspm.config.js"
-    },
-    "configFile": "client/jspm.config.js",
     "dependencies": {
       "bootstrap-sass": "github:twbs/bootstrap-sass@^3.3.6",
       "bootswatch": "npm:bootswatch@^3.3.6",
       "css": "github:systemjs/plugin-css@^0.1.21",
       "font-awesome": "npm:font-awesome@^4.6.1",
-      "jquery": "npm:jquery@^2.2.3",
+      "jquery": "npm:jquery@^2.2.4",
       "lodash": "npm:lodash@^4.12.0",
       "riot": "npm:riot@^2.4.0",
-      "tag": "npm:systemjs-riot@^1.2.6"
+      "tag": "github:dougludlow/systemjs-riot@master"
     },
     "devDependencies": {
       "plugin-typescript": "github:frankwallis/plugin-typescript@^4.0.16"
@@ -117,7 +107,7 @@
           "test.js"
         ]
       },
-      "npm:jquery@2.2.3": {
+      "npm:jquery@2.2.4": {
         "format": "amd"
       },
       "npm:readable-stream@1.1.14": {

@@ -1,34 +1,30 @@
-import './tags/viewer.tag!';
-import './tags/name.tag!';
-import './tags/header.tag!';
-import './tags/panel.tag!';
-import './tags/sections/demographics.tag!';
-import './tags/sections/allergies.tag!';
+import './tags';
 import 'font-awesome/css/font-awesome.min.css!';
+import 'bootstrap-sass';
 
 import BlueButton from 'bluebutton';
-import * as _ from 'lodash';
-import * as $ from 'jquery';
-import * as riot from 'riot';
-import { Section } from './models';
+import _ from 'lodash';
+import $ from 'jquery';
+import riot from 'riot';
+import { Section, ViewerOptions } from './models';
 
 export class App {
 
   sections: Section[] = [
-    { key: 'allergies', display: 'Allergies', icon: 'pagelines' },
-    { key: 'care_plan', display: 'Care Plan', icon: 'sticky-note-o' },
-    { key: 'chief_complaint', display: 'Chief Complaint', icon: 'bullhorn' },
-    { key: 'encounters', display: 'Encounters', icon: 'stethoscope' },
-    { key: 'functional_ststus', display: 'Functional Status', icon: 'wheelchair' },
-    { key: 'immunization_declines', display: 'Declined Immunizations', icon: 'ban' },
-    { key: 'immunizations', display: 'Immunization', icon: 'eyedropper' },
-    { key: 'instructions', display: 'Patient Instructions', icon: 'user-md' },
-    { key: 'medications', display: 'Medications', icon: 'medkit' },
-    { key: 'problems', display: 'Problems', icon: 'exclamation-triangle' },
-    { key: 'procedures', display: 'Procedures', icon: 'hospital-o' },
-    { key: 'results', display: 'Results', icon: 'flask' },
-    { key: 'smoking_status', display: 'Smoking Status', icon: 'fire' },
-    { key: 'vitals', display: 'Vitals', icon: 'heartbeat' },
+    { key: 'allergies', display: 'Allergies', tagName: 'allergies', icon: 'pagelines' },
+    { key: 'care_plan', display: 'Care Plan', tagName: 'care-plan', icon: 'sticky-note-o' },
+    { key: 'chief_complaint', display: 'Chief Complaint', tagName: 'chief-complaint', icon: 'bullhorn' },
+    { key: 'encounters', display: 'Encounters', tagName: 'encounters', icon: 'stethoscope' },
+    { key: 'functional_status', display: 'Functional Status', tagName: 'functional-status', icon: 'wheelchair' },
+    { key: 'immunization_declines', display: 'Declined Immunizations', tagName: 'immunization-declines', icon: 'ban' },
+    { key: 'immunizations', display: 'Immunization', tagName: 'immunizations', icon: 'eyedropper' },
+    { key: 'instructions', display: 'Patient Instructions', tagName: 'instructions', icon: 'user-md' },
+    { key: 'medications', display: 'Medications', tagName: 'medications', icon: 'medkit' },
+    { key: 'problems', display: 'Problems', tagName: 'problems', icon: 'exclamation-triangle' },
+    { key: 'procedures', display: 'Procedures', tagName: 'procedures', icon: 'hospital-o' },
+    { key: 'results', display: 'Results', tagName: 'results', icon: 'flask' },
+    { key: 'smoking_status', display: 'Smoking Status', tagName: 'smoking-status', icon: 'fire' },
+    { key: 'vitals', display: 'Vitals', tagName: 'vitals', icon: 'heartbeat' },
   ];
 
   ignoreSections: string[] = ['document', 'demographics', 'json'];
@@ -75,20 +71,19 @@ export class App {
     }
   }
 
-  render(data) {
-    riot.mount('viewer', data);
+  render(options: ViewerOptions) {
+    riot.mount('viewer', options);
   }
 
   load(data) {
-    // console.log(data);
-    // var xmlDoc = $.parseXML(data);
-    // var $xml = $(xmlDoc);
-    // console.log(xmlDoc);
+    let bb = BlueButton(data);
+    console.log(bb);
+    let options: ViewerOptions = {
+      sections: this.sections,
+      data: bb.data
+    };
 
-    var bb = BlueButton(data);
-    // console.log(bb);
-    // $("#pre").text(JSON.stringify(bb, null, 4));
-    this.render(bb.data);
+    this.render(options);
   };
 
 }

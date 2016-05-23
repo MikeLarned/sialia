@@ -39,3 +39,4 @@ bower_components/
 
 # Generated assets
 client/styles/*.css
+client/build

@@ -9,9 +9,10 @@
 
     <link rel="stylesheet" href="styles/styles.css">
 
-    <script src="jspm_packages/system.src.js"></script>
-    <script src="jspm.browser.js"></script>
-    <script src="jspm.config.js"></script>
+    <script src="../jspm_packages/system.js"></script>
+    <script src="../jspm.browser.js"></script>
+    <script src="../jspm.config.js"></script>
+    <!-- <script src="build/build.js"></script> -->
 </head>
 
 <body>
@@ -19,13 +20,11 @@
     <viewer></viewer>
 
     <script>
-        SystemJS.import("ccdaview")
+        SystemJS.import("client")
             .then(function(app) {
                 new app.App();
             })
-            .catch(function(err) {
-                console.error(err);
-            })
+            .catch(console.error.bind(console));
     </script>
 
 </body>

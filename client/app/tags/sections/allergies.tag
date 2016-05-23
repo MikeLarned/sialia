@@ -1,30 +1,13 @@
 <allergies>
-  <div class="panel panel-default" id="allergies-summary">
-    <div class="panel-heading">
-      <h3 class="panel-title">
-        Allergies &nbsp;
-        <span class="badge">3</span>
-        <a href="#" class="pull-right">
-          <i class="fa fa-lg fa-caret-down" aria-hidden="true"></i>
-        </a>
-      </h3>
-    </div>
-    <div class="panel-body">
-      <div class="alert alert-mild clearfix" role="alert">
-        <h4>ALLERGENIC EXTRACT, PENICILLIN</h4>
-        <div class="pull-left">Nausea</div>
-        <div class="pull-right">Mild</div>
-      </div>
-      <div class="alert alert-mild clearfix" role="alert">
-        <h4>Codeine</h4>
-        <div class="pull-left">Wheezing</div>
-        <div class="pull-right">Mild</div>
-      </div>
-      <div class="alert alert-mild clearfix" role="alert">
-        <h4>Aspirin</h4>
-        <div class="pull-left">Hives</div>
-        <div class="pull-right">Mild to moderate</div>
+  <panel section={ opts.section } count={ opts.data.length } data={ opts.data }>
+    <div class="row">
+      <div each={ opts.data } class="col-sm-4">
+        <div class="alert alert-mild clearfix " role="alert">
+          <h4>{ allergen.name }</h4>
+          <div class="pull-left">{ reaction.name }</div>
+          <div class="pull-right">{ severity }</div>
+        </div>
       </div>
     </div>
-  </div>
+  </panel>
 </allergies>

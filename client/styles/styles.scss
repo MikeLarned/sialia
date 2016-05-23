@@ -1,6 +1,6 @@
-@import "../../node_modules/bootswatch/cosmo/variables";
-@import "../../node_modules/bootstrap-sass/assets/stylesheets/bootstrap";
-@import "../../node_modules/bootswatch/cosmo/bootswatch";
+@import "../../jspm_packages/npm/bootswatch@3.3.6/cosmo/variables";
+@import "../../jspm_packages/github/twbs/bootstrap-sass@3.3.6/assets/stylesheets/bootstrap";
+@import "../../jspm_packages/npm/bootswatch@3.3.6/cosmo/bootswatch";
 
 $body-bg: #f2f2f2;
 $mild: #ffdc67;
@@ -48,9 +48,9 @@ h1 {
     }
 }
 
-#demographics-summary {
+#demographics {
     .fa-ul {
-        margin-left: 20px;
+        margin-left: 24px;
     }
 
     address {
@@ -78,4 +78,18 @@ h1 {
     &, #demographics-summary & {
         margin-bottom: 0;
     }
+}
+
+.section-icon {
+    margin-right: 8px;
+}
+
+.section-item-count {
+    margin-left: 5px;
+    vertical-align: bottom;
+}
+
+.panel-default > .panel-heading .badge-muted,
+.badge-muted {
+  background-color: #bbb;
 }

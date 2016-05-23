@@ -1,12 +1,17 @@
 SystemJS.config({
   transpiler: "plugin-typescript",
   packages: {
-    "ccdaview": {
+    "client": {
       "format": "esm",
       "main": "app/app",
-      "defaultExtension": "ts"
+      "defaultExtension": "ts",
+      "meta" : {
+        "*.tag": {
+          "loader": "tag"
+        }
+      }
     },
-    "ccdaview/lib": {
+    "client/lib": {
       "defaultExtension": "js"
     }
   },
@@ -41,7 +46,7 @@ SystemJS.config({
     "http": "github:jspm/nodelibs-http@0.2.0-alpha",
     "https": "github:jspm/nodelibs-https@0.2.0-alpha",
     "jodid25519": "npm:jodid25519@1.0.2",
-    "jquery": "npm:jquery@2.2.3",
+    "jquery": "npm:jquery@2.2.4",
     "jsbn": "npm:jsbn@0.1.0",
     "lodash": "npm:lodash@4.12.0",
     "module": "github:jspm/nodelibs-module@0.2.0-alpha",
@@ -55,7 +60,7 @@ SystemJS.config({
     "riot": "npm:riot@2.4.0",
     "stream": "github:jspm/nodelibs-stream@0.2.0-alpha",
     "string_decoder": "github:jspm/nodelibs-string_decoder@0.2.0-alpha",
-    "tag": "npm:systemjs-riot@1.2.6",
+    "tag": "github:dougludlow/systemjs-riot@master",
     "tls": "github:jspm/nodelibs-tls@0.2.0-alpha",
     "tty": "github:jspm/nodelibs-tty@0.2.0-alpha",
     "tweetnacl": "npm:tweetnacl@0.13.3",
@@ -65,6 +70,13 @@ SystemJS.config({
     "zlib": "github:jspm/nodelibs-zlib@0.2.0-alpha"
   },
   packages: {
+    "github:dougludlow/systemjs-riot@master": {
+      "map": {
+        "fs": "github:jspm/nodelibs-fs@0.1.2",
+        "path": "github:jspm/nodelibs-path@0.1.0",
+        "riot-compiler": "npm:riot-compiler@2.4.1"
+      }
+    },
     "github:frankwallis/plugin-typescript@4.0.16": {
       "map": {
         "typescript": "npm:typescript@1.8.10"
@@ -165,7 +177,7 @@ SystemJS.config({
         "concat-map": "npm:concat-map@0.0.1"
       }
     },
-    "npm:braces@1.8.4": {
+    "npm:braces@1.8.5": {
       "map": {
         "expand-range": "npm:expand-range@1.8.2",
         "preserve": "npm:preserve@0.2.0",
@@ -207,7 +219,7 @@ SystemJS.config({
         "browserify-rsa": "npm:browserify-rsa@4.0.1",
         "create-hash": "npm:create-hash@1.1.2",
         "create-hmac": "npm:create-hmac@1.1.4",
-        "elliptic": "npm:elliptic@6.2.3",
+        "elliptic": "npm:elliptic@6.2.5",
         "inherits": "npm:inherits@2.0.1",
         "parse-asn1": "npm:parse-asn1@5.0.0"
       }
@@ -215,7 +227,7 @@ SystemJS.config({
     "npm:browserify-zlib@0.1.4": {
       "map": {
         "pako": "npm:pako@0.2.8",
-        "readable-stream": "npm:readable-stream@2.1.3"
+        "readable-stream": "npm:readable-stream@2.1.4"
       }
     },
     "npm:buffer@4.6.0": {
@@ -234,7 +246,7 @@ SystemJS.config({
         "supports-color": "npm:supports-color@2.0.0"
       }
     },
-    "npm:chokidar@1.5.0": {
+    "npm:chokidar@1.5.1": {
       "map": {
         "anymatch": "npm:anymatch@1.3.0",
         "async-each": "npm:async-each@1.0.0",
@@ -264,7 +276,7 @@ SystemJS.config({
     "npm:create-ecdh@4.0.0": {
       "map": {
         "bn.js": "npm:bn.js@4.11.3",
-        "elliptic": "npm:elliptic@6.2.3"
+        "elliptic": "npm:elliptic@6.2.5"
       }
     },
     "npm:create-hash@1.1.2": {
@@ -328,7 +340,7 @@ SystemJS.config({
         "jsbn": "npm:jsbn@0.1.0"
       }
     },
-    "npm:elliptic@6.2.3": {
+    "npm:elliptic@6.2.5": {
       "map": {
         "bn.js": "npm:bn.js@4.11.3",
         "brorand": "npm:brorand@1.0.5",
@@ -562,7 +574,7 @@ SystemJS.config({
       "map": {
         "arr-diff": "npm:arr-diff@2.0.0",
         "array-unique": "npm:array-unique@0.2.1",
-        "braces": "npm:braces@1.8.4",
+        "braces": "npm:braces@1.8.5",
         "expand-brackets": "npm:expand-brackets@0.1.5",
         "extglob": "npm:extglob@0.3.2",
         "filename-regex": "npm:filename-regex@2.0.0",
@@ -716,7 +728,7 @@ SystemJS.config({
         "util-deprecate": "npm:util-deprecate@1.0.2"
       }
     },
-    "npm:readable-stream@2.1.3": {
+    "npm:readable-stream@2.1.4": {
       "map": {
         "buffer-shims": "npm:buffer-shims@1.0.0",
         "core-util-is": "npm:core-util-is@1.0.2",
@@ -778,7 +790,7 @@ SystemJS.config({
     "npm:riot-cli@2.5.0": {
       "map": {
         "chalk": "npm:chalk@1.1.3",
-        "chokidar": "npm:chokidar@1.5.0",
+        "chokidar": "npm:chokidar@1.5.1",
         "co": "npm:co@4.6.0",
         "optionator": "npm:optionator@0.8.1",
         "riot-compiler": "npm:riot-compiler@2.4.1",
@@ -860,7 +872,7 @@ SystemJS.config({
       "map": {
         "builtin-status-codes": "npm:builtin-status-codes@2.0.0",
         "inherits": "npm:inherits@2.0.1",
-        "readable-stream": "npm:readable-stream@2.1.3",
+        "readable-stream": "npm:readable-stream@2.1.4",
         "to-arraybuffer": "npm:to-arraybuffer@1.0.1",
         "xtend": "npm:xtend@4.0.1"
       }
@@ -868,13 +880,6 @@ SystemJS.config({
     "npm:strip-ansi@3.0.1": {
       "map": {
         "ansi-regex": "npm:ansi-regex@2.0.0"
-      }
-    },
-    "npm:systemjs-riot@1.2.6": {
-      "map": {
-        "fs": "github:jspm/nodelibs-fs@0.1.2",
-        "path": "github:jspm/nodelibs-path@0.1.0",
-        "riot-compiler": "npm:riot-compiler@2.4.1"
       }
     },
     "npm:tar-pack@3.1.3": {
