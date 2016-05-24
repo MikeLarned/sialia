@@ -1891,10 +1891,14 @@ Parsers.C32.allergies = function (c32) {
   var parseDate = Documents.parseDate;
   var parseName = Documents.parseName;
   var parseAddress = Documents.parseAddress;
-  var data = [], el;
-  
   var allergies = c32.section('allergies');
-  
+
+  var data = {}, el;
+  data.entries = [];
+  data.displayName = "Allergies";
+  data.templateId = "";
+  data.text = allergies.tag('text').val();
+
   allergies.entries().each(function(entry) {
     
     el = entry.tag('effectiveTime');
@@ -1957,7 +1961,7 @@ Parsers.C32.allergies = function (c32) {
     el = entry.template('2.16.840.1.113883.10.20.1.39').tag('value');
     var status = el.attr('displayName');
     
-    data.push({
+    data.entries.push({
       date_range: {
         start: start_date,
         end: end_date
@@ -2101,10 +2105,14 @@ Parsers.C32.encounters = function (c32) {
   var parseDate = Documents.parseDate;
   var parseName = Documents.parseName;
   var parseAddress = Documents.parseAddress;
-  var data = [], el;
-  
   var encounters = c32.section('encounters');
-  
+
+  var data = {}, el;
+  data.entries = [];
+  data.displayName = "Encounters";
+  data.templateId = "";
+  data.text = encounters.tag('text').val();
+
   encounters.entries().each(function(entry) {
     
     var date = parseDate(entry.tag('effectiveTime').attr('value'));
@@ -2151,7 +2159,7 @@ Parsers.C32.encounters = function (c32) {
       });
     }
     
-    data.push({
+    data.entries.push({
       date: date,
       name: name,
       code: code,
@@ -2188,9 +2196,21 @@ Parsers.C32.immunizations = function (c32) {
   var parseDate = Documents.parseDate;
   var parseName = Documents.parseName;
   var parseAddress = Documents.parseAddress;
-  var administeredData = [], declinedData = [], el, product;
-  
+  var administeredData = {}, declinedData = {}, product, el;
+
   var immunizations = c32.section('immunizations');
+
+  administeredData.entries = [];
+  administeredData.displayName = "Immunizations";
+  administeredData.templateId = "";
+  administeredData.text = immunizations.tag('text').val();
+
+  declinedData.entries = [];
+  declinedData.displayName = "Immunizations Declined";
+  declinedData.templateId = "";
+  declinedData.text = immunizations.tag('text').val();
+
+
   
   immunizations.entries().each(function(entry) {
     
@@ -2248,7 +2268,7 @@ Parsers.C32.immunizations = function (c32) {
         dose_unit = el.attr('unit');
     
     var data = (declined) ? declinedData : administeredData;
-    data.push({
+    data.entries.push({
       date: date,
       product: {
         name: product_name,
@@ -2299,10 +2319,14 @@ Parsers.C32.results = function (c32) {
   var parseDate = Documents.parseDate;
   var parseName = Documents.parseName;
   var parseAddress = Documents.parseAddress;
-  var data = [], el;
-  
   var results = c32.section('results');
-  
+
+  var data = {}, el;
+  data.entries = [];
+  data.displayName = "Results";
+  data.templateId = "";
+  data.text = results.tag('text').val();
+
   results.entries().each(function(entry) {
     
     el = entry.tag('effectiveTime');
@@ -2389,7 +2413,7 @@ Parsers.C32.results = function (c32) {
       }
     }
     
-    data.push({
+    data.entries.push({
       name: panel_name,
       code: panel_code,
       code_system: panel_code_system,
@@ -2410,9 +2434,13 @@ Parsers.C32.results = function (c32) {
 Parsers.C32.medications = function (c32) {
   
   var parseDate = Documents.parseDate;
-  var data = [], el;
-  
   var medications = c32.section('medications');
+
+  var data = {}, el;
+  data.entries = [];
+  data.displayName = "Medications";
+  data.templateId = "";
+  data.text = medications.tag('text').val();
   
   medications.entries().each(function(entry) {
 
@@ -2526,7 +2554,7 @@ Parsers.C32.medications = function (c32) {
     var prescriber_organization = el.tag('name').val(),
         prescriber_person = null;
     
-    data.push({
+    data.entries.push({
       date_range: {
         start: start_date,
         end: end_date
@@ -2605,10 +2633,14 @@ Parsers.C32.problems = function (c32) {
   var parseDate = Documents.parseDate;
   var parseName = Documents.parseName;
   var parseAddress = Documents.parseAddress;
-  var data = [], el;
-  
   var problems = c32.section('problems');
-  
+
+  var data = {}, el;
+  data.entries = [];
+  data.displayName = "Problems";
+  data.templateId = "";
+  data.text = problems.tag('text').val();
+
   problems.entries().each(function(entry) {
     
     el = entry.tag('effectiveTime');
@@ -2645,7 +2677,7 @@ Parsers.C32.problems = function (c32) {
       age = parseFloat(el.tag('value').attr('value'));
     }
     
-    data.push({
+    data.entries.push({
       date_range: {
         start: start_date,
         end: end_date
@@ -2679,9 +2711,13 @@ Parsers.C32.procedures = function (c32) {
   var parseDate = Documents.parseDate;
   var parseName = Documents.parseName;
   var parseAddress = Documents.parseAddress;
-  var data = [], el;
-  
   var procedures = c32.section('procedures');
+
+  var data = {}, el;
+  data.entries = [];
+  data.displayName = "Procedures";
+  data.templateId = "";
+  data.text = procedures.tag('text').val();
   
   procedures.entries().each(function(entry) {
     
@@ -2717,7 +2753,7 @@ Parsers.C32.procedures = function (c32) {
         device_code = el.attr('code'),
         device_code_system = el.attr('codeSystem');
     
-    data.push({
+    data.entries.push({
       date: date,
       name: name,
       code: code,
@@ -2749,9 +2785,13 @@ Parsers.C32.vitals = function (c32) {
   var parseDate = Documents.parseDate;
   var parseName = Documents.parseName;
   var parseAddress = Documents.parseAddress;
-  var data = [], el;
-  
   var vitals = c32.section('vitals');
+
+  var data = {}, el;
+  data.entries = [];
+  data.displayName = "Vitals";
+  data.templateId = "";
+  data.text = vitals.tag('text').val();
   
   vitals.entries().each(function(entry) {
     
@@ -2787,7 +2827,7 @@ Parsers.C32.vitals = function (c32) {
       });
     }
     
-    data.push({
+    data.entries.push({
       date: entry_date,
       results: results_data
     });
@@ -2842,7 +2882,7 @@ Parsers.CCDA = (function () {
     data.vitals.json                 = Core.json;
 
     // Decorate each section with Title, templateId and text and adds missing sections
-    Parsers.GenericInfo(ccda, data);
+    // Parsers.GenericInfo(ccda, data);
 
     return data;
   };
@@ -2937,9 +2977,13 @@ Parsers.CCDA.allergies = function (ccda) {
   var parseDate = Documents.parseDate;
   var parseName = Documents.parseName;
   var parseAddress = Documents.parseAddress;
-  var data = [], el;
-  
-  var allergies = ccda.section('allergies');
+    var allergies = ccda.section('allergies');
+
+    var data = {}, el;
+    data.entries = [];
+    data.displayName = "Allergies";
+    data.templateId = "";
+    data.text = allergies.tag('text').val();
   
   allergies.entries().each(function(entry) {
     
@@ -2994,8 +3038,8 @@ Parsers.CCDA.allergies = function (ccda) {
     // status
     el = entry.template('2.16.840.1.113883.10.20.22.4.28').tag('value');
     var status = el.attr('displayName');
-
-    data.push({
+    
+    data.entries.push({
       date_range: {
         start: start_date,
         end: end_date
@@ -3185,9 +3229,13 @@ Parsers.CCDA.encounters = function (ccda) {
   var parseDate = Documents.parseDate;
   var parseName = Documents.parseName;
   var parseAddress = Documents.parseAddress;
-  var data = [], el;
-  
   var encounters = ccda.section('encounters');
+
+  var data = {}, el;
+  data.entries = [];
+  data.displayName = "Encounters";
+  data.templateId = "";
+  data.text = encounters.tag('text').val();
   
   encounters.entries().each(function(entry) {
     
@@ -3233,7 +3281,7 @@ Parsers.CCDA.encounters = function (ccda) {
       });
     }
     
-    data.push({
+    data.entries.push({
       date: date,
       name: name,
       code: code,
@@ -3328,9 +3376,19 @@ Parsers.CCDA.immunizations = function (ccda) {
   var parseDate = Documents.parseDate;
   var parseName = Documents.parseName;
   var parseAddress = Documents.parseAddress;
-  var administeredData = [], declinedData = [], el, product;
-  
+  var administeredData = {}, declinedData = {}, product, el;
+
   var immunizations = ccda.section('immunizations');
+
+  administeredData.entries = [];
+  administeredData.displayName = "Immunizations";
+  administeredData.templateId = "";
+  administeredData.text = immunizations.tag('text').val();
+
+  declinedData.entries = [];
+  declinedData.displayName = "Immunizations Declined";
+  declinedData.templateId = "";
+  declinedData.text = immunizations.tag('text').val();
   
   immunizations.entries().each(function(entry) {
     
@@ -3388,7 +3446,7 @@ Parsers.CCDA.immunizations = function (ccda) {
         dose_unit = el.attr('unit');
     
     var data = (declined) ? declinedData : administeredData;
-    data.push({
+    data.entries.push({
       date: date,
       product: {
         name: product_name,
@@ -3472,9 +3530,15 @@ Parsers.CCDA.results = function (ccda) {
   var parseDate = Documents.parseDate;
   var parseName = Documents.parseName;
   var parseAddress = Documents.parseAddress;
-  var data = [], el;
-  
   var results = ccda.section('results');
+
+  var data = {}, el;
+  data.entries = [];
+  data.displayName = "Results";
+  data.templateId = "";
+  data.text = results.tag('text').val();
+  
+
   
   results.entries().each(function(entry) {
     
@@ -3553,7 +3617,7 @@ Parsers.CCDA.results = function (ccda) {
       });
     }
     
-    data.push({
+    data.entries.push({
       name: panel_name,
       code: panel_code,
       code_system: panel_code_system,
@@ -3573,9 +3637,13 @@ Parsers.CCDA.results = function (ccda) {
 Parsers.CCDA.medications = function (ccda) {
   
   var parseDate = Documents.parseDate;
-  var data = [], el;
-  
   var medications = ccda.section('medications');
+
+  var data = {}, el;
+  data.entries = [];
+  data.displayName = "Medications";
+  data.templateId = "";
+  data.text = medications.tag('text').val();
   
   medications.entries().each(function(entry) {
     
@@ -3754,9 +3822,14 @@ Parsers.CCDA.problems = function (ccda) {
   var parseDate = Documents.parseDate;
   var parseName = Documents.parseName;
   var parseAddress = Documents.parseAddress;
-  var data = [], el;
-  
+
   var problems = ccda.section('problems');
+
+  var data = {}, el;
+  data.entries = [];
+  data.displayName = "Problems";
+  data.templateId = "";
+  data.text = problems.tag('text').val();
   
   problems.entries().each(function(entry) {
     
@@ -3788,7 +3861,7 @@ Parsers.CCDA.problems = function (ccda) {
     el = entry.template('2.16.840.1.113883.10.20.22.4.64');
     var comment = Core.stripWhitespace(el.tag('text').val());
     
-    data.push({
+    data.entries.push({
       date_range: {
         start: start_date,
         end: end_date
@@ -3822,9 +3895,13 @@ Parsers.CCDA.procedures = function (ccda) {
   var parseDate = Documents.parseDate;
   var parseName = Documents.parseName;
   var parseAddress = Documents.parseAddress;
-  var data = [], el;
-  
   var procedures = ccda.section('procedures');
+
+  var data = {}, el;
+  data.entries = [];
+  data.displayName = "Procedures";
+  data.templateId = "";
+  data.text = procedures.tag('text').val();
   
   procedures.entries().each(function(entry) {
     
@@ -3860,7 +3937,7 @@ Parsers.CCDA.procedures = function (ccda) {
         device_code = el.attr('code'),
         device_code_system = el.attr('codeSystem');
     
-    data.push({
+    data.entries.push({
       date: date,
       name: name,
       code: code,
@@ -3952,10 +4029,14 @@ Parsers.CCDA.vitals = function (ccda) {
   var parseDate = Documents.parseDate;
   var parseName = Documents.parseName;
   var parseAddress = Documents.parseAddress;
-  var data = [], el;
-  
   var vitals = ccda.section('vitals');
-  
+
+  var data = {}, el;
+  data.entries = [];
+  data.displayName = "Vitals";
+  data.templateId = "";
+  data.text = vitals.tag('text').val();
+
   vitals.entries().each(function(entry) {
     
     el = entry.tag('effectiveTime');
@@ -3988,7 +4069,7 @@ Parsers.CCDA.vitals = function (ccda) {
       });
     }
     
-    data.push({
+    data.entries.push({
       date: entry_date,
       results: results_data
     });
