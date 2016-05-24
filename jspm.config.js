@@ -5,7 +5,7 @@ SystemJS.config({
       "format": "esm",
       "main": "app/app",
       "defaultExtension": "ts",
-      "meta" : {
+      "meta": {
         "*.tag": {
           "loader": "tag"
         }
