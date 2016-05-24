@@ -42,6 +42,7 @@
       "bootstrap-sass": "github:twbs/bootstrap-sass@^3.3.6",
       "bootswatch": "npm:bootswatch@^3.3.6",
       "css": "github:systemjs/plugin-css@^0.1.21",
+      "dragula": "npm:dragula@^3.7.1",
       "font-awesome": "npm:font-awesome@^4.6.1",
       "jquery": "npm:jquery@^2.2.4",
       "lodash": "npm:lodash@^4.12.0",

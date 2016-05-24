@@ -1,4 +1,5 @@
 import './tags/viewer.tag!';
+import './tags/preferences.tag!';
 import './tags/name.tag!';
 import './tags/header.tag!';
 import './tags/panel.tag!';

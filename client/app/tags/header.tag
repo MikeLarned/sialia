@@ -16,7 +16,7 @@
 
       <div class="collapse navbar-collapse" id="navbar-collapse-1">
 
-        <form class="navbar-form navbar-right" role="search" id="search">
+        <!-- <form class="navbar-form navbar-right" role="search" id="search">
           <div class="input-group">
             <input type="text" class="form-control" placeholder="Search">
             <span class="input-group-btn">
@@ -25,7 +25,7 @@
               </button>
             </span>
           </div>
-        </form>
+        </form> -->
 
         <ul class="nav navbar-nav navbar-right" id="jump-nav">
           <li class="dropdown">
@@ -46,10 +46,16 @@
               </li>
             </ul>
           </li>
+          <li class={ active: this.parent.showPreferences }><a href="#" onclick={ showPreferences }><i class="fa fa-lg fa-cog"></i></a></li>
         </ul>
 
       </div>
     </div>
   </nav>
+
+  showPreferences() {
+    this.parent.showPreferences = true;
+    this.parent.update();
+  }
 
 </header>

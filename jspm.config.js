@@ -38,6 +38,7 @@ SystemJS.config({
     "css": "github:systemjs/plugin-css@0.1.21",
     "dgram": "github:jspm/nodelibs-dgram@0.2.0-alpha",
     "dns": "github:jspm/nodelibs-dns@0.2.0-alpha",
+    "dragula": "npm:dragula@3.7.1",
     "ecc-jsbn": "npm:ecc-jsbn@0.1.1",
     "events": "github:jspm/nodelibs-events@0.2.0-alpha",
     "font-awesome": "npm:font-awesome@4.6.1",
@@ -273,6 +274,12 @@ SystemJS.config({
         "graceful-readlink": "npm:graceful-readlink@1.0.1"
       }
     },
+    "npm:contra@1.9.4": {
+      "map": {
+        "atoa": "npm:atoa@1.0.0",
+        "ticky": "npm:ticky@1.0.1"
+      }
+    },
     "npm:create-ecdh@4.0.0": {
       "map": {
         "bn.js": "npm:bn.js@4.11.3",
@@ -291,6 +298,11 @@ SystemJS.config({
       "map": {
         "create-hash": "npm:create-hash@1.1.2",
         "inherits": "npm:inherits@2.0.1"
+      }
+    },
+    "npm:crossvent@1.5.4": {
+      "map": {
+        "custom-event": "npm:custom-event@1.0.0"
       }
     },
     "npm:cryptiles@2.0.5": {
@@ -333,6 +345,12 @@ SystemJS.config({
         "bn.js": "npm:bn.js@4.11.3",
         "miller-rabin": "npm:miller-rabin@4.0.0",
         "randombytes": "npm:randombytes@2.0.3"
+      }
+    },
+    "npm:dragula@3.7.1": {
+      "map": {
+        "contra": "npm:contra@1.9.4",
+        "crossvent": "npm:crossvent@1.5.4"
       }
     },
     "npm:ecc-jsbn@0.1.1": {
