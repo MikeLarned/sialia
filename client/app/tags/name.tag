@@ -9,5 +9,4 @@
       this.possesive = this.family.slice(-1) === 's' ? '\'' : '\'s';
     }
   </script>
-
 </name>

@@ -10,7 +10,7 @@ export interface Section {
 }
 
 export function updateSortOrder(sections: Section[]): Section[] {
-  _.each(sections, function(v, k) {
+  _.each(sections, (v, k) => {
     v.sort = k;
   });
   return sections;

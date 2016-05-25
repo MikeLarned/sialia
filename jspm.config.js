@@ -59,6 +59,7 @@ SystemJS.config({
     "punycode": "github:jspm/nodelibs-punycode@0.2.0-alpha",
     "querystring": "github:jspm/nodelibs-querystring@0.2.0-alpha",
     "riot": "npm:riot@2.4.0",
+    "rxjs": "npm:rxjs@5.0.0-beta.8",
     "stream": "github:jspm/nodelibs-stream@0.2.0-alpha",
     "string_decoder": "github:jspm/nodelibs-string_decoder@0.2.0-alpha",
     "tag": "github:dougludlow/systemjs-riot@master",
@@ -837,6 +838,11 @@ SystemJS.config({
         "chalk": "npm:chalk@1.1.3",
         "minimist": "npm:minimist@1.2.0",
         "source-map-support": "npm:source-map-support@0.4.0"
+      }
+    },
+    "npm:rxjs@5.0.0-beta.8": {
+      "map": {
+        "symbol-observable": "npm:symbol-observable@0.2.4"
       }
     },
     "npm:sha.js@2.4.5": {

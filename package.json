@@ -29,11 +29,14 @@
   },
   "homepage": "https://github.com/MikeLarned/ccdaview#readme",
   "devDependencies": {
+    "autoprefixer": "^6.3.6",
     "browser-sync": "^2.12.8",
     "gulp": "^3.9.1",
-    "gulp-clean-css": "^2.0.7",
+    "gulp-postcss": "^6.1.1",
     "gulp-sass": "^2.3.1",
     "jspm": "^0.17.0-beta.14",
+    "postcss-clean": "^1.0.2",
+    "rxjs": "^5.0.0-beta.8",
     "typings": "^1.0.4"
   },
   "dependencies": {},
@@ -47,6 +50,7 @@
       "jquery": "npm:jquery@^2.2.4",
       "lodash": "npm:lodash@^4.12.0",
       "riot": "npm:riot@^2.4.0",
+      "rxjs": "npm:rxjs@^5.0.0-beta.8",
       "tag": "github:dougludlow/systemjs-riot@master"
     },
     "devDependencies": {

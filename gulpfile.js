@@ -2,7 +2,9 @@
 
 var gulp = require('gulp'),
     sass = require('gulp-sass'),
-    cleanCss = require('gulp-clean-css'),
+    postcss = require('gulp-postcss'),
+    autoprefixer = require('autoprefixer'),
+    cleanCss = require('postcss-clean'),
     Builder = require('jspm').Builder,
     browserSync = require('browser-sync').create();
 
@@ -36,9 +38,23 @@ gulp.task('serve', ['sass', 'jspm'], function() {
     gulp.watch(config.html).on('change', browserSync.reload);
 });
 
+gulp.task('serve:release', ['sass:release', 'jspm:release'], function() {
+    browserSync.init({
+        startPath: '/client/index.release.html',
+        server: {
+            baseDir: './'
+        }
+    });
+});
+
 gulp.task('sass:debug', function() {
     return gulp.src(config.sass)
         .pipe(sass().on('error', sass.logError))
+        .pipe(postcss([
+            autoprefixer({
+                browsers: ['last 2 versions']
+            })
+        ]))
         .pipe(gulp.dest(config.styles))
         .pipe(browserSync.stream());
 });
@@ -46,32 +62,47 @@ gulp.task('sass:debug', function() {
 gulp.task('sass:release', function() {
     return gulp.src(config.sass)
         .pipe(sass().on('error', sass.logError))
-        .pipe(cleanCss())
+        .pipe(postcss([
+            autoprefixer({
+                browsers: ['last 2 versions']
+            }),
+            cleanCss()
+        ]))
         .pipe(gulp.dest(config.styles));
 });
 
-gulp.task('jspm:debug', function(done) {
+gulp.task('jspm:debug', ['sass:debug'], function(done) {
     var builder = new Builder(),
         options = {
             minify: false,
             sourceMaps: true
         };
+
+    builder.config({
+       rootURL: 'file:' + process.cwd()
+    });
+
     builder
-        .bundle('client/app/**/* - [client/app/**/*] - [client/app/**/*.tag!]', config.build, options)
+        .bundle('client/app/**/* - [client/app/**/*] - [client/app/**/*.tag!] - [client/styles/**/*.css!]', config.build, options)
         .then(function() {
             browserSync.reload();
             done();
         });
 });
 
-gulp.task('jspm:release', function(done) {
+gulp.task('jspm:release', ['sass:release'], function(done) {
     var builder = new Builder(),
         options = {
             minify: true,
             sourceMaps: false
         };
+
+    builder.config({
+       rootURL: 'file:' + process.cwd()
+    });
+
     builder
-        .bundle("client", config.build, options)
+        .buildStatic("client", config.build, options)
         .then(function() {
             browserSync.reload();
             done();

@@ -5,13 +5,19 @@
         <i class="fa fa-{ opts.section.icon } section-icon" aria-hidden="true" if="{ !opts.hideicon }"></i>
         { opts.section.display }
         <span class="section-item-count badge badge-muted" if={ opts.count }>{ opts.count }</span>
-        <a href="#" class="section-toggle pull-right">
-          <i class="fa fa-lg fa-caret-down" aria-hidden="true"></i>
-        </a>
+        <span class="section-toggle pull-right" onclick={ toggleSection }>
+          <i class="fa fa-lg fa-caret-down { fa-rotate-180: opts.section.enabled }" aria-hidden="true"></i>
+        </span>
       </h3>
     </div>
-    <div class="panel-body">
+    <div class="panel-body" show={ opts.section.enabled }>
       <yield/>
     </div>
   </div>
+
+  <script>
+    toggleSection() {
+      opts.section.enabled = !opts.section.enabled;
+    }
+  </script>
 </panel>

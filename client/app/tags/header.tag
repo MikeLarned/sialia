@@ -1,3 +1,6 @@
+import { DocumentsService } from '../services';
+import { DOCUMENTS } from '../config';
+
 <header>
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container-fluid">
@@ -10,7 +13,7 @@
         </button>
         <a class="navbar-brand" href="#">
           { opts.data.document.title } -
-          <name name={ opts.data.demographics.name } class="text-muted" />
+          <name name={ opts.data.demographics.name } class="text-muted"/>
         </a>
       </div>
 
@@ -30,6 +33,19 @@
         <ul class="nav navbar-nav navbar-right" id="jump-nav">
           <li class="dropdown">
             <a href="#" class="dropdown-toggle" id="jump" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+              Documents
+              <span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="jump">
+              <li each={ documents }>
+                <a href="#" onclick={ view }>
+                  { name }
+                </a>
+              </li>
+            </ul>
+          </li>
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" id="jump" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
               Jump to
               <span class="caret"></span>
             </a>
@@ -46,16 +62,32 @@
               </li>
             </ul>
           </li>
-          <li class={ active: this.parent.showPreferences }><a href="#" onclick={ showPreferences }><i class="fa fa-lg fa-cog"></i></a></li>
+          <li class={ active: this.parent.showPreferences }>
+            <a href="#" onclick={ showPreferences }>
+              <i class="fa fa-lg fa-cog"></i>
+            </a>
+          </li>
         </ul>
 
       </div>
     </div>
   </nav>
 
-  showPreferences() {
-    this.parent.showPreferences = true;
-    this.parent.update();
-  }
+  <script>
+    this.documents = DOCUMENTS;
+    this.service = new DocumentsService();
+
+    view(e) {
+      this.service.fetch(e.item.url).subscribe((options) => {
+        this.parent.update(options);
+        riot.update();
+      });
+    }
+
+    showPreferences() {
+      this.parent.showPreferences = true;
+      this.parent.update();
+    }
+  </script>
 
 </header>
