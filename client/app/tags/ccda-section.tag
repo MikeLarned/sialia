@@ -1,19 +1,12 @@
 <ccda-section>
-  var tag = riot.mount(this.root, opts.current.tagName, {
+  var options = {
     section: opts.current,
-    data: opts.sectionData
-  });
-  var self = this;
-  this.on('mount', function(){
-    var seen = [];
-    console.log(JSON.stringify(self, function(key, val) {
-       if (val != null && typeof val == "object") {
-            if (seen.indexOf(val) >= 0) {
-                return;
-            }
-            seen.push(val);
-        }
-        return val;
-    }, 4));
+    data: opts.parent.data[opts.current.key]
+  };
+
+  riot.mount(this.root, opts.current.tagName, options);
+
+  this.on('update', function() {
+    options.data = opts.parent.data[opts.current.key];
   });
 </ccda-section>

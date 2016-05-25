@@ -1,5 +1,5 @@
 <allergies>
-  <panel section={ opts.section } count={ opts.data.allergies.entries.length } entries={ opts.data.allergies.entries }>
+  <panel section={ opts.section } count={ opts.data.entries.length } entries={ opts.data.entries }>
     <div class="row">
       <div each={ opts.entries } class="col-sm-4">
         <div class="alert alert-mild clearfix " role="alert">
