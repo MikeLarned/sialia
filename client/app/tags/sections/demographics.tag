@@ -8,11 +8,11 @@
       <ul class="fa-ul">
         <li class="dob">
           <i class="fa fa-li fa-birthday-cake" title="DOB"></i>
-          <p>May 5, 1975</p>
+          <p>{ opts.demographics.dob }</p>
         </li>
         <li class="guardian">
           <i class="fa fa-li fa-child" title="Guardian"></i>
-          Ralph Jones
+          { opts.demographics.guardian.name.given[0] } { opts.demographics.guardian.name.family }
           <span class="text-muted">(guardian)</span>
         </li>
       </ul>
@@ -21,18 +21,22 @@
       <ul class="fa-ul">
         <li class="narrative">
           <i class="fa fa-li fa-female" title="Demographics"></i>
-          <p>Isabella is a married white female who observes Christianity and speaks English.</p>
+          <p>{ opts.demographics.name.given[0] } is a { opts.demographics.marital_status } { opts.demographics.race } { opts.demographics.gender } who observes { opts.demographics.religion } and speaks { opts.demographics.language }.</p>
         </li>
         <li>
           <i class="fa fa-li fa-map-marker" title="Address"></i>
           <address class="address">
-            1357 Amber Drive<br>
-            Beaverton, OR 97867
+            { opts.demographics.address.street[0] }<br>
+            { opts.demographics.address.city }, { opts.demographics.address.state } { opts.demographics.address.zip }
           </address>
         </li>
         <li>
           <i class="fa fa-li fa-phone" title="Phone"></i>
-          <address class="phone">(816) 276-6909</address>
+          <address class="phone"> { opts.demographics.phone.home }</address>
+        </li>
+        <li>
+          <i class="fa fa-li fa-building title="Provider"></i>
+          <p>{ opts.demographics.provider.organization }</p>
         </li>
       </ul>
     </div>
