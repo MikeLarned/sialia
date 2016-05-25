@@ -1,3 +1,5 @@
+import '../styles/styles.css!';
+//import 'font-awesome/css/font-awesome.css!';
 import './tags';
 import 'bootstrap-sass';
 import riot from 'riot';
@@ -14,3 +16,5 @@ export class App {
     });
   }
 }
+
+new App();
