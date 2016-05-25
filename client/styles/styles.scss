@@ -34,7 +34,6 @@ h1 {
 .alert-mild {
     @include alert-variant($mild, $mild, #000);
 }
-
 @media (min-width: $screen-sm-min) {
     #left {
         padding-right: 8px;
@@ -116,4 +115,12 @@ preference-section {
 .preferences-section {
     cursor: move;
     cursor: grab;
+}
+
+.section-toggle {
+    cursor: pointer;
+
+    .fa {
+        transition: all 0.1s ease;
+    }
 }

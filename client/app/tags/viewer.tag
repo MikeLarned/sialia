@@ -1,19 +1,25 @@
 <viewer>
-  <header data={ opts.data } sections={ opts.sections }/>
+  <header data={ data } sections={ sections }/>
   <div class="container-fluid">
     <div class="row">
       <div class="col-lg-3 col-sm-4" id="left">
-        <demographics demographics={ opts.data.demographics }/>
-        <allergies-summary section={ sections['allergies' ] } data={ opts.data.allergies }/>
+        <demographics demographics={ data.demographics }/>
+        <allergies-summary section={ dictionary['allergies' ] } data={ data.allergies }/>
       </div>
-      <div class="col-lg-9 col-sm-8" id="right">
-        <preferences sections={ opts.sections } if={ showPreferences }/>
-        <ccda-section each={ section in opts.sections } current={ section } section-data={ parent.opts.data[section.key] } if={ !showPreferences }/>
+      <div class="col-lg-9 col-sm-8" id="right" if={ showPreferences }>
+        <preferences sections={ sections } />
+      </div>
+      <div class="col-lg-9 col-sm-8" id="right" if={ !showPreferences }>
+        <ccda-section each={ section in sections } current={ section } section-data={ parent.data }/>
       </div>
     </div>
   </div>
+
   <script>
-    this.sections = opts.sections.reduce(function(o, x){ o[x.key] = x; return o; }, {});
+    var self = this;
+    this.data = opts.data;
+    this.sections = opts.sections;
     this.showPreferences = true;
+    this.dictionary = this.sections.reduce(function(o, x){ o[x.key] = x; return o; }, {});
   </script>
 </viewer>

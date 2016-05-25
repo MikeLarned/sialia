@@ -47,7 +47,7 @@ import { getElementIndex } from '../utilities/htmlhelper';
 
     save() {
       this.parent.showPreferences = false;
-      this.parent.update();
+      riot.update();
     }
 
   </script>
