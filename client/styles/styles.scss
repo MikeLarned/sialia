@@ -98,16 +98,22 @@ h1 {
 }
 
 preferences {
+    display: block;
+
     h2 {
         line-height: 44px;
+    }
+}
+
+preference-section {
+    display: block;
+
+    &.gu-mirror {
+        cursor: grabbing;
     }
 }
 
 .preferences-section {
     cursor: move;
     cursor: grab;
-
-    &.gu-mirror {
-        cursor: grabbing;
-    }
 }

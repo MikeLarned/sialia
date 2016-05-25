@@ -2,6 +2,8 @@
 
 var gulp = require('gulp'),
     sass = require('gulp-sass'),
+    postcss = require('gulp-postcss'),
+    autoprefixer = require('autoprefixer'),
     cleanCss = require('gulp-clean-css'),
     Builder = require('jspm').Builder,
     browserSync = require('browser-sync').create();
@@ -39,6 +41,11 @@ gulp.task('serve', ['sass', 'jspm'], function() {
 gulp.task('sass:debug', function() {
     return gulp.src(config.sass)
         .pipe(sass().on('error', sass.logError))
+        .pipe(postcss([
+            autoprefixer({
+                browsers: ['last 2 versions']
+            })
+        ]))
         .pipe(gulp.dest(config.styles))
         .pipe(browserSync.stream());
 });
@@ -46,7 +53,12 @@ gulp.task('sass:debug', function() {
 gulp.task('sass:release', function() {
     return gulp.src(config.sass)
         .pipe(sass().on('error', sass.logError))
-        .pipe(cleanCss())
+        .pipe(postcss([
+            autoprefixer({
+                browsers: ['last 2 versions']
+            }),
+            cleanCss()
+        ]))
         .pipe(gulp.dest(config.styles));
 });
 
