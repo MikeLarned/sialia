@@ -4,7 +4,6 @@
     <div class="row">
       <div class="col-lg-3 col-sm-4" id="left">
         <demographics demographics={ data.demographics }/>
-        <allergies-summary section={ dictionary['allergies'] } data={ data.allergies } enabled={ true }/>
       </div>
       <div class="col-lg-9 col-sm-8" id="right" if={ showPreferences }>
         <preferences sections={ sections } />
