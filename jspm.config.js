@@ -64,6 +64,7 @@ SystemJS.config({
     "jsbn": "npm:jsbn@0.1.0",
     "lodash": "npm:lodash@4.12.0",
     "module": "github:jspm/nodelibs-module@0.2.0-alpha",
+    "moment": "npm:moment@2.13.0",
     "net": "github:jspm/nodelibs-net@0.2.0-alpha",
     "os": "github:jspm/nodelibs-os@0.2.0-alpha",
     "path": "github:jspm/nodelibs-path@0.2.0-alpha",

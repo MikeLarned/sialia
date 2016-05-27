@@ -1,3 +1,5 @@
+import moment from 'moment';
+
 <demographics>
   <div class="panel panel-default" id="demographics">
     <div class="panel-heading">
@@ -8,7 +10,7 @@
       <ul class="fa-ul">
         <li class="dob">
           <i class="fa fa-li fa-birthday-cake" title="DOB"></i>
-          <p>{ opts.demographics.dob }</p>
+          <p>{ formatDate(opts.demographics.dob) }</p>
         </li>
         <li class="guardian">
           <i class="fa fa-li fa-child" title="Guardian"></i>
@@ -42,4 +44,9 @@
     </div>
   </div>
 
+  <script>
+    formatDate(date) {
+      return moment(date).format('MMM D, YYYY');
+    }
+  </script>
 </demographics>
