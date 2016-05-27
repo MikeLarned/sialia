@@ -13,7 +13,7 @@ export class DocumentsService {
 
     let allSections = [];
     _.each(bb.data, (val, key) => {
-      if (ignoreSections.indexOf(key) == -1) return;
+      if (ignoreSections.indexOf(key) !== -1) return;
       var match = _.find(sections, (s) => { s.key === key; });
       if (match) allSections.push(match);
       else allSections.push({
@@ -25,12 +25,12 @@ export class DocumentsService {
     });
 
     // init sort and enabled
-    _.each(sections, (val, index) => {
+    _.each(allSections, (val, index) => {
       val.sort = index;
       val.enabled = false;
     });
 
-    return sections;
+    return allSections;
   }
 
   fetch(url: string): Observable<ViewerOptions> {

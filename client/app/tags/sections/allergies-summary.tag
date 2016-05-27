@@ -1,5 +1,5 @@
 <allergies-summary>
-  <panel section={ opts.section } count={ opts.data.entries.length } entries={ opts.data.entries } hideicon={ true }>
+  <panel section={ opts.section } count={ opts.data.entries.length } entries={ opts.data.entries } hideicon={ true } enabled={ opts.enabled }>
     <div each={ opts.entries }>
       <div class="alert alert-mild clearfix" role="alert">
         <h4>{ allergen.name }</h4>

@@ -4,6 +4,7 @@ import './tags/name.tag!';
 import './tags/header.tag!';
 import './tags/panel.tag!';
 import './tags/ccda-section.tag!';
+import './tags/sections/generic.tag!';
 import './tags/sections/demographics.tag!';
 import './tags/sections/allergies-summary.tag!';
 import './tags/sections/allergies.tag!';

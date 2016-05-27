@@ -10,7 +10,7 @@
         </span>
       </h3>
     </div>
-    <div class="panel-body" show={ opts.section.enabled }>
+    <div class="panel-body" show={ opts.section.enabled || opts.enabled }>
       <yield/>
     </div>
   </div>

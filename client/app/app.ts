@@ -11,7 +11,7 @@ export class App {
   service: DocumentsService = new DocumentsService();
 
   constructor() {
-    this.service.fetch(DOCUMENTS[2].url).subscribe((options) => {
+    this.service.fetch(DOCUMENTS[1].url).subscribe((options) => {
       riot.mount('viewer', options);
     });
   }
