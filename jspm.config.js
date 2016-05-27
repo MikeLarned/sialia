@@ -1,4 +1,16 @@
 SystemJS.config({
+  devConfig: {
+    "map": {
+      "plugin-typescript": "github:frankwallis/plugin-typescript@4.0.16"
+    },
+    "packages": {
+      "github:frankwallis/plugin-typescript@4.0.16": {
+        "map": {
+          "typescript": "npm:typescript@1.8.10"
+        }
+      }
+    }
+  },
   transpiler: "plugin-typescript",
   packages: {
     "client": {
@@ -7,6 +19,7 @@ SystemJS.config({
       "defaultExtension": "ts",
       "meta": {
         "*.tag": {
+          "format": "esm",
           "loader": "tag"
         }
       }
@@ -54,7 +67,6 @@ SystemJS.config({
     "net": "github:jspm/nodelibs-net@0.2.0-alpha",
     "os": "github:jspm/nodelibs-os@0.2.0-alpha",
     "path": "github:jspm/nodelibs-path@0.2.0-alpha",
-    "plugin-typescript": "github:frankwallis/plugin-typescript@4.0.16",
     "process": "github:jspm/nodelibs-process@0.2.0-alpha",
     "punycode": "github:jspm/nodelibs-punycode@0.2.0-alpha",
     "querystring": "github:jspm/nodelibs-querystring@0.2.0-alpha",
@@ -77,11 +89,6 @@ SystemJS.config({
         "fs": "github:jspm/nodelibs-fs@0.1.2",
         "path": "github:jspm/nodelibs-path@0.1.0",
         "riot-compiler": "npm:riot-compiler@2.4.1"
-      }
-    },
-    "github:frankwallis/plugin-typescript@4.0.16": {
-      "map": {
-        "typescript": "npm:typescript@1.8.10"
       }
     },
     "github:jspm/nodelibs-buffer@0.2.0-alpha": {
