@@ -14,7 +14,7 @@ export class DocumentsService {
     let allSections = [];
     _.each(bb.data, (val, key) => {
       if (ignoreSections.indexOf(key) !== -1) return;
-      var match = _.find(sections, (s) => { s.key === key; });
+      var match = _.find(sections, (s) => s.key === key);
       if (match) allSections.push(match);
       else allSections.push({
         key: key,

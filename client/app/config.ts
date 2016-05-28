@@ -6,7 +6,7 @@ export const SECTIONS: Section[] = [
   { key: 'care_plan', display: 'Care Plan', tagName: 'generic', icon: 'sticky-note-o' },
   { key: 'chief_complaint', display: 'Chief Complaint', tagName: 'generic', icon: 'bullhorn' },
   { key: 'encounters', display: 'Encounters', tagName: 'generic', icon: 'stethoscope' },
-  { key: 'functional_status', display: 'Functional Status', tagName: 'generic', icon: 'wheelchair' },
+  { key: 'functional_statuses', display: 'Functional Status', tagName: 'generic', icon: 'wheelchair' },
   { key: 'immunization_declines', display: 'Declined Immunizations', tagName: 'generic', icon: 'ban' },
   { key: 'immunizations', display: 'Immunization', tagName: 'generic', icon: 'eyedropper' },
   { key: 'instructions', display: 'Patient Instructions', tagName: 'generic', icon: 'user-md' },
