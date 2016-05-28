@@ -1,5 +1,5 @@
 <generic>
   <panel section={ opts.section } data={ opts.data }>
-    <pre>{ opts.data.text }</pre>
+    <raw content="{ opts.data.text }"/>
   </panel>
 </generic>

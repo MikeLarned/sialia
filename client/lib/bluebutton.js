@@ -888,10 +888,10 @@ Core.XML = (function () {
    * which can store their content in a <content> tag in a totally different
    * part of the document.
    */
-  var val = function () {
+  var val = function (html) {
     if (!this.el) { return null; }
     if (!this.el.childNodes || !this.el.childNodes.length) { return null; }
-    var textContent = this.el.textContent;
+    var textContent = html? this.el.innerHTML : this.el.textContent;
 
     // if there's no text value here and the only thing inside is a
     // <reference> tag, see if there's a linked <content> tag we can
@@ -1897,7 +1897,7 @@ Parsers.C32.allergies = function (c32) {
   data.entries = [];
   data.displayName = "Allergies";
   data.templateId = "";
-  data.text = allergies.tag('text').val();
+  data.text = allergies.tag('text').val(true);
 
   allergies.entries().each(function(entry) {
 
@@ -2111,7 +2111,7 @@ Parsers.C32.encounters = function (c32) {
   data.entries = [];
   data.displayName = "Encounters";
   data.templateId = "";
-  data.text = encounters.tag('text').val();
+  data.text = encounters.tag('text').val(true);
 
   encounters.entries().each(function(entry) {
 
@@ -2203,12 +2203,12 @@ Parsers.C32.immunizations = function (c32) {
   administeredData.entries = [];
   administeredData.displayName = "Immunizations";
   administeredData.templateId = "";
-  administeredData.text = immunizations.tag('text').val();
+  administeredData.text = immunizations.tag('text').val(true);
 
   declinedData.entries = [];
   declinedData.displayName = "Immunizations Declined";
   declinedData.templateId = "";
-  declinedData.text = immunizations.tag('text').val();
+  declinedData.text = immunizations.tag('text').val(true);
 
 
 
@@ -2256,7 +2256,7 @@ Parsers.C32.immunizations = function (c32) {
 
     // instructions
     el = entry.template('2.16.840.1.113883.10.20.1.49');
-    var instructions_text = Core.stripWhitespace(el.tag('text').val());
+    var instructions_text = Core.stripWhitespace(el.tag('text').val(true));
     el = el.tag('code');
     var education_name = el.attr('displayName'),
         education_code = el.attr('code'),
@@ -2325,7 +2325,7 @@ Parsers.C32.results = function (c32) {
   data.entries = [];
   data.displayName = "Results";
   data.templateId = "";
-  data.text = results.tag('text').val();
+  data.text = results.tag('text').val(true);
 
   results.entries().each(function(entry) {
 
@@ -2440,7 +2440,7 @@ Parsers.C32.medications = function (c32) {
   data.entries = [];
   data.displayName = "Medications";
   data.templateId = "";
-  data.text = medications.tag('text').val();
+  data.text = medications.tag('text').val(true);
 
   medications.entries().each(function(entry) {
 
@@ -2639,7 +2639,7 @@ Parsers.C32.problems = function (c32) {
   data.entries = [];
   data.displayName = "Problems";
   data.templateId = "";
-  data.text = problems.tag('text').val();
+  data.text = problems.tag('text').val(true);
 
   problems.entries().each(function(entry) {
 
@@ -2717,7 +2717,7 @@ Parsers.C32.procedures = function (c32) {
   data.entries = [];
   data.displayName = "Procedures";
   data.templateId = "";
-  data.text = procedures.tag('text').val();
+  data.text = procedures.tag('text').val(true);
 
   procedures.entries().each(function(entry) {
 
@@ -2791,7 +2791,7 @@ Parsers.C32.vitals = function (c32) {
   data.entries = [];
   data.displayName = "Vitals";
   data.templateId = "";
-  data.text = vitals.tag('text').val();
+  data.text = vitals.tag('text').val(true);
 
   vitals.entries().each(function(entry) {
 
@@ -2983,7 +2983,7 @@ Parsers.CCDA.allergies = function (ccda) {
     data.entries = [];
     data.displayName = "Allergies";
     data.templateId = "";
-    data.text = allergies.tag('text').val();
+    data.text = allergies.tag('text').val(true);
 
   allergies.entries().each(function(entry) {
 
@@ -3235,7 +3235,7 @@ Parsers.CCDA.encounters = function (ccda) {
   data.entries = [];
   data.displayName = "Encounters";
   data.templateId = "";
-  data.text = encounters.tag('text').val();
+  data.text = encounters.tag('text').val(true);
 
   encounters.entries().each(function(entry) {
 
@@ -3318,7 +3318,7 @@ Parsers.CCDA.free_text = function (ccda, sectionName) {
   var data = {};
 
   var doc = ccda.section(sectionName);
-  var text = Core.stripWhitespace(doc.tag('text').val());
+  var text = Core.stripWhitespace(doc.tag('text').val(true));
 
   data = {
     text: text
@@ -3383,12 +3383,12 @@ Parsers.CCDA.immunizations = function (ccda) {
   administeredData.entries = [];
   administeredData.displayName = "Immunizations";
   administeredData.templateId = "";
-  administeredData.text = immunizations.tag('text').val();
+  administeredData.text = immunizations.tag('text').val(true);
 
   declinedData.entries = [];
   declinedData.displayName = "Immunizations Declined";
   declinedData.templateId = "";
-  declinedData.text = immunizations.tag('text').val();
+  declinedData.text = immunizations.tag('text').val(true);
 
   immunizations.entries().each(function(entry) {
 
@@ -3536,7 +3536,7 @@ Parsers.CCDA.results = function (ccda) {
   data.entries = [];
   data.displayName = "Results";
   data.templateId = "";
-  data.text = results.tag('text').val();
+  data.text = results.tag('text').val(true);
 
 
 
@@ -3643,7 +3643,7 @@ Parsers.CCDA.medications = function (ccda) {
   data.entries = [];
   data.displayName = "Medications";
   data.templateId = "";
-  data.text = medications.tag('text').val();
+  data.text = medications.tag('text').val(true);
 
   medications.entries().each(function(entry) {
 
@@ -3829,7 +3829,7 @@ Parsers.CCDA.problems = function (ccda) {
   data.entries = [];
   data.displayName = "Problems";
   data.templateId = "";
-  data.text = problems.tag('text').val();
+  data.text = problems.tag('text').val(true);
 
   problems.entries().each(function(entry) {
 
@@ -3901,7 +3901,7 @@ Parsers.CCDA.procedures = function (ccda) {
   data.entries = [];
   data.displayName = "Procedures";
   data.templateId = "";
-  data.text = procedures.tag('text').val();
+  data.text = procedures.tag('text').val(true);
 
   procedures.entries().each(function(entry) {
 
@@ -4035,7 +4035,7 @@ Parsers.CCDA.vitals = function (ccda) {
   data.entries = [];
   data.displayName = "Vitals";
   data.templateId = "";
-  data.text = vitals.tag('text').val();
+  data.text = vitals.tag('text').val(true);
 
   vitals.entries().each(function(entry) {
 
@@ -4103,7 +4103,7 @@ Parsers.GenericInfo = function (ccda, data) {
             }
             data[nodeName].displayName = code;
             data[nodeName].templateId = s.tag('templateId').attr('root');
-            data[nodeName].text = s.tag('text').val();
+            data[nodeName].text = s.tag('text').val(true);
         }
     });
 };;
@@ -4228,7 +4228,7 @@ Parsers.CCDAR2.health_concerns_document = function (ccda) {
     var model = {}, el;
     model.entries = [];
 
-    model.text = ccda.tag('text').val();
+    model.text = ccda.tag('text').val(true);
 
     var health_concerns = ccda.section('health_concerns_document');
     var title = health_concerns.tag('title').val();

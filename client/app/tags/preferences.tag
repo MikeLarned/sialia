@@ -2,7 +2,7 @@ import dragula from 'dragula';
 import _ from 'lodash';
 import '../utilities/lodashmixins';
 import { updateSortOrder } from '../models/section';
-import { getElementIndex } from '../utilities/htmlhelper';
+import { getElementIndex } from '../utilities/htmlhelpers';
 
 <preferences>
   <h2>
