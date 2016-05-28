@@ -7,14 +7,19 @@ export function getElementIndex(node: HTMLElement): number {
 }
 
 export function bootstrapize(html: string): any {
-  var $html = $('<div>');
+  var $html = $('<div />');
 
   $html.html(html);
 
-  $html.find('*')
-    .removeAttr('width border')
-    .filter('table')
+  var $all = $html.find('*').removeAttr('width border xmlns');
+
+  $all.filter('table')
     .addClass('table table-bordered table-striped');
+
+  $all.filter('paragraph')
+    .replaceWith(function() {
+      return $("<h5 />").append($(this).contents());
+    });
 
   return $html.html();
 }

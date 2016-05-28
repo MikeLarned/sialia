@@ -36,7 +36,7 @@ import moment from 'moment';
           <i class="fa fa-li fa-phone" title="Phone"></i>
           <address class="phone"> { opts.demographics.phone.home }</address>
         </li>
-        <li>
+        <li if={ opts.demographics.provider.organization }>
           <i class="fa fa-li fa-building" title="Provider"></i>
           <p>{ opts.demographics.provider.organization }</p>
         </li>
