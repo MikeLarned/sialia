@@ -1,4 +1,6 @@
 import moment from 'moment';
+import _ from 'lodash';
+import '../../utilities/lodashmixins';
 
 <demographics>
   <div class="panel panel-default" id="demographics">
@@ -34,7 +36,7 @@ import moment from 'moment';
         </li>
         <li>
           <i class="fa fa-li fa-phone" title="Phone"></i>
-          <address class="phone"> { opts.demographics.phone.home }</address>
+          <address class="phone"> { formatPhone(opts.demographics.phone) }</address>
         </li>
         <li if={ opts.demographics.provider.organization }>
           <i class="fa fa-li fa-building" title="Provider"></i>
@@ -53,6 +55,44 @@ import moment from 'moment';
 
     formatDate(date) {
       return moment(date).format('MMM D, YYYY');
+    }
+    
+    formatPhone(phone) {
+      
+      var p = '';
+      // which phone?
+      if (phone.work) {
+        p = phone.work
+      }
+      if (phone.home) {
+        p = phone.home;
+      }
+      if (phone.cell) {
+        p = phone.cell;
+      }
+    
+      var clean = "";
+      //_.(p).forEach(function(value) {
+        //clean = clean + value;
+      //});
+      for (var i = 0, len = p.length; i < len; i++) {
+        if (!isNaN(p[i])) {
+          clean = clean + p[i];
+        }
+      }
+      
+      if (clean.length > 10) {
+        if (clean[0] == '1') {
+          clean = clean.slice(1);
+        }
+      }
+      
+      var pretty = '';
+      if (clean.length == 10) {
+        var c = clean;
+        pretty = '(' + c[0] + c[1] + c[2] + ') ' + c[3] + c[4] + c[5] + '-' + c[6] + c[7] + c[8] + c[9];
+      }
+      return pretty;
     }
   </script>
 </demographics>
