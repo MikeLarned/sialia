@@ -6,7 +6,7 @@
         { opts.section.display }
         <span class="section-item-count badge badge-muted" if={ opts.count }>{ opts.count }</span>
         <span class="section-toggle pull-right" onclick={ toggleSection }>
-          <i class="fa fa-lg fa-caret-down { fa-rotate-180: opts.section.enabled }" aria-hidden="true"></i>
+          <i class="fa fa-chevron-down { fa-rotate-180: opts.section.enabled }" aria-hidden="true"></i>
         </span>
       </h3>
     </div>

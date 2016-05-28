@@ -21,13 +21,10 @@ h1 {
     margin: 10px 0 15px;
 }
 
-.panel-success {
+.panel {
     .toggle-body {
-        color: #fff;
-    }
-
-    .text-muted {
-        color: #ddd;
+        z-index: 1;
+        color: #000;
     }
 }
 
@@ -121,6 +118,6 @@ preference-section {
     cursor: pointer;
 
     .fa {
-        transition: all 0.1s ease;
+        transition: all 0.05s ease;
     }
 }

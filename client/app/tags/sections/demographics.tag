@@ -4,8 +4,8 @@ import moment from 'moment';
   <div class="panel panel-default" id="demographics">
     <div class="panel-heading">
       <h2><name name={ opts.demographics.name } /></h2>
-      <a href="#" class="toggle-body">
-        <i class="fa fa-lg fa-caret-down"></i>
+      <a href="#" class="toggle-body" onclick={ toggle }>
+        <i class="fa fa-chevron-down { fa-rotate-180: visible }" title="Show/hide"></i>
       </a>
       <ul class="fa-ul">
         <li class="dob">
@@ -14,12 +14,12 @@ import moment from 'moment';
         </li>
         <li class="guardian">
           <i class="fa fa-li fa-child" title="Guardian"></i>
-          { opts.demographics.guardian.name.given[0] } { opts.demographics.guardian.name.family }
+          <name name={ opts.demographics.guardian.name } />
           <span class="text-muted">(guardian)</span>
         </li>
       </ul>
     </div>
-    <div class="panel-body">
+    <div class="panel-body" show={ visible }>
       <ul class="fa-ul">
         <li class="narrative">
           <i class="fa fa-li fa-female" title="Demographics"></i>
@@ -37,7 +37,7 @@ import moment from 'moment';
           <address class="phone"> { opts.demographics.phone.home }</address>
         </li>
         <li>
-          <i class="fa fa-li fa-building title="Provider"></i>
+          <i class="fa fa-li fa-building" title="Provider"></i>
           <p>{ opts.demographics.provider.organization }</p>
         </li>
       </ul>
@@ -45,6 +45,12 @@ import moment from 'moment';
   </div>
 
   <script>
+    this.visible = true;
+
+    toggle() {
+      this.visible = !this.visible;
+    }
+
     formatDate(date) {
       return moment(date).format('MMM D, YYYY');
     }
