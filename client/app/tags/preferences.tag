@@ -19,7 +19,7 @@ import { PreferencesService } from '../services';
 
   <script>
     var self = this;
-    this.preferenceService = new PreferencesService();
+    this.preferencesService = new PreferencesService();
 
     this.on('mount', function () {
       updateSortOrder();
@@ -49,6 +49,8 @@ import { PreferencesService } from '../services';
 
     save() {
       this.parent.showPreferences = false;
+  console.log(opts);
+      this.preferencesService.save(opts.sections);
       riot.update();
     }
 

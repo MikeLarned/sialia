@@ -44,7 +44,6 @@ export class DocumentsService {
 
   load(data: any): ViewerOptions {
     let bb = BlueButton(data);
-    console.log(bb);
 
     return {
       sections: this.getSections(bb, SECTIONS, IGNORE_SECTIONS),
