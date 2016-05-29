@@ -4,12 +4,25 @@ import BlueButton from 'bluebutton';
 import { Observable } from 'rxjs/Observable';
 import { Section, ViewerOptions } from '../models';
 import { SECTIONS, IGNORE_SECTIONS } from '../config';
+import { PreferencesService } from './services';
 
 let viewer: any;
 
 export class DocumentsService {
 
   getSections(bb: any, sections: Section[], ignoreSections: string[]): Section[] {
+
+    //var pref = new PreferencesService().getPreferences(b)
+
+    var storageId = "doc_" + bb.data.document.type.templateId;
+    var pref = JSON.parse(localStorage.getItem(storageId));
+
+    var isSectionEnabled = function(key, pref) {
+      if(!pref) return false;
+      return _.some(pref.sortedSectionKeys, (k) => {
+        return k == key;
+      });
+    };
 
     let allSections = [];
     _.each(bb.data, (val, key) => {
@@ -27,7 +40,7 @@ export class DocumentsService {
     // init sort and enabled
     _.each(allSections, (val, index) => {
       val.sort = index;
-      val.enabled = false;
+      val.enabled = isSectionEnabled(val.key, pref);
     });
 
     return allSections;

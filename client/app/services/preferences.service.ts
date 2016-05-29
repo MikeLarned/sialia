@@ -5,8 +5,6 @@ export class PreferencesService  {
 
     save(opts: any) : void {
 
-        // ML - Find the Items we want to enable for a given document section and document
-        // id type
         var enabled = _.filter(opts.sections, (item) => {
             return item.enabled
         });
@@ -19,10 +17,6 @@ export class PreferencesService  {
 
         var storageId = "doc_" + opts.pref.type.templateId;
         localStorage.setItem(storageId, JSON.stringify(pref));
-    }
-
-    isDocumentPrefSet(documentid: string) {
-        return false;
     }
 
     getPreferences(docType: any) {
