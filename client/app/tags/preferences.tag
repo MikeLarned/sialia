@@ -19,7 +19,7 @@ import { PreferencesService } from '../services';
 
   <script>
     var self = this;
-    this.preferenceService = new PreferenceService();
+    this.preferenceService = new PreferencesService();
 
     this.on('mount', function () {
       updateSortOrder();
