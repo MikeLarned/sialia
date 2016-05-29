@@ -3,6 +3,7 @@ import _ from 'lodash';
 import '../utilities/lodashmixins';
 import { updateSortOrder } from '../models/section';
 import { getElementIndex } from '../utilities/htmlhelpers';
+import { PreferencesService } from '../services';
 
 <preferences>
   <h2>
@@ -18,6 +19,7 @@ import { getElementIndex } from '../utilities/htmlhelpers';
 
   <script>
     var self = this;
+    this.preferenceService = new PreferenceService();
 
     this.on('mount', function () {
       updateSortOrder();
