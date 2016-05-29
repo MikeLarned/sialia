@@ -17,8 +17,9 @@
   <script>
     var self = this;
     this.data = opts.data;
+    this.pref = opts.pref;
     this.sections = opts.sections;
-    this.showPreferences = true;
+    this.showPreferences = !opts.pref.isSet;
     this.dictionary = this.sections.reduce(function(o, x){ o[x.key] = x; return o; }, {});
   </script>
 </viewer>

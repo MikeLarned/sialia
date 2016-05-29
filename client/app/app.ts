@@ -4,6 +4,7 @@ import './tags';
 import 'bootstrap-sass';
 import riot from 'riot';
 import { DocumentsService } from './services';
+import { PreferencesService } from './services';
 import { DOCUMENTS } from './config';
 
 export class App {
@@ -12,6 +13,8 @@ export class App {
 
   constructor() {
     this.service.fetch(DOCUMENTS[1].url).subscribe((options) => {
+      console.log(options)
+      options.pref = new PreferencesService().getPreferences();
       riot.mount('viewer', options);
     });
   }

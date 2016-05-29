@@ -11,12 +11,34 @@ export class PreferencesService  {
             return item.enabled
         });
 
-        var doc = "doc_" + documentid;
+        var pref = getPreferences(documentid);
 
-        console.log(doc)
     }
 
     isDocumentPrefSet(documentid: string) {
         return false;
+    }
+
+    getPreferences(documentid: string) {
+        var isSet = false;
+        var id = documentid;
+        var storageId = "doc_" + id;
+
+        var prefString = localStorage.getItem(storageId);
+        var pref = JSON.parse(prefString);
+        isSet = pref !== null;
+
+        if(!isSet) {
+            pref = {
+                id: id,
+                isSet: isSet
+            };
+        }
+
+        console.log("Preferences String");
+        console.log(pref);
+
+        return pref;
+
     }
 }
