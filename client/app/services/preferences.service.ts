@@ -15,8 +15,10 @@ export class PreferencesService  {
         pref.sortedSectionKeys = _.map(enabled, (item) => {
            return item.key;
         });
+        pref.isSet = true;
 
-        console.log(pref);
+        var storageId = "doc_" + opts.pref.type.templateId;
+        localStorage.setItem(storageId, JSON.stringify(pref));
     }
 
     isDocumentPrefSet(documentid: string) {
@@ -31,6 +33,9 @@ export class PreferencesService  {
         var prefString = localStorage.getItem(storageId);
         var pref = JSON.parse(prefString);
         var isSet = pref !== null;
+
+        console.log("FROM STORAGE");
+        console.log(pref);
 
         if(!isSet) {
             pref = {
