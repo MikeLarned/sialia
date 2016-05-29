@@ -13,8 +13,7 @@ export class App {
 
   constructor() {
     this.service.fetch(DOCUMENTS[1].url).subscribe((options) => {
-      console.log(options)
-      options.pref = new PreferencesService().getPreferences();
+      options.pref = new PreferencesService().getPreferences(options.data.document.type);
       riot.mount('viewer', options);
     });
   }

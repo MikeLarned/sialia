@@ -49,8 +49,7 @@ import { PreferencesService } from '../services';
 
     save() {
       this.parent.showPreferences = false;
-  console.log(opts);
-      this.preferencesService.save(opts.sections);
+      this.preferencesService.save(opts);
       riot.update();
     }
 

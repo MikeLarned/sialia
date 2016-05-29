@@ -6,7 +6,7 @@
         <demographics demographics={ data.demographics }/>
       </div>
       <div class="col-lg-9 col-sm-8" id="right" if={ showPreferences }>
-        <preferences sections={ sections } />
+        <preferences sections={ sections } pref={ pref } />
       </div>
       <div class="col-lg-9 col-sm-8" id="right" if={ !showPreferences }>
         <ccda-section each={ section in sections } current={ section } parent={ parent }/>

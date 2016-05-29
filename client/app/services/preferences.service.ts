@@ -3,42 +3,43 @@ import _ from 'lodash';
 
 export class PreferencesService  {
 
-    save(documentid: string, sections: Section[]) : void {
+    save(opts: any) : void {
 
         // ML - Find the Items we want to enable for a given document section and document
         // id type
-        var enabled = _.filter(sections, (item) => {
+        var enabled = _.filter(opts.sections, (item) => {
             return item.enabled
         });
 
-        var pref = getPreferences(documentid);
+        var pref = this.getPreferences(opts.pref.type);
+        pref.sortedSectionKeys = _.map(enabled, (item) => {
+           return item.key;
+        });
 
+        console.log(pref);
     }
 
     isDocumentPrefSet(documentid: string) {
         return false;
     }
 
-    getPreferences(documentid: string) {
-        var isSet = false;
-        var id = documentid;
+    getPreferences(docType: any) {
+
+        var id = docType.templateId;
         var storageId = "doc_" + id;
 
         var prefString = localStorage.getItem(storageId);
         var pref = JSON.parse(prefString);
-        isSet = pref !== null;
+        var isSet = pref !== null;
 
         if(!isSet) {
             pref = {
                 id: id,
-                isSet: isSet
+                isSet: isSet,
+                type: docType
             };
         }
 
-        console.log("Preferences String");
-        console.log(pref);
-
         return pref;
-
     }
 }
