@@ -65,7 +65,6 @@ export class DocumentsService {
 
   load(data: any): ViewerOptions {
     let bb = BlueButton(data);
-    console.log(bb);
 
     if (!bb.data) {
       console.log('BlueButton could not parse the file.');

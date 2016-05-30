@@ -103,8 +103,6 @@ import moment from 'moment';
 
     <script>
 
-        console.log(opts.data.entries[0]);
-
         this.on('update', function() {
             _.each(opts.data.entries, function(e) {
                 e.date_range.start_display =  moment(e.date_range.start).format('MMM D, YYYY');
