@@ -81,11 +81,10 @@ import { DOCUMENTS } from '../config';
 
     view(e) {
       this.service.fetch(e.item.url).subscribe((options) => {
-        options.pref = this.preferencesService.getPreferences(options.data.document.type);
+        if (!options) return;
         if(!options.pref.isSet) {
           this.parent.showPreferences = true;
         };
-
         this.parent.update(options);
         riot.update();
       });

@@ -65,9 +65,14 @@ export class DocumentsService {
 
   load(data: any): ViewerOptions {
     let bb = BlueButton(data);
-    let pref = new PreferencesService().getPreferences(bb.data.document.type);
     console.log(bb);
 
+    if (!bb.data) {
+      console.log('BlueButton could not parse the file.');
+      return null;
+    }
+
+    let pref = new PreferencesService().getPreferences(bb.data.document.type);
     return {
       sections: this.getSections(bb, SECTIONS, IGNORE_SECTIONS, pref),
       data: bb.data,
