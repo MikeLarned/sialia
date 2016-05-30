@@ -73,6 +73,7 @@ h1 {
 }
 @media (min-width: $screen-sm-min) {
     #left {
+        position: fixed;
         padding-right: 8px;
     }
 
