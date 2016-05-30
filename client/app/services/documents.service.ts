@@ -19,15 +19,24 @@ export class DocumentsService {
 
     var isSectionEnabled = function(key, pref) {
       if(!pref) return false;
-      return _.some(pref.sortedSectionKeys, (k) => {
+      return _.some(pref.enabledSectionKeys, (k) => {
         return k == key;
       });
+    };
+
+    var indexOfSection = function(key, pref) {
+        if(!pref) return -1;
+        var index = pref.sortedSectionKeys.indexOf(key);
+        //console.log(key + " " + index);
+        return index;
     };
 
     let allSections = [];
     _.each(bb.data, (val, key) => {
       if (ignoreSections.indexOf(key) !== -1) return;
       var match = _.find(sections, (s) => s.key === key);
+      match.index = indexOfSection(key, pref);
+
       if (match) allSections.push(match);
       else allSections.push({
         key: key,
@@ -35,6 +44,10 @@ export class DocumentsService {
         tagName: 'generic',
         icon: 'asterisk'
       });
+    });
+
+    allSections = _.sortBy(allSections, (item) => {
+        return item.index;
     });
 
     // init sort and enabled

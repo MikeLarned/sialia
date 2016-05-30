@@ -36,6 +36,7 @@ import { PreferencesService } from '../services';
       var to = getElementIndex(el);
       _.move(opts.sections, from, to);
       updateSortOrder();
+      self.preferencesService.save(opts);
       self.update();
     }
 

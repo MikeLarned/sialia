@@ -9,14 +9,20 @@ export class PreferencesService  {
             return item.enabled
         });
 
+        var sortOrder = _.map(opts.sections, (item) => {
+            return item.key
+        });
+
         var pref = this.getPreferences(opts.pref.type);
-        pref.sortedSectionKeys = _.map(enabled, (item) => {
+        pref.enabledSectionKeys = _.map(enabled, (item) => {
            return item.key;
         });
+        pref.sortedSectionKeys = sortOrder;
         pref.isSet = true;
 
         var storageId = "doc_" + opts.pref.type.templateId;
         localStorage.setItem(storageId, JSON.stringify(pref));
+        
     }
 
     getPreferences(docType: any) {
