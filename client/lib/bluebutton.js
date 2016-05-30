@@ -1817,13 +1817,22 @@ Parsers.C32.document = function (c32) {
   var doc = c32.section('document');
 
   // Parse Doc Type Info
+  var templates =  doc.elsByTag('templateId');
+  var rootTemplate = templates[0].attr('root');
+  var secondTemplate;
+  if(templates.length >1)
+    secondTemplate = templates[1].attr('root');
+  else
+    secondTemplate = rootTemplate;
+
   var loinc = doc.tag('code').attr('code');
   var templateId = doc.tag('templateId').attr('root');
   var displayName = doc.tag('code').attr('displayName');
 
   var docType = {
-    type: "C32",
-    templateId: templateId,
+    type: "CCDAR2",
+    rootTemplateId: rootTemplate,
+    templateId: secondTemplate,
     displayName: displayName,
     loinc: loinc
   };
@@ -2920,14 +2929,24 @@ Parsers.CCDA.document = function (ccda) {
   
   var doc = ccda.section('document');
 
+
   // Parse Doc Type Info
+  var templates =  doc.elsByTag('templateId');
+  var rootTemplate = templates[0].attr('root');
+  var secondTemplate;
+  if(templates.length >1)
+    secondTemplate = templates[1].attr('root');
+  else
+    secondTemplate = rootTemplate;
+
   var loinc = doc.tag('code').attr('code');
   var templateId = doc.tag('templateId').attr('root');
   var displayName = doc.tag('code').attr('displayName');
 
   var docType = {
-    type: "CCDA",
-    templateId: templateId,
+    type: "CCDAR2",
+    rootTemplateId: rootTemplate,
+    templateId: secondTemplate,
     displayName: displayName,
     loinc: loinc
   };
@@ -4177,16 +4196,26 @@ Parsers.CCDAR2.document = function (ccda) {
   var title = Core.stripWhitespace(doc.tag('title').val());
 
   // Parse Doc Type Info
+  var templates =  doc.elsByTag('templateId');
+  var rootTemplate = templates[0].attr('root');
+  var secondTemplate;
+  if(templates.length >1)
+    secondTemplate = templates[1].attr('root');
+  else
+    secondTemplate = rootTemplate;
+
   var loinc = doc.tag('code').attr('code');
   var templateId = doc.tag('templateId').attr('root');
   var displayName = doc.tag('code').attr('displayName');
 
   var docType = {
     type: "CCDAR2",
-    templateId: templateId,
+    rootTemplateId: rootTemplate,
+    templateId: secondTemplate,
     displayName: displayName,
     loinc: loinc
   };
+
 
   var author = doc.tag('author');
   el = author.tag('assignedPerson').tag('name');

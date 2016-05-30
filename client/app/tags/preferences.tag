@@ -13,6 +13,10 @@ import { PreferencesService } from '../services';
       <a href="#" onclick={ enableAll }>all</a> | <a href="#" onclick={ disableAll }>none</a>
       (drag to sort)</small>
   </h2>
+    <p class="alert-info" if={ !opts.pref.isSet }>
+        This is the first time you are setting up your section preferences for <b>{ opts.pref.type.type } { opts.pref.type.displayName }</b> documents.  You can order and select
+        sections that are relevant for the care you are providing and we will save these for future use.
+    </p>
   <ul class="list-group" id="preferences">
     <preference-section each={ opts.sections }/>
   </div>

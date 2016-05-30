@@ -28,9 +28,6 @@ export class PreferencesService  {
         var pref = JSON.parse(prefString);
         var isSet = pref !== null;
 
-        console.log("FROM STORAGE");
-        console.log(pref);
-
         if(!isSet) {
             pref = {
                 id: id,
@@ -38,6 +35,11 @@ export class PreferencesService  {
                 type: docType
             };
         }
+
+        console.log("Doc Pref " + pref.isSet);
+        console.log(pref.type.templateId);
+        console.log(pref.sortedSectionKeys);
+        console.log(pref.type.displayName);
 
         return pref;
     }
