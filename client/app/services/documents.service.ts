@@ -72,10 +72,12 @@ export class DocumentsService {
     }
 
     let pref = new PreferencesService().getPreferences(bb.data.document.type);
+
     return {
       sections: this.getSections(bb, SECTIONS, IGNORE_SECTIONS, pref),
       data: bb.data,
-      pref: pref
+      pref: pref,
+
     };
   }
 }

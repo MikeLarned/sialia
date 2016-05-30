@@ -13,8 +13,6 @@ export class App {
 
   constructor() {
     this.service.fetch(DOCUMENTS[2].url).subscribe((options) => {
-      console.log("ISNONXML");
-      console.log(options)
       riot.mount('viewer', options);
     });
   }
