@@ -81,8 +81,6 @@ import { DOCUMENTS } from '../config';
 
     view(e) {
       this.service.fetch(e.item.url).subscribe((options) => {
-        console.log("Post Fetch " + options.data.document.type.templateId);
-
         options.pref = this.preferencesService.getPreferences(options.data.document.type);
         if(!options.pref.isSet) {
           this.parent.showPreferences = true;

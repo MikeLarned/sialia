@@ -36,10 +36,10 @@ export class PreferencesService  {
             };
         }
 
-        console.log("Doc Pref " + pref.isSet);
-        console.log(pref.type.templateId);
-        console.log(pref.sortedSectionKeys);
-        console.log(pref.type.displayName);
+        //console.log("Doc Pref " + pref.isSet);
+        //console.log(pref.type.templateId);
+        //console.log(pref.sortedSectionKeys);
+        //console.log(pref.type.displayName);
 
         return pref;
     }

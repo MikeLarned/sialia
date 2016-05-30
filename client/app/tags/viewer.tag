@@ -15,7 +15,6 @@
   </div>
 
   <script>
-    console.log("B")
     var self = this;
     this.data = opts.data;
     this.pref = opts.pref;
