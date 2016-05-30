@@ -2,6 +2,7 @@
   <header data={ data } sections={ sections }/>
   <div class="container-fluid">
     <div class="row">
+      <div class="col-lg-3 col-sm-4 hidden-xs" id="placeholder"></div>
       <div class="col-lg-3 col-sm-4" id="left">
         <demographics demographics={ data.demographics }/>
       </div>
