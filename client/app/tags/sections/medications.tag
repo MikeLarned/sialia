@@ -52,7 +52,7 @@ import moment from 'moment';
                                 <span class="header-small">Rate</span>
                             </th>
                             <td>
-                                <span>{ dose_quantity.value }</span>
+                                <span>{ rate_quantity.value } { rate_quantity.unit }</span>
                             </td>
                         </tr>
                         </tbody>
@@ -87,12 +87,7 @@ import moment from 'moment';
                             </td>
                         </tr>
                         <tr>
-                            <th scope="row">
-                                <span class="header-small">Rate</span>
-                            </th>
-                            <td>
-                                <span>{ rate_quantity.value } { rate_quantity.unit }</span>
-                            </td>
+
                         </tr>
                         </tbody>
                     </table>
