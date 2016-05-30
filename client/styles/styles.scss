@@ -40,6 +40,25 @@ h1 {
     margin-top: -15px;
 }
 
+.header-name {
+
+    display: block;
+}
+
+.header-small {
+   font-size: .8em;
+    font-color: #ccc;
+}
+
+.header-row {
+    margin-bottom: 5px;
+    border-bottom: 1px dashed #eee;
+    margin: 0 10px 10px 10px;
+}
+.table-borderless tbody tr td, .table-borderless tbody tr th, .table-borderless thead tr th {
+    border: none;
+}
+
 .alert-mild {
     @include alert-variant($mild, $mild, #000);
 }

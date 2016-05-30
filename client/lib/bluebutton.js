@@ -888,10 +888,10 @@ Core.XML = (function () {
    * which can store their content in a <content> tag in a totally different
    * part of the document.
    */
-  var val = function () {
+  var val = function (html) {
     if (!this.el) { return null; }
     if (!this.el.childNodes || !this.el.childNodes.length) { return null; }
-    var textContent = this.el.textContent;
+    var textContent = html ? this.el.innerHTML : this.el.textContent;
 
     // if there's no text value here and the only thing inside is a
     // <reference> tag, see if there's a linked <content> tag we can
@@ -4148,7 +4148,7 @@ Parsers.GenericInfo = function (ccda, data) {
             }
             data[nodeName].displayName = code;
             data[nodeName].templateId = s.tag('templateId').attr('root');
-            data[nodeName].text = s.tag('text').val();
+            data[nodeName].text = s.tag('text').val(true);
         }
     });
 };;
