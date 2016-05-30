@@ -165,3 +165,26 @@ preference-section {
         transition: all 0.05s ease;
     }
 }
+
+list {
+  display: block;
+
+  item {
+    display: list-item;
+    list-style-type: none;
+    margin-bottom: 10px;
+
+    content[id^=problem] {
+      display: block;
+      font-weight: bold;
+    }
+  }
+}
+
+paragraph {
+  display: block;
+
+  &[stylecode=Bold] {
+    font-weight: bold;
+  }
+}

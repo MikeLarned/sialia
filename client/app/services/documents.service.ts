@@ -2,20 +2,15 @@ import $ from 'jquery';
 import _ from 'lodash';
 import BlueButton from 'bluebutton';
 import { Observable } from 'rxjs/Observable';
-import { Section, ViewerOptions } from '../models';
+import { Section, ViewerOptions, Preferences } from '../models';
 import { SECTIONS, IGNORE_SECTIONS } from '../config';
-import { PreferencesService } from './services';
+import { PreferencesService } from './preferences.service';
 
 let viewer: any;
 
 export class DocumentsService {
 
-  getSections(bb: any, sections: Section[], ignoreSections: string[]): Section[] {
-
-    //var pref = new PreferencesService().getPreferences(b)
-
-    var storageId = "doc_" + bb.data.document.type.templateId;
-    var pref = JSON.parse(localStorage.getItem(storageId));
+  getSections(bb: any, sections: Section[], ignoreSections: string[], pref: Preferences): Section[] {
 
     var isSectionEnabled = function(key, pref) {
       if(!pref) return false;
@@ -35,9 +30,10 @@ export class DocumentsService {
     _.each(bb.data, (val, key) => {
       if (ignoreSections.indexOf(key) !== -1) return;
       var match = _.find(sections, (s) => s.key === key);
-      match.index = indexOfSection(key, pref);
-
-      if (match) allSections.push(match);
+      if (match) {
+        match.sort = indexOfSection(key, pref);
+        allSections.push(match);
+      }
       else allSections.push({
         key: key,
         display: val.displayName || key,
@@ -47,12 +43,11 @@ export class DocumentsService {
     });
 
     allSections = _.sortBy(allSections, (item) => {
-        return item.index;
+        return item.sort;
     });
 
     // init sort and enabled
     _.each(allSections, (val, index) => {
-      val.sort = index;
       val.enabled = isSectionEnabled(val.key, pref);
     });
 
@@ -70,10 +65,18 @@ export class DocumentsService {
 
   load(data: any): ViewerOptions {
     let bb = BlueButton(data);
+    console.log(bb);
 
+    if (!bb.data) {
+      console.log('BlueButton could not parse the file.');
+      return null;
+    }
+
+    let pref = new PreferencesService().getPreferences(bb.data.document.type);
     return {
-      sections: this.getSections(bb, SECTIONS, IGNORE_SECTIONS),
-      data: bb.data
+      sections: this.getSections(bb, SECTIONS, IGNORE_SECTIONS, pref),
+      data: bb.data,
+      pref: pref
     };
   }
 }

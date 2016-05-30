@@ -1,9 +1,9 @@
-import { Section} from '../models';
+import { ViewerOptions, Section, Preferences, DocType } from '../models';
 import _ from 'lodash';
 
 export class PreferencesService  {
 
-    save(opts: any) : void {
+    save(opts: ViewerOptions) : void {
 
         var enabled = _.filter(opts.sections, (item) => {
             return item.enabled
@@ -25,7 +25,7 @@ export class PreferencesService  {
 
     }
 
-    getPreferences(docType: any) {
+    getPreferences(docType: DocType): Preferences {
 
         var id = docType.templateId;
         var storageId = "doc_" + id;
@@ -38,7 +38,8 @@ export class PreferencesService  {
             pref = {
                 id: id,
                 isSet: isSet,
-                type: docType
+                type: docType,
+                sortedSectionKeys: []
             };
         }
 
