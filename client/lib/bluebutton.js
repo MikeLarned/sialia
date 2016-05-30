@@ -1829,60 +1829,13 @@ Parsers.C32.document = function (c32) {
   var templateId = doc.tag('templateId').attr('root');
   var displayName = doc.tag('code').attr('displayName');
 
-  var nonXml = doc.tag('nonXMLBody');
-  var nonXmlNodes = nonXml.el.childNodes;
-
-  var bodyType = "structured";
-  var nonXmlBody = {
-    type: "",
-    mediaType: "",
-    representation: "",
-    rawText: "",
-    reference: ""
-  };
-
-  if(nonXmlNodes && nonXmlNodes.length > 0) {
-    bodyType = "unstructured";
-    var text = nonXml.tag('text');
-    var mediaType = "";
-    var representation = "";
-    var rawText = "";
-    var reference = "";
-    var type = "";
-
-    // We have an embedded doc
-    if(text && text.attr('mediaType')) {
-      mediaType = text.attr('mediaType');
-      representation = text.attr('representation');
-      rawText = text.val();
-      type = "embedded";
-    }
-
-    if(text && !mediaType) {
-      reference = text.tag('reference').attr('value');
-      type = "reference";
-    }
-    nonXmlBody = {
-      type: type,
-      mediaType: mediaType,
-      representation: representation,
-      rawText: rawText,
-      reference: reference
-    }
-  }
-
   var docType = {
     type: "CCDAR2",
     rootTemplateId: rootTemplate,
     templateId: secondTemplate,
     displayName: displayName,
-    loinc: loinc,
-    bodyType: bodyType,
-    nonXmlBody: nonXmlBody
+    loinc: loinc
   };
-
-  console.log("DOCTYPE")
-  console.log(docType);
 
   var date = parseDate(doc.tag('effectiveTime').attr('value'));
   var title = Core.stripWhitespace(doc.tag('title').val());
@@ -1966,7 +1919,7 @@ Parsers.C32.allergies = function (c32) {
   data.entries = [];
   data.displayName = "Allergies";
   data.templateId = "";
-  data.text = allergies.tag('text').val();
+  data.text = allergies.tag('text').val(true);
 
   allergies.entries().each(function(entry) {
     
@@ -2180,7 +2133,7 @@ Parsers.C32.encounters = function (c32) {
   data.entries = [];
   data.displayName = "Encounters";
   data.templateId = "";
-  data.text = encounters.tag('text').val();
+  data.text = encounters.tag('text').val(true);
 
   encounters.entries().each(function(entry) {
     
@@ -2272,12 +2225,12 @@ Parsers.C32.immunizations = function (c32) {
   administeredData.entries = [];
   administeredData.displayName = "Immunizations";
   administeredData.templateId = "";
-  administeredData.text = immunizations.tag('text').val();
+  administeredData.text = immunizations.tag('text').val(true);
 
   declinedData.entries = [];
   declinedData.displayName = "Immunizations Declined";
   declinedData.templateId = "";
-  declinedData.text = immunizations.tag('text').val();
+  declinedData.text = immunizations.tag('text').val(true);
 
 
   
@@ -2394,7 +2347,7 @@ Parsers.C32.results = function (c32) {
   data.entries = [];
   data.displayName = "Results";
   data.templateId = "";
-  data.text = results.tag('text').val();
+  data.text = results.tag('text').val(true);
 
   results.entries().each(function(entry) {
     
@@ -2509,7 +2462,7 @@ Parsers.C32.medications = function (c32) {
   data.entries = [];
   data.displayName = "Medications";
   data.templateId = "";
-  data.text = medications.tag('text').val();
+  data.text = medications.tag('text').val(true);
   
   medications.entries().each(function(entry) {
 
@@ -2708,7 +2661,7 @@ Parsers.C32.problems = function (c32) {
   data.entries = [];
   data.displayName = "Problems";
   data.templateId = "";
-  data.text = problems.tag('text').val();
+  data.text = problems.tag('text').val(true);
 
   problems.entries().each(function(entry) {
     
@@ -2786,7 +2739,7 @@ Parsers.C32.procedures = function (c32) {
   data.entries = [];
   data.displayName = "Procedures";
   data.templateId = "";
-  data.text = procedures.tag('text').val();
+  data.text = procedures.tag('text').val(true);
   
   procedures.entries().each(function(entry) {
     
@@ -2860,7 +2813,7 @@ Parsers.C32.vitals = function (c32) {
   data.entries = [];
   data.displayName = "Vitals";
   data.templateId = "";
-  data.text = vitals.tag('text').val();
+  data.text = vitals.tag('text').val(true);
   
   vitals.entries().each(function(entry) {
     
@@ -2990,59 +2943,13 @@ Parsers.CCDA.document = function (ccda) {
   var templateId = doc.tag('templateId').attr('root');
   var displayName = doc.tag('code').attr('displayName');
 
-  var nonXml = doc.tag('nonXMLBody');
-  var nonXmlNodes = nonXml.el.childNodes;
-
-  var bodyType = "structured";
-  var nonXmlBody = {
-    type: "",
-    mediaType: "",
-    representation: "",
-    rawText: "",
-    reference: ""
-  };
-  if(nonXmlNodes && nonXmlNodes.length > 0) {
-    bodyType = "unstructured";
-    var text = nonXml.tag('text');
-    var mediaType = "";
-    var representation = "";
-    var rawText = "";
-    var reference = "";
-    var type = "";
-
-    // We have an embedded doc
-    if(text && text.attr('mediaType')) {
-      mediaType = text.attr('mediaType');
-      representation = text.attr('representation');
-      rawText = text.val();
-      type = "embedded";
-    }
-
-    if(text && !mediaType) {
-       reference = text.tag('reference').attr('value');
-      type = "reference";
-    }
-    nonXmlBody = {
-      type: type,
-      mediaType: mediaType,
-      representation: representation,
-      rawText: rawText,
-      reference: reference
-    }
-  }
-
   var docType = {
     type: "CCDAR2",
     rootTemplateId: rootTemplate,
     templateId: secondTemplate,
     displayName: displayName,
-    loinc: loinc,
-    bodyType: bodyType,
-    nonXmlBody: nonXmlBody
+    loinc: loinc
   };
-
-  console.log("DOCTYPE")
-  console.log(docType);
 
   var date = parseDate(doc.tag('effectiveTime').attr('value'));
   var title = Core.stripWhitespace(doc.tag('title').val());
@@ -3121,7 +3028,7 @@ Parsers.CCDA.allergies = function (ccda) {
     data.entries = [];
     data.displayName = "Allergies";
     data.templateId = "";
-    data.text = allergies.tag('text').val();
+    data.text = allergies.tag('text').val(true);
   
   allergies.entries().each(function(entry) {
     
@@ -3242,7 +3149,7 @@ Parsers.CCDA.care_plan = function (ccda) {
       code_system_name = el.attr('codeSystemName');
     }
 
-    var text = Core.stripWhitespace(entry.tag('text').val());
+    var text = Core.stripWhitespace(entry.tag('text').val(true));
     
     data.push({
       text: text,
@@ -3373,7 +3280,7 @@ Parsers.CCDA.encounters = function (ccda) {
   data.entries = [];
   data.displayName = "Encounters";
   data.templateId = "";
-  data.text = encounters.tag('text').val();
+  data.text = encounters.tag('text').val(true);
   
   encounters.entries().each(function(entry) {
     
@@ -3456,7 +3363,7 @@ Parsers.CCDA.free_text = function (ccda, sectionName) {
   var data = {};
   
   var doc = ccda.section(sectionName);
-  var text = Core.stripWhitespace(doc.tag('text').val());
+  var text = Core.stripWhitespace(doc.tag('text').val(true));
   
   data = {
     text: text
@@ -3521,12 +3428,12 @@ Parsers.CCDA.immunizations = function (ccda) {
   administeredData.entries = [];
   administeredData.displayName = "Immunizations";
   administeredData.templateId = "";
-  administeredData.text = immunizations.tag('text').val();
+  administeredData.text = immunizations.tag('text').val(true);
 
   declinedData.entries = [];
   declinedData.displayName = "Immunizations Declined";
   declinedData.templateId = "";
-  declinedData.text = immunizations.tag('text').val();
+  declinedData.text = immunizations.tag('text').val(true);
   
   immunizations.entries().each(function(entry) {
     
@@ -3644,7 +3551,7 @@ Parsers.CCDA.instructions = function (ccda) {
         code_system = el.attr('codeSystem'),
         code_system_name = el.attr('codeSystemName');
 
-    var text = Core.stripWhitespace(entry.tag('text').val());
+    var text = Core.stripWhitespace(entry.tag('text').val(true));
     
     data.push({
       text: text,
@@ -3674,7 +3581,7 @@ Parsers.CCDA.results = function (ccda) {
   data.entries = [];
   data.displayName = "Results";
   data.templateId = "";
-  data.text = results.tag('text').val();
+  data.text = results.tag('text').val(true);
   
 
   
@@ -3781,7 +3688,7 @@ Parsers.CCDA.medications = function (ccda) {
   data.entries = [];
   data.displayName = "Medications";
   data.templateId = "";
-  data.text = medications.tag('text').val();
+  data.text = medications.tag('text').val(true);
 
   medications.entries().each(function(entry) {
     
@@ -3967,7 +3874,7 @@ Parsers.CCDA.problems = function (ccda) {
   data.entries = [];
   data.displayName = "Problems";
   data.templateId = "";
-  data.text = problems.tag('text').val();
+  data.text = problems.tag('text').val(true);
   
   problems.entries().each(function(entry) {
     
@@ -4039,7 +3946,7 @@ Parsers.CCDA.procedures = function (ccda) {
   data.entries = [];
   data.displayName = "Procedures";
   data.templateId = "";
-  data.text = procedures.tag('text').val();
+  data.text = procedures.tag('text').val(true);
   
   procedures.entries().each(function(entry) {
     
@@ -4173,7 +4080,7 @@ Parsers.CCDA.vitals = function (ccda) {
   data.entries = [];
   data.displayName = "Vitals";
   data.templateId = "";
-  data.text = vitals.tag('text').val();
+  data.text = vitals.tag('text').val(true);
 
   vitals.entries().each(function(entry) {
     
@@ -4301,59 +4208,13 @@ Parsers.CCDAR2.document = function (ccda) {
   var templateId = doc.tag('templateId').attr('root');
   var displayName = doc.tag('code').attr('displayName');
 
-  var nonXml = doc.tag('nonXMLBody');
-  var nonXmlNodes = nonXml.el.childNodes;
-
-  var bodyType = "structured";
-  var nonXmlBody = {
-    type: "",
-    mediaType: "",
-    representation: "",
-    rawText: "",
-    reference: ""
-  };
-  if(nonXmlNodes && nonXmlNodes.length > 0) {
-    bodyType = "unstructured";
-    var text = nonXml.tag('text');
-    var mediaType = "";
-    var representation = "";
-    var rawText = "";
-    var reference = "";
-    var type = "";
-
-    // We have an embedded doc
-    if(text && text.attr('mediaType')) {
-      mediaType = text.attr('mediaType');
-      representation = text.attr('representation');
-      rawText = text.val();
-      type = "embedded";
-    }
-
-    if(text && !mediaType) {
-      reference = text.tag('reference').attr('value');
-      type = "reference";
-    }
-    nonXmlBody = {
-      type: type,
-      mediaType: mediaType,
-      representation: representation,
-      rawText: rawText,
-      reference: reference
-    }
-  }
-
   var docType = {
     type: "CCDAR2",
     rootTemplateId: rootTemplate,
     templateId: secondTemplate,
     displayName: displayName,
-    loinc: loinc,
-    bodyType: bodyType,
-    nonXmlBody: nonXmlBody
+    loinc: loinc
   };
-
-  console.log("DOCTYPE")
-  console.log(docType);
 
 
   var author = doc.tag('author');
@@ -4435,7 +4296,7 @@ Parsers.CCDAR2.health_concerns_document = function (ccda) {
     var model = {}, el;
     model.entries = [];
 
-    model.text = ccda.tag('text').val();
+    model.text = ccda.tag('text').val(true);
 
     var health_concerns = ccda.section('health_concerns_document');
     var title = health_concerns.tag('title').val();
