@@ -14,7 +14,7 @@ import '../../utilities/lodashmixins';
           <i class="fa fa-li fa-birthday-cake" title="DOB"></i>
           <p>{ formatDate(opts.demographics.dob) }</p>
         </li>
-        <li class="guardian">
+        <li class="guardian" if={ opts.demographics.guardian.name.family }>
           <i class="fa fa-li fa-child" title="Guardian"></i>
           <name name={ opts.demographics.guardian.name } />
           <span class="text-muted">(guardian)</span>
@@ -56,9 +56,9 @@ import '../../utilities/lodashmixins';
     formatDate(date) {
       return moment(date).format('MMM D, YYYY');
     }
-    
+
     formatPhone(phone) {
-      
+
       var p = '';
       // which phone?
       if (phone.work) {
@@ -70,7 +70,7 @@ import '../../utilities/lodashmixins';
       if (phone.cell) {
         p = phone.cell;
       }
-    
+
       var clean = "";
       //_.(p).forEach(function(value) {
         //clean = clean + value;
@@ -80,13 +80,13 @@ import '../../utilities/lodashmixins';
           clean = clean + p[i];
         }
       }
-      
+
       if (clean.length > 10) {
         if (clean[0] == '1') {
           clean = clean.slice(1);
         }
       }
-      
+
       var pretty = '';
       if (clean.length == 10) {
         var c = clean;

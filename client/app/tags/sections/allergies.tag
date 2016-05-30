@@ -1,6 +1,6 @@
 <allergies>
   <panel section={ opts.section } entries={ opts.data.entries }>
-    <div class="row">
+    <div class="row" if={ opts.entries.length }>
       <div each={ opts.entries } class="col-sm-4">
         <div class="alert alert-mild clearfix " role="alert">
           <h4>{ allergen.name }</h4>
@@ -9,5 +9,6 @@
         </div>
       </div>
     </div>
+    <empty if={ !opts.entries.length } />
   </panel>
 </allergies>
