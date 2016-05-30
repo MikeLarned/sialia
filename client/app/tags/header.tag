@@ -1,4 +1,5 @@
 import { DocumentsService } from '../services';
+import { PreferencesService } from '../services';
 import { DOCUMENTS } from '../config';
 
 <header>
@@ -76,9 +77,15 @@ import { DOCUMENTS } from '../config';
   <script>
     this.documents = DOCUMENTS;
     this.service = new DocumentsService();
+    this.preferencesService = new PreferencesService();
 
     view(e) {
       this.service.fetch(e.item.url).subscribe((options) => {
+        options.pref = this.preferencesService.getPreferences(options.data.document.type);
+        if(!options.pref.isSet) {
+          this.parent.showPreferences = true;
+        };
+
         this.parent.update(options);
         riot.update();
       });

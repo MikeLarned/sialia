@@ -888,10 +888,10 @@ Core.XML = (function () {
    * which can store their content in a <content> tag in a totally different
    * part of the document.
    */
-  var val = function (html) {
+  var val = function () {
     if (!this.el) { return null; }
     if (!this.el.childNodes || !this.el.childNodes.length) { return null; }
-    var textContent = html ? this.el.innerHTML : this.el.textContent;
+    var textContent = this.el.textContent;
 
     // if there's no text value here and the only thing inside is a
     // <reference> tag, see if there's a linked <content> tag we can
@@ -1816,6 +1816,27 @@ Parsers.C32.document = function (c32) {
   
   var doc = c32.section('document');
 
+  // Parse Doc Type Info
+  var templates =  doc.elsByTag('templateId');
+  var rootTemplate = templates[0].attr('root');
+  var secondTemplate;
+  if(templates.length >1)
+    secondTemplate = templates[1].attr('root');
+  else
+    secondTemplate = rootTemplate;
+
+  var loinc = doc.tag('code').attr('code');
+  var templateId = doc.tag('templateId').attr('root');
+  var displayName = doc.tag('code').attr('displayName');
+
+  var docType = {
+    type: "CCDAR2",
+    rootTemplateId: rootTemplate,
+    templateId: secondTemplate,
+    displayName: displayName,
+    loinc: loinc
+  };
+
   var date = parseDate(doc.tag('effectiveTime').attr('value'));
   var title = Core.stripWhitespace(doc.tag('title').val());
   
@@ -1861,6 +1882,7 @@ Parsers.C32.document = function (c32) {
   }
   
   data = {
+    type: docType,
     date: date,
     title: title,
     author: {
@@ -2907,6 +2929,28 @@ Parsers.CCDA.document = function (ccda) {
   
   var doc = ccda.section('document');
 
+
+  // Parse Doc Type Info
+  var templates =  doc.elsByTag('templateId');
+  var rootTemplate = templates[0].attr('root');
+  var secondTemplate;
+  if(templates.length >1)
+    secondTemplate = templates[1].attr('root');
+  else
+    secondTemplate = rootTemplate;
+
+  var loinc = doc.tag('code').attr('code');
+  var templateId = doc.tag('templateId').attr('root');
+  var displayName = doc.tag('code').attr('displayName');
+
+  var docType = {
+    type: "CCDAR2",
+    rootTemplateId: rootTemplate,
+    templateId: secondTemplate,
+    displayName: displayName,
+    loinc: loinc
+  };
+
   var date = parseDate(doc.tag('effectiveTime').attr('value'));
   var title = Core.stripWhitespace(doc.tag('title').val());
   
@@ -2947,6 +2991,7 @@ Parsers.CCDA.document = function (ccda) {
   }
   
   data = {
+    type: docType,
     date: date,
     title: title,
     author: {
@@ -3644,7 +3689,7 @@ Parsers.CCDA.medications = function (ccda) {
   data.displayName = "Medications";
   data.templateId = "";
   data.text = medications.tag('text').val();
-  
+
   medications.entries().each(function(entry) {
     
     el = entry.tag('text');
@@ -3743,7 +3788,7 @@ Parsers.CCDA.medications = function (ccda) {
     var prescriber_organization = el.tag('name').val(),
         prescriber_person = null;
     
-    data.push({
+    data.entries.push({
       date_range: {
         start: start_date,
         end: end_date
@@ -4103,7 +4148,7 @@ Parsers.GenericInfo = function (ccda, data) {
             }
             data[nodeName].displayName = code;
             data[nodeName].templateId = s.tag('templateId').attr('root');
-            data[nodeName].text = s.tag('text').val(true);
+            data[nodeName].text = s.tag('text').val();
         }
     });
 };;
@@ -4150,6 +4195,28 @@ Parsers.CCDAR2.document = function (ccda) {
   var date = parseDate(doc.tag('effectiveTime').attr('value'));
   var title = Core.stripWhitespace(doc.tag('title').val());
 
+  // Parse Doc Type Info
+  var templates =  doc.elsByTag('templateId');
+  var rootTemplate = templates[0].attr('root');
+  var secondTemplate;
+  if(templates.length >1)
+    secondTemplate = templates[1].attr('root');
+  else
+    secondTemplate = rootTemplate;
+
+  var loinc = doc.tag('code').attr('code');
+  var templateId = doc.tag('templateId').attr('root');
+  var displayName = doc.tag('code').attr('displayName');
+
+  var docType = {
+    type: "CCDAR2",
+    rootTemplateId: rootTemplate,
+    templateId: secondTemplate,
+    displayName: displayName,
+    loinc: loinc
+  };
+
+
   var author = doc.tag('author');
   el = author.tag('assignedPerson').tag('name');
   var name_dict = parseName(el);
@@ -4187,6 +4254,7 @@ Parsers.CCDAR2.document = function (ccda) {
   }
 
   data = {
+    type: docType,
     date: date,
     title: title,
     author: {

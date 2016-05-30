@@ -28,6 +28,18 @@ h1 {
     }
 }
 
+.alert-info {
+    font-size: .94em;
+    background-color: #eee;
+    padding: 15px;
+    color: #666;
+}
+
+.document-info {
+    font-size: .8em;
+    margin-top: -15px;
+}
+
 .alert-mild {
     @include alert-variant($mild, $mild, #000);
 }

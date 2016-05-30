@@ -3,6 +3,7 @@ import _ from 'lodash';
 import '../utilities/lodashmixins';
 import { updateSortOrder } from '../models/section';
 import { getElementIndex } from '../utilities/htmlhelpers';
+import { PreferencesService } from '../services';
 
 <preferences>
   <h2>
@@ -12,12 +13,17 @@ import { getElementIndex } from '../utilities/htmlhelpers';
       <a href="#" onclick={ enableAll }>all</a> | <a href="#" onclick={ disableAll }>none</a>
       (drag to sort)</small>
   </h2>
+    <p class="alert-info" if={ !opts.pref.isSet }>
+        This is the first time you are setting up your section preferences for <b>{ opts.pref.type.type } { opts.pref.type.displayName }</b> documents.  You can order and select
+        sections that are relevant for the care you are providing and we will save these for future use.
+    </p>
   <ul class="list-group" id="preferences">
     <preference-section each={ opts.sections }/>
   </div>
 
   <script>
     var self = this;
+    this.preferencesService = new PreferencesService();
 
     this.on('mount', function () {
       updateSortOrder();
@@ -30,6 +36,7 @@ import { getElementIndex } from '../utilities/htmlhelpers';
       var to = getElementIndex(el);
       _.move(opts.sections, from, to);
       updateSortOrder();
+      self.preferencesService.save(opts);
       self.update();
     }
 
@@ -47,6 +54,7 @@ import { getElementIndex } from '../utilities/htmlhelpers';
 
     save() {
       this.parent.showPreferences = false;
+      this.preferencesService.save(opts);
       riot.update();
     }
 
