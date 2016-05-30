@@ -16,10 +16,5 @@ export function bootstrapize(html: string): any {
   $all.filter('table')
     .addClass('table table-bordered table-striped');
 
-  $all.filter('paragraph')
-    .replaceWith(function() {
-      return $("<h5 />").append($(this).contents());
-    });
-
   return $html.html();
 }

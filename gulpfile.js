@@ -10,6 +10,7 @@ var gulp = require('gulp'),
 
 var base = './client/';
 var config = {
+    lib: base + 'lib/**/*.*',
     ts: base + 'app/**/*.ts',
     html: base + '*.html',
     html: base + 'app/**/*.tag',
@@ -33,6 +34,7 @@ gulp.task('serve', ['sass', 'jspm'], function() {
     });
 
     gulp.watch(config.ts, ['jspm']);
+    gulp.watch(config.lib, ['jspm']);
     gulp.watch(config.sass, ['sass']);
     gulp.watch(config.tag).on('change', browserSync.reload);
     gulp.watch(config.html).on('change', browserSync.reload);

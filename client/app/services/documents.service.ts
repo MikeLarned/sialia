@@ -30,9 +30,10 @@ export class DocumentsService {
     _.each(bb.data, (val, key) => {
       if (ignoreSections.indexOf(key) !== -1) return;
       var match = _.find(sections, (s) => s.key === key);
-      match.sort = indexOfSection(key, pref);
-
-      if (match) allSections.push(match);
+      if (match) {
+        match.sort = indexOfSection(key, pref);
+        allSections.push(match);
+      }
       else allSections.push({
         key: key,
         display: val.displayName || key,
@@ -65,6 +66,7 @@ export class DocumentsService {
   load(data: any): ViewerOptions {
     let bb = BlueButton(data);
     let pref = new PreferencesService().getPreferences(bb.data.document.type);
+    console.log(bb);
 
     return {
       sections: this.getSections(bb, SECTIONS, IGNORE_SECTIONS, pref),
