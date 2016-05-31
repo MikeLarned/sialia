@@ -3214,7 +3214,13 @@ Parsers.CCDA.care_plan = function (ccda) {
   
   var data = [], el;
   
-  var care_plan = ccda.section('care_plan');
+  var data = {}, el;
+      care_plan = ccda.section('care_plan');
+      data.entries = [];
+      data.displayName = "Care Plan";
+      data.templateId = "";
+      data.text = care_plan.tag('text').val(true);
+  
   
   care_plan.entries().each(function(entry) {
     
@@ -3237,17 +3243,28 @@ Parsers.CCDA.care_plan = function (ccda) {
     }
 
     var text = Core.stripWhitespace(entry.tag('text').val(true));
+    var time = entry.tag('effectiveTime').immediateChildTag('center').attr('value');
     
-    data.push({
+    data.entries.push({
       text: text,
       name: name,
       code: code,
       code_system: code_system,
       code_system_name: code_system_name,
+      effective_time: parse(time)
     });
   });
   
   return data;
+  
+  function parse(str) {
+    if (!str) return null;
+    var y = str.substr(0,4),
+        m = str.substr(4,2) - 1,
+        d = str.substr(6,2);
+    var D = new Date(y,m,d);
+    return (D.getFullYear() == y && D.getMonth() == m && D.getDate() == d) ? D : null;
+  }
 };
 ;
 
