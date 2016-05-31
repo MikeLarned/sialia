@@ -2948,7 +2948,7 @@ Parsers.CCDA = (function () {
     data.vitals.json                 = Core.json;
 
     // Decorate each section with Title, templateId and text and adds missing sections
-    // Parsers.GenericInfo(ccda, data);
+    Parsers.GenericInfo(ccda, data);
 
     return data;
   };
@@ -3220,7 +3220,6 @@ Parsers.CCDA.care_plan = function (ccda) {
       data.displayName = "Care Plan";
       data.templateId = "";
       data.text = care_plan.tag('text').val(true);
-  
   
   care_plan.entries().each(function(entry) {
     
@@ -4241,9 +4240,15 @@ Parsers.GenericInfo = function (ccda, data) {
     var allSections = ccda.elsByTag('section');
     allSections.each = each;
 
+    console.log("ALL SECTIONS");
+    console.log(allSections);
+
     allSections.each(function(s) {
 
+
         var code = s.tag('code').attr('displayName');
+
+        console.log("Section Title " + code);
 
         if (code) {
             var nodeName = code.split(' ').join('_').toLowerCase();
