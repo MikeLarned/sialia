@@ -1962,7 +1962,7 @@ Parsers.C32.allergies = function (c32) {
   var data = {}, el;
   data.entries = [];
   data.displayName = "Allergies";
-  data.templateId = "";
+  data.templateId = allergies.tag('templateId').attr('root');
   data.text = allergies.tag('text').val(true);
 
   allergies.entries().each(function(entry) {
@@ -2176,7 +2176,7 @@ Parsers.C32.encounters = function (c32) {
   var data = {}, el;
   data.entries = [];
   data.displayName = "Encounters";
-  data.templateId = "";
+  data.templateId = encounters.tag('templateId').attr('root');
   data.text = encounters.tag('text').val(true);
 
   encounters.entries().each(function(entry) {
@@ -2268,12 +2268,12 @@ Parsers.C32.immunizations = function (c32) {
 
   administeredData.entries = [];
   administeredData.displayName = "Immunizations";
-  administeredData.templateId = "";
+  administeredData.templateId = immunizations.tag('templateId').attr('root');
   administeredData.text = immunizations.tag('text').val(true);
 
   declinedData.entries = [];
   declinedData.displayName = "Immunizations Declined";
-  declinedData.templateId = "";
+  declinedData.templateId = immunizations.tag('templateId').attr('root');
   declinedData.text = immunizations.tag('text').val(true);
 
 
@@ -2390,8 +2390,9 @@ Parsers.C32.results = function (c32) {
   var data = {}, el;
   data.entries = [];
   data.displayName = "Results";
-  data.templateId = "";
+  data.templateId = results.tag('templateId').attr('root');
   data.text = results.tag('text').val(true);
+
 
   results.entries().each(function(entry) {
     
@@ -2505,7 +2506,7 @@ Parsers.C32.medications = function (c32) {
   var data = {}, el;
   data.entries = [];
   data.displayName = "Medications";
-  data.templateId = "";
+  data.templateId = medications.tag('templateId').attr('root');
   data.text = medications.tag('text').val(true);
   
   medications.entries().each(function(entry) {
@@ -2704,7 +2705,7 @@ Parsers.C32.problems = function (c32) {
   var data = {}, el;
   data.entries = [];
   data.displayName = "Problems";
-  data.templateId = "";
+  data.templateId = problems.tag('templateId').attr('root');
   data.text = problems.tag('text').val(true);
 
   problems.entries().each(function(entry) {
@@ -2782,7 +2783,7 @@ Parsers.C32.procedures = function (c32) {
   var data = {}, el;
   data.entries = [];
   data.displayName = "Procedures";
-  data.templateId = "";
+  data.templateId = procedures.tag('templateId').attr('root');
   data.text = procedures.tag('text').val(true);
   
   procedures.entries().each(function(entry) {
@@ -2856,7 +2857,7 @@ Parsers.C32.vitals = function (c32) {
   var data = {}, el;
   data.entries = [];
   data.displayName = "Vitals";
-  data.templateId = "";
+  data.templateId = vitals.tag('templateId').attr('root');
   data.text = vitals.tag('text').val(true);
   
   vitals.entries().each(function(entry) {
@@ -3114,7 +3115,7 @@ Parsers.CCDA.allergies = function (ccda) {
     var data = {}, el;
     data.entries = [];
     data.displayName = "Allergies";
-    data.templateId = "";
+    data.templateId = allergies.tag('templateId').attr('root');
     data.text = allergies.tag('text').val(true);
   
   allergies.entries().each(function(entry) {
@@ -3211,59 +3212,59 @@ Parsers.CCDA.allergies = function (ccda) {
  */
 
 Parsers.CCDA.care_plan = function (ccda) {
-  
-  var data = [], el;
-  
-  var data = {}, el;
-      care_plan = ccda.section('care_plan');
-      data.entries = [];
-      data.displayName = "Care Plan";
-      data.templateId = "";
-      data.text = care_plan.tag('text').val(true);
-  
-  care_plan.entries().each(function(entry) {
-    
-    var name = null,
-        code = null,
-        code_system = null,
-        code_system_name = null;
 
-    // Plan of care encounters, which have no other details
-    el = entry.template('2.16.840.1.113883.10.20.22.4.40');
-    if (!el.isEmpty()) {
-      name = 'encounter';
-    } else {
-      el = entry.tag('code');
-      
-      name = el.attr('displayName');
-      code = el.attr('code');
-      code_system = el.attr('codeSystem');
-      code_system_name = el.attr('codeSystemName');
-    }
+    var data = [], el;
 
-    var text = Core.stripWhitespace(entry.tag('text').val(true));
-    var time = entry.tag('effectiveTime').immediateChildTag('center').attr('value');
-    
-    data.entries.push({
-      text: text,
-      name: name,
-      code: code,
-      code_system: code_system,
-      code_system_name: code_system_name,
-      effective_time: parse(time)
+    var data = {}, el;
+    care_plan = ccda.section('care_plan');
+    data.entries = [];
+    data.displayName = "Care Plan";
+    data.templateId = care_plan.tag('templateId').attr('root');
+    data.text = care_plan.tag('text').val(true);
+
+    care_plan.entries().each(function (entry) {
+
+        var name = null,
+            code = null,
+            code_system = null,
+            code_system_name = null;
+
+        // Plan of care encounters, which have no other details
+        el = entry.template('2.16.840.1.113883.10.20.22.4.40');
+        if (!el.isEmpty()) {
+            name = 'encounter';
+        } else {
+            el = entry.tag('code');
+
+            name = el.attr('displayName');
+            code = el.attr('code');
+            code_system = el.attr('codeSystem');
+            code_system_name = el.attr('codeSystemName');
+        }
+
+        var text = Core.stripWhitespace(entry.tag('text').val(true));
+        var time = entry.tag('effectiveTime').immediateChildTag('center').attr('value');
+
+        data.entries.push({
+            text: text,
+            name: name,
+            code: code,
+            code_system: code_system,
+            code_system_name: code_system_name,
+            effective_time: parse(time)
+        });
     });
-  });
-  
-  return data;
-  
-  function parse(str) {
-    if (!str) return null;
-    var y = str.substr(0,4),
-        m = str.substr(4,2) - 1,
-        d = str.substr(6,2);
-    var D = new Date(y,m,d);
-    return (D.getFullYear() == y && D.getMonth() == m && D.getDate() == d) ? D : null;
-  }
+
+    return data;
+
+    function parse(str) {
+        if (!str) return null;
+        var y = str.substr(0, 4),
+            m = str.substr(4, 2) - 1,
+            d = str.substr(6, 2);
+        var D = new Date(y, m, d);
+        return (D.getFullYear() == y && D.getMonth() == m && D.getDate() == d) ? D : null;
+    }
 };
 ;
 
@@ -3382,7 +3383,7 @@ Parsers.CCDA.encounters = function (ccda) {
   var data = {}, el;
   data.entries = [];
   data.displayName = "Encounters";
-  data.templateId = "";
+  data.templateId = encounters.tag('templateId').attr('root');
   data.text = encounters.tag('text').val(true);
   
   encounters.entries().each(function(entry) {
@@ -3530,12 +3531,12 @@ Parsers.CCDA.immunizations = function (ccda) {
 
   administeredData.entries = [];
   administeredData.displayName = "Immunizations";
-  administeredData.templateId = "";
+  administeredData.templateId = immunizations.tag('templateId').attr('root');
   administeredData.text = immunizations.tag('text').val(true);
 
   declinedData.entries = [];
   declinedData.displayName = "Immunizations Declined";
-  declinedData.templateId = "";
+  declinedData.templateId = immunizations.tag('templateId').attr('root');
   declinedData.text = immunizations.tag('text').val(true);
   
   immunizations.entries().each(function(entry) {
@@ -3645,6 +3646,7 @@ Parsers.CCDA.instructions = function (ccda) {
   var data = [], el;
   
   var instructions = ccda.section('instructions');
+  data.templateId = instructions.tag('templateId').attr('root');
   
   instructions.entries().each(function(entry) {
 
@@ -3683,10 +3685,8 @@ Parsers.CCDA.results = function (ccda) {
   var data = {}, el;
   data.entries = [];
   data.displayName = "Results";
-  data.templateId = "";
+  data.templateId = results.tag('templateId').attr('root');
   data.text = results.tag('text').val(true);
-  
-
   
   results.entries().each(function(entry) {
     
@@ -3790,7 +3790,7 @@ Parsers.CCDA.medications = function (ccda) {
   var data = {}, el;
   data.entries = [];
   data.displayName = "Medications";
-  data.templateId = "";
+  data.templateId = medications.tag('templateId').attr('root');
   data.text = medications.tag('text').val(true);
 
   medications.entries().each(function(entry) {
@@ -3976,7 +3976,7 @@ Parsers.CCDA.problems = function (ccda) {
   var data = {}, el;
   data.entries = [];
   data.displayName = "Problems";
-  data.templateId = "";
+  data.templateId = problems.tag('templateId').attr('root');
   data.text = problems.tag('text').val(true);
   
   problems.entries().each(function(entry) {
@@ -4048,7 +4048,7 @@ Parsers.CCDA.procedures = function (ccda) {
   var data = {}, el;
   data.entries = [];
   data.displayName = "Procedures";
-  data.templateId = "";
+  data.templateId = procedures.tag('templateId').attr('root');
   data.text = procedures.tag('text').val(true);
   
   procedures.entries().each(function(entry) {
@@ -4182,7 +4182,7 @@ Parsers.CCDA.vitals = function (ccda) {
   var data = {}, el;
   data.entries = [];
   data.displayName = "Vitals";
-  data.templateId = "";
+  data.templateId = vitals.tag('templateId').attr('root');
   data.text = vitals.tag('text').val(true);
 
   vitals.entries().each(function(entry) {
@@ -4237,27 +4237,48 @@ Parsers.GenericInfo = function (ccda, data) {
         }
     };
 
+    var containsTemplateId = function(templateId, data) {
+        for (var property in data) {
+            if (data.hasOwnProperty(property)) {
+                var p = data[property].templateId;
+                //var display = this[property].displayName;
+                if(p) {
+                    if(p === templateId) {
+                        //console.log("TemplateId Match " + templateId + " " + display);
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    };
+
     var allSections = ccda.elsByTag('section');
     allSections.each = each;
 
-    console.log("ALL SECTIONS");
-    console.log(allSections);
-
     allSections.each(function(s) {
 
-
         var code = s.tag('code').attr('displayName');
+        var templateId =  s.tag('templateId').attr('root');
 
-        console.log("Section Title " + code);
+        var existingTemplateId = containsTemplateId(templateId, data);
 
         if (code) {
             var nodeName = code.split(' ').join('_').toLowerCase();
-            if (!data[nodeName]) {
+
+            //console.log("NODE NAME " + nodeName);
+
+            if (!data[nodeName] && !existingTemplateId) {
+                //console.log("CREATE NODE " + code);
                 data[nodeName] = {};
             }
-            data[nodeName].displayName = code;
-            data[nodeName].templateId = s.tag('templateId').attr('root');
-            data[nodeName].text = s.tag('text').val(true);
+
+            if(data[nodeName]) {
+                data[nodeName].displayName = code;
+                data[nodeName].templateId = templateId;
+                data[nodeName].text = s.tag('text').val(true);
+            }
+
         }
     });
 };;
