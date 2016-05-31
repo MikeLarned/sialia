@@ -103,5 +103,7 @@ import { languages } from '../../utilities/lang';
     formatLanguage(languageCode) {
       return languages[languageCode] || 'an uknown language';
     }
+    
+    // religion: http://www.hl7.org/documentcenter/public_temp_44EED454-1C23-BA17-0CCDE88B4D98F6FD/standards/vocabulary/vocabulary_tables/infrastructure/vocabulary/ReligiousAffiliation.html
   </script>
 </demographics>
