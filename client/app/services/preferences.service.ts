@@ -27,27 +27,22 @@ export class PreferencesService  {
 
     getPreferences(docType: DocType): Preferences {
 
-        var id = docType.templateId;
-        var storageId = "doc_" + id;
+        let id = docType.templateId,
+            storageId = "doc_" + id,
+            prefString = localStorage.getItem(storageId),
+            pref = JSON.parse(prefString),
+            isSet = pref !== null;
 
-        var prefString = localStorage.getItem(storageId);
-        var pref = JSON.parse(prefString);
-        var isSet = pref !== null;
-
-        if(!isSet) {
+        if (!isSet) {
             pref = {
                 id: id,
                 isSet: isSet,
                 type: docType,
-                sortedSectionKeys: []
+                enabledSectionKeys: null,
+                sortedSectionKeys: null
             };
         }
 
-        //console.log("Doc Pref " + pref.isSet);
-        //console.log(pref.type.templateId);
-        //console.log(pref.sortedSectionKeys);
-        //console.log(pref.type.displayName);
-
-        return pref;
+        return new Preferences(pref);
     }
 }

@@ -12,43 +12,32 @@ export class DocumentsService {
 
   getSections(bb: any, sections: Section[], ignoreSections: string[], pref: Preferences): Section[] {
 
-    var isSectionEnabled = function(key, pref) {
-      if(!pref) return false;
-      return _.some(pref.enabledSectionKeys, (k) => {
-        return k == key;
-      });
-    };
 
-    var indexOfSection = function(key, pref) {
-        if(!pref) return -1;
-        var index = pref.sortedSectionKeys.indexOf(key);
-        //console.log(key + " " + index);
-        return index;
-    };
 
     let allSections = [];
     _.each(bb.data, (val, key) => {
-      if (ignoreSections.indexOf(key) !== -1) return;
-      var match = _.find(sections, (s) => s.key === key);
+      if (_.includes(ignoreSections, key)) return;
+      let match = _.find(sections, s => s.key === key);
       if (match) {
-        match.sort = indexOfSection(key, pref);
+        match.sort = pref.indexOfSection(key);
         allSections.push(match);
       }
       else allSections.push({
         key: key,
         display: val.displayName || key,
         tagName: 'generic',
-        icon: 'asterisk'
+        icon: 'asterisk',
+        sort: pref.indexOfSection(key)
       });
     });
 
-    allSections = _.sortBy(allSections, (item) => {
-        return item.sort;
-    });
+    // sort by name first, then by sort order
+    allSections = _.sortBy(allSections, s => s.display.toLowerCase());
+    allSections = _.sortBy(allSections, s => s.sort);
 
     // init sort and enabled
     _.each(allSections, (val, index) => {
-      val.enabled = isSectionEnabled(val.key, pref);
+      val.enabled = pref.isSectionEnabled(val.key);
     });
 
     return allSections;
@@ -78,7 +67,6 @@ export class DocumentsService {
       sections: this.getSections(bb, SECTIONS, IGNORE_SECTIONS, pref),
       data: bb.data,
       pref: pref,
-
     };
   }
 }
