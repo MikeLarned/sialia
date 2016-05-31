@@ -13,7 +13,7 @@ var config = {
     lib: base + 'lib/**/*.*',
     ts: base + 'app/**/*.ts',
     html: base + '*.html',
-    html: base + 'app/**/*.tag',
+    tag: base + 'app/**/*.tag',
     styles: base + 'styles/',
     sass: base + 'styles/*.scss',
     build: base + 'build/build.js'

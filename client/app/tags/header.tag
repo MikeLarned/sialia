@@ -1,5 +1,5 @@
+import _ from 'lodash';
 import { DocumentsService } from '../services';
-import { PreferencesService } from '../services';
 import { DOCUMENTS } from '../config';
 
 <header>
@@ -38,8 +38,8 @@ import { DOCUMENTS } from '../config';
               <span class="caret"></span>
             </a>
             <ul class="dropdown-menu" aria-labelledby="jump">
-              <li each={ documents }>
-                <a href="#" onclick={ view }>
+              <li each={ documents } class={ active: active }>
+                <a href="#" onclick={ load }>
                   { name }
                 </a>
               </li>
@@ -73,29 +73,36 @@ import { DOCUMENTS } from '../config';
       </div>
     </div>
   </nav>
-
+  
   <script>
     this.documents = DOCUMENTS;
     this.service = new DocumentsService();
-    this.preferencesService = new PreferencesService();
+    this.documents[2].active = true;
 
-    view(e) {
-      this.service.fetch(e.item.url).subscribe((options) => {
-          if (!options) return;
+    load(e) {
+      this.toggleActive(e);
+      this.service.fetch(e.item.url).subscribe(function(options) {
+        if (!options) return;
 
         if(!options.pref.isSet) {
           this.parent.showPreferences = true;
         };
-
+        
         this.parent.update(options);
         riot.update();
-      });
+      }.bind(this));
     }
 
     showPreferences() {
       this.parent.showPreferences = true;
       this.parent.update();
     }
+    
+    toggleActive(e) {
+      _.each(this.documents, function(d) {
+        d.active = false;
+      });
+      e.item.active = true;
+    }
   </script>
-
 </header>
