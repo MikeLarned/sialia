@@ -12,8 +12,6 @@ export class DocumentsService {
 
   getSections(bb: any, sections: Section[], ignoreSections: string[], pref: Preferences): Section[] {
 
-
-
     let allSections = [];
     _.each(bb.data, (val, key) => {
       if (_.includes(ignoreSections, key)) return;
