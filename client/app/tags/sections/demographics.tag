@@ -1,6 +1,7 @@
 import moment from 'moment';
 import _ from 'lodash';
 import '../../utilities/lodashmixins';
+import { languages } from '../../utilities/lang';
 
 <demographics>
   <div class="panel panel-default" id="demographics">
@@ -25,7 +26,11 @@ import '../../utilities/lodashmixins';
       <ul class="fa-ul">
         <li class="narrative">
           <i class="fa fa-li fa-female" title="Demographics"></i>
-          <p>{ opts.demographics.name.given[0] } is a { opts.demographics.marital_status } { opts.demographics.race } { opts.demographics.gender } who observes { opts.demographics.religion } and speaks { opts.demographics.language }.</p>
+          <p>
+            <strong>{ opts.demographics.name.given[0] }</strong> is a 
+            <strong>{ opts.demographics.marital_status } { opts.demographics.race } { opts.demographics.gender }</strong> whose religion is 
+            <strong>{ opts.demographics.religion }</strong> and speaks <strong>{ formatLanguage(opts.demographics.language) }</strong>.
+            </p>
         </li>
         <li>
           <i class="fa fa-li fa-map-marker" title="Address"></i>
@@ -93,6 +98,10 @@ import '../../utilities/lodashmixins';
         pretty = '(' + c[0] + c[1] + c[2] + ') ' + c[3] + c[4] + c[5] + '-' + c[6] + c[7] + c[8] + c[9];
       }
       return pretty;
+    }
+    
+    formatLanguage(languageCode) {
+      return languages[languageCode] || 'Unspecified';
     }
   </script>
 </demographics>
