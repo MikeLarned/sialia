@@ -1,8 +1,8 @@
 import moment from 'moment';
 
 <medications>
-    <panel section={ opts.section } entries={ opts.data.entries }>
-        <div each={ opts.entries }>
+    <panel section={ opts.section } data={ opts.data }>
+        <div each={ opts.data.entries }>
             <div class="row">
                 <div class="col-md-12">
                     <div class="header-row">

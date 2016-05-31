@@ -120,8 +120,14 @@ h1 {
     }
 }
 
-panel.generic h5 {
-  font-weight: bold;
+panel {
+    &.collapsed .panel-body {
+        display: none;
+    }
+    
+    &.expanded.fade {
+        opacity: 1;
+    }
 }
 
 .section-icon {
@@ -165,6 +171,10 @@ preference-section {
     .fa {
         transition: all 0.05s ease;
     }
+}
+
+.fade {
+    opacity: .45;
 }
 
 list {

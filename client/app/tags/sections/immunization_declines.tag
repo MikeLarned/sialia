@@ -1,5 +1,5 @@
 <immunization-declines>
-  <panel section={ opts.section } entries={ opts.data.entries }>
-    <empty if={ !opts.entries.length } />
+  <panel section={ opts.section } data={ opts.data }>
+    <empty if={ !opts.data.entries.length } />
   </panel>
 </immunization-declines>
