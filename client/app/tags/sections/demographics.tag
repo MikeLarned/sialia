@@ -101,7 +101,7 @@ import { languages } from '../../utilities/lang';
     }
     
     formatLanguage(languageCode) {
-      return languages[languageCode] || 'Unspecified';
+      return languages[languageCode] || 'an uknown language';
     }
   </script>
 </demographics>
