@@ -1,5 +1,5 @@
-Copyright (c) 2016 Mike Larned <mlarned@gmail.com>
-Copyright (c) 2016 Douglas Ludlow <doug.ludlow@gmail.com>
+Copyright (c) 2016 Mike Larned <mlarned@gmail.com> <br />
+Copyright (c) 2016 Douglas Ludlow <doug.ludlow@gmail.com> <br />
 Copyright (c) 2016 Blake Erickson <o.blakeerickson@gmail.com>
 
 Licensed under the Apache License, Version 2.0 (the "License");
