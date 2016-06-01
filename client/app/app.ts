@@ -21,3 +21,4 @@ export class App {
   }
 }
 
+window['Sialia'] = App;

@@ -20,7 +20,7 @@
         var url = "http://sialia.ria.ms/files";
         var documents = $.get(url, function(docs) {
             SystemJS.import('client').then(function(x) {
-                new x.App({
+                new Sialia({
                     docs: docs
                 })
             }).catch(console.error.bind(console));
