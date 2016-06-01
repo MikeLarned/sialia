@@ -1,4 +1,4 @@
-<viewer>
+<sialia>
   <header data={ data } sections={ sections } documents={ documents }/>
   <div class="container-fluid">
     <div class="row">
@@ -35,4 +35,4 @@
         self.showNonXml = self.data.document.type.nonXmlBody.type !== "";
     });
   </script>
-</viewer>
+</sialia>

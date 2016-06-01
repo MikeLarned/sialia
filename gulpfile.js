@@ -16,7 +16,7 @@ var config = {
     tag: base + 'app/**/*.tag',
     styles: base + 'styles/',
     sass: base + 'styles/*.scss',
-    build: base + 'build/build.js'
+    build: base + 'build/sialia.js'
 };
 
 gulp.task('default', ['sass', 'jspm']);

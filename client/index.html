@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -10,23 +11,26 @@
     <script src="../jspm.browser.js"></script>
     <script src="../jspm.config.js"></script>
 </head>
+
 <body>
 
-    <viewer></viewer>
+    <sialia></sialia>
 
-    <script src="build/build.js"></script>
+    <script src="build/sialia.js"></script>
     <script>
-
-        var url = "http://sialia.ria.ms/files";
-        var documents = $.get(url, function(docs) {
-            SystemJS.import('client').then(function(x) {
-                new Sialia({
-                    docs: docs
-                })
-            }).catch(console.error.bind(console));
+        SystemJS.import('client')
+            .then(function() {
+                var url = "http://sialia.ria.ms/files";
+                var documents = $.get(url, function(docs) {
+                    new Sialia({
+                        docs: docs
+                    });
+                });
+            })
+            .catch(console.error.bind(console));
         });
-
     </script>
 
 </body>
+
 </html>

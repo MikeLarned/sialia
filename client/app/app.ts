@@ -16,7 +16,7 @@ export class App {
 
     this.service.fetch(documents[0].Url).subscribe((options) => {
       options.documents = documents;
-      riot.mount('viewer', options);
+      riot.mount('sialia', options);
     });
   }
 }

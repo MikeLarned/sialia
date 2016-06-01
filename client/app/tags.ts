@@ -1,4 +1,4 @@
-import './tags/viewer.tag!';
+import './tags/sialia.tag!';
 import './tags/preferences.tag!';
 import './tags/name.tag!';
 import './tags/header.tag!';
