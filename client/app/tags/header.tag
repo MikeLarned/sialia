@@ -1,6 +1,5 @@
 import { DocumentsService } from '../services';
 import { PreferencesService } from '../services';
-import { DOCUMENTS } from '../config';
 
 <header>
   <nav class="navbar navbar-default navbar-fixed-top">
@@ -40,7 +39,7 @@ import { DOCUMENTS } from '../config';
             <ul class="dropdown-menu" aria-labelledby="jump">
               <li each={ documents }>
                 <a href="#" onclick={ view }>
-                  { name }
+                  { Name }
                 </a>
               </li>
             </ul>
@@ -75,12 +74,14 @@ import { DOCUMENTS } from '../config';
   </nav>
 
   <script>
-    this.documents = DOCUMENTS;
+
+
+    this.documents = this.opts.documents;
     this.service = new DocumentsService();
     this.preferencesService = new PreferencesService();
 
     view(e) {
-      this.service.fetch(e.item.url).subscribe((options) => {
+      this.service.fetch(e.item.Url).subscribe((options) => {
           if (!options) return;
 
         if(!options.pref.isSet) {

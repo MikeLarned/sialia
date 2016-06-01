@@ -1,5 +1,5 @@
 <viewer>
-  <header data={ data } sections={ sections }/>
+  <header data={ data } sections={ sections } documents={ documents }/>
   <div class="container-fluid">
     <div class="row">
       <div class="col-lg-3 col-sm-4 hidden-xs" id="placeholder"></div>
@@ -26,6 +26,7 @@
     this.sections = opts.sections;
     this.showPreferences = !opts.pref.isSet;
     this.showNonXml = self.data.document.type.nonXmlBody.type;
+    this.documents = opts.documents;
     this.dictionary = this.sections.reduce(function(o, x){ o[x.key] = x; return o; }, {});
 
     this.on('update', function() {

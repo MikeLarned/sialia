@@ -16,7 +16,16 @@
 
     <script src="build/build.js"></script>
     <script>
-        SystemJS.import('client').catch(console.error.bind(console));
+
+        var url = "http://sialia.ria.ms/files";
+        var documents = $.get(url, function(docs) {
+            SystemJS.import('client').then(function(x) {
+                new x.App({
+                    docs: docs
+                })
+            }).catch(console.error.bind(console));
+        });
+
     </script>
 
 </body>
