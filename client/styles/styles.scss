@@ -7,195 +7,198 @@ $fa-font-path: "../../jspm_packages/npm/font-awesome@4.6.1/fonts";
 $body-bg: #f2f2f2;
 $mild: #ffdc67; //$mild: #ffea18;
 
-body {
-    padding-top: 65px;
+sialia {
     background-color: $body-bg;
-}
-
-h1 {
-    margin-bottom: 20px;
-    color: #666;
-}
-
-.panel-heading h2 {
-    margin: 10px 0 15px;
-}
-
-.panel {
-    .toggle-body {
-        z-index: 1;
-        color: #000;
-    }
-}
-
-.alert-info {
-    font-size: .94em;
-    background-color: #eee;
-    padding: 15px;
-    color: #666;
-}
-
-.document-info {
-    font-size: .8em;
-    margin-top: -15px;
-}
-
-.header-name {
-    display: block;
-}
-
-.header-date {
-    display: inline-block;
-}
-
-.header-small {
-   font-size: .8em;
-    font-color: #ccc;
-}
-
-.header-row {
-    border-bottom: 1px solid #eee;
-    margin: 0 10px 10px 10px;
-    padding-bottom: 5px;
-}
-.table-borderless tbody tr td, .table-borderless tbody tr th, .table-borderless thead tr th {
-    border: none;
-}
-
-.alert-mild {
-    @include alert-variant($mild, $mild, #000);
-}
-
-.reasons {
-    padding: 3px;
-    background-color: #fafafa;
-    border: 1px solid #eee;
-}
-@media (min-width: $screen-sm-min) {
-    #left {
-        position: fixed;
-        padding-right: 8px;
-    }
-
-    #right {
-        padding-left: 7px;
-    }
-
-    #jump-nav {
-        margin-right: 15px;
-    }
-}
-
-#demographics {
-    .fa-ul {
-        margin-left: 24px;
-    }
-
-    address {
-        margin-bottom: 10px;
-    }
-}
-
-.panel-heading {
-    position: relative;
-
-    .toggle-body {
-        position: absolute;
-        bottom: 11px;
-        right: 15px;
-    }
-}
-
-.panel-body,
-.panel-heading {
-    & > *:last-child {
-        margin-bottom: 0;
-    }
-}
-
-.panel-body > ul:last-child > li:last-child > *:last-child {
-    #demographics-summary &,
-    & {
-        margin-bottom: 0;
-    }
-}
-
-panel {
-    &.collapsed .panel-body {
-        display: none;
-    }
     
-    &.expanded.fade {
-        opacity: 1;
+    .sialia-body {
+        padding-top: 65px;
     }
-}
 
-.section-icon {
-    margin-right: 8px;
-}
-
-.section-item-count {
-    margin-left: 5px;
-    vertical-align: bottom;
-}
-
-.badge-muted,
-.panel-default > .panel-heading .badge-muted {
-    background-color: #bbb;
-}
-
-preferences {
-    display: block;
-
-    h2 {
-        line-height: 44px;
+    h1 {
+        margin-bottom: 20px;
+        color: #666;
     }
-}
 
-preference-section {
-    display: block;
-
-    &.gu-mirror {
-        cursor: grabbing;
+    .panel-heading h2 {
+        margin: 10px 0 15px;
     }
-}
 
-.preferences-section {
-    cursor: move;
-    cursor: grab;
-}
-
-.section-toggle {
-    cursor: pointer;
-
-    .fa {
-        transition: all 0.05s ease;
+    .panel {
+        .toggle-body {
+            z-index: 1;
+            color: #000;
+        }
     }
-}
 
-.fade {
-    opacity: .45;
-}
-
-list {
-  display: block;
-
-  item {
-    display: list-item;
-    list-style-type: none;
-    margin-bottom: 10px;
-
-    content[id^=problem] {
-      display: block;
-      font-weight: bold;
+    .alert-info {
+        font-size: .94em;
+        background-color: #eee;
+        padding: 15px;
+        color: #666;
     }
-  }
-}
 
-paragraph {
-  display: block;
+    .document-info {
+        font-size: .8em;
+        margin-top: -15px;
+    }
 
-  &[stylecode=Bold] {
-    font-weight: bold;
-  }
+    .header-name {
+        display: block;
+    }
+
+    .header-date {
+        display: inline-block;
+    }
+
+    .header-small {
+    font-size: .8em;
+        font-color: #ccc;
+    }
+
+    .header-row {
+        border-bottom: 1px solid #eee;
+        margin: 0 10px 10px 10px;
+        padding-bottom: 5px;
+    }
+    .table-borderless tbody tr td, .table-borderless tbody tr th, .table-borderless thead tr th {
+        border: none;
+    }
+
+    .alert-mild {
+        @include alert-variant($mild, $mild, #000);
+    }
+
+    .reasons {
+        padding: 3px;
+        background-color: #fafafa;
+        border: 1px solid #eee;
+    }
+    @media (min-width: $screen-sm-min) {
+        #left {
+            position: fixed;
+            padding-right: 8px;
+        }
+
+        #right {
+            padding-left: 7px;
+        }
+
+        #jump-nav {
+            margin-right: 15px;
+        }
+    }
+
+    #demographics {
+        .fa-ul {
+            margin-left: 24px;
+        }
+
+        address {
+            margin-bottom: 10px;
+        }
+    }
+
+    .panel-heading {
+        position: relative;
+
+        .toggle-body {
+            position: absolute;
+            bottom: 11px;
+            right: 15px;
+        }
+    }
+
+    .panel-body,
+    .panel-heading {
+        & > *:last-child {
+            margin-bottom: 0;
+        }
+    }
+
+    .panel-body > ul:last-child > li:last-child > *:last-child {
+        #demographics-summary &,
+        & {
+            margin-bottom: 0;
+        }
+    }
+
+    panel {
+        &.collapsed .panel-body {
+            display: none;
+        }
+        
+        &.expanded.fade {
+            opacity: 1;
+        }
+    }
+
+    .section-icon {
+        margin-right: 8px;
+    }
+
+    .section-item-count {
+        margin-left: 5px;
+        vertical-align: bottom;
+    }
+
+    .badge-muted,
+    .panel-default > .panel-heading .badge-muted {
+        background-color: #bbb;
+    }
+
+    preferences {
+        display: block;
+
+        h2 {
+            line-height: 44px;
+        }
+    }
+
+    preference-section {
+        display: block;
+
+        &.gu-mirror {
+            cursor: grabbing;
+        }
+    }
+
+    .preferences-section {
+        cursor: move;
+        cursor: grab;
+    }
+
+    .section-toggle {
+        cursor: pointer;
+
+        .fa {
+            transition: all 0.05s ease;
+        }
+    }
+
+    .fade {
+        opacity: .45;
+    }
+
+    list {
+        display: block;
+
+        item {
+            display: list-item;
+            list-style-type: none;
+            margin-bottom: 10px;
+
+            content[id^=problem] {
+                display: block;
+                font-weight: bold;
+            }
+        }
+    }
+
+    paragraph {
+        display: block;
+
+        &[stylecode=Bold] {
+            font-weight: bold;
+        }
+    }
 }
