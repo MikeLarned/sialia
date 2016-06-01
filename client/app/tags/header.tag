@@ -1,5 +1,6 @@
+import _ from 'lodash';
 import { DocumentsService } from '../services';
-import { DOCUMENTS } from '../config';
+import { PreferencesService } from '../services';
 
 <header>
   <nav class="navbar navbar-default navbar-fixed-top">
@@ -37,9 +38,9 @@ import { DOCUMENTS } from '../config';
               <span class="caret"></span>
             </a>
             <ul class="dropdown-menu" aria-labelledby="jump">
-              <li each={ documents }>
-                <a href="#" onclick={ view }>
-                  { name }
+              <li each={ documents } class={ active: active }>
+                <a href="#" onclick={ load }>
+                  { Name }
                 </a>
               </li>
             </ul>
@@ -72,22 +73,37 @@ import { DOCUMENTS } from '../config';
       </div>
     </div>
   </nav>
-
+  
   <script>
-    this.documents = DOCUMENTS;
-    this.service = new DocumentsService();
 
-    view(e) {
-      this.service.fetch(e.item.url).subscribe((options) => {
+
+    this.documents = this.opts.documents;
+    this.service = new DocumentsService();
+    this.documents[2].active = true;
+
+    load(e) {
+      this.toggleActive(e);
+      this.service.fetch(e.item.Url).subscribe(function(options) {
+        if (!options) return;
+        if(!options.pref.isSet) {
+          this.parent.showPreferences = true;
+        };
+        
         this.parent.update(options);
         riot.update();
-      });
+      }.bind(this));
     }
 
     showPreferences() {
       this.parent.showPreferences = true;
       this.parent.update();
     }
+    
+    toggleActive(e) {
+      _.each(this.documents, function(d) {
+        d.active = false;
+      });
+      e.item.active = true;
+    }
   </script>
-
 </header>

@@ -1,11 +1,14 @@
-import './tags/viewer.tag!';
+import './tags/sialia.tag!';
 import './tags/preferences.tag!';
 import './tags/name.tag!';
 import './tags/header.tag!';
 import './tags/panel.tag!';
 import './tags/ccda-section.tag!';
+import './tags/raw.tag!';
+import './tags/nonxml.tag!';
+import './tags/sections/empty.tag!';
+import './tags/sections/generic.tag!';
 import './tags/sections/demographics.tag!';
-import './tags/sections/allergies-summary.tag!';
 import './tags/sections/allergies.tag!';
 import './tags/sections/care-plan.tag!';
 import './tags/sections/chief-complaint.tag!';

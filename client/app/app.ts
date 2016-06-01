@@ -4,17 +4,21 @@ import './tags';
 import 'bootstrap-sass';
 import riot from 'riot';
 import { DocumentsService } from './services';
-import { DOCUMENTS } from './config';
+import { PreferencesService } from './services';
 
 export class App {
 
   service: DocumentsService = new DocumentsService();
 
-  constructor() {
-    this.service.fetch(DOCUMENTS[2].url).subscribe((options) => {
-      riot.mount('viewer', options);
+  constructor(options: any) {
+
+    var documents = options.docs;
+
+    this.service.fetch(documents[0].Url).subscribe((options) => {
+      options.documents = documents;
+      riot.mount('sialia', options);
     });
   }
 }
 
-new App();
+window['Sialia'] = App;
