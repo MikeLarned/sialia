@@ -27,9 +27,9 @@ import { languages } from '../../utilities/lang';
         <li class="narrative">
           <i class="fa fa-li fa-female" title="Demographics"></i>
           <p>
-            <strong>{ opts.demographics.name.given[0] }</strong> is a 
-            <strong>{ opts.demographics.marital_status } { opts.demographics.race } { opts.demographics.gender }</strong> whose religion is 
-            <strong>{ opts.demographics.religion }</strong> and speaks <strong>{ formatLanguage(opts.demographics.language) }</strong>.
+            <strong>{ opts.demographics.name.given[0] }</strong> is a
+            <strong>{ opts.demographics.marital_status } { opts.demographics.race } { opts.demographics.gender }</strong> whose religion is
+            <strong>{ opts.demographics.religion || 'unspecified' }</strong> and speaks <strong>{ formatLanguage(opts.demographics.language) }</strong>.
             </p>
         </li>
         <li>
@@ -99,11 +99,11 @@ import { languages } from '../../utilities/lang';
       }
       return pretty;
     }
-    
+
     formatLanguage(languageCode) {
-      return languages[languageCode] || 'an uknown language';
+      return languageCode && languages[languageCode.toLowerCase()] || 'an uknown language';
     }
-    
+
     // religion: http://www.hl7.org/documentcenter/public_temp_44EED454-1C23-BA17-0CCDE88B4D98F6FD/standards/vocabulary/vocabulary_tables/infrastructure/vocabulary/ReligiousAffiliation.html
   </script>
 </demographics>

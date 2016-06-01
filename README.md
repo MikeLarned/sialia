@@ -1,6 +1,10 @@
-# ccdaview
+# SaliaJS
 
 CCDA Rendering Tool
+
+### Demo
+
+http://mikelarned.github.io/sialia/client/
 
 ### Building
 
@@ -16,7 +20,6 @@ To use BrowserSync as a development server and watch for file changes, run the f
 ```bash
 gulp serve
 ```
-
 
 ### BlueButton Updates
 
