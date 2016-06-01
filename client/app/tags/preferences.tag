@@ -65,7 +65,7 @@ import { PreferencesService } from '../services';
   <li class="list-group-item preferences-section text-right">
     <label class="checkbox-inline pull-left">
       <input type="checkbox" checked={ enabled } onchange={ change }>
-      { display }
+      <i class="fa fa-{ icon }"></i> { display }
     </label>
     <i class="fa fa-bars" title="Drag to sort"></i>
   </div>
