@@ -4349,8 +4349,6 @@ Parsers.CCDAR2 = (function () {
 
   var run = function (ccda) {
 
-    console.log("CCDAR2 Parsing");
-
     var data = {};
 
     data.document              = Parsers.CCDAR2.document(ccda);
@@ -4639,18 +4637,7 @@ Parsers.CCD.document = function (ccda) {
 
   // Parse Doc Type Info
   var templates =  doc.elsByTag('templateId');
-
-  console.log("CCDA");
-  console.log(ccda.section('document'));
-
-  console.log("DOC");
-  console.log(doc);
-
-  console.log("TEMPLATES");
-  console.log(templates);
-  console.log(templates[0].attr('root'));
-
-
+  
   var rootTemplate = templates[0].attr('root');
   var secondTemplate;
   if(templates.length >1)
