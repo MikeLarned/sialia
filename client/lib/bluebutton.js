@@ -1039,6 +1039,8 @@ var Documents = (function () {
       return 'ccda';
     } else if(!data.template('2.16.840.1.113883.10.20.22.1.15').isEmpty()) {
       return 'ccdar2';
+    }else if(!data.template('2.16.840.1.113883.10.20.22.1.2').isEmpty()) {
+      return 'ccd';
     }
   };
   
@@ -1454,6 +1456,62 @@ Documents.CCDAR2 = (function () {
                 return this.template('2.16.840.1.113883.10.20.22.1.15');
             case 'demographics':
                 return this.template('2.16.840.1.113883.10.20.22.1.15');
+            case 'health_concerns_document':
+                el = this.template('2.16.840.1.113883.10.20.22.2.58');
+                el.entries = entries;
+                return el;
+            case 'goals':
+                el = this.template('2.16.840.1.113883.10.20.22.2.60');
+                el.entries = entries;
+                return el;
+            case 'interventions':
+                el = this.template('2.16.840.1.113883.10.20.21.2.3');
+                el.entries = entries;
+                return el;
+            case 'health_status_outcomes':
+                el = this.template('2.16.840.1.113883.10.20.22.2.61');
+                el.entries = entries;
+                return el;
+        }
+
+        return null;
+    };
+
+
+    return {
+        process: process,
+        section: section
+    };
+
+})();
+;
+
+/*
+ * ...
+ */
+
+Documents.CCD = (function () {
+
+    /*
+     * Preprocesses the CCDAR2 document
+     */
+    var process = function (ccda) {
+        ccda.section = section;
+        return ccda;
+    };
+
+
+    /*
+     * Finds the section of a CCDA document
+     */
+    var section = function (name) {
+        var el, entries = Documents.entries;
+
+        switch (name) {
+            case 'document':
+                return this.template('2.16.840.1.113883.10.20.22.1.2');
+            case 'demographics':
+                return this.template('2.16.840.1.113883.10.20.22.1.2');
             case 'health_concerns_document':
                 el = this.template('2.16.840.1.113883.10.20.22.2.58');
                 el.entries = entries;
@@ -4290,6 +4348,9 @@ Parsers.GenericInfo = function (ccda, data) {
 Parsers.CCDAR2 = (function () {
 
   var run = function (ccda) {
+
+    console.log("CCDAR2 Parsing");
+
     var data = {};
 
     data.document              = Parsers.CCDAR2.document(ccda);
@@ -4327,6 +4388,7 @@ Parsers.CCDAR2.document = function (ccda) {
 
   // Parse Doc Type Info
   var templates =  doc.elsByTag('templateId');
+
   var rootTemplate = templates[0].attr('root');
   var secondTemplate;
   if(templates.length >1)
@@ -4533,6 +4595,184 @@ Parsers.CCDAR2.health_concerns_document = function (ccda) {
 ;
 
 /*
+ * Parser for the CCDAR2 document
+ */
+
+Parsers.CCD = (function () {
+
+  var run = function (ccda) {
+
+    var data = {};
+
+    data.document              = Parsers.CCD.document(ccda);
+    data.demographics          = Parsers.CCDA.demographics(ccda);
+    data.health_concerns_document  = Parsers.CCDAR2.health_concerns_document(ccda);
+    data.json                  = Core.json;
+
+    // Decorate each section with Title, templateId and text and adds missing sections
+    Parsers.GenericInfo(ccda, data);
+
+    return data;
+  };
+
+  return {
+    run: run
+  };
+
+})();
+;
+
+/*
+ * Parser for the CCDAR2 document section
+ */
+
+Parsers.CCD.document = function (ccda) {
+
+  var parseDate = Documents.parseDate;
+  var parseName = Documents.parseName;
+  var parseAddress = Documents.parseAddress;
+  var data = {}, el;
+
+  var doc = ccda.section('document');
+  var date = parseDate(doc.tag('effectiveTime').attr('value'));
+  var title = Core.stripWhitespace(doc.tag('title').val());
+
+  // Parse Doc Type Info
+  var templates =  doc.elsByTag('templateId');
+
+  console.log("CCDA");
+  console.log(ccda.section('document'));
+
+  console.log("DOC");
+  console.log(doc);
+
+  console.log("TEMPLATES");
+  console.log(templates);
+  console.log(templates[0].attr('root'));
+
+
+  var rootTemplate = templates[0].attr('root');
+  var secondTemplate;
+  if(templates.length >1)
+    secondTemplate = templates[1].attr('root');
+  else
+    secondTemplate = rootTemplate;
+
+  var loinc = doc.tag('code').attr('code');
+  var templateId = doc.tag('templateId').attr('root');
+  var displayName = doc.tag('code').attr('displayName');
+
+  var nonXml = doc.tag('nonXMLBody');
+  var nonXmlNodes = nonXml.el.childNodes;
+
+  var bodyType = "structured";
+  var nonXmlBody = {
+    type: "",
+    mediaType: "",
+    representation: "",
+    rawText: "",
+    reference: ""
+  };
+  if(nonXmlNodes && nonXmlNodes.length > 0) {
+    bodyType = "unstructured";
+    var text = nonXml.tag('text');
+    var mediaType = "";
+    var representation = "";
+    var rawText = "";
+    var reference = "";
+    var type = "";
+
+    // We have an embedded doc
+    if(text && text.attr('mediaType')) {
+      mediaType = text.attr('mediaType');
+      representation = text.attr('representation');
+      rawText = text.val();
+      type = "embedded";
+    }
+
+    if(text && !mediaType) {
+      reference = text.tag('reference').attr('value');
+      type = "reference";
+    }
+    nonXmlBody = {
+      type: type,
+      mediaType: mediaType,
+      representation: representation,
+      rawText: rawText,
+      reference: reference
+    }
+  }
+
+  var docType = {
+    type: "CCDAR2",
+    rootTemplateId: rootTemplate,
+    templateId: secondTemplate,
+    displayName: displayName,
+    loinc: loinc,
+    bodyType: bodyType,
+    nonXmlBody: nonXmlBody
+  };
+
+  var author = doc.tag('author');
+  el = author.tag('assignedPerson').tag('name');
+  var name_dict = parseName(el);
+
+  el = author.tag('addr');
+  var address_dict = parseAddress(el);
+
+  el = author.tag('telecom');
+  var work_phone = el.attr('value');
+
+  var documentation_of_list = [];
+  var performers = doc.tag('documentationOf').elsByTag('performer');
+  for (var i = 0; i < performers.length; i++) {
+    el = performers[i];
+    var performer_name_dict = parseName(el);
+    var performer_phone = el.tag('telecom').attr('value');
+    var performer_addr = parseAddress(el.tag('addr'));
+    documentation_of_list.push({
+      name: performer_name_dict,
+      phone: {
+        work: performer_phone
+      },
+      address: performer_addr
+    });
+  }
+
+  el = doc.tag('encompassingEncounter').tag('location');
+  var location_name = Core.stripWhitespace(el.tag('name').val());
+  var location_addr_dict = parseAddress(el.tag('addr'));
+
+  var encounter_date = null;
+  el = el.tag('effectiveTime');
+  if (!el.isEmpty()) {
+    encounter_date = parseDate(el.attr('value'));
+  }
+
+  data = {
+    type: docType,
+    date: date,
+    title: title,
+    author: {
+      name: name_dict,
+      address: address_dict,
+      phone: {
+        work: work_phone
+      }
+    },
+    documentation_of: documentation_of_list,
+    location: {
+      name: location_name,
+      address: location_addr_dict,
+      encounter_date: encounter_date
+    }
+  };
+
+  return data;
+};
+;
+
+/*
  * ...
  */
 
@@ -4582,6 +4822,10 @@ var BlueButton = function (source, opts) {
       case 'ccdar2':
         parsedData = Documents.CCDAR2.process(parsedData);
         parsedDocument = Parsers.CCDAR2.run(parsedData);
+        break;
+      case 'ccd':
+        parsedData = Documents.CCD.process(parsedData);
+        parsedDocument = Parsers.CCD.run(parsedData);
         break;
       case 'json':
         /* Expects a call like:
