@@ -1,4 +1,4 @@
-# SaliaJS
+# SialiaJS
 
 CCDA Rendering Tool
 
