@@ -13,7 +13,7 @@ C-CDA files uploaded at sialia.ria.ms and will be available for testing in the d
 
 ### Installation
 
-```html
+```
 <!DOCTYPE html>
 <html lang="en">
 
@@ -50,14 +50,14 @@ The 'docs' parameter is an array of document objects containing a Name and Url. 
 through jquery for our Sialia instance.  Here is an example docs array object.
 
 ```javascript
-{
+[{
   Name: "CCD_1",
   Url: "http://sialia.ria.ms:80/file/CCD_1"
 },
 {
   Name: "Doc2",
   Url: "http://sialia.ria.ms:80/file/Doc2"
-}
+}]
 ```
 
 ### Building
