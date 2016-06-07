@@ -13,7 +13,7 @@ C-CDA files uploaded at sialia.ria.ms and will be available for testing in the d
 
 ### Installation
 
-```
+```html
 <!DOCTYPE html>
 <html lang="en">
 
