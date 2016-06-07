@@ -46,7 +46,19 @@ C-CDA files uploaded at sialia.ria.ms and will be available for testing in the d
 3. Load a set of documents for sialia to consume.
 4. Create a new Sialia instance.
 
+The 'docs' parameter is an array of document objects containing a Name and Url.  Each URL would return an xml cda document with a mime type of text/html; charset=utf-8.  Our example loads a set of docs
+through jquery for our Sialia instance.  Here is an example docs array object.
 
+```
+{
+  Name: "CCD_1",
+  Url: "http://sialia.ria.ms:80/file/CCD_1"
+},
+{
+  Name: "Doc2",
+  Url: "http://sialia.ria.ms:80/file/Doc2"
+}
+```
 
 ### Building
 
