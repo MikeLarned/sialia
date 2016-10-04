@@ -46,18 +46,13 @@ export class DocumentsService {
       $.get(url, (content) => {
         observer.next(this.load(content));
         observer.complete();
-      });
+      }, 'text');
     });
   }
 
   load(data: any): ViewerOptions {
     let bb = BlueButton(data);
-    // console.log(bb);
-
-    if (!bb.data) {
-      console.log('BlueButton could not parse the file.');
-      return null;
-    }
+    if (!bb.data) throw 'BlueButton could not parse the file.';
 
     let pref = new PreferencesService().getPreferences(bb.data.document.type);
 

@@ -75,7 +75,7 @@ SystemJS.config({
     "rxjs": "npm:rxjs@5.0.0-beta.8",
     "stream": "github:jspm/nodelibs-stream@0.2.0-alpha",
     "string_decoder": "github:jspm/nodelibs-string_decoder@0.2.0-alpha",
-    "tag": "github:dougludlow/systemjs-riot@master",
+    "tag": "npm:systemjs-riot@1.4.2",
     "tls": "github:jspm/nodelibs-tls@0.2.0-alpha",
     "tty": "github:jspm/nodelibs-tty@0.2.0-alpha",
     "tweetnacl": "npm:tweetnacl@0.13.3",
@@ -85,13 +85,6 @@ SystemJS.config({
     "zlib": "github:jspm/nodelibs-zlib@0.2.0-alpha"
   },
   packages: {
-    "github:dougludlow/systemjs-riot@master": {
-      "map": {
-        "fs": "github:jspm/nodelibs-fs@0.1.2",
-        "path": "github:jspm/nodelibs-path@0.1.0",
-        "riot-compiler": "npm:riot-compiler@2.4.1"
-      }
-    },
     "github:jspm/nodelibs-buffer@0.2.0-alpha": {
       "map": {
         "buffer-browserify": "npm:buffer@4.6.0"
@@ -110,11 +103,6 @@ SystemJS.config({
     "github:jspm/nodelibs-os@0.2.0-alpha": {
       "map": {
         "os-browserify": "npm:os-browserify@0.2.1"
-      }
-    },
-    "github:jspm/nodelibs-path@0.1.0": {
-      "map": {
-        "path-browserify": "npm:path-browserify@0.0.0"
       }
     },
     "github:jspm/nodelibs-punycode@0.2.0-alpha": {
@@ -947,6 +935,11 @@ SystemJS.config({
     "npm:verror@1.3.6": {
       "map": {
         "extsprintf": "npm:extsprintf@1.0.2"
+      }
+    },
+    "npm:systemjs-riot@1.4.2": {
+      "map": {
+        "riot-compiler": "npm:riot-compiler@2.5.5"
       }
     }
   }

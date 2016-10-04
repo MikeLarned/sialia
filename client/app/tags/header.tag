@@ -79,7 +79,7 @@ import { PreferencesService } from '../services';
 
     this.documents = this.opts.documents;
     this.service = new DocumentsService();
-    this.documents[2].active = true;
+    this.documents[0].active = true;
 
     load(e) {
       this.toggleActive(e);
