@@ -1,11 +1,11 @@
 {
-  "name": "ccdaview-js",
+  "name": "ccdaview",
   "version": "1.0.0",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
   "license": "Apache-2.0",
   "scripts": {
-    "postinstall": "webpack"
+    "postinstall": "\"webpack\""
   },
   "dependencies": {
     "blue-button": "^1.10.1",
