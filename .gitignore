@@ -43,3 +43,9 @@ client/build
 
 #Idea Folder
 .idea/
+
+#.vs Folder
+.vs/
+
+#Compiled files
+dist/

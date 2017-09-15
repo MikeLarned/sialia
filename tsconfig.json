@@ -1,12 +1,19 @@
 {
     "compilerOptions": {
-        "module": "system",
-        "target": "es5",
+        "module": "commonjs",
+        "target": "es2015",
         "noImplicitAny": false,
-        "sourceMap": false
+        "sourceMap": true,
+        "declaration": true,
+        "outDir": "dist"
     },
     "exclude": [
-        "node_modules"
+        "node_modules",
+        "dist"
+    ],
+    "include": [
+        "dist/index.d.ts",
+        "app/**/*"
     ],
     // Atom settings
     "compileOnSave": false
