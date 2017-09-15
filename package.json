@@ -6,7 +6,7 @@
   "license": "Apache-2.0",
   "scripts": {
     "pack": "webpack",
-    "postinstall": "node install.js"
+    "postinstall": "node_modules/.bin/webpack"
   },
   "dependencies": {
     "blue-button": "^1.10.1",
