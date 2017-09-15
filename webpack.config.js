@@ -1,20 +1,20 @@
 var webpack             = require('webpack'),
     path                = require('path');
 
-//function DtsBundlerPlugin(){}
-//DtsBundlerPlugin.prototype.apply = function(compiler) {
-//    compiler.plugin('done', function() {
-//        var dts = require('dts-bundle');
-//
-//        dts.bundle({
-//            name: 'index',
-//            main: 'dist/**/*.d.ts',
-//            out: 'index.d.ts',
-//            removeSource: true,
-//            outputAsModuleFolder: true
-//        })
-//    });
-//};
+function DtsBundlerPlugin(){}
+DtsBundlerPlugin.prototype.apply = function(compiler) {
+    compiler.plugin('done', function() {
+        var dts = require('dts-bundle');
+
+        dts.bundle({
+            name: 'index',
+            main: 'dist/**/*.d.ts',
+            out: 'index.d.ts',
+            removeSource: true,
+            outputAsModuleFolder: true
+        })
+    });
+};
 
 module.exports = {
     entry: {
@@ -27,9 +27,9 @@ module.exports = {
     resolve: {
         extensions: ['.scss', '.ts', '.tsx', '.js']
     },
-    //plugins: [
-    //    new DtsBundlerPlugin()
-    //],
+    plugins: [
+        new DtsBundlerPlugin()
+    ],
     module: {
         rules: [
             { 
