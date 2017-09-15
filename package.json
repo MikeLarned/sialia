@@ -5,7 +5,8 @@
   "typings": "dist/index.d.ts",
   "license": "Apache-2.0",
   "scripts": {
-    "postinstall": "\"webpack\""
+    "pack": "webpack",
+    "postinstall": "node install.js"
   },
   "dependencies": {
     "blue-button": "^1.10.1",
