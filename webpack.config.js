@@ -14,6 +14,20 @@ module.exports = {
     },
     module: {
         rules: [
+            { 
+                test: /\.tag$/, 
+                loader: 'riot-tag-loader', 
+                exclude: /node_modules/,
+                enforce: "pre",
+                query: {
+                    format: 'ems'
+                }
+            },
+            {
+                test: /\.ts$/,
+                enforce: "pre",
+                loader: 'tslint-loader'
+            },
             { test: /\.ts$/, use: ['ts-loader'], exclude: /(node_modules|dist)/ },
             {
                 test: /\.(png|jpg|gif|svg|eot|ttf|woff|woff2)$/,
@@ -35,16 +49,7 @@ module.exports = {
                     }, 
                     { loader: 'sass-loader' }
                 ]
-            },
-            { 
-                test: /\.tag$/, 
-                loader: 'riot-tag-loader', 
-                exclude: /node_modules/,
-                enforce: "pre",
-                query: {
-                    format: 'ems'
-                }
-            }
+            }            
         ]
     }
 }
