@@ -22,13 +22,27 @@ module.exports = {
     },
     output: {
         path: path.join(__dirname, "dist"),
-        filename: "index.d.js"
+        filename: "index.d.js",
+        library: "ccdaview"
     },
     resolve: {
         extensions: ['.scss', '.ts', '.tsx', '.js']
     },
     plugins: [
         new DtsBundlerPlugin()
+    ],
+    externals: [
+        "riot",
+        "rxjs",
+        "font-awesome",
+        "jquery",
+        "lodash",
+        "blue-button",
+        "bootstrap",
+        "bootstrap-sass",
+        "dragula",
+        "file-load",
+        "bootswatch"
     ],
     module: {
         rules: [
