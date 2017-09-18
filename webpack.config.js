@@ -46,7 +46,7 @@ module.exports = {
                 enforce: "pre",
                 loader: 'tslint-loader'
             },
-            { test: /\.ts$/, use: ['ts-loader'], exclude: /(node_modules|dist)/ },
+            { test: /\.ts$/, use: ['ts-loader'], exclude: /dist/ },
             {
                 test: /\.(png|jpg|gif|svg|eot|ttf|woff|woff2)$/,
                 loader: 'url-loader',
