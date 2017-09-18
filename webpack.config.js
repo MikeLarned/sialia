@@ -21,9 +21,10 @@ module.exports = {
         'app': "./app/app.ts"
     },
     output: {
-        path: path.join(__dirname, "dist"),
+        path: path.resolve(__dirname, "dist"),
         filename: "index.d.js",
-        library: "ccdaview"
+        library: "ccdaview",
+        libraryTarget: "umd"
     },
     resolve: {
         extensions: ['.scss', '.ts', '.tsx', '.js']
