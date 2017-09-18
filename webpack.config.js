@@ -34,8 +34,7 @@ module.exports = {
         rules: [
             { 
                 test: /\.tag$/, 
-                loader: 'riot-tag-loader', 
-                exclude: /node_modules/,
+                loader: 'riot-tag-loader',
                 enforce: "pre",
                 query: {
                     format: 'ems'
