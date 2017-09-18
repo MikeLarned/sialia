@@ -22,7 +22,7 @@ module.exports = {
     },
     output: {
         path: path.resolve(__dirname, "dist"),
-        filename: "index.d.js",
+        filename: "index.js",
         library: "ccdaview",
         libraryTarget: "umd"
     },
