@@ -32,7 +32,7 @@ module.exports = {
     plugins: [
         new DtsBundlerPlugin()
     ],
-    externals: [
+    /*externals: [
         "riot",
         "rxjs",
         "font-awesome",
@@ -44,7 +44,7 @@ module.exports = {
         "dragula",
         "file-load",
         "bootswatch"
-    ],
+    ],*/
     module: {
         rules: [
             { 
