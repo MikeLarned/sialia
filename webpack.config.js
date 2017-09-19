@@ -30,7 +30,10 @@ module.exports = {
         extensions: ['.scss', '.ts', '.tsx', '.js']
     },
     plugins: [
-        new DtsBundlerPlugin()
+        new DtsBundlerPlugin(),
+        new webpack.ProvidePlugin({
+            lodash: 'lodash'
+        })
     ],
     /*externals: [
         "riot",
