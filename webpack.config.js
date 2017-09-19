@@ -1,5 +1,6 @@
 var webpack             = require('webpack'),
-    path                = require('path');
+    path                = require('path')
+    nodeExternals       = require('webpack-node-externals');
 
 function DtsBundlerPlugin(){}
 DtsBundlerPlugin.prototype.apply = function(compiler) {
@@ -20,6 +21,8 @@ module.exports = {
     entry: {
         'app': "./app/app.ts"
     },
+    target: "node",
+    externals: [nodeExternals()],
     output: {
         path: path.resolve(__dirname, "dist"),
         filename: "index.js",
@@ -29,12 +32,6 @@ module.exports = {
     resolve: {
         extensions: ['.scss', '.ts', '.tsx', '.js']
     },
-    plugins: [
-        new DtsBundlerPlugin(),
-        new webpack.ProvidePlugin({
-            lodash: 'lodash'
-        })
-    ],
     /*externals: [
         "riot",
         "rxjs",

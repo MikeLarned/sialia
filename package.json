@@ -26,6 +26,7 @@
     "css-loader": "^0.28.7",
     "dts-bundle": "^0.7.3",
     "dtsbundler-webpack-plugin": "^1.0.0",
+    "file-loader": "^0.11.2",
     "node-sass": "^4.5.3",
     "postcss-loader": "^2.0.6",
     "precss": "^2.0.0",
@@ -39,6 +40,6 @@
     "typescript-simple": "^8.0.4",
     "url-loader": "^0.5.9",
     "webpack": "^3.5.6",
-    "file-loader": "^0.11.2"
+    "webpack-node-externals": "^1.6.0"
   }
 }
