@@ -58,7 +58,7 @@ export class DocumentsService {
   }
 
   load(data: any): ViewerOptions {
-    let bb = BlueButton.parseString(data);
+    let bb = BlueButton.parse(data);
     if (!bb.data) throw 'BlueButton could not parse the file.';
 
     let pref = new PreferencesService().getPreferences(bb.data.document.type);
