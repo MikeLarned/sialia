@@ -1,12 +1,10 @@
 import $ from 'jquery';
-import * as lodash from 'lodash';
-import * as BlueButton from 'blue-button';
+import _ from 'lodash';
+import BlueButton from 'blue-button';
 import { Observable } from 'rxjs/Observable';
 import { Section, ViewerOptions, Preferences } from '../models';
 import { SECTIONS, IGNORE_SECTIONS } from '../config';
 import { PreferencesService } from './preferences.service';
-
-var _ = lodash;
 
 let viewer: any;
 

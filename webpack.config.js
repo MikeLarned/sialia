@@ -1,6 +1,7 @@
-var webpack             = require('webpack'),
-    path                = require('path')
-    nodeExternals       = require('webpack-node-externals');
+var webpack                 = require('webpack'),
+    path                    = require('path')
+    nodeExternals           = require('webpack-node-externals'),
+    FixDefaultImportPlugin  = require('webpack-fix-default-import-plugin');
 
 let excludes = nodeExternals();
 
@@ -37,11 +38,14 @@ module.exports = {
         path: path.resolve(__dirname, "dist"),
         filename: "index.js",
         library: "ccdaview",
-        libraryTarget: "umd"
+        libraryTarget: "commonjs"
     },
     resolve: {
         extensions: ['.scss', '.ts', '.tsx', '.js']
     },
+    plugins: [
+        new FixDefaultImportPlugin()
+    ],
     module: {
         rules: [
             { 
