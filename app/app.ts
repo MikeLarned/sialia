@@ -14,10 +14,20 @@ export class App {
 
     var documents = options.docs;
 
-    this.service.fetch(documents[0].Url).subscribe((options) => {
-      options.documents = documents;
-      riot.mount('sialia', options);
-    });
+    if (documents[0] instanceof String) {
+      this.service.loadRaw(documents[0]).subscribe(documents => {
+        riot.mount('sialia', {
+          documents: documents
+        })
+      })
+    }
+    else
+    {
+      this.service.fetch(documents[0].Url).subscribe((options) => {
+        options.documents = documents;
+        riot.mount('sialia', options);
+      });
+    }    
   }
 }
 

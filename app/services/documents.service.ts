@@ -52,6 +52,13 @@ export class DocumentsService {
     });
   }
 
+  loadRaw(data: any): Observable<ViewerOptions> {
+    return Observable.create((observer) => {
+      observer.next(this.load(data));
+      observer.complete();
+    });
+  }
+
   load(data: any): ViewerOptions {
     let bb = BlueButton(data);
     if (!bb.data) throw 'BlueButton could not parse the file.';
