@@ -1,6 +1,6 @@
 import $ from 'jquery';
 import * as lodash from 'lodash';
-import BlueButton from 'blue-button';
+import * as BlueButton from 'blue-button';
 import { Observable } from 'rxjs/Observable';
 import { Section, ViewerOptions, Preferences } from '../models';
 import { SECTIONS, IGNORE_SECTIONS } from '../config';
