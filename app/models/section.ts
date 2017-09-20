@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import * as lodash from 'lodash';
 
 export interface Section {
   key: string;
@@ -10,7 +10,7 @@ export interface Section {
 }
 
 export function updateSortOrder(sections: Section[]): Section[] {
-  _.each(sections, (v, k) => {
+  lodash.each(sections, (v, k) => {
     v.sort = k;
   });
   return sections;
