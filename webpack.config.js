@@ -2,6 +2,15 @@ var webpack             = require('webpack'),
     path                = require('path')
     nodeExternals       = require('webpack-node-externals');
 
+let excludes = nodeExternals();
+
+excludes.lodash = {
+    commonjs: 'lodash',
+    commonjs2: 'lodash',
+    amd: '_',
+    root: '_'
+};
+
 function DtsBundlerPlugin(){}
 DtsBundlerPlugin.prototype.apply = function(compiler) {
     compiler.plugin('done', function() {
@@ -22,7 +31,7 @@ module.exports = {
         'app': "./app/app.ts"
     },
     target: "node",
-    externals: [nodeExternals()],
+    externals: [excludes],
     output: {
         path: path.resolve(__dirname, "dist"),
         filename: "index.js",
@@ -32,19 +41,6 @@ module.exports = {
     resolve: {
         extensions: ['.scss', '.ts', '.tsx', '.js']
     },
-    /*externals: [
-        "riot",
-        "rxjs",
-        "font-awesome",
-        "jquery",
-        "lodash",
-        "blue-button",
-        "bootstrap",
-        "bootstrap-sass",
-        "dragula",
-        "file-load",
-        "bootswatch"
-    ],*/
     module: {
         rules: [
             { 
