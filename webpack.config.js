@@ -31,11 +31,12 @@ module.exports = {
         'app': "./app/app.ts"
     },
     target: "node",
+    devtool: 'source-map',
     externals: [excludes],
     output: {
         path: path.resolve(__dirname, "dist"),
         filename: "index.js",
-        //library: "ccdaview",
+        library: "ccdaview",
         libraryTarget: "umd"
     },
     resolve: {
