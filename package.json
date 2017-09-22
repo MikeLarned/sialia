@@ -9,7 +9,7 @@
     "postinstall": "postinstall-build-yarn dist/sialia.js"
   },
   "dependencies": {
-    "blue-button": "^1.10.2",
+    "bluebutton": "github:LucasObendorf/bluebutton.js",
     "bootstrap": "^3.3.7",
     "bootstrap-sass": "^3.3.7",
     "bootswatch": "^3.3.7",
