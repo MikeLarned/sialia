@@ -7,11 +7,11 @@ export function getElementIndex(node: HTMLElement): number {
 }
 
 export function bootstrapize(html: string): any {
-  var $html = $('<div />');
+  let $html = $('<div />');
 
   $html.html(html);
 
-  var $all = $html.find('*').removeAttr('width border xmlns');
+  let $all = $html.find('*').removeAttr('width border xmlns');
 
   $all.filter('table')
     .addClass('table table-bordered table-striped');

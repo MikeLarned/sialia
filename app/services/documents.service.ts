@@ -1,6 +1,6 @@
 import $ from 'jquery';
 import _ from 'lodash';
-import BlueButton from 'bluebutton';
+import BlueButton from 'blue-button';
 import { Observable } from 'rxjs/Observable';
 import { Section, ViewerOptions, Preferences } from '../models';
 import { SECTIONS, IGNORE_SECTIONS } from '../config';
@@ -58,7 +58,7 @@ export class DocumentsService {
   }
 
   load(data: any): ViewerOptions {
-    let bb = BlueButton(data);
+    let bb = BlueButton.parse(data);
     if (!bb.data) throw 'BlueButton could not parse the file.';
 
     let pref = new PreferencesService().getPreferences(bb.data.document.type);

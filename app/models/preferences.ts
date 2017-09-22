@@ -1,6 +1,4 @@
-import * as lodash from 'lodash';
-
-var _ = lodash;
+import _ from 'lodash';
 
 export interface DocType {
   displayName: string;

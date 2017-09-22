@@ -12,31 +12,16 @@ excludes.lodash = {
     root: '_'
 };
 
-function DtsBundlerPlugin(){}
-DtsBundlerPlugin.prototype.apply = function(compiler) {
-    compiler.plugin('done', function() {
-        var dts = require('dts-bundle');
-
-        dts.bundle({
-            name: 'index',
-            main: 'dist/**/*.d.ts',
-            out: 'index.d.ts',
-            removeSource: true,
-            outputAsModuleFolder: true
-        })
-    });
-};
-
 module.exports = {
     entry: {
-        'app': "./app/app.ts"
+        'sialia': "./app/app.ts"
     },
     target: "node",
     devtool: 'source-map',
     externals: [excludes],
     output: {
         path: path.resolve(__dirname, "dist"),
-        filename: "index.js",
+        filename: "[name].js",
         library: "ccdaview",
         libraryTarget: "commonjs"
     },

@@ -1,16 +1,15 @@
 {
   "name": "ccdaview",
   "version": "1.0.0",
-  "main": "dist/index.js",
-  "module": "dist/index.js",
-  "typings": "dist/index.d.ts",
+  "main": "dist/sialia.js",
+  "module": "dist/sialia.js",
   "license": "Apache-2.0",
   "scripts": {
     "build": "webpack",
-    "postinstall": "postinstall-build-yarn dist/index.js"
+    "postinstall": "postinstall-build-yarn dist/sialia.js"
   },
   "dependencies": {
-    "bluebutton": "github:LucasObendorf/bluebutton.js",
+    "blue-button": "^1.10.2",
     "bootstrap": "^3.3.7",
     "bootstrap-sass": "^3.3.7",
     "bootswatch": "^3.3.7",
@@ -25,8 +24,6 @@
   },
   "devDependencies": {
     "css-loader": "^0.28.7",
-    "dts-bundle": "^0.7.3",
-    "dtsbundler-webpack-plugin": "^1.0.0",
     "file-loader": "^0.11.2",
     "node-sass": "^4.5.3",
     "postcss-loader": "^2.0.6",
