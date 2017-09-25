@@ -47,11 +47,11 @@ export class DocumentsService {
         try {
           let loadedData = this.load(content);
           observer.next(loadedData);
+          observer.complete();
         }
         catch (e) {
           observer.error(e);
         }
-        observer.complete();
       }, 'text');
     });
   }
@@ -60,18 +60,19 @@ export class DocumentsService {
     return Observable.create((observer) => {
       try {
         let loadedData = this.load(data);
-        observer.next(loadedData);
+        observer.next(loadedData);        
+        observer.complete();
       }
       catch (e) {
         observer.error(e);
       }
-      observer.complete();
     });
   }
 
   load(data: any): ViewerOptions {
     let bb = BlueButton.parse(data);
     if (!bb.data) throw 'BlueButton could not parse the file.';
+    console.log(bb);
 
     let pref = new PreferencesService().getPreferences(bb.data.document.type);
 
