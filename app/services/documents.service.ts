@@ -51,7 +51,6 @@ export class DocumentsService {
         catch (e) {
           observer.error(e);
         }
-        observer.next(this.load(content));
         observer.complete();
       }, 'text');
     });

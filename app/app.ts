@@ -10,7 +10,7 @@ export class App {
 
   service: DocumentsService = new DocumentsService();
 
-  constructor(options: any, errorHandler?: (err: string) => void) {
+  constructor(options: any, errorHandler?: (err: any) => void) {
 
     let documents = options.docs;
 
