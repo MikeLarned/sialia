@@ -17,6 +17,7 @@ export class App {
     if (lodash.isString(docs[0])) {
       this.service.loadRaw(docs[0])
         .subscribe(options => {
+          options.documents = docs;
           riot.mount('sialia', options);
           },
           errorHandler);
