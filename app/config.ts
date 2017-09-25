@@ -1,4 +1,4 @@
-import * as lodash from 'lodash';
+import _ from 'lodash';
 import { Section, Document } from './models';
 
 export const SECTIONS: Section[] = [
@@ -37,7 +37,7 @@ let fileNames: string[] = [
   'UD 2.xml',
 ];
 
-export const DOCUMENTS: Document[] = lodash.map(fileNames, (name) => ({
+export const DOCUMENTS: Document[] = _.map(fileNames, (name) => ({
   name: name,
   url: `${root}${name}`
 }));

@@ -60,7 +60,7 @@ export class DocumentsService {
     return Observable.create((observer) => {
       try {
         let loadedData = this.load(data);
-        observer.next(loadedData);        
+        observer.next(loadedData);
         observer.complete();
       }
       catch (e) {
@@ -74,7 +74,7 @@ export class DocumentsService {
     if (!bb.data) throw 'BlueButton could not parse the file.';
     console.log(bb);
 
-    let pref = new PreferencesService().getPreferences(bb.data.document.type);
+    let pref = new PreferencesService().getPreferences(bb.meta.identifiers[0]);
 
     return {
       sections: this.getSections(bb, SECTIONS, IGNORE_SECTIONS, pref),
