@@ -44,6 +44,13 @@ export class DocumentsService {
   fetch(url: string): Observable<ViewerOptions> {
     return Observable.create((observer) => {
       $.get(url, (content) => {
+        try {
+          let loadedData = this.load(content);
+          observer.next(loadedData);
+        }
+        catch (e) {
+          observer.error(e);
+        }
         observer.next(this.load(content));
         observer.complete();
       }, 'text');
@@ -53,10 +60,11 @@ export class DocumentsService {
   loadRaw(data: any): Observable<ViewerOptions> {
     return Observable.create((observer) => {
       try {
-        observer.next(this.load(data));
+        let loadedData = this.load(data);
+        observer.next(loadedData);
       }
-      catch (err) {
-        observer.error(err);
+      catch (e) {
+        observer.error(e);
       }
       observer.complete();
     });
