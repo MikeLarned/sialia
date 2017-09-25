@@ -25,7 +25,7 @@
     this.pref = opts.pref;
     this.sections = opts.sections;
     this.showPreferences = !opts.pref.isSet;
-    this.showNonXml = self.data.document.type.nonXmlBody.type;
+    this.showNonXml = false;//self.data.document.type.nonXmlBody.type;
     this.documents = opts.documents;
     this.dictionary = this.sections.reduce(function(o, x){ o[x.key] = x; return o; }, {});
     this.on('update', function() {
