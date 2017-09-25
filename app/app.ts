@@ -12,20 +12,18 @@ export class App {
 
   constructor(options: any, errorHandler?: (err: any) => void) {
 
-    let documents = options.docs;
+    let docs = options.docs;
 
-    if (lodash.isString(documents[0])) {
-      this.service.loadRaw(documents[0])
-        .subscribe(documents => {
-          riot.mount('sialia', {
-            documents: documents
+    if (lodash.isString(docs[0])) {
+      this.service.loadRaw(docs[0])
+        .subscribe(options => {
+          riot.mount('sialia', options);
           },
           errorHandler);
-      });
     } else {
-      this.service.fetch(documents[0].Url)
+      this.service.fetch(docs[0].Url)
         .subscribe((options) => {
-          options.documents = documents;
+          options.documents = docs;
           riot.mount('sialia', options);
         },
         errorHandler);
