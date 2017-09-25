@@ -52,7 +52,12 @@ export class DocumentsService {
 
   loadRaw(data: any): Observable<ViewerOptions> {
     return Observable.create((observer) => {
-      observer.next(this.load(data));
+      try {
+        observer.next(this.load(data));
+      }
+      catch (err) {
+        observer.error(err);
+      }
       observer.complete();
     });
   }
