@@ -1,7 +1,7 @@
 import '../styles/styles.scss';
 import './tags';
 import 'bootstrap-sass';
-import * as lodash from 'lodash';
+import _ from 'lodash';
 import riot from 'riot';
 import { DocumentsService } from './services';
 import { PreferencesService } from './services';
@@ -14,10 +14,12 @@ export class App {
 
     let docs = options.docs;
 
-    if (lodash.isString(docs[0])) {
+    if (_.isString(docs[0])) {
       this.service.loadRaw(docs[0])
         .subscribe(options => {
-          options.documents = docs;
+          options.documents = _.map(docs, (doc) => {
+            return { document: doc };
+          });
           riot.mount('sialia', options);
           },
           errorHandler);
