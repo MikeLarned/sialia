@@ -5,8 +5,7 @@
   "module": "dist/sialia.js",
   "license": "Apache-2.0",
   "scripts": {
-    "build": "webpack",
-    "postinstall": "postinstall-build-yarn dist/sialia.js"
+    "build": "webpack"
   },
   "dependencies": {
     "blue-button": "github:LucasObendorf/blue-button",
@@ -18,7 +17,6 @@
     "jquery": "^3.2.1",
     "lodash": "^4.16.4",
     "moment": "^2.18.1",
-    "postinstall-build-yarn": "^0.0.2",
     "riot": "^3.7.0",
     "rxjs": "^5.4.3"
   },
