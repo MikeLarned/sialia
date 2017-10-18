@@ -18,7 +18,7 @@ module.exports = {
     },
     target: "node",
     devtool: 'source-map',
-    externals: [excludes],
+    //externals: [excludes],
     output: {
         path: path.resolve(__dirname, "dist"),
         filename: "[name].js",
