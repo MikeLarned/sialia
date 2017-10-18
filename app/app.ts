@@ -13,13 +13,13 @@ export class App {
   constructor(options: any, errorHandler?: (err: any) => void) {
 
     let docs = options.docs;
-    
+
     this.service.fetch(docs[0].Url)
       .subscribe((options) => {
         options.documents = docs;
         riot.mount('sialia', options);
       },
-      errorHandler);    
+      errorHandler);
   }
 }
 

@@ -3,14 +3,16 @@ var webpack                 = require('webpack'),
     nodeExternals           = require('webpack-node-externals'),
     FixDefaultImportPlugin  = require('webpack-fix-default-import-plugin');
 
-let excludes = nodeExternals();
+let excludes = nodeExternals({
+    whitelist: ["blue-button", "lodash"]
+});
 
-excludes.lodash = {
+/*excludes.lodash = {
     commonjs: 'lodash',
     commonjs2: 'lodash',
     amd: '_',
     root: '_'
-};
+};*/
 
 module.exports = {
     entry: {
@@ -18,7 +20,7 @@ module.exports = {
     },
     target: "node",
     devtool: 'source-map',
-    //externals: [excludes],
+    externals: [excludes],
     output: {
         path: path.resolve(__dirname, "dist"),
         filename: "[name].js",
