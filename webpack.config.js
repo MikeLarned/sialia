@@ -4,7 +4,7 @@ var webpack                 = require('webpack'),
     FixDefaultImportPlugin  = require('webpack-fix-default-import-plugin');
 
 let excludes = nodeExternals({
-    whitelist: ["blue-button", "lodash"]
+    whitelist: ["blue-button"]
 });
 
 /*excludes.lodash = {
