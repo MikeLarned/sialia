@@ -652,6 +652,7 @@ class DocumentsService {
         });
     }
     load(data) {
+        console.log(bluebutton_1.default);
         let bb = bluebutton_1.default(data);
         console.log(bb);
         if (!bb.data)
