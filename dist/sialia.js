@@ -234,7 +234,7 @@ module.exports = require("moment");
 Object.defineProperty(exports, "__esModule", { value: true });
 __webpack_require__(11);
 __webpack_require__(17);
-__webpack_require__(55);
+__webpack_require__(54);
 const riot_1 = __webpack_require__(0);
 const services_1 = __webpack_require__(2);
 class App {
@@ -381,6 +381,7 @@ module.exports = require("bootstrap-sass/assets/fonts/bootstrap/glyphicons-halfl
 Object.defineProperty(exports, "__esModule", { value: true });
 __webpack_require__(18);
 __webpack_require__(19);
+__webpack_require__(30);
 __webpack_require__(31);
 __webpack_require__(32);
 __webpack_require__(33);
@@ -389,7 +390,7 @@ __webpack_require__(35);
 __webpack_require__(36);
 __webpack_require__(37);
 __webpack_require__(38);
-__webpack_require__(39);
+__webpack_require__(40);
 __webpack_require__(41);
 __webpack_require__(42);
 __webpack_require__(43);
@@ -403,7 +404,6 @@ __webpack_require__(50);
 __webpack_require__(51);
 __webpack_require__(52);
 __webpack_require__(53);
-__webpack_require__(54);
 
 
 /***/ }),
@@ -592,8 +592,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const jquery_1 = __webpack_require__(7);
 const lodash_1 = __webpack_require__(1);
 const bluebutton_1 = __webpack_require__(26);
-const Observable_1 = __webpack_require__(29);
-const config_1 = __webpack_require__(30);
+const Observable_1 = __webpack_require__(28);
+const config_1 = __webpack_require__(29);
 const preferences_service_1 = __webpack_require__(8);
 let viewer;
 class DocumentsService {
@@ -672,19 +672,224 @@ exports.DocumentsService = DocumentsService;
 /* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
-(function(root, factory) {
-    if(true) {
-        module.exports = factory();
-    }
-    else if(typeof define === 'function' && define.amd) {
-        define([], factory);
-    }
-    else {
-        root['BlueButton'] = factory();
-    }
-}(this, function() {
+exports["bluebutton"] =
+/******/ (function(modules) { // webpackBootstrap
+/******/ 	// The module cache
+/******/ 	var installedModules = {};
+/******/
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/
+/******/ 		// Check if module is in cache
+/******/ 		if(installedModules[moduleId]) {
+/******/ 			return installedModules[moduleId].exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = installedModules[moduleId] = {
+/******/ 			i: moduleId,
+/******/ 			l: false,
+/******/ 			exports: {}
+/******/ 		};
+/******/
+/******/ 		// Execute the module function
+/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+/******/
+/******/ 		// Flag the module as loaded
+/******/ 		module.l = true;
+/******/
+/******/ 		// Return the exports of the module
+/******/ 		(function (module) {
+/******/ 		  if (module.exports
+/******/ 		    && !module.exports.__esModule
+/******/ 		    && module.exports.default === undefined
+/******/ 		  ) {
+/******/ 		    if (module.exports.headers
+/******/ 		      && module.exports.headers.common
+/******/ 		      && module.exports.headers.common.Accept
+/******/ 		      && module.exports.adapter
+/******/ 		      && module.exports.transformRequest
+/******/ 		      && module.exports.transformResponse
+/******/ 		    ) {
+/******/ 		      return;
+/******/ 		    }
+/******/ 		    module.exports.default = module.exports;
+/******/ 		  }
+/******/ 		})(module);
+/******/ 		return module.exports;
+/******/ 	}
+/******/
+/******/
+/******/ 	// expose the modules object (__webpack_modules__)
+/******/ 	__webpack_require__.m = modules;
+/******/
+/******/ 	// expose the module cache
+/******/ 	__webpack_require__.c = installedModules;
+/******/
+/******/ 	// define getter function for harmony exports
+/******/ 	__webpack_require__.d = function(exports, name, getter) {
+/******/ 		if(!__webpack_require__.o(exports, name)) {
+/******/ 			Object.defineProperty(exports, name, {
+/******/ 				configurable: false,
+/******/ 				enumerable: true,
+/******/ 				get: getter
+/******/ 			});
+/******/ 		}
+/******/ 	};
+/******/
+/******/ 	// getDefaultExport function for compatibility with non-harmony modules
+/******/ 	__webpack_require__.n = function(module) {
+/******/ 		var getter = module && module.__esModule ?
+/******/ 			function getDefault() { return module['default']; } :
+/******/ 			function getModuleExports() { return module; };
+/******/ 		__webpack_require__.d(getter, 'a', getter);
+/******/ 		return getter;
+/******/ 	};
+/******/
+/******/ 	// Object.prototype.hasOwnProperty.call
+/******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
+/******/
+/******/ 	// __webpack_public_path__
+/******/ 	__webpack_require__.p = "";
+/******/
+/******/ 	// Load entry module and return exports
+/******/ 	return __webpack_require__(__webpack_require__.s = 0);
+/******/ })
+/************************************************************************/
+/******/ ([
+/* 0 */
+/***/ (function(module, exports, __webpack_require__) {
 
-/* BlueButton.js -- 0.4.3 */
+/*
+ * ...
+ */
+
+__webpack_require__(1)
+__webpack_require__(2)
+__webpack_require__(3)
+
+__webpack_require__(5)
+__webpack_require__(6)
+__webpack_require__(7)
+__webpack_require__(8)
+__webpack_require__(9)
+
+__webpack_require__(10)
+__webpack_require__(11)
+__webpack_require__(12)
+//require('./ccda_template.ejs')
+
+__webpack_require__(13)
+
+__webpack_require__(14)
+__webpack_require__(15)
+__webpack_require__(16)
+__webpack_require__(17)
+__webpack_require__(18)
+__webpack_require__(19)
+__webpack_require__(20)
+__webpack_require__(21)
+__webpack_require__(22)
+__webpack_require__(23)
+__webpack_require__(24)
+
+__webpack_require__(25)
+__webpack_require__(26)
+__webpack_require__(27)
+__webpack_require__(28)
+__webpack_require__(29)
+__webpack_require__(30)
+__webpack_require__(31)
+__webpack_require__(32)
+__webpack_require__(33)
+__webpack_require__(34)
+__webpack_require__(35)
+__webpack_require__(36)
+__webpack_require__(37)
+__webpack_require__(38)
+__webpack_require__(39)
+__webpack_require__(40)
+__webpack_require__(41)
+__webpack_require__(42)
+__webpack_require__(43)
+__webpack_require__(44)
+__webpack_require__(45)
+__webpack_require__(46)
+
+__webpack_require__(47)
+//require('./renderers/c32.js')
+//require('./renderers/ccda.js')
+
+
+/* exported BlueButton */
+module.exports.BlueButton = function (source, opts) {
+  var type, parsedData, parsedDocument;
+  
+  // Look for options
+  if (!opts) opts = {};
+  
+  // Detect and parse the source data
+  parsedData = Core.parseData(source);
+  
+  // Detect and parse the document
+  if (opts.parser) {
+    
+    // TODO: parse the document with provided custom parser
+    parsedDocument = opts.parser();
+    
+  } else {
+    type = Documents.detect(parsedData);
+    switch (type) {
+      case 'c32':
+        parsedData = Documents.C32.process(parsedData);
+        parsedDocument = Parsers.C32.run(parsedData);
+        break;
+      case 'ccda':
+        parsedData = Documents.CCDA.process(parsedData);
+        parsedDocument = Parsers.CCDA.run(parsedData);
+        break;
+      case 'ccdar2':
+        parsedData = Documents.CCDAR2.process(parsedData);
+        parsedDocument = Parsers.CCDAR2.run(parsedData);
+        break;
+      case 'ccd':
+        parsedData = Documents.CCD.process(parsedData);
+        parsedDocument = Parsers.CCD.run(parsedData);
+        break;
+      case 'json':
+        /* Expects a call like:
+         * BlueButton(json string, {
+         *   generatorType: 'ccda',
+         *   template: < EJS file contents >
+         * })
+         * The returned "type" will be the requested type (not "json")
+         * and the XML will be turned as a string in the 'data' key
+         */
+        switch (opts.generatorType) {
+          // only the unit tests ever need to worry about this testingMode argument
+          case 'c32':
+            type = 'c32';
+            parsedDocument = Generators.C32.run(parsedData, opts.template, opts.testingMode);
+            break;
+          case 'ccda':
+            type = 'ccda';
+            parsedDocument = Generators.CCDA.run(parsedData, opts.template, opts.testingMode);
+            break;
+        }
+    }
+  }
+  
+  return {
+    type: type,
+    data: parsedDocument,
+    source: parsedData
+  };
+
+};
+
+
+/***/ }),
+/* 1 */
+/***/ (function(module, exports) {
 
 /*
  * ...
@@ -829,7 +1034,11 @@ var Core = (function () {
   };
   
 })();
-;
+
+
+/***/ }),
+/* 2 */
+/***/ (function(module, exports) {
 
 /*
  * ...
@@ -1353,7 +1562,11 @@ Core.Codes = (function () {
   };
   
 })();
-;
+
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports, __webpack_require__) {
 
 /*
  * ...
@@ -1679,7 +1892,7 @@ Core.XML = (function () {
   if (true) {
     if (typeof module !== 'undefined' && module.exports) {
       isNode = true;
-      xmldom = __webpack_require__(27);
+      xmldom = __webpack_require__(4);
       doc = new xmldom.DOMImplementation().createDocument();
     }
   }
@@ -1690,7 +1903,17 @@ Core.XML = (function () {
   };
   
 })();
-;
+
+
+/***/ }),
+/* 4 */
+/***/ (function(module, exports) {
+
+module.exports = __webpack_require__(27);
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
 
 /*
  * ...
@@ -1891,7 +2114,11 @@ var Documents = (function () {
   };
   
 })();
-;
+
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports) {
 
 /*
  * ...
@@ -1989,7 +2216,11 @@ Documents.C32 = (function () {
   };
   
 })();
-;
+
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports) {
 
 /*
  * ...
@@ -2105,7 +2336,11 @@ Documents.CCDA = (function () {
   };
   
 })();
-;
+
+
+/***/ }),
+/* 8 */
+/***/ (function(module, exports) {
 
 /*
  * ...
@@ -2161,7 +2396,11 @@ Documents.CCDAR2 = (function () {
     };
 
 })();
-;
+
+
+/***/ }),
+/* 9 */
+/***/ (function(module, exports) {
 
 /*
  * ...
@@ -2217,7 +2456,11 @@ Documents.CCD = (function () {
     };
 
 })();
-;
+
+
+/***/ }),
+/* 10 */
+/***/ (function(module, exports) {
 
 /*
  * ...
@@ -2230,9 +2473,9 @@ var Generators = (function () {
 
   /* Import ejs if we're in Node. Then setup custom formatting filters
    */
-  if (true) {
+  /*if (typeof exports !== 'undefined') {
     if (typeof module !== 'undefined' && module.exports) {
-      ejs = __webpack_require__(28);
+      ejs = require("ejs");
     }
   }
 
@@ -2240,7 +2483,7 @@ var Generators = (function () {
     /* Filters are automatically available to ejs to be used like "... | hl7Date"
      * Helpers are functions that we'll manually pass in to ejs.
      * The intended distinction is that a helper gets called with regular function-call syntax
-     */
+     */ /*
     var pad = function(number) {
       if (number < 10) {
         return '0' + number;
@@ -2372,14 +2615,18 @@ var Generators = (function () {
       return tags;
     };
 
-  }
+  }*/
   
   return {
     method: method
   };
   
 })();
-;
+
+
+/***/ }),
+/* 11 */
+/***/ (function(module, exports) {
 
 /*
  * ...
@@ -2401,7 +2648,11 @@ Generators.C32 = (function () {
   };
   
 })();
-;
+
+
+/***/ }),
+/* 12 */
+/***/ (function(module, exports) {
 
 /*
  * ...
@@ -2448,7 +2699,11 @@ Generators.CCDA = (function () {
   };
   
 })();
-;
+
+
+/***/ }),
+/* 13 */
+/***/ (function(module, exports) {
 
 /*
  * ...
@@ -2464,7 +2719,11 @@ var Parsers = (function () {
   };
   
 })();
-;
+
+
+/***/ }),
+/* 14 */
+/***/ (function(module, exports) {
 
 /*
  * Parser for the C32 document
@@ -2536,7 +2795,11 @@ Parsers.C32 = (function () {
   };
   
 })();
-;
+
+
+/***/ }),
+/* 15 */
+/***/ (function(module, exports) {
 
 /*
  * Parser for the C32 document section
@@ -2681,7 +2944,11 @@ Parsers.C32.document = function (c32) {
   
   return data;
 };
-;
+
+
+/***/ }),
+/* 16 */
+/***/ (function(module, exports) {
 
 /*
  * Parser for the C32 allergies section
@@ -2795,7 +3062,11 @@ Parsers.C32.allergies = function (c32) {
   
   return data;
 };
-;
+
+
+/***/ }),
+/* 17 */
+/***/ (function(module, exports) {
 
 /*
  * Parser for the C32 demographics section
@@ -2895,7 +3166,11 @@ Parsers.C32.demographics = function (c32) {
   
   return data;
 };
-;
+
+
+/***/ }),
+/* 18 */
+/***/ (function(module, exports) {
 
 /*
  * Parser for the C32 encounters section
@@ -2986,7 +3261,11 @@ Parsers.C32.encounters = function (c32) {
   
   return data;
 };
-;
+
+
+/***/ }),
+/* 19 */
+/***/ (function(module, exports) {
 
 /*
  * Parser for the C32 immunizations section
@@ -3109,7 +3388,11 @@ Parsers.C32.immunizations = function (c32) {
     declined: declinedData
   };
 };
-;
+
+
+/***/ }),
+/* 20 */
+/***/ (function(module, exports) {
 
 /*
  * Parser for the C32 results (labs) section
@@ -3227,7 +3510,11 @@ Parsers.C32.results = function (c32) {
   
   return data;
 };
-;
+
+
+/***/ }),
+/* 21 */
+/***/ (function(module, exports) {
 
 /*
  * Parser for the C32 medications section
@@ -3424,7 +3711,11 @@ Parsers.C32.medications = function (c32) {
   
   return data;
 };
-;
+
+
+/***/ }),
+/* 22 */
+/***/ (function(module, exports) {
 
 /*
  * Parser for the C32 problems section
@@ -3502,7 +3793,11 @@ Parsers.C32.problems = function (c32) {
   
   return data;
 };
-;
+
+
+/***/ }),
+/* 23 */
+/***/ (function(module, exports) {
 
 /*
  * Parser for the C32 procedures section
@@ -3576,7 +3871,11 @@ Parsers.C32.procedures = function (c32) {
   
   return data;
 };
-;
+
+
+/***/ }),
+/* 24 */
+/***/ (function(module, exports) {
 
 /*
  * Parser for the C32 vitals section
@@ -3637,7 +3936,11 @@ Parsers.C32.vitals = function (c32) {
   
   return data;
 };
-;
+
+
+/***/ }),
+/* 25 */
+/***/ (function(module, exports) {
 
 /*
  * Parser for the CCDA document
@@ -3694,7 +3997,11 @@ Parsers.CCDA = (function () {
   };
   
 })();
-;
+
+
+/***/ }),
+/* 26 */
+/***/ (function(module, exports) {
 
 /*
  * Parser for the CCDA document section
@@ -3834,7 +4141,11 @@ Parsers.CCDA.document = function (ccda) {
   
   return data;
 };
-;
+
+
+/***/ }),
+/* 27 */
+/***/ (function(module, exports) {
 
 /*
  * Parser for the CCDA allergies section
@@ -3940,7 +4251,11 @@ Parsers.CCDA.allergies = function (ccda) {
   
   return data;
 };
-;
+
+
+/***/ }),
+/* 28 */
+/***/ (function(module, exports) {
 
 /*
  * Parser for the CCDA "plan of care" section
@@ -4001,7 +4316,11 @@ Parsers.CCDA.care_plan = function (ccda) {
         return (D.getFullYear() == y && D.getMonth() == m && D.getDate() == d) ? D : null;
     }
 };
-;
+
+
+/***/ }),
+/* 29 */
+/***/ (function(module, exports) {
 
 /*
  * Parser for the CCDA demographics section
@@ -4102,7 +4421,11 @@ Parsers.CCDA.demographics = function (ccda) {
   
   return data;
 };
-;
+
+
+/***/ }),
+/* 30 */
+/***/ (function(module, exports) {
 
 /*
  * Parser for the CCDA encounters section
@@ -4191,7 +4514,11 @@ Parsers.CCDA.encounters = function (ccda) {
   
   return data;
 };
-;
+
+
+/***/ }),
+/* 31 */
+/***/ (function(module, exports) {
 
 /*
  * Parser for any freetext section (i.e., contains just a single <text> element)
@@ -4210,7 +4537,11 @@ Parsers.CCDA.free_text = function (ccda, sectionName) {
 
   return data;
 };
-;
+
+
+/***/ }),
+/* 32 */
+/***/ (function(module, exports) {
 
 /*
  * Parser for the CCDA functional & cognitive status
@@ -4249,7 +4580,11 @@ Parsers.CCDA.functional_statuses = function (ccda) {
   
   return data;
 };
-;
+
+
+/***/ }),
+/* 33 */
+/***/ (function(module, exports) {
 
 /*
  * Parser for the CCDA immunizations section
@@ -4370,7 +4705,11 @@ Parsers.CCDA.immunizations = function (ccda) {
     declined: declinedData
   };
 };
-;
+
+
+/***/ }),
+/* 34 */
+/***/ (function(module, exports) {
 
 /*
  * Parser for the CCDA "plan of care" section
@@ -4404,7 +4743,11 @@ Parsers.CCDA.instructions = function (ccda) {
   
   return data;
 };
-;
+
+
+/***/ }),
+/* 35 */
+/***/ (function(module, exports) {
 
 /*
  * Parser for the CCDA results (labs) section
@@ -4511,7 +4854,11 @@ Parsers.CCDA.results = function (ccda) {
   
   return data;
 };
-;
+
+
+/***/ }),
+/* 36 */
+/***/ (function(module, exports) {
 
 /*
  * Parser for the CCDA medications section
@@ -4694,7 +5041,11 @@ Parsers.CCDA.medications = function (ccda) {
   
   return data;
 };
-;
+
+
+/***/ }),
+/* 37 */
+/***/ (function(module, exports) {
 
 /*
  * Parser for the CCDA problems section
@@ -4767,7 +5118,11 @@ Parsers.CCDA.problems = function (ccda) {
   
   return data;
 };
-;
+
+
+/***/ }),
+/* 38 */
+/***/ (function(module, exports) {
 
 /*
  * Parser for the CCDA procedures section
@@ -4841,7 +5196,11 @@ Parsers.CCDA.procedures = function (ccda) {
   
   return data;
 };
-;
+
+
+/***/ }),
+/* 39 */
+/***/ (function(module, exports) {
 
 /*
  * Parser for the CCDA smoking status in social history section
@@ -4901,7 +5260,11 @@ Parsers.CCDA.smoking_status = function (ccda) {
   
   return data;
 };
-;
+
+
+/***/ }),
+/* 40 */
+/***/ (function(module, exports) {
 
 /*
  * Parser for the CCDA vitals section
@@ -4960,7 +5323,11 @@ Parsers.CCDA.vitals = function (ccda) {
   
   return data;
 };
-;
+
+
+/***/ }),
+/* 41 */
+/***/ (function(module, exports) {
 
 /* Parses out basic data about each section */
 
@@ -5016,7 +5383,11 @@ Parsers.GenericInfo = function (ccda, data) {
 
         }
     });
-};;
+};
+
+/***/ }),
+/* 42 */
+/***/ (function(module, exports) {
 
 /*
  * Parser for the CCDAR2 document
@@ -5044,7 +5415,11 @@ Parsers.CCDAR2 = (function () {
   };
 
 })();
-;
+
+
+/***/ }),
+/* 43 */
+/***/ (function(module, exports) {
 
 /*
  * Parser for the CCDAR2 document section
@@ -5183,7 +5558,11 @@ Parsers.CCDAR2.document = function (ccda) {
 
   return data;
 };
-;
+
+
+/***/ }),
+/* 44 */
+/***/ (function(module, exports) {
 
 /*
  * Parser for the CCDAR2 Health Concerns Section
@@ -5267,7 +5646,11 @@ Parsers.CCDAR2.health_concerns_document = function (ccda) {
 
     return model;
 };
-;
+
+
+/***/ }),
+/* 45 */
+/***/ (function(module, exports) {
 
 /*
  * Parser for the CCDAR2 document
@@ -5295,7 +5678,11 @@ Parsers.CCD = (function () {
   };
 
 })();
-;
+
+
+/***/ }),
+/* 46 */
+/***/ (function(module, exports) {
 
 /*
  * Parser for the CCDAR2 document section
@@ -5434,7 +5821,11 @@ Parsers.CCD.document = function (ccda) {
 
   return data;
 };
-;
+
+
+/***/ }),
+/* 47 */
+/***/ (function(module, exports) {
 
 /*
  * ...
@@ -5450,83 +5841,11 @@ var Renderers = (function () {
   };
   
 })();
-;
-
-/*
- * ...
- */
-
-/* exported BlueButton */
-var BlueButton = function (source, opts) {
-  var type, parsedData, parsedDocument;
-  
-  // Look for options
-  if (!opts) opts = {};
-  
-  // Detect and parse the source data
-  parsedData = Core.parseData(source);
-  
-  // Detect and parse the document
-  if (opts.parser) {
-    
-    // TODO: parse the document with provided custom parser
-    parsedDocument = opts.parser();
-    
-  } else {
-    type = Documents.detect(parsedData);
-    switch (type) {
-      case 'c32':
-        parsedData = Documents.C32.process(parsedData);
-        parsedDocument = Parsers.C32.run(parsedData);
-        break;
-      case 'ccda':
-        parsedData = Documents.CCDA.process(parsedData);
-        parsedDocument = Parsers.CCDA.run(parsedData);
-        break;
-      case 'ccdar2':
-        parsedData = Documents.CCDAR2.process(parsedData);
-        parsedDocument = Parsers.CCDAR2.run(parsedData);
-        break;
-      case 'ccd':
-        parsedData = Documents.CCD.process(parsedData);
-        parsedDocument = Parsers.CCD.run(parsedData);
-        break;
-      case 'json':
-        /* Expects a call like:
-         * BlueButton(json string, {
-         *   generatorType: 'ccda',
-         *   template: < EJS file contents >
-         * })
-         * The returned "type" will be the requested type (not "json")
-         * and the XML will be turned as a string in the 'data' key
-         */
-        switch (opts.generatorType) {
-          // only the unit tests ever need to worry about this testingMode argument
-          case 'c32':
-            type = 'c32';
-            parsedDocument = Generators.C32.run(parsedData, opts.template, opts.testingMode);
-            break;
-          case 'ccda':
-            type = 'ccda';
-            parsedDocument = Generators.CCDA.run(parsedData, opts.template, opts.testingMode);
-            break;
-        }
-    }
-  }
-  
-  return {
-    type: type,
-    data: parsedDocument,
-    source: parsedData
-  };
-
-};
 
 
-return BlueButton;
-
-}));
-
+/***/ })
+/******/ ]);
+//# sourceMappingURL=bluebutton.js.map
 
 /***/ }),
 /* 27 */
@@ -5538,16 +5857,10 @@ module.exports = require("xmldom");
 /* 28 */
 /***/ (function(module, exports) {
 
-module.exports = require("ejs");
-
-/***/ }),
-/* 29 */
-/***/ (function(module, exports) {
-
 module.exports = require("rxjs/Observable");
 
 /***/ }),
-/* 30 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5594,7 +5907,7 @@ exports.DOCUMENTS = lodash_1.default.map(fileNames, (name) => ({
 
 
 /***/ }),
-/* 31 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
@@ -5609,7 +5922,7 @@ exports.DOCUMENTS = lodash_1.default.map(fileNames, (name) => ({
   
 
 /***/ }),
-/* 32 */
+/* 31 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -5661,7 +5974,7 @@ riot.tag2('header', '<nav class="navbar navbar-default navbar-fixed-top"> <div c
   
 
 /***/ }),
-/* 33 */
+/* 32 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -5699,7 +6012,7 @@ riot.tag2('panel', '<div class="panel panel-{opts.state ? opts.state : \'default
   
 
 /***/ }),
-/* 34 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
@@ -5720,7 +6033,7 @@ riot.tag2('panel', '<div class="panel panel-{opts.state ? opts.state : \'default
   
 
 /***/ }),
-/* 35 */
+/* 34 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -5741,7 +6054,7 @@ riot.tag2('raw', '<span></span>', '', '', function(opts) {
   
 
 /***/ }),
-/* 36 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
@@ -5752,7 +6065,7 @@ riot.tag2('raw', '<span></span>', '', '', function(opts) {
   
 
 /***/ }),
-/* 37 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
@@ -5764,7 +6077,7 @@ riot.tag2('raw', '<span></span>', '', '', function(opts) {
   
 
 /***/ }),
-/* 38 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
@@ -5776,7 +6089,7 @@ riot.tag2('raw', '<span></span>', '', '', function(opts) {
   
 
 /***/ }),
-/* 39 */
+/* 38 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -5787,7 +6100,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_lodash___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_lodash__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__utilities_lodashmixins__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__utilities_lodashmixins___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2__utilities_lodashmixins__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__utilities_lang__ = __webpack_require__(40);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__utilities_lang__ = __webpack_require__(39);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__utilities_lang___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3__utilities_lang__);
 
     var riot = __webpack_require__(0)
@@ -5853,7 +6166,7 @@ riot.tag2('demographics', '<div class="panel panel-default" id="demographics"> <
   
 
 /***/ }),
-/* 40 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6046,7 +6359,7 @@ exports.languages = {
 
 
 /***/ }),
-/* 41 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
@@ -6058,7 +6371,7 @@ exports.languages = {
   
 
 /***/ }),
-/* 42 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
@@ -6070,7 +6383,7 @@ exports.languages = {
   
 
 /***/ }),
-/* 43 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
@@ -6082,7 +6395,7 @@ exports.languages = {
   
 
 /***/ }),
-/* 44 */
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
@@ -6094,7 +6407,7 @@ exports.languages = {
   
 
 /***/ }),
-/* 45 */
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
@@ -6106,7 +6419,7 @@ exports.languages = {
   
 
 /***/ }),
-/* 46 */
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
@@ -6118,7 +6431,7 @@ exports.languages = {
   
 
 /***/ }),
-/* 47 */
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
@@ -6130,7 +6443,7 @@ exports.languages = {
   
 
 /***/ }),
-/* 48 */
+/* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
@@ -6142,7 +6455,7 @@ exports.languages = {
   
 
 /***/ }),
-/* 49 */
+/* 48 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -6168,7 +6481,7 @@ riot.tag2('medications', '<panel section="{opts.section}" data="{opts.data}"> <d
   
 
 /***/ }),
-/* 50 */
+/* 49 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
@@ -6180,7 +6493,7 @@ riot.tag2('medications', '<panel section="{opts.section}" data="{opts.data}"> <d
   
 
 /***/ }),
-/* 51 */
+/* 50 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
@@ -6192,7 +6505,7 @@ riot.tag2('medications', '<panel section="{opts.section}" data="{opts.data}"> <d
   
 
 /***/ }),
-/* 52 */
+/* 51 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
@@ -6204,7 +6517,7 @@ riot.tag2('medications', '<panel section="{opts.section}" data="{opts.data}"> <d
   
 
 /***/ }),
-/* 53 */
+/* 52 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
@@ -6216,7 +6529,7 @@ riot.tag2('medications', '<panel section="{opts.section}" data="{opts.data}"> <d
   
 
 /***/ }),
-/* 54 */
+/* 53 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
@@ -6228,7 +6541,7 @@ riot.tag2('medications', '<panel section="{opts.section}" data="{opts.data}"> <d
   
 
 /***/ }),
-/* 55 */
+/* 54 */
 /***/ (function(module, exports) {
 
 module.exports = require("bootstrap-sass");
