@@ -663,12 +663,11 @@ block-stream@*:
   dependencies:
     inherits "~2.0.0"
 
-"bluebutton@github:LucasObendorf/bluebutton.js":
+"bluebutton@github:LucasObendorf/bluebutton.js#Webpack":
   version "0.4.3"
-  resolved "https://codeload.github.com/LucasObendorf/bluebutton.js/tar.gz/c99d4c6077a1f6d6f3b69a213a90eeabdd7b8d85"
+  resolved "https://codeload.github.com/LucasObendorf/bluebutton.js/tar.gz/410cbfd9a45da9bc984c3e4735491742030c827d"
   dependencies:
     ejs "^1.0.0"
-    postinstall-build-yarn "^0.0.2"
     xmldom "~0.1.19"
 
 bn.js@^4.0.0, bn.js@^4.1.0, bn.js@^4.1.1, bn.js@^4.4.0:
@@ -3354,10 +3353,6 @@ postcss@^6.0.0, postcss@^6.0.1, postcss@^6.0.11, postcss@^6.0.12, postcss@^6.0.1
     chalk "^2.1.0"
     source-map "^0.6.1"
     supports-color "^4.4.0"
-
-postinstall-build-yarn@^0.0.2:
-  version "0.0.2"
-  resolved "https://registry.yarnpkg.com/postinstall-build-yarn/-/postinstall-build-yarn-0.0.2.tgz#7293f137543446beb3c39d8d88aaebf16a1a47cf"
 
 precss@^2.0.0:
   version "2.0.0"
