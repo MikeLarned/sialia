@@ -652,8 +652,8 @@ class DocumentsService {
         });
     }
     load(data) {
-        console.log(bluebutton_1.default);
-        let bb = bluebutton_1.default(data);
+        console.log(bluebutton_1.bluebutton);
+        let bb = bluebutton_1.bluebutton(data);
         console.log(bb);
         if (!bb.data)
             throw 'BlueButton could not parse the file.';
