@@ -8,7 +8,7 @@
     "build": "webpack"
   },
   "dependencies": {
-    "blue-button": "github:LucasObendorf/blue-button",
+    "bluebutton": "github:LucasObendorf/bluebutton.js",
     "bootstrap": "github:twbs/bootstrap#v3.0.0",
     "bootstrap-sass": ">=3.0.0",
     "bootswatch": ">=3.0.0",

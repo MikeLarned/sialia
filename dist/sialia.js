@@ -78,564 +78,23 @@ exports["ccdaview"] =
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 47);
+/******/ 	return __webpack_require__(__webpack_require__.s = 10);
 /******/ })
 /************************************************************************/
 /******/ ([
 /* 0 */
 /***/ (function(module, exports) {
 
-module.exports = require("blue-button-xml");
+module.exports = require("riot");
 
 /***/ }),
 /* 1 */
 /***/ (function(module, exports) {
 
-module.exports = require("blue-button-meta");
-
-/***/ }),
-/* 2 */
-/***/ (function(module, exports) {
-
-module.exports = require("riot");
-
-/***/ }),
-/* 3 */
-/***/ (function(module, exports) {
-
 module.exports = require("lodash");
 
 /***/ }),
-/* 4 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var component = __webpack_require__(0).component.withNullFlavor();
-var processor = __webpack_require__(0).processor;
-var cleanup = __webpack_require__(5);
-var common = __webpack_require__(0).common;
-
-var commonShared = __webpack_require__(13);
-
-var shared = module.exports = Object.create(commonShared);
-
-var TextWithReference = shared.TextWithReference = component.define("TextWithReference");
-TextWithReference.fields([
-        ["text", "0..*", "text()"],
-        ["reference", "0..1", "./h:reference/@value"],
-    ])
-    .cleanupStep(cleanup.resolveReference);
-
-var NegationIndicator = shared.NegationIndicator = component.define("NegationIndicator");
-NegationIndicator.fields([
-        ["negation_indicator", "0..1", "@negationInd", processor.asBoolean]
-    ]).cleanupStep(function () {
-        //Flag missing negations as false.
-        if (this.js) {
-            if (!common.exists(this.js)) {
-                this.js.negation_indicator = false;
-            }
-            if (this.js.negation_indicator === 'true') {
-                this.js.negation_indicator = true;
-            }
-        }
-    })
-    .cleanupStep(cleanup.replaceWithField('negation_indicator'));
-
-var conceptWoutTranslation = component.define("conceptWoutTranslation");
-conceptWoutTranslation.fields([
-    ["name", "0..1", "@displayName"],
-    ["code", "0..1", "@code"],
-    ["system", "0..1", "@codeSystem"],
-    ["code_system_name", "0..1", "@codeSystemName"],
-    ["nullFlavor", "0..1", "@nullFlavor"],
-    ["original_text", "0..1", "h:originalText", TextWithReference],
-    ["reference", "0..1", "./h:reference/@value"]
-]);
-conceptWoutTranslation.cleanupStep(cleanup.augmentConcept);
-conceptWoutTranslation.cleanupStep(cleanup.removeField('system'));
-conceptWoutTranslation.cleanupStep(cleanup.resolveReferenceOntoName);
-
-var ConceptDescriptor = shared.ConceptDescriptor = conceptWoutTranslation.define("ConceptDescriptor");
-ConceptDescriptor.fields([
-    ["translations", "0..*", "h:translation", conceptWoutTranslation],
-]);
-
-var AgeDescriptor = shared.AgeDescriptor = component.define("AgeDescriptor");
-AgeDescriptor.fields([
-        ["units", "0..1", "@unit"],
-    ])
-    .cleanupStep(cleanup.augmentAge);
-
-var SimplifiedCode = shared.SimplifiedCode = ConceptDescriptor.define("SimpifiedCode")
-    .cleanupStep(cleanup.augmentSimplifiedCode);
-
-var PhysicalQuantity = shared.PhysicalQuantity = component.define("PhysicalQuantity")
-    .fields([
-        ["value", "1..1", "@value", processor.asFloat],
-        ["unit", "0..1", "@unit"]
-    ]);
-
-var XsiTypedValue = shared.XsiTypedValue = component.define("XsiTypedValue");
-// TODO I'm pretty sure these xpaths are wrong
-XsiTypedValue.fields([
-    ["type", "1..1", "@xsi:type"],
-    ["physicalQuantityValue", "0..1", ".", PhysicalQuantity],
-    ["textValue", "0..1", "./text()"],
-    ["codeValue", "0..1", ".", ConceptDescriptor]
-]);
-XsiTypedValue.cleanupStep(cleanup.selectValueFields);
-
-var EventOffset = shared.EventOffset = component.define("EventOffset")
-    .fields([
-        ["low", "0..1", "h:low", PhysicalQuantity],
-        ["high", "0..1", "h:high", PhysicalQuantity],
-        ["center", "0..1", "h:center", PhysicalQuantity],
-        ["width", "0..1", "h:width", PhysicalQuantity],
-    ]);
-
-var EffectiveTime = shared.EffectiveTime = component.define("EffectiveTime")
-    .fields([
-        ["point", "0..1", "@value", processor.asTimestamp],
-        ["point_resolution", "0..1", "@value", processor.asTimestampResolution],
-        ["low", "0..1", "h:low/@value", processor.asTimestamp],
-        ["low_resolution", "0..1", "h:low/@value", processor.asTimestampResolution],
-        ["high", "0..1", "h:high/@value", processor.asTimestamp],
-        ["high_resolution", "0..1", "h:high/@value", processor.asTimestampResolution],
-        ["center", "0..1", "h:center/@value", processor.asTimestamp],
-        ["center_resolution", "0..1", "h:center/@value", processor.asTimestampResolution]
-    ])
-    .cleanupStep(cleanup.augmentEffectiveTime);
-
-var IndividualName = shared.IndividualName = component.define('IndividualName')
-    .fields([
-        ["prefix", "0..1", "h:prefix/text()"],
-        ["middle", "0..*", "h:given/text()"],
-        ["last", "0..1", "h:family/text()"],
-        ["suffix", "0..1", "h:suffix/text()"],
-        ["freetext_name", "0..1", "../h:name/text()", processor.asString]
-    ]).cleanupStep(cleanup.augmentIndividualName);
-
-var Address = shared.Address = component.define("Address")
-    .fields([
-        ["street_lines", "1..4", "h:streetAddressLine/text()"],
-        ["city", "1..1", "h:city/text()", processor.asString],
-        ["state", "0..1", "h:state/text()"],
-        ["zip", "0..1", "h:postalCode/text()"],
-        ["country", "0..1", "h:country/text()"],
-        ["use", "0..1", "@use", shared.SimpleCode("2.16.840.1.113883.5.1119")]
-    ]);
-
-var Organization = shared.Organization = component.define("Organization")
-    .fields([
-        ["identifiers", "0..*", "h:id", shared.Identifier],
-        ["name", "0..*", "h:name/text()"],
-        ["address", "0..*", "h:addr", Address],
-        ["email", "0..*", shared.email.xpath(), shared.email],
-        ["phone", "0..*", shared.phone.xpath(), shared.phone]
-    ]);
-
-var assignedEntity = shared.assignedEntity = component.define("assignedEntity")
-    .fields([
-        ["identifiers", "0..*", "h:id", shared.Identifier],
-        ["name", "0..*", "h:assignedPerson/h:name", IndividualName],
-        ["address", "0..*", "h:addr", Address],
-        ["email", "0..*", shared.email.xpath(), shared.email],
-        ["phone", "0..*", shared.phone.xpath(), shared.phone],
-        ["organization", "0..*", "h:representedOrganization", Organization],
-        ["code", "0..*", "h:code", ConceptDescriptor],
-    ]);
-
-shared.serviceDeliveryLocation = component.define('serviceDeliveryLocation')
-    .fields([
-        ["name", "0:1", "h:playingEntity/h:name/text()"],
-        ["location_type", "1..1", "h:code", ConceptDescriptor],
-        ["address", "0..*", "h:addr", Address],
-        ["email", "0..*", shared.email.xpath(), shared.email],
-        ["phone", "0..*", shared.phone.xpath(), shared.phone]
-    ]);
-
-
-/***/ }),
-/* 5 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var includeCleanup = __webpack_require__(11);
-
-var cleanup = module.exports = Object.create(includeCleanup);
-
-var _ = __webpack_require__(3);
-
-cleanup.promoteAllergenNameIfNoAllergen = function () {
-    if (this.js && (!_.get(this, "js.allergen"))) {
-        var name = this.js.allergenName && this.js.allergenName.js;
-        if (name) {
-            this.js.allergen = {
-                name: name
-            };
-        }
-    }
-    delete this.js.allergenName;
-};
-
-cleanup.promoteFreeTextIfNoReaction = function () {
-    if (this.js && (!_.get(this, "js.reaction"))) {
-        var name = this.js.free_text_reaction && this.js.free_text_reaction.js;
-        if (name) {
-            this.js.reaction = {
-                name: name
-            };
-        }
-    }
-    delete this.js.free_text_reaction;
-};
-
-
-/***/ }),
-/* 6 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var component = __webpack_require__(0).component;
-var processor = __webpack_require__(0).processor;
-var cleanup = __webpack_require__(8);
-var common = __webpack_require__(0).common;
-
-var commonShared = __webpack_require__(13);
-
-var shared = module.exports = Object.create(commonShared);
-
-var TextWithReference = shared.TextWithReference = component.define("TextWithReference");
-TextWithReference.fields([
-        ["text", "0..*", "text()"],
-        ["reference", "0..1", "./h:reference/@value"],
-    ])
-    .cleanupStep(cleanup.resolveReference);
-
-var NegationIndicator = shared.NegationIndicator = component.define("NegationIndicator");
-NegationIndicator.fields([
-        ["negation_indicator", "0..1", "@negationInd", processor.asBoolean]
-    ]).cleanupStep(function () {
-        //Flag missing negations as false.
-        if (this.js) {
-            if (!common.exists(this.js)) {
-                this.js.negation_indicator = false;
-            }
-            if (this.js.negation_indicator === 'true') {
-                this.js.negation_indicator = true;
-            }
-        } else {
-            this.js = {
-                negation_indicator: false
-            };
-        }
-    })
-    .cleanupStep(cleanup.replaceWithField('negation_indicator'));
-
-var conceptWoutTranslation = component.define("conceptWoutTranslation");
-conceptWoutTranslation.fields([
-    ["name", "0..1", "@displayName"],
-    ["code", "1..1", "@code"],
-    ["system", "1..1", "@codeSystem"],
-    ["code_system_name", "0..1", "@codeSystemName"],
-    ["nullFlavor", "0..1", "@nullFlavor"],
-    ["original_text", "0..1", "h:originalText", TextWithReference]
-]);
-conceptWoutTranslation.cleanupStep(cleanup.augmentConcept);
-conceptWoutTranslation.cleanupStep(cleanup.removeField('system'));
-
-var ConceptDescriptor = shared.ConceptDescriptor = conceptWoutTranslation.define("ConceptDescriptor");
-ConceptDescriptor.fields([
-    ["translations", "0..*", "h:translation", conceptWoutTranslation],
-]);
-
-var AgeDescriptor = shared.AgeDescriptor = component.define("AgeDescriptor");
-AgeDescriptor.fields([
-        ["units", "0..1", "@unit"],
-    ])
-    .cleanupStep(cleanup.augmentAge);
-
-var SimplifiedCode = shared.SimplifiedCode = ConceptDescriptor.define("SimpifiedCode")
-    .cleanupStep(cleanup.augmentSimplifiedCode);
-
-var PhysicalQuantity = shared.PhysicalQuantity = component.define("PhysicalQuantity")
-    .fields([
-        ["value", "1..1", "@value", processor.asFloat],
-        ["unit", "0..1", "@unit"]
-    ]);
-
-var EventOffset = shared.EventOffset = component.define("EventOffset")
-    .fields([
-        ["low", "0..1", "h:/low", PhysicalQuantity],
-        ["high", "0..1", "h:/high", PhysicalQuantity],
-        ["center", "0..1", "h:/center", PhysicalQuantity],
-        ["width", "0..1", "h:/width", PhysicalQuantity],
-    ]);
-
-var EffectiveTime = shared.EffectiveTime = component.define("EffectiveTime")
-    .fields([
-        ["point", "0..1", "@value", processor.asTimestamp],
-        ["point_resolution", "0..1", "@value", processor.asTimestampResolution],
-        ["low", "0..1", "h:low/@value", processor.asTimestamp],
-        ["low_resolution", "0..1", "h:low/@value", processor.asTimestampResolution],
-        ["high", "0..1", "h:high/@value", processor.asTimestamp],
-        ["high_resolution", "0..1", "h:high/@value", processor.asTimestampResolution],
-        ["center", "0..1", "h:center/@value", processor.asTimestamp],
-        ["center_resolution", "0..1", "h:center/@value", processor.asTimestampResolution]
-    ])
-    .cleanupStep(cleanup.augmentEffectiveTime);
-
-var IndividualName = shared.IndividualName = component.define('IndividualName')
-    .fields([
-        ["prefix", "0..1", "h:prefix/text()"],
-        ["middle", "0..*", "h:given/text()"],
-        ["last", "0..1", "h:family/text()"],
-        ["suffix", "0..1", "h:suffix/text()"],
-        ["freetext_name", "0..1", "../h:name/text()", processor.asString]
-    ]).cleanupStep(cleanup.augmentIndividualName).cleanupStep(cleanup.clearNulls);
-
-var Address = shared.Address = component.define("Address")
-    .fields([
-        ["street_lines", "1..4", "h:streetAddressLine/text()"],
-        ["city", "1..1", "h:city/text()", processor.asString],
-        ["state", "0..1", "h:state/text()"],
-        ["zip", "0..1", "h:postalCode/text()"],
-        ["country", "0..1", "h:country/text()"],
-        ["use", "0..1", "@use", shared.SimpleCode("2.16.840.1.113883.5.1119")]
-    ]);
-
-var Organization = shared.Organization = component.define("Organization")
-    .fields([
-        ["identifiers", "0..*", "h:id", shared.Identifier],
-        ["name", "0..*", "h:name/text()"],
-        ["address", "0..*", "h:addr", Address],
-        ["email", "0..*", shared.email.xpath(), shared.email],
-        ["phone", "0..*", shared.phone.xpath(), shared.phone]
-    ]);
-
-var assignedEntity = shared.assignedEntity = component.define("assignedEntity")
-    .fields([
-        ["identifiers", "0..*", "h:id", shared.Identifier],
-        ["name", "0..*", "h:assignedPerson/h:name", IndividualName],
-        ["address", "0..*", "h:addr", Address],
-        ["email", "0..*", shared.email.xpath(), shared.email],
-        ["phone", "0..*", shared.phone.xpath(), shared.phone],
-        ["organization", "0..*", "h:representedOrganization", Organization],
-        ["code", "0..*", "h:code", ConceptDescriptor],
-    ]);
-
-shared.serviceDeliveryLocation = component.define('serviceDeliveryLocation')
-    .fields([
-        ["name", "0:1", "h:playingEntity/h:name/text()"],
-        ["location_type", "1..1", "h:code", ConceptDescriptor],
-        ["address", "0..*", "h:addr", Address],
-        ["email", "0..*", shared.email.xpath(), shared.email],
-        ["phone", "0..*", shared.phone.xpath(), shared.phone]
-    ]);
-
-
-/***/ }),
-/* 7 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var component = __webpack_require__(0).component;
-var processor = __webpack_require__(0).processor;
-var cleanup = __webpack_require__(9);
-var common = __webpack_require__(0).common;
-
-var commonShared = __webpack_require__(13);
-
-var shared = module.exports = Object.create(commonShared);
-
-var TextWithReference = shared.TextWithReference = component.define("TextWithReference");
-TextWithReference.fields([
-        ["text", "0..*", "text()"],
-        ["reference", "0..1", "./h:reference/@value"],
-    ])
-    .cleanupStep(cleanup.resolveReference);
-
-var NegationIndicator = shared.NegationIndicator = component.define("NegationIndicator");
-NegationIndicator.fields([
-        ["negation_indicator", "0..1", "@negationInd", processor.asBoolean]
-    ]).cleanupStep(function () {
-        //Flag missing negations as false.
-        if (this.js) {
-            if (!common.exists(this.js)) {
-                this.js.negation_indicator = false;
-            }
-            if (this.js.negation_indicator === 'true') {
-                this.js.negation_indicator = true;
-            }
-        } else {
-            this.js = {
-                negation_indicator: false
-            };
-        }
-    })
-    .cleanupStep(cleanup.replaceWithField('negation_indicator'));
-
-var conceptWoutTranslation = component.define("conceptWoutTranslation");
-conceptWoutTranslation.fields([
-    ["name", "0..1", "@displayName"],
-    ["code", "1..1", "@code"],
-    ["system", "1..1", "@codeSystem"],
-    ["code_system_name", "0..1", "@codeSystemName"],
-    ["nullFlavor", "0..1", "@nullFlavor"],
-    ["original_text", "0..1", "h:originalText", TextWithReference]
-]);
-conceptWoutTranslation.cleanupStep(cleanup.augmentConcept);
-conceptWoutTranslation.cleanupStep(cleanup.removeField('system'));
-
-var ConceptDescriptor = shared.ConceptDescriptor = conceptWoutTranslation.define("ConceptDescriptor");
-ConceptDescriptor.fields([
-    ["translations", "0..*", "h:translation", conceptWoutTranslation],
-]);
-
-var AgeDescriptor = shared.AgeDescriptor = component.define("AgeDescriptor");
-AgeDescriptor.fields([
-        ["units", "0..1", "@unit"],
-    ])
-    .cleanupStep(cleanup.augmentAge);
-
-var SimplifiedCode = shared.SimplifiedCode = ConceptDescriptor.define("SimpifiedCode")
-    .cleanupStep(cleanup.augmentSimplifiedCode);
-
-var PhysicalQuantity = shared.PhysicalQuantity = component.define("PhysicalQuantity")
-    .fields([
-        ["value", "1..1", "@value", processor.asFloat],
-        ["unit", "0..1", "@unit"]
-    ]);
-
-var EventOffset = shared.EventOffset = component.define("EventOffset")
-    .fields([
-        ["low", "0..1", "h:/low", PhysicalQuantity],
-        ["high", "0..1", "h:/high", PhysicalQuantity],
-        ["center", "0..1", "h:/center", PhysicalQuantity],
-        ["width", "0..1", "h:/width", PhysicalQuantity],
-    ]);
-
-var EffectiveTime = shared.EffectiveTime = component.define("EffectiveTime")
-    .fields([
-        ["point", "0..1", "@value", processor.asTimestamp],
-        ["point_resolution", "0..1", "@value", processor.asTimestampResolution],
-        ["low", "0..1", "h:low/@value", processor.asTimestamp],
-        ["low_resolution", "0..1", "h:low/@value", processor.asTimestampResolution],
-        ["high", "0..1", "h:high/@value", processor.asTimestamp],
-        ["high_resolution", "0..1", "h:high/@value", processor.asTimestampResolution],
-        ["center", "0..1", "h:center/@value", processor.asTimestamp],
-        ["center_resolution", "0..1", "h:center/@value", processor.asTimestampResolution]
-    ])
-    .cleanupStep(cleanup.augmentEffectiveTime);
-
-var IndividualName = shared.IndividualName = component.define('IndividualName')
-    .fields([
-        ["prefix", "0..1", "h:prefix/text()"],
-        ["middle", "0..*", "h:given/text()"],
-        ["last", "0..1", "h:family/text()"],
-        ["suffix", "0..1", "h:suffix/text()"],
-        ["freetext_name", "0..1", "../h:name/text()", processor.asString]
-    ]).cleanupStep(cleanup.augmentIndividualName);
-
-var Address = shared.Address = component.define("Address")
-    .fields([
-        ["street_lines", "1..4", "h:streetAddressLine/text()"],
-        ["city", "1..1", "h:city/text()", processor.asString],
-        ["state", "0..1", "h:state/text()"],
-        ["zip", "0..1", "h:postalCode/text()"],
-        ["country", "0..1", "h:country/text()"],
-        ["use", "0..1", "@use", shared.SimpleCode("2.16.840.1.113883.5.1119")]
-    ]);
-
-var Organization = shared.Organization = component.define("Organization")
-    .fields([
-        ["identifiers", "0..*", "h:id", shared.Identifier],
-        ["name", "0..*", "h:name/text()"],
-        ["address", "0..*", "h:addr", Address],
-        ["email", "0..*", shared.email.xpath(), shared.email],
-        ["phone", "0..*", shared.phone.xpath(), shared.phone]
-    ]);
-
-var assignedEntity = shared.assignedEntity = component.define("assignedEntity")
-    .fields([
-        ["identifiers", "0..*", "h:id", shared.Identifier],
-        ["name", "0..*", "h:assignedPerson/h:name", IndividualName],
-        ["address", "0..*", "h:addr", Address],
-        ["email", "0..*", shared.email.xpath(), shared.email],
-        ["phone", "0..*", shared.phone.xpath(), shared.phone],
-        ["organization", "0..*", "h:representedOrganization", Organization],
-        ["code", "0..*", "h:code", ConceptDescriptor],
-    ]);
-
-shared.serviceDeliveryLocation = component.define('serviceDeliveryLocation')
-    .fields([
-        ["name", "0:1", "h:playingEntity/h:name/text()"],
-        ["location_type", "1..1", "h:code", ConceptDescriptor],
-        ["address", "0..*", "h:addr", Address],
-        ["email", "0..*", shared.email.xpath(), shared.email],
-        ["phone", "0..*", shared.phone.xpath(), shared.phone]
-    ]);
-
-
-/***/ }),
-/* 8 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var includeCleanup = __webpack_require__(11);
-
-var cleanup = module.exports = Object.create(includeCleanup);
-
-var _ = __webpack_require__(3);
-
-cleanup.augmentObservation = function () {
-
-    if (_.get(this, "js.problem_text") && _.get(this, "js.problem_text.js")) {
-        if (!_.get(this, "js.code.js.name")) {
-            this.js.code.js.name = this.js.problem_text.js;
-        }
-    }
-
-};
-
-
-/***/ }),
-/* 9 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var includeCleanup = __webpack_require__(11);
-
-var cleanup = module.exports = Object.create(includeCleanup);
-
-cleanup.augmentObservation = function () {
-
-    if (this.js.problem_text) {
-        if (this.js.problem_text.js) {
-            if (!this.js.code.js.name) {
-                this.js.code.js.name = this.js.problem_text.js;
-            }
-        }
-    }
-
-};
-
-
-/***/ }),
-/* 10 */
+/* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -644,2288 +103,24 @@ function __export(m) {
     for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-__export(__webpack_require__(38));
-__export(__webpack_require__(62));
+__export(__webpack_require__(8));
+__export(__webpack_require__(25));
 
 
 /***/ }),
-/* 11 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var bbxml = __webpack_require__(0);
-var bbm = __webpack_require__(1);
-var _ = __webpack_require__(3);
-
-var css = bbm.code_systems;
-
-var includeCleanup = bbxml.cleanup;
-var processor = bbxml.processor;
-var common = bbxml.common;
-var xmlUtil = bbxml.xmlUtil;
-
-var cleanup = module.exports = Object.create(includeCleanup);
-
-var lookupReference = function (node, id) {
-    // ensure element itself exists
-    var resolved = xmlUtil.xpath(node, "//*[@ID='" + id + "']");
-    if (!resolved || resolved.length !== 1) {
-        return null;
-    }
-
-    // check for contained text
-    var textNode = xmlUtil.xpath(resolved[0], "./text()")[0];
-    var containedText = textNode && processor.asString(textNode);
-
-    if (containedText) {
-        return containedText;
-    }
-
-    return null;
-};
-
-var resolveReference = cleanup.resolveReference = function () {
-    if (!common.exists(this.js)) {
-        return;
-    }
-
-    var ret = null;
-
-    // ignore reference if the element itself contains text
-    if (this.js.text) {
-        ret = this.js.text.join("").match(/\s*(.*)\s*/)[1];
-    } else {
-        var r = this.js.reference && this.js.reference.match(/#(.*)/);
-        var resolved = null;
-        if (r && r.length === 2) {
-            resolved = lookupReference(this.node, r[1]);
-        }
-        if (resolved) {
-            ret = resolved;
-        }
-    }
-
-    this.js = ret || null;
-};
-
-var resolveReferenceOntoName = cleanup.resolveReferenceOntoName = function () {
-    if (!common.exists(this.js)) {
-        return;
-    }
-
-    var r = this.js.reference && this.js.reference.match(/#(.*)/);
-    var resolved = null;
-    if (r && r.length === 2) {
-        resolved = lookupReference(this.node, r[1]);
-    }
-    var ret = null;
-    if (resolved) {
-        this.js.name = resolved;
-        delete this.js.reference;
-    }
-};
-
-var augmentAge = cleanup.augmentAge = function () {
-    var units = this.js && this.js.units;
-    if (units) {
-        var cs = css.find("2.16.840.1.113883.11.20.9.21");
-        if (cs) {
-            var value = cs.codeDisplayName(units);
-            if (value) {
-                this.js = value;
-            }
-        }
-    }
-};
-
-cleanup.augmentSimpleCode = function (oid) {
-    var f = function () {
-        if (this.js) {
-            var cs = css.find(oid);
-            if (cs) {
-                this.js = cs.codeDisplayName(this.js);
-            }
-        }
-    };
-    return f;
-};
-
-var augmentIndividualName = cleanup.augmentIndividualName = function () {
-    if (this.js) {
-        if (this.js.middle && this.js.middle.length > 0) {
-            this.js.first = this.js.middle[0];
-            if (this.js.middle.length > 1) {
-                this.js.middle.splice(0, 1);
-            } else {
-                delete this.js.middle;
-            }
-        }
-        if (!this.js.first && !this.js.last && this.js.freetext_name) {
-            var names = this.js.freetext_name.split(' ').filter(function (piece) {
-                return piece.length > 0;
-            });
-            var n = names.length;
-            if (n > 0) {
-                this.js.last = names[n - 1];
-                if (n > 1) {
-                    this.js.first = names[0];
-                }
-                if (n > 2) {
-                    this.js.middle = names.slice(1, n - 1);
-                }
-            }
-        }
-        delete this.js.freetext_name;
-    }
-};
-
-cleanup.nullFlavorDisplayNames = {
-    "NI": "no information",
-    "NA": "not applicable",
-    "UNK": "unknown",
-    "ASKU": "asked, but not known",
-    "NAV": "temporarily unavailable",
-    "NASK": "not asked",
-    "TRC": "trace",
-    "OTH": "other",
-    "PINF": "positive infinity",
-    "NINF": "negative infinity",
-    "MSK": "masked"
-};
-
-// if a field is absent or is an object that looks like a nullFlavor code,
-// replace it with the nullFlavor display name from a sibling nullFlavorField
-cleanup.replaceStringFieldWithNullFlavorName = function (field) {
-    return function () {
-        if (!this.js) {
-            return null;
-        }
-
-        if (_.get(this, ["js", field, "code_system_name"]) === "Null Flavor") {
-            this.js[field] = cleanup.nullFlavorDisplayNames[this.js[field].code];
-        }
-    };
-};
-
-cleanup.augmentConcept = function () {
-    if (!this.js) {
-        this.js = {};
-    }
-
-    var nullFlavorDisplayNames = cleanup.nullFlavorDisplayNames;
-
-    if (common.exists(this.js.nullFlavor)) {
-        this.js.code = this.js.nullFlavor;
-        this.js.code_system_name = "Null Flavor";
-        this.js.name = nullFlavorDisplayNames[this.js.nullFlavor];
-        delete this.js.nullFlavor;
-    }
-
-    if (this.js.system) {
-        var cs = css.find(this.js.system);
-        if (cs) {
-            // Keep existing name if present
-            if (!common.exists(this.js.name)) {
-                var newName = cs.codeDisplayName(this.js.code);
-                if (newName) {
-                    this.js.name = newName;
-                }
-            }
-            // but preferentially use our canonical names for the coding system
-            var systemName = cs.name();
-            if (systemName) {
-                this.js.code_system_name = systemName;
-            }
-        }
-    }
-
-    //If original text is present w/out name, use it.
-    if (this.js.original_text && (!this.js.name || this.js.code_system_name === 'Null Flavor')) {
-        this.js.name = this.js.original_text.js;
-        delete this.js.original_text;
-    } else {
-        delete this.js.original_text;
-    }
-
-    if (this.js.nullFlavor) {
-        delete this.js.nullFlavor;
-    }
-};
-
-cleanup.selectValueFields = function () {
-    var ret = null;
-    if (this.js) {
-
-        var type = _.get(this, "js.type");
-
-        if (type === "ST") {
-            ret = {
-                text: _.get(this, "js.textValue")
-            };
-        } else if (type === "PQ") {
-            ret = _.get(this, "js.physicalQuantityValue.js");
-        } else if (type === "CD") {
-            ret = _.get(this, "js.codeValue.js");
-        }
-    }
-
-    this.js = ret;
-};
-
-cleanup.augmentEffectiveTime = function () {
-    if (this.js) {
-        var returnArray = {};
-
-        if (this.js.point) {
-            returnArray.point = {
-                "date": this.js.point,
-                "precision": this.js.point_resolution
-            };
-        }
-
-        if (this.js.low) {
-            returnArray.low = {
-                "date": this.js.low,
-                "precision": this.js.low_resolution
-            };
-        }
-
-        if (this.js.high) {
-            returnArray.high = {
-                "date": this.js.high,
-                "precision": this.js.high_resolution
-            };
-        }
-
-        if (this.js.center) {
-            returnArray.center = {
-                "date": this.js.center,
-                "precision": this.js.center_resolution
-            };
-        }
-
-        this.js = returnArray;
-    }
-};
-
-cleanup.augmentSimplifiedCode = function () {
-    if (this.js) {
-        // TODO: look up; don't trust the name to be present...
-        this.js = this.js.name;
-    }
-};
-
-cleanup.augmentSimplifiedCodeOID = function (oid) {
-    var f = function () {
-        if (this.js) {
-            if (this.js.name) {
-                this.js = this.js.name;
-            } else if (this.js.code) {
-                var cs = css.find(oid);
-                if (cs) {
-                    var name = cs.codeDisplayName(this.js.code);
-                    if (name) {
-                        this.js = name;
-                    }
-                }
-            } else {
-                this.js = null;
-            }
-        }
-    };
-    return f;
-};
-
-cleanup.allergiesProblemStatusToHITSP = (function () {
-    var dict = {};
-    dict.active = {
-        "name": "Active",
-        "code": "55561003",
-        "code_system_name": "SNOMED CT"
-    };
-    dict.suspended = dict.aborted = {
-        "name": "Inactive",
-        "code": "73425007",
-        "code_system_name": "SNOMED CT"
-    };
-    dict.completed = {
-        "name": "Resolved",
-        "code": "413322009",
-        "code_system_name": "SNOMED CT"
-    };
-
-    return function () {
-        var status = this.js && this.js.problemStatus;
-        if (status) {
-            var value = dict[status];
-            if (value) {
-                var observation = this.js.observation;
-                if (!observation) {
-                    this.js.observation = {
-                        status: value
-                    };
-                } else if (!observation.js) {
-                    observation.js = {
-                        status: value
-                    };
-                } else if (!observation.js.status) {
-                    observation.js.status = value;
-                }
-            }
-            delete this.js.problemStatus;
-        }
-    };
-})();
-
-
-/***/ }),
-/* 12 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var shared = __webpack_require__(4);
-var component = __webpack_require__(0).component.withNullFlavor();
-var cleanup = __webpack_require__(5);
-var processor = __webpack_require__(0).processor;
-var bbm = __webpack_require__(1);
-var _ = __webpack_require__(3);
-
-var exportMedicationsSection = function (version) {
-    var sectionIDs = bbm.CCDA["sections" + version];
-    var clinicalStatementsIDs = bbm.CCDA["statements" + version];
-
-    // Common entries between ccda-r1.1 and ccda-r1.0
-
-    /* 1. For the medication interval component, you may find that some of the fields
-    below(xsi:type, alignment, event, event_offset) are not defined in ccda 1.1.
-    specification and in many sample files.
-
-    refer to this link: https://groups.google.com/forum/#!msg/ccda_samples/WawmwNMYT_8/pqnp5bG1IygJ
-
-    2. This is about the frequency tag and institutionSpecified attribute:
-
-    The period element can represent either timing between doses or frequency.
-    Use @institutionSpecified to distinguish these: To specify an interval between doses
-    (e.g., every 8 hours), set the value of @institutionSpecified to false or omit the attribute.
-    To specify frequency of administration (e.g., 3 times per day), set the value
-    of @institutionSpecified to true.
-
-    source: http://wiki.siframework.org/CDA+-+Medications+Section
-
-    */
-    var MedicationInterval = component.define("MedicationInterval")
-        .fields([
-            ["phase", "0..1", "./h:phase", shared.EffectiveTime],
-            ["period", "0..1", "./h:period", shared.PhysicalQuantity],
-            ["alignment", "0..1", "./@alignment"],
-            ["frequency", "0..1", "./@institutionSpecified", processor.asBoolean],
-            ["event", "0..1", "./h:event/@code", shared.SimpleCode("2.16.840.1.113883.5.139")],
-            ["event_offset", "0..1", "./h:offset", shared.EventOffset]
-        ]);
-
-    var MedicationAdministration = component.define("MedicationAdministration")
-        .fields([
-            ["route", "0..1", "h:routeCode", shared.ConceptDescriptor],
-            ["site", "0..1", "h:approachSiteCode", shared.ConceptDescriptor],
-            ["form", "0..1", "h:administrationUnitCode", shared.ConceptDescriptor],
-            ["dose", "0..1", "h:doseQuantity", shared.PhysicalQuantity],
-            ["rate", "0..1", "h:rateQuantity", shared.PhysicalQuantity],
-            ["dose_restriction", "0..1", "h:maxDoseQuantity", shared.PhysicalQuantity],
-            ["interval", "0..1", "h:effectiveTime[@operator='A']", MedicationInterval],
-        ]);
-
-    var MedicationIndication = component.define("MedicationIndication")
-        .fields([
-            ["identifiers", "0..*", "h:id", shared.Identifier],
-            ["code", "0..1", "h:code", shared.ConceptDescriptor],
-            ["date_time", "0..1", "h:effectiveTime", shared.EffectiveTime],
-            ["value", "0..1", "h:value", shared.ConceptDescriptor]
-        ]);
-
-    var MedicationPrecondition = component.define("MedicationPrecondition")
-        .fields([
-            ["code", "0..1", "h:code", shared.ConceptDescriptor],
-            ["text", "0..1", "h:text/text()"],
-            ["value", "0..1", "h:value", shared.ConceptDescriptor]
-        ]);
-
-    var author = component.define("author")
-        .fields([
-            ["date_time", "0..1", "h:time", shared.EffectiveTime],
-            ["identifiers", "0..*", "h:assignedAuthor/h:id", shared.Identifier],
-            ["name", "0..1", "h:assignedAuthor/h:assignedPerson/h:name", shared.IndividualName],
-            ["organization", "0..1", "h:assignedAuthor/h:representedOrganization", shared.Organization]
-        ]);
-
-    var MedicationInstructions = component.define("MedicationInstructions")
-        .fields([
-            ["code", "0..1", "h:code", shared.ConceptDescriptor],
-            ["free_text", "0..1", "h:text/text()"]
-        ]);
-
-    // below entries differ between ccda-r1.1 and ccda-r1.0
-    // ***************************************************************************
-    // *                      ccda-r1.1 (LATEST VERSION)                         *
-    // ***************************************************************************
-
-    var medicationInformation;
-    var medicationSupplyOrder;
-    var medicationActivity;
-    var medicationsSection;
-
-    if (version === "") {
-        medicationInformation = component.define("medicationInformation")
-            .templateRoot("2.16.840.1.113883.10.20.22.4.23")
-            .fields([
-                ["identifiers", "0..*", "h:id", shared.Identifier],
-                ["unencoded_name", "0..1", "h:manufacturedMaterial/h:code/h:originalText", shared.TextWithReference],
-                ["product", "1..1", "h:manufacturedMaterial/h:code", shared.ConceptDescriptor],
-                ["manufacturer", "0..1", "h:manufacturerOrganization/h:name/text()"]
-            ]);
-
-        medicationSupplyOrder = component.define("medicationSupplyOrder")
-            .fields([
-                ["identifiers", "0..*", "h:assignedEntity/h:id", shared.Identifier],
-                ["date_time", "0..1", "h:effectiveTime", shared.EffectiveTime],
-                ["repeatNumber", "0..1", "h:repeatNumber/@value"],
-                ["quantity", "0..1", "h:quantity/@value"],
-                ["status", "0..1", "h:status/@code"],
-                ["author", "0..1", "h:author", author],
-                ["instructions", "0..1", "h:entryRelationship[@typeCode='SUBJ']/h:act", MedicationInstructions],
-                ["product", "0..1", "h:product/h:manufacturedProduct", medicationInformation]
-            ]);
-
-        var MedicationPerformer = component.define("MedicationPerformer")
-            .fields([
-                ["identifiers", "0..*", "h:assignedEntity/h:id", shared.Identifier],
-                ["address", "0..*", "h:assignedEntity/h:addr", shared.Address],
-                ["phone", "0..1", "h:assignedEntity/" + shared.phone.xpath(), shared.phone],
-                ["organization", "0..*", "h:assignedEntity/h:representedOrganization", shared.Organization]
-            ]);
-        /*
-        var MedicationDrugVehicle = component.define("MedicationDrugVehicle")
-            .templateRoot("2.16.840.1.113883.10.20.22.4.24")
-            .fields([
-                ["playingEntity", "0..1", "h:playingEntity/h:code", shared.ConceptDescriptor]
-            ]).cleanupStep(cleanup.extractAllFields(["drug_vehicle"]));
-*/
-
-        var MedicationDispense = component.define("MedicationDispense")
-            .templateRoot("2.16.840.1.113883.10.20.22.4.18")
-            .fields([
-                ["identifiers", "0..*", "h:id", shared.Identifier],
-                ["performer", "0..1", "h:performer", MedicationPerformer],
-                ["supply", "0..1", "h:entryRelationship[@typeCode='REFR']/h:supply", medicationSupplyOrder],
-                ["product", "0..1", "h:product/h:manufacturedProduct", medicationInformation]
-            ]);
-
-        medicationActivity = component.define("medicationActivity")
-            .fields([
-                ["date_time", "0..1", "h:effectiveTime[not (@operator='A')]", shared.EffectiveTime],
-                ["identifiers", "0..*", "h:id", shared.Identifier],
-                ["status", "1..1", "./../h:substanceAdministration/@moodCode"],
-                ["sig", "0..1", "h:text", shared.TextWithReference],
-                ["product", "1..1", "h:consumable/h:manufacturedProduct", medicationInformation],
-                ["supply", "0..1", "h:entryRelationship[@typeCode='REFR']/h:supply", medicationSupplyOrder],
-                ["administration", "0..1", "../h:substanceAdministration", MedicationAdministration],
-                ["performer", "0..1", "h:performer", MedicationPerformer],
-                ["drug_vehicle", "0..1", "h:participant[@typeCode='CSM']/h:participantRole/h:playingEntity[@classCode='MMAT']/h:code", shared.ConceptDescriptor],
-                ["precondition", "1..1", "h:precondition/h:criterion", MedicationPrecondition],
-                ["indication", "0..1", "h:entryRelationship[@typeCode='RSON']/h:observation", MedicationIndication],
-                //["instructions", "0..1", "h:entryRelationship[@typeCode='REFR']/h:supply/*/*/h:templateId[@root='2.16.840.1.113883.10.20.22.4.20']", MedicationInstructions],
-                ["dispense", "0..1", MedicationDispense.xpath(), MedicationDispense]
-            ])
-            //.cleanupStep(Cleanup.extractAllFields(["medicationName"]))
-            .cleanupStep(function () {
-
-                //Cleanup Status.
-
-                if (_.get(this, "js.status") === "EVN") {
-                    this.js.status = "Completed";
-                }
-                if (_.get(this, "js.status") === "INT") {
-                    this.js.status = "Prescribed";
-                }
-
-                // separate out two effectiveTimes
-
-                /*
-          // 1.  startDate --- endDate
-          var range = this.js.times.filter(function(t){
-            return -1 === ['PIVL_TS', 'EIVL_TS'].indexOf(t.js.xsitype);
-          });
-
-          // 2.  dosing interval
-          var period= this.js.times.filter(function(t){
-            return -1 !== ['PIVL_TS', 'EIVL_TS'].indexOf(t.js.xsitype);
-          });
-
-          delete this.js.times;
-
-          if (range.length > 0) {
-            this.js.dateRange = range[0];
-          }
-
-          if (period.length > 0) {
-            this.js.dosePeriod = period[0].js.period;
-          }*/
-
-            });
-        medicationActivity.setXPath(".//h:templateId[@root=\"2.16.840.1.113883.10.20.22.4.16\" and not(../@negationInd=\"true\")]/..");
-
-        // ignore negationInd medications
-
-        medicationsSection = component.define("medicationsSection");
-        medicationsSection.templateRoot(["2.16.840.1.113883.10.20.22.2.1", "2.16.840.1.113883.10.20.22.2.1.1"]);
-        medicationsSection.fields([
-            ["medications", "0..*", medicationActivity.xpath(), medicationActivity]
-        ]);
-        medicationsSection.cleanupStep(cleanup.replaceWithField('medications'));
-        return [medicationsSection, medicationActivity];
-
-        // ***************************************************************************
-        // *                      ccda-r1.0 (OLD VERSION)                            *
-        // ***************************************************************************
-    } else {
-
-        medicationInformation = component.define("medicationInformation")
-            .templateRoot("2.16.840.1.113883.10.20.1.53")
-            .fields([
-                ["unencoded_name", "0..1", "h:manufacturedProduct/h:manufacturedMaterial/h:code/h:originalText", shared.TextWithReference],
-                ["product", "1..1", "h:manufacturedProduct/h:manufacturedMaterial/h:code", shared.ConceptDescriptor],
-            ]);
-
-        medicationSupplyOrder = component.define("medicationSupplyOrder")
-            .templateRoot("2.16.840.1.113883.10.20.1.34")
-            .fields([
-                ["date_time", "0..1", "h:effectiveTime", shared.EffectiveTime],
-                ["repeatNumber", "0..1", "h:repeatNumber/@value"],
-                ["quantity", "0..1", "h:quantity/@value"],
-                ["author", "0..1", "h:author", author]
-            ]);
-
-        medicationActivity = component.define("Medications")
-            .templateRoot(["2.16.840.1.113883.10.20.1.34", "2.16.840.1.113883.10.20.1.24"])
-            .fields([
-                ["date_time", "0..1", "h:effectiveTime", shared.EffectiveTime],
-                ["identifiers", "0..*", "h:id", shared.Identifier],
-                ["status", "1..1", "h:statusCode/@code"],
-                ["sig", "0..1", "h:text", shared.TextWithReference],
-                ["product", "1..1", "(h:product | h:consumable)", medicationInformation],
-                ["supply", "0..1", "../h:supply", medicationSupplyOrder],
-                ["administration", "0..1", "../h:substanceAdministration", MedicationAdministration],
-                ["precondition", "1..1", "h:precondition/h:criterion", MedicationPrecondition]
-            ])
-            .cleanupStep(function () {
-
-                //Cleanup Status.
-
-                if (_.get(this, "js.status") === "EVN") {
-                    this.js.status = "Completed";
-                }
-                if (_.get(this, "js.status") === "INT") {
-                    this.js.status = "Prescribed";
-                }
-            });
-
-        medicationsSection = component.define("medicationsSection");
-        medicationsSection.templateRoot("2.16.840.1.113883.10.20.1.8");
-        medicationsSection.fields([
-            ["Medications", "0..*", medicationActivity.xpath(), medicationActivity]
-        ]);
-        medicationsSection.cleanupStep(cleanup.replaceWithField('medications'));
-        return [medicationsSection, medicationActivity];
-    }
-};
-
-exports.medicationsSection = exportMedicationsSection;
-exports.medicationsEntry = exportMedicationsSection;
-
-
-/***/ }),
-/* 13 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var bbxml = __webpack_require__(0);
-
-var component = bbxml.component;
-var processor = bbxml.processor;
-
-var cleanup = __webpack_require__(11);
-
-var shared = module.exports = {};
-
-var Identifier = shared.Identifier = component.define("Identifier")
-    .fields([
-        ["identifier", "1..1", "@root"],
-        ["extension", "0..1", "@extension"],
-    ]);
-
-var simpleCode = shared.SimpleCode = function (oid) {
-    var r = component.define("SimpleCode." + oid);
-    r.fields([]);
-    r.cleanupStep(cleanup.augmentSimpleCode(oid));
-    return r;
-};
-
-var email = shared.email = component.define("email");
-email.fields([
-    ["address", "1..1", "@value"],
-    ["type", "0..1", "@use", simpleCode("2.16.840.1.113883.5.1119")]
-]);
-email.cleanupStep(function () {
-    if (this.js && this.js.address) {
-        this.js.address = this.js.address.substring(7);
-
-        //NOTE: type for email should be empty (per PragueExpat)
-        if (this.js.type) {
-            this.js.type = '';
-        }
-    }
-});
-email.setXPath("h:telecom[starts-with(@value, 'mailto:')]");
-
-var phone = shared.phone = component.define("phone");
-phone.fields([
-    ["number", "1..1", "@value"],
-    ["type", "0..1", "@use", simpleCode("2.16.840.1.113883.5.1119")]
-]);
-phone.cleanupStep(function () {
-    if (this.js && this.js.number) {
-        if (this.js.number.substring(0, 4) === "tel:") {
-            this.js.number = this.js.number.substring(4);
-        }
-    }
-});
-phone.setXPath("h:telecom[@value and @value!='' and not(starts-with(@value, 'mailto:'))]");
-
-var simplifiedCodeOID = shared.simplifiedCodeOID = function (oid) {
-    var r = component.define("SC " + oid);
-    r.fields([
-        ["name", "0..1", "@displayName"],
-        ["code", "1..1", "@code"],
-    ]);
-    r.cleanupStep(cleanup.augmentSimplifiedCodeOID(oid));
-    return r;
-};
-
-shared.metaData = component.define("metaData")
-    .fields([
-        ["identifiers", "0..*", "h:id", Identifier],
-        ["confidentiality", '0..1', "h:confidentialityCode", simplifiedCodeOID("2.16.840.1.113883.5.25")],
-        ["set_id", "0..1", "h:setId", Identifier]
-    ]);
-
-
-/***/ }),
-/* 14 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-// NOTE: allergies section not present in ccda-r1.0, so just kept
-// templateIds hard-coded with ccda-r1.1 values
-var shared = __webpack_require__(6);
-var component = __webpack_require__(0).component;
-var cleanup = __webpack_require__(8);
-var processor = __webpack_require__(0).processor;
-var _ = __webpack_require__(3);
-
-var exportAllergiesSection = function (version) {
-
-    var allergySeverityObservation = component.define("allergySeverityObservation")
-        .fields([
-
-            //VA Mod, per file no coding, so shim into code name.
-            //["code", "0..1", "h:value", shared.ConceptDescriptor],
-            ["code.name", "0..1", "h:text", shared.TextWithReference]
-            //Interpretation not in C32 Spec.
-            //["interpretation", "0..1", "h:interpretationCode", shared.ConceptDescriptor]
-        ]);
-
-    var allergyReaction = component.define("allergyReaction");
-    allergyReaction.templateRoot(["2.16.840.1.113883.10.20.1.54"]);
-    allergyReaction.fields([
-        ["date_time", "0..1", "h:effectiveTime", shared.EffectiveTime],
-        ["reaction.name", "1..1", "h:text", shared.TextWithReference],
-        //Reaction Severity not included in C32 Spec.
-        //["severity", "0..1", "h:entryRelationship/h:observation", allergySeverityObservation]
-    ]);
-
-    var allergenDescriptor = component.define('allergenDescriptor');
-    allergenDescriptor.fields([
-
-        ["name", "0..1", "h:name/text()"],
-        ["code", "0..1", "h:code", shared.ConceptDescriptor]
-    ]).cleanupStep(function () {
-
-        //Custom VA C32 Shim.
-        if (_.get(this, "js.code")) {
-            if (_.get(this, "js.code.js.name") === "Coded Allergy Name Not Available") {
-                delete this.js.code;
-            }
-        }
-
-    });
-
-    /*
-    var allergyStatusObservation = component.define("allergyStatusObservation");
-    allergyStatusObservation.fields([
-        ["code", "0..1", "@code"],
-        ["status", "0..1", "@code", shared.SimpleCode("2.16.840.1.113883.3.88.12.80.68")],
-    ]);
-    */
-
-    var allergyObservation = component.define("allergyObservation"); // this is status observation
-    allergyObservation.templateRoot(["2.16.840.1.113883.10.20.1.18"]);
-    allergyObservation.fields([
-        ["identifiers", "0..*", "h:id", shared.Identifier],
-        //NOTE: Negation Id (per PragueExpat)
-        ["negation_indicator", "0..1", "./@negationInd", processor.asBoolean],
-        //NOTE allergen must be optional in case of negationInd = true (per PragueExpat)
-        ["allergen", "0..1", "h:participant/h:participantRole/h:playingEntity", allergenDescriptor], // (see above) - was 1..1 //Require (optional in spec)
-
-        ["intolerance", "0..1", "h:code", shared.ConceptDescriptor],
-        ["date_time", "0..1", "h:effectiveTime", shared.EffectiveTime],
-
-        //Status not included on C32.
-        //["status", "0..1", "h:entryRelationship/h:observation[h:templateId/@root='2.16.840.1.113883.10.20.22.4.28']/h:value", shared.ConceptDescriptor],
-        ["reactions", "0..*", allergyReaction.xpath(), allergyReaction],
-        ["severity", "0..1", "h:entryRelationship/h:observation[h:templateId/@root='2.16.840.1.113883.10.20.1.55']", allergySeverityObservation]
-    ]);
-
-    var problemAct = component.define('problemAct');
-    problemAct.templateRoot(['2.16.840.1.113883.3.88.11.83.6']);
-    problemAct.fields([
-        ["identifiers", "0..*", "h:id", shared.Identifier],
-        ["date_time", "1..1", "h:effectiveTime", shared.EffectiveTime],
-        ["problemStatus", "1..1", "h:statusCode/@code"],
-        ["observation", "1..1", allergyObservation.xpath(), allergyObservation] // Ignore observation cardinality (in spec can be more than 1)
-    ]);
-    problemAct.cleanupStep(cleanup.allergiesProblemStatusToHITSP);
-
-    var allergiesSection = component.define('allergiesSection');
-    allergiesSection.templateRoot(['2.16.840.1.113883.3.88.11.83.102']);
-    allergiesSection.fields([
-        ["problemAct", "1..*", problemAct.xpath(), problemAct]
-    ]);
-    allergiesSection.cleanupStep(cleanup.replaceWithField(["problemAct"]));
-
-    return [allergiesSection, problemAct];
-};
-exports.allergiesSection = exportAllergiesSection;
-exports.allergiesEntry = exportAllergiesSection;
-
-
-/***/ }),
-/* 15 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var shared = __webpack_require__(6);
-var component = __webpack_require__(0).component;
-var cleanup = __webpack_require__(8);
-var bbm = __webpack_require__(1);
-
-var exportVitalSignsSection = function (version) {
-    var sectionIDs = bbm.CCDA["sections" + version];
-    var clinicalStatementsIDs = bbm.CCDA["statements" + version];
-
-    var VitalSignObservation = component.define("VitalSignObservation")
-        .templateRoot("2.16.840.1.113883.3.88.11.83.14")
-        .fields([
-            ["identifiers", "0..*", "h:id", shared.Identifier], //this one is stripped out by "paredown" cleanup step in component.js
-            ["vital", "1..1", "h:code", shared.ConceptDescriptor],
-            //["identifiers","0..*", "h:id", shared.Identifier], //dup with first line
-            ["status", "1..1", "h:statusCode/@code"],
-            ["date_time", "1..1", "h:effectiveTime", shared.EffectiveTime],
-            ["physicalQuantity", "1..1", "h:value[@xsi:type='PQ']", shared.PhysicalQuantity],
-            //["freeTextValue", "0..1", "h:text", shared.TextWithReference],
-            ["interpretations", "0..*", "h:interpretationCode[@codeSystem='2.16.840.1.113883.5.83']", shared.SimplifiedCode]
-        ]);
-    //VitalSignObservation.cleanupStep(cleanup.extractAllFields(['code']));
-    VitalSignObservation.cleanupStep(cleanup.extractAllFields(['physicalQuantity']));
-
-    var vitalSignsSection = component.define("vitalSignsSection");
-    vitalSignsSection.templateRoot(["2.16.840.1.113883.3.88.11.83.119"]);
-    vitalSignsSection.fields([
-        ["entry", "0..*", VitalSignObservation.xpath(), VitalSignObservation]
-    ]);
-    vitalSignsSection.cleanupStep(cleanup.replaceWithField('entry'));
-    return [vitalSignsSection, VitalSignObservation];
-};
-
-// var VitalSignObservation = component.define("VitalSignObservation")
-//     .templateRoot(clinicalStatementsIDs.VitalSignObservation)
-//     .fields([
-//         ["identifiers", "0..*", "h:id", shared.Identifier], //this one is stripped out by "paredown" cleanup step in component.js
-//         ["vital", "1..1", "h:code", shared.ConceptDescriptor],
-//         //["identifiers","1..*", "h:id", shared.Identifier], //dup with first line
-//         ["status", "1..1", "h:statusCode/@code"],
-//         ["date_time", "1..1", "h:effectiveTime", shared.EffectiveTime],
-//         ["physicalQuantity", "1..1", "h:value[@xsi:type='PQ']", shared.PhysicalQuantity],
-//         //["freeTextValue", "0..1", "h:text", shared.TextWithReference],
-//         ["interpretations", "0..*", "h:interpretationCode[@codeSystem='2.16.840.1.113883.5.83']", shared.SimplifiedCode]
-//     ]);
-//   //VitalSignObservation.cleanupStep(cleanup.extractAllFields(['code']));
-//   VitalSignObservation.cleanupStep(cleanup.extractAllFields(['physicalQuantity']));
-
-/*
-  //Vitals organizer is not used (flattened out in JSON model)
-  var VitalSignsOrganizer = component.define("VitalSignsOrganizer")
-  .templateRoot("2.16.840.1.113883.10.20.22.4.26")
-  .fields([
-    ["panelName","0..1", "h:code", shared.ConceptDescriptor],
-    ["sourceIds","1..*", "h:id", shared.Identifier],
-    ["vitals", "1..*", VitalSignObservation.xpath(), VitalSignObservation]
-  ]);
-  
-  
-  exports.VitalSignsSection = Component.define("VitalSignsSection")
-  .templateRoot("2.16.840.1.113883.10.20.22.2.4.1")
-  .fields([
-    //["name","0..1", "h:code", shared.ConceptDescriptor],
-    //["panels","0..*", VitalSignsOrganizer.xpath(), VitalSignsOrganizer],
-    ["vitals","0..*", VitalSignObservation.xpath(), VitalSignObservation],
-  ]);
-  */
-
-exports.vitalSignsSection = exportVitalSignsSection;
-
-exports.vitalSignsEntry = exportVitalSignsSection;
-
-
-/***/ }),
-/* 16 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var shared = __webpack_require__(6);
-var component = __webpack_require__(0).component;
-var cleanup = __webpack_require__(8);
-var bbm = __webpack_require__(1);
-
-var exportResultsSection = function (version) {
-    var clinicalStatementsIDs = bbm.CCDA["statements" + version];
-    var sectionIDs = bbm.CCDA["sections" + version];
-
-    var referenceRange = component.define('referenceRange')
-        .fields([
-            ["low", "0..1", "h:value/h:low/@value"],
-            ["high", "0..1", "h:value/h:high/@value"],
-            ["unit", "0..1", "h:value/h:low/@unit"],
-            ["range", "0..1", "h:text/text()"]
-        ]);
-
-    var ResultObservation = component.define("ResultObservation")
-        .templateRoot("2.16.840.1.113883.3.88.11.83.15.1")
-        .fields([
-            ["identifiers", "0..*", "h:id", shared.Identifier],
-            ["result", "1..1", "h:code", shared.ConceptDescriptor],
-            ["date_time", "1..1", "h:effectiveTime", shared.EffectiveTime],
-            //["physicalQuantity.text", "1..1", "h:value[@xsi:type='ST']", shared.PhysicalQuantity],
-            ["status", "1..1", "h:statusCode/@code"],
-            ["text", "0..1", "h:value[@xsi:type='ST']/text()"],
-            ["reference_range", "0..1", "h:referenceRange/h:observationRange", referenceRange],
-            //["codedValue", "0..1", "h:value[@xsi:type='CD']", shared.ConceptDescriptor],
-            //["freeTextValue", "0..1", "h:text", shared.TextWithReference],
-            ["interpretations", "0..*", "h:interpretationCode[@codeSystem='2.16.840.1.113883.5.83']", shared.SimplifiedCode]
-        ]);
-    //ResultObservation.cleanupStep(cleanup.extractAllFields(['resultName']));
-
-    // TODO: Accomodating both PQ and CD values needed
-    //ResultObservation.cleanupStep(cleanup.extractAllFields(['physicalQuantity']));
-    //ResultObservation.cleanupStep(cleanup.extractAllFields(['codedValue']));
-
-    var ResultsOrganizer = component.define("ResultsOrganizer")
-        .templateRoot("2.16.840.1.113883.10.20.1.32")
-        .fields([
-            ["identifiers", "0..*", "h:id", shared.Identifier],
-            ["result_set", "0..1", "h:code", shared.ConceptDescriptor],
-            ["results", "1..*", ResultObservation.xpath(), ResultObservation]
-        ]);
-
-    var resultsSection = component.define("resultsSection");
-    resultsSection.templateRoot(['2.16.840.1.113883.3.88.11.83.122']); // .1 for "entries required"
-    resultsSection.fields([
-        ["panels", "0..*", ResultsOrganizer.xpath(), ResultsOrganizer]
-    ]);
-    resultsSection.cleanupStep(cleanup.replaceWithField('panels'));
-
-    return [resultsSection, ResultsOrganizer];
-};
-
-exports.resultsSection = exportResultsSection;
-exports.resultsEntry = exportResultsSection;
-
-
-/***/ }),
-/* 17 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var shared = __webpack_require__(6);
-var component = __webpack_require__(0).component;
-var cleanup = __webpack_require__(8);
-var bbm = __webpack_require__(1);
-
-var exportProblemsSection = function (version) {
-    var sectionIDs = bbm.CCDA["sections" + version];
-    var clinicalStatementsIDs = bbm.CCDA["statements" + version];
-
-    //These three elements aren't used right now, but can be refactored to use in standardized way.
-    var AgeObservation = component.define("AgeObservation")
-        .templateRoot("2.16.840.1.113883.10.20.1.38");
-
-    var ProblemStatus = component.define("ProblemStatus")
-        .templateRoot("2.16.840.1.113883.10.20.1.50")
-        .fields([
-            ["name", "0..1", "h:value/@displayName"],
-            ["date_time", "0..1", "h:effectiveTime", shared.EffectiveTime],
-        ]);
-
-    var ProblemObservation = component.define("ProblemObservation")
-        .fields([
-            ["code", "0..1", "../h:value", shared.ConceptDescriptor],
-            ["problem_text", "0..1", "../h:text", shared.TextWithReference],
-            ["date_time", "0..1", "../h:effectiveTime", shared.EffectiveTime],
-        ]).cleanupStep(cleanup.augmentObservation).cleanupStep(cleanup.removeField("problem_text"));
-
-    //TODO:  Cleanup/investigate negation status.
-    var ProblemConcernAct = component.define("ProblemConcernAct")
-        .fields([
-            ["date_time", "0..1", "h:effectiveTime", shared.EffectiveTime],
-            ["identifiers", "0..*", "h:entryRelationship/h:observation/h:id", shared.Identifier],
-            ["negation_indicator", "0..1", "h:entryRelationship/h:observation", shared.NegationIndicator],
-            ["problem", "1:1", "h:entryRelationship/h:observation/h:value", ProblemObservation],
-            ["onset_age", "0..1", "h:entryRelationship/h:observation/h:entryRelationship/h:observation/h:templateId[@root='2.16.840.1.1 13883.10.20.1.38']/../h:value/@value"],
-            ["onset_age_unit", "0..1", "h:entryRelationship/h:observation/h:entryRelationship/h:observation/h:templateId[@root='2.16.840.1.1 13883.10.20.1.38']/../h:value", shared.AgeDescriptor],
-            ["status", "0..1", ProblemStatus.xpath(), ProblemStatus],
-            //Patient Status not supported.
-            //["patient_status", "0..1", "h:entryRelationship/h:observation/h:entryRelationship/h:observation/h:templateId[@root='2.16.840.1.113883.10.20.22.4.5']/../h:value/@displayName"],
-            ["source_list_identifiers", "0..*", "h:id", shared.Identifier],
-        ]);
-
-    var NonProblemObservation = ProblemConcernAct
-        .define("ProblemObservation");
-
-    var ProblemOrganizer = component.define("ProblemOrganizer")
-        .templateRoot(["2.16.840.1.113883.3.88.11.83.7"]);
-
-    var problemsSection = component.define("problemsSection");
-    problemsSection.templateRoot(["2.16.840.1.113883.3.88.11.83.103"]); // coded entries required
-    problemsSection.fields([
-        ["problems", "0..*", ProblemOrganizer.xpath(), ProblemConcernAct],
-    ]);
-
-    problemsSection.cleanupStep(cleanup.replaceWithField("problems"));
-    return [problemsSection, ProblemConcernAct];
-};
-
-exports.problemsSection = exportProblemsSection;
-exports.problemsEntry = exportProblemsSection;
-
-
-/***/ }),
-/* 18 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var shared = __webpack_require__(6);
-var component = __webpack_require__(0).component;
-var cleanup = __webpack_require__(8);
-var bbm = __webpack_require__(1);
-
-var exportProceduresSection = function (version) {
-    var sectionIDs = bbm.CCDA["sections" + version];
-    var clinicalStatementsIDs = bbm.CCDA["statements" + version];
-
-    var entry = component.define('entry');
-    entry.templateRoot(["2.16.840.1.113883.3.88.11.83.17", "1.3.6.1.4.1.19376.1.5.3.1.4.19"]);
-    entry.fields([
-        ["procedure", "1..1", "h:code", shared.ConceptDescriptor],
-        ["identifiers", "0..*", "h:id", shared.Identifier],
-        //Not C32 Supported.
-        //["status", "1..1", "h:statusCode", shared.simplifiedCodeOID('2.16.840.1.113883.11.20.9.22')],
-        ["date_time", "0..1", "h:effectiveTime", shared.EffectiveTime],
-        ["body_sites", "0..*", "h:targetSiteCode", shared.ConceptDescriptor],
-
-        //Not C32 Supported.
-        //["specimen", "0..1", "h:specimen", ProcedureSpecimen],
-        //Not C32 Supported.
-        //["priority", "0..1", "h:priorityCode", shared.ConceptDescriptor],
-        ["performers", "0..*", "h:performer/h:assignedEntity", shared.assignedEntity],
-        //Not C32 Supported.
-        //["locations", "0..*", "h:participant/h:participantRole", shared.serviceDeliveryLocation],
-        ['procedure_type', "1..1", "h:templateId/@root"]
-    ]);
-
-    entry.cleanupStep(function () {
-        var typeMap = {
-            "2.16.840.1.113883.3.88.11.83.17": "procedure" // ccda-r1
-        };
-        var t = this.js['procedure_type'];
-        this.js['procedure_type'] = typeMap[t];
-    });
-
-    var proceduresSection = component.define('proceduresSection');
-    proceduresSection.templateRoot(["2.16.840.1.113883.10.20.1.12"]);
-    proceduresSection.fields([
-        ["entry", "0..*", entry.xpath(), entry]
-    ]);
-    proceduresSection.cleanupStep(cleanup.replaceWithField('entry'));
-    return [proceduresSection, entry];
-};
-
-exports.proceduresSection = exportProceduresSection;
-exports.proceduresEntry = exportProceduresSection;
-
-
-/***/ }),
-/* 19 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var shared = __webpack_require__(6);
-var component = __webpack_require__(0).component;
-var cleanup = __webpack_require__(8);
-var bbm = __webpack_require__(1);
-var _ = __webpack_require__(3);
-
-var augmentImmunizationStatus = function () {
-    var tmpStatus = "";
-    if (_.get(this, 'js.negation_ind') === "true") {
-        tmpStatus = "refused";
-    } else if (_.get(this, 'js.mood_code') === "INT") {
-        tmpStatus = "pending";
-    } else if (_.get(this, 'js.mood_code') === "EVN") {
-        tmpStatus = "complete";
-    } else {
-        tmpStatus = "unknown";
-    }
-    this.js = tmpStatus;
-};
-
-var exportImmunizationsSection = function (version) {
-    var sectionIDs = bbm.CCDA["sections" + version];
-    var clinicalStatementsIDs = bbm.CCDA["statements" + version];
-
-    var ImmunizationStatus = component.define("ImmunizationStatus")
-        .fields([
-            ["mood_code", "0..1", "./@moodCode"],
-            ["negation_ind", "0..1", "./@negationInd"],
-        ]).cleanupStep(augmentImmunizationStatus);
-
-    var ImmunizationAdministration = component.define("ImmunizationAdministration")
-        .fields([
-            ["route", "0..1", "h:routeCode", shared.ConceptDescriptor],
-            ["body_site", "0..1", "h:approachSiteCode", shared.ConceptDescriptor],
-            ["dose", "0..1", "h:doseQuantity", shared.PhysicalQuantity],
-            ["form", "0..1", "h:administrationUnitCode", shared.ConceptDescriptor]
-        ]);
-
-    var ImmunizationInstructions = component.define("MedicationInstructions")
-        .fields([
-            ["code", "0..1", "h:code", shared.ConceptDescriptor],
-            ["free_text", "0..1", "h:text", shared.TextWithReference]
-        ]);
-
-    var immunizationActivityProduct = component.define('immunizationActivityProduct')
-        .fields([
-            ["product", "1..1", "h:manufacturedMaterial/h:code", shared.ConceptDescriptor],
-            ["lot_number", "0..1", "h:manufacturedMaterial/h:lotNumberText"],
-            ["manufacturer", "0..1", "h:manufacturerOrganization/h:name"],
-        ]);
-
-    var ImmunizationActivity = component.define("ImmunizationActivity")
-        .templateRoot(["2.16.840.1.113883.3.88.11.83.13"])
-        .fields([
-            ["date_time", "1..1", "h:effectiveTime", shared.EffectiveTime],
-            ["identifiers", "0..*", "h:id", shared.Identifier],
-            ["status", "0..1", "./../h:substanceAdministration", ImmunizationStatus],
-            ["sequence_number", "0..1", "h:entryRelationship[@typeCode='SUBJ']/h:observation/h:value"],
-            ["product", "0..1", "h:consumable/h:manufacturedProduct", immunizationActivityProduct],
-            ["administration", "0..1", "./../h:substanceAdministration", ImmunizationAdministration],
-            ["performer", "0..1", "h:performer/h:assignedEntity", shared.assignedEntity],
-            //Not in C32 Spec.
-            //["instructions", "0..1", "h:entryRelationship[@typeCode='RSON']/h:act", ImmunizationInstructions],
-            ["refusal_reason", "0..1", "h:entryRelationship[@typeCode='RSON']/h:act", shared.SimpleCode("2.16.840.1.113883.10.20.1.27")],
-        ]);
-
-    var immunizationsSection = component.define("immunizationsSection");
-    immunizationsSection.templateRoot(["2.16.840.1.113883.3.88.11.83.117", "1.3.6.1.4.1.19376.1.5.3.1.3.23"]);
-    immunizationsSection.fields([
-        ["immunizations", "0..*", ImmunizationActivity.xpath(), ImmunizationActivity]
-    ]);
-
-    immunizationsSection.cleanupStep(cleanup.replaceWithField('immunizations'));
-
-    return [immunizationsSection, ImmunizationActivity];
-};
-
-exports.immunizationsSection = exportImmunizationsSection;
-exports.immunizationsEntry = exportImmunizationsSection;
-
-
-/***/ }),
-/* 20 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var shared = __webpack_require__(6);
-var component = __webpack_require__(0).component;
-var cleanup = __webpack_require__(8);
-var processor = __webpack_require__(0).processor;
-var bbm = __webpack_require__(1);
-var _ = __webpack_require__(3);
-
-var exportMedicationsSection = function (version) {
-    var sectionIDs = bbm.CCDA["sections" + version];
-    var clinicalStatementsIDs = bbm.CCDA["statements" + version];
-
-    var MedicationInterval = component.define("MedicationInterval")
-        .fields([
-            ["phase", "0..1", "./h:phase", shared.EffectiveTime],
-            ["period", "0..1", "./h:period", shared.PhysicalQuantity],
-            ["alignment", "0..1", "./@alignment"],
-            ["frequency", "0..1", "./@institutionSpecified", processor.asBoolean],
-            ["event", "0..1", "./h:event/@code", shared.SimpleCode("2.16.840.1.113883.5.139")],
-            ["event_offset", "0..1", "./h:offset", shared.EventOffset]
-        ]);
-
-    var MedicationAdministration = component.define("MedicationAdministration")
-        .fields([
-            ["route", "0..1", "h:routeCode", shared.ConceptDescriptor],
-            ["site", "0..1", "h:approachSiteCode", shared.ConceptDescriptor],
-            ["form", "0..1", "h:administrationUnitCode", shared.ConceptDescriptor],
-            //["dose", "0..1", "h:doseQuantity", shared.PhysicalQuantity],
-            ["rate", "0..1", "h:rateQuantity", shared.PhysicalQuantity],
-            ["dose_restriction", "0..1", "h:maxDoseQuantity", shared.PhysicalQuantity],
-            //["interval", "0..1", "h:effectiveTime[@operator='A']", MedicationInterval],
-        ]);
-
-    var MedicationIndication = component.define("MedicationIndication")
-        .fields([
-            ["identifiers", "0..*", "h:id", shared.Identifier],
-            ["code", "0..1", "h:code", shared.ConceptDescriptor],
-            ["date_time", "0..1", "h:effectiveTime", shared.EffectiveTime],
-            ["value", "0..1", "h:value", shared.ConceptDescriptor]
-        ]);
-
-    var MedicationPrecondition = component.define("MedicationPrecondition")
-        .fields([
-            ["code", "0..1", "h:code", shared.ConceptDescriptor],
-            ["text", "0..1", "h:text"],
-            ["value", "0..1", "h:value", shared.ConceptDescriptor]
-        ]);
-
-    var author = component.define("author")
-        .fields([
-            ["date_time", "0..1", "h:time", shared.EffectiveTime],
-            ["identifiers", "0..*", "h:assignedAuthor/h:id", shared.Identifier],
-            [version === "" ? "name" : "organization", "0..1",
-                "(h:assignedAuthor/h:representedOrganization | h:assignedAuthor/h:assignedPerson/h:name)[last()]", (version === "" ? shared.IndividualName : shared.Organization)
-            ]
-        ]);
-
-    var MedicationInformation = component.define("MedicationInformation")
-        .templateRoot("2.16.840.1.113883.10.20.22.4.23")
-        .fields([
-            ["identifiers", "0..*", "h:id", shared.Identifier],
-            ["unencoded_name", "0..1", "h:manufacturedMaterial/h:code/h:originalText", shared.TextWithReference],
-            ["product", "1..1", "h:manufacturedMaterial/h:code", shared.ConceptDescriptor],
-            ["manufacturer", "0..1", "h:manufacturerOrganization/h:name"]
-        ]);
-
-    var MedicationSupplyOrder = component.define("MedicationSupplyOrder")
-        .fields([
-            ["identifiers", "0..*", "h:assignedEntity/h:id", shared.Identifier],
-            ["date_time", "0..1", "h:effectiveTime", shared.EffectiveTime],
-            ["repeatNumber", "0..1", "h:repeatNumber/@value"],
-            ["quantity", "0..1", "h:quantity/@value"],
-            ["status", "0..1", "h:status/@code"],
-            ["author", "0..1", "h:author", author] //, instructions use references, which are not supported (also samples don't have good data for it)
-            //["instructions", "0..1", "h:entryRelationship[@typeCode='SUBJ']/h:act", MedicationInstructions]
-        ]);
-
-    var MedicationPerformer = component.define("MedicationPerformer")
-        .fields([
-            ["identifiers", "0..*", "h:assignedEntity/h:id", shared.Identifier],
-            ["address", "0..*", "h:assignedEntity/h:addr", shared.Address],
-            ["phone", "0..1", "h:assignedEntity/" + shared.phone.xpath(), shared.phone],
-            ["organization", "0..*", "h:assignedEntity/h:representedOrganization", shared.Organization]
-        ]);
-    /*
-        var MedicationDrugVehicle = component.define("MedicationDrugVehicle")
-            .templateRoot("2.16.840.1.113883.10.20.22.4.24")
-            .fields([
-                ["playingEntity", "0..1", "h:playingEntity/h:code", shared.ConceptDescriptor]
-            ]).cleanupStep(cleanup.extractAllFields(["drug_vehicle"]));
-*/
-    var MedicationInstructions = component.define("MedicationInstructions")
-        .fields([
-            ["code", "0..1", "../h:code", shared.ConceptDescriptor],
-            ["freeText", "0..1", "../h:text", shared.TextWithReference]
-        ]);
-
-    var MedicationDispense = component.define("MedicationDispense")
-        .templateRoot("2.16.840.1.113883.10.20.22.4.18")
-        .fields([
-            ["identifiers", "0..*", "h:id", shared.Identifier],
-            ["performer", "0..1", "h:performer", MedicationPerformer],
-            ["supply", "0..1", "h:entryRelationship[@typeCode='REFR']/h:supply", MedicationSupplyOrder]
-        ]);
-
-    var MedicationActivity = component.define("MedicationActivity")
-        .templateRoot("2.16.840.1.113883.3.88.11.83.8")
-        .fields([
-            ["date_time", "0..1", "h:effectiveTime[not (@operator='A')]", shared.EffectiveTime],
-            ["identifiers", "0..*", "h:id", shared.Identifier],
-            ["status", "1..1", "./../h:substanceAdministration/@moodCode"],
-            ["sig", "0..1", "h:text", shared.TextWithReference],
-            ["product", "1..1", "h:consumable/h:manufacturedProduct", MedicationInformation],
-            ["supply", "0..1", "h:entryRelationship[@typeCode='REFR']/h:supply", MedicationSupplyOrder],
-            ["administration", "0..1", "../h:substanceAdministration", MedicationAdministration],
-            ["performer", "0..1", "h:performer", MedicationPerformer],
-            ["drug_vehicle", "0..1", "h:participant[@typeCode='CSM']/h:participantRole/h:playingEntity[@classCode='MMAT']/h:code", shared.ConceptDescriptor],
-            ["precondition", "1..1", "h:precondition/h:criterion", MedicationPrecondition],
-            ["indication", "0..1", "h:entryRelationship[@typeCode='RSON']/h:observation", MedicationIndication],
-            //["instructions", "0..1", "h:entryRelationship[@typeCode='REFR']/h:supply/*/*/h:templateId[@root='2.16.840.1.113883.10.20.22.4.20']", MedicationInstructions],
-            ["dispense", "0..1", MedicationDispense.xpath(), MedicationDispense]
-        ])
-        //.cleanupStep(Cleanup.extractAllFields(["medicationName"]))
-        .cleanupStep(function () {
-
-            this.js.identifiers = _.filter(this.js.identifiers, function (identifier) {
-                if (identifier) {
-                    if (identifier.js === null) {
-                        return false;
-                    } else {
-                        return true;
-                    }
-                } else {
-                    return false;
-                }
-            });
-
-            //Cleanup Status.
-
-            if (_.get(this, "js.status") === "EVN") {
-                this.js.status = "Completed";
-            }
-            if (_.get(this, "js.status") === "INT") {
-                this.js.status = "Prescribed";
-            }
-
-            // separate out two effectiveTimes
-
-            /*
-          // 1.  startDate --- endDate
-          var range = this.js.times.filter(function(t){
-            return -1 === ['PIVL_TS', 'EIVL_TS'].indexOf(t.js.xsitype);
-          });
-
-          // 2.  dosing interval
-          var period= this.js.times.filter(function(t){
-            return -1 !== ['PIVL_TS', 'EIVL_TS'].indexOf(t.js.xsitype);
-          });
-
-          delete this.js.times;
-
-          if (range.length > 0) {
-            this.js.dateRange = range[0];
-          }
-
-          if (period.length > 0) {
-            this.js.dosePeriod = period[0].js.period;
-          }*/
-
-        });
-
-    var medicationsSection = component.define("medicationsSection");
-    medicationsSection.templateRoot(["2.16.840.1.113883.3.88.11.83.112", "1.3.6.1.4.1.19376.1.5.3.1.3.19"]);
-    medicationsSection.fields([
-        ["medications", "0..*", MedicationActivity.xpath(), MedicationActivity]
-    ]);
-    medicationsSection.cleanupStep(cleanup.replaceWithField('medications'));
-    return [medicationsSection, MedicationActivity];
-
-};
-
-exports.medicationsSection = exportMedicationsSection;
-exports.medicationsEntry = exportMedicationsSection;
-
-
-/***/ }),
-/* 21 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var shared = __webpack_require__(6);
-var component = __webpack_require__(0).component;
-var cleanup = __webpack_require__(8);
-var bbm = __webpack_require__(1);
-
-var exportEncountersSection = function (version) {
-    var sectionIDs = bbm.CCDA["sections" + version];
-    var clinicalStatementsIDs = bbm.CCDA["statements" + version];
-
-    /*var finding = component.define("finding");
-    finding.templateRoot([clinicalStatementsIDs.Indication]);
-    finding.fields([
-        ["identifiers", "1..*", "h:id", shared.Identifier],
-        ["value", "1..1", "h:value", shared.ConceptDescriptor],
-        ["date_time", "1..1", "h:effectiveTime", shared.EffectiveTime]
-    ]);*/
-    //finding.cleanupStep(cleanup.extractAllFields(['value']));
-
-    // Iff needed add this later by refactoring Problem Observation from Problems.  They should share.
-    //var diagnosis = component.define("diagnosis");
-    //finding.templateRoot(['2.16.840.1.113883.10.20.22.4.80']);
-    //finding.fields([
-    //  ["code", "1..1", "h:code", shared.ConceptDescriptor]
-    //]);
-    //finding.cleanupStep(cleanup.extractAllFields(['code']));
-
-    var activity = component.define('activity');
-    activity.templateRoot(["2.16.840.1.113883.10.20.1.2", "2.16.840.1.113883.3.88.11.83.16"]);
-    activity.fields([
-        ["encounter", "1..1", "h:code", shared.ConceptDescriptor],
-        ["identifiers", "0..*", "h:id", shared.Identifier],
-        ["date_time", "1..1", "h:effectiveTime", shared.EffectiveTime],
-        ["performers", "0..*", "h:performer/h:assignedEntity", shared.assignedEntity],
-        ["locations", "0..*", "h:participant/h:participantRole", shared.serviceDeliveryLocation]
-
-        //No findings in C32 Spec.
-        //["findings", "0..*", finding.xpath(), finding] //,
-        //["diagnoses", "0..*", diagnosis.xpath(), diagnosis]
-    ]);
-
-    var encountersSection = component.define('encountersSection');
-    encountersSection.templateRoot(["2.16.840.1.113883.3.88.11.83.127", "1.3.6.1.4.1.19376.1.5.3.1.1.5.3.3"]);
-    encountersSection.fields([
-        ["activity", "0..*", activity.xpath(), activity]
-    ]);
-    encountersSection.cleanupStep(cleanup.replaceWithField(["activity"]));
-    return [encountersSection, activity];
-};
-exports.encountersSection = exportEncountersSection;
-exports.encountersEntry = exportEncountersSection;
-
-
-/***/ }),
-/* 22 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var shared = __webpack_require__(4);
-var component = __webpack_require__(0).component.withNullFlavor();
-var cleanup = __webpack_require__(5);
-var bbm = __webpack_require__(1);
-
-var exportResultsSection = function (version) {
-    var clinicalStatementsIDs = bbm.CCDA["statements" + version];
-    var sectionIDs = bbm.CCDA["sections" + version];
-
-    var referenceRangeValue = component.define('referenceRangeValue')
-        .fields([
-            ["standard_value", "0..1", ".", shared.ConceptDescriptor],
-            ["interpretation", "0..1", "../h:interpretationCode/@code"]
-        ])
-        .cleanupStep(cleanup.extractAllFields(["standard_value"]));
-
-    var referenceRange = component.define('referenceRange')
-        .fields([
-            ["low", "0..1", "h:value/h:low/@value"],
-            ["high", "0..1", "h:value/h:high/@value"],
-            ["unit", "0..1", "h:value/h:low/@unit"],
-            ["range", "0..1", "h:text/text()"],
-            ["value", "0..1", "h:value[@xsi:type='CO']", referenceRangeValue]
-        ]);
-
-    var ResultObservation = component.define("ResultObservation")
-        .templateRoot(clinicalStatementsIDs["ResultObservation"])
-        .fields([
-            ["identifiers", "0..*", "h:id", shared.Identifier],
-            ["result", "1..1", "h:code", shared.ConceptDescriptor],
-            ["date_time", "1..1", "h:effectiveTime", shared.EffectiveTime],
-            ["physicalQuantity", "1..1", "h:value[@xsi:type='PQ']", shared.PhysicalQuantity],
-            ["status", "1..1", "h:statusCode/@code"],
-            ["text", "0..1", "h:value[@xsi:type='ST'] | h:value[@xsi:type='ED']", shared.TextWithReference],
-            ["codedOrdinalText", "0..1", "h:value[@xsi:type='CO']/@displayName"],
-            ["reference_range", "0..1", "h:referenceRange/h:observationRange", referenceRange],
-            //["codedValue", "0..1", "h:value[@xsi:type='CD']", shared.ConceptDescriptor],
-            //["freeTextValue", "0..1", "h:text", shared.TextWithReference],
-            ["interpretations", "0..*", "h:interpretationCode[@codeSystem='2.16.840.1.113883.5.83']", shared.ConceptDescriptor],
-        ]);
-    ResultObservation.cleanupStep(cleanup.replaceStringFieldWithNullFlavorName("text"));
-    //ResultObservation.cleanupStep(cleanup.extractAllFields(['resultName']));
-    ResultObservation.cleanupStep(cleanup.renameField("codedOrdinalText", "text"));
-
-    // TODO: Accomodating both PQ and CD values needed
-    ResultObservation.cleanupStep(cleanup.extractAllFields(['physicalQuantity']));
-    //ResultObservation.cleanupStep(cleanup.extractAllFields(['codedValue']));
-
-    var ResultsOrganizer = component.define("ResultsOrganizer")
-        .templateRoot(clinicalStatementsIDs["ResultOrganizer"])
-        .fields([
-            ["identifiers", "0..*", "h:id", shared.Identifier],
-            ["result_set", "0..1", "h:code", shared.ConceptDescriptor],
-            ["results", "1..*", ResultObservation.xpath(), ResultObservation]
-        ]);
-    //ResultsOrganizer.cleanupStep(cleanup.extractAllFields(['panelName']));
-
-    var resultsSection = component.define("resultsSection");
-    resultsSection.templateRoot([sectionIDs.ResultsSection, sectionIDs.ResultsSectionEntriesOptional]); // .1 for "entries required"
-    resultsSection.fields([
-        ["panels", "0..*", ResultsOrganizer.xpath(), ResultsOrganizer]
-    ]);
-    resultsSection.cleanupStep(cleanup.replaceWithField('panels'));
-
-    return [resultsSection, ResultsOrganizer];
-};
-
-exports.resultsSection = exportResultsSection;
-exports.resultsEntry = exportResultsSection;
-
-
-/***/ }),
-/* 23 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var shared = __webpack_require__(4);
-var component = __webpack_require__(0).component.withNullFlavor();
-var cleanup = __webpack_require__(5);
-var bbm = __webpack_require__(1);
-var _ = __webpack_require__(3);
-
-var exportVitalSignsSection = function (version) {
-    var sectionIDs = bbm.CCDA["sections" + version];
-    var clinicalStatementsIDs = bbm.CCDA["statements" + version];
-
-    var VitalSignObservation = component.define("VitalSignObservation")
-        .templateRoot(clinicalStatementsIDs.VitalSignObservation)
-        .fields([
-            ["identifiers", "0..*", "h:id", shared.Identifier], //this one is stripped out by "paredown" cleanup step in component.js
-            ["vital", "1..1", "h:code", shared.ConceptDescriptor],
-            //["identifiers","0..*", "h:id", shared.Identifier], //dup with first line
-            ["status", "1..1", "h:statusCode/@code"],
-            ["date_time", "1..1", "h:effectiveTime", shared.EffectiveTime],
-            ["physicalQuantity", "1..1", "h:value[@xsi:type='PQ']", shared.PhysicalQuantity],
-            // ["freeTextValue", "0..1", "h:text", shared.TextWithReference],
-            ["interpretations", "0..*", "h:interpretationCode[@codeSystem='2.16.840.1.113883.5.83']", shared.SimplifiedCode],
-            ["text", "0..1", "h:value[@xsi:type='ED']", shared.TextWithReference],
-            ["nullVitalReplacementText", "0..1", "h:text", shared.TextWithReference]
-        ]);
-    //VitalSignObservation.cleanupStep(cleanup.extractAllFields(['code']));
-    VitalSignObservation.cleanupStep(cleanup.extractAllFields(['physicalQuantity']));
-    // custom cleanup to replace a nullFlavored h:code with the contents of h:text
-    VitalSignObservation.cleanupStep(function () {
-        if (_.has(this, "js.nullVitalReplacementText")) {
-            if (_.get(this, "js.vital.code_system_name") === "Null Flavor") {
-                this.js.vital = {
-                    "name": this.js.nullVitalReplacementText
-                };
-            }
-            delete this.js.nullVitalReplacementText;
-        }
-    });
-    VitalSignObservation.cleanupStep(cleanup.replaceStringFieldWithNullFlavorName("text"));
-
-    var vitalSignsSection = component.define("vitalSignsSection");
-    vitalSignsSection.templateRoot([sectionIDs.VitalSignsSection, sectionIDs.VitalSignsSectionEntriesOptional]);
-    vitalSignsSection.fields([
-        ["entry", "0..*", VitalSignObservation.xpath(), VitalSignObservation]
-    ]);
-    vitalSignsSection.cleanupStep(cleanup.replaceWithField('entry'));
-    return [vitalSignsSection, VitalSignObservation];
-};
-
-// var VitalSignObservation = component.define("VitalSignObservation")
-//     .templateRoot(clinicalStatementsIDs.VitalSignObservation)
-//     .fields([
-//         ["identifiers", "0..*", "h:id", shared.Identifier], //this one is stripped out by "paredown" cleanup step in component.js
-//         ["vital", "1..1", "h:code", shared.ConceptDescriptor],
-//         //["identifiers","1..*", "h:id", shared.Identifier], //dup with first line
-//         ["status", "1..1", "h:statusCode/@code"],
-//         ["date_time", "1..1", "h:effectiveTime", shared.EffectiveTime],
-//         ["physicalQuantity", "1..1", "h:value[@xsi:type='PQ']", shared.PhysicalQuantity],
-//         //["freeTextValue", "0..1", "h:text", shared.TextWithReference],
-//         ["interpretations", "0..*", "h:interpretationCode[@codeSystem='2.16.840.1.113883.5.83']", shared.SimplifiedCode]
-//     ]);
-//   //VitalSignObservation.cleanupStep(cleanup.extractAllFields(['code']));
-//   VitalSignObservation.cleanupStep(cleanup.extractAllFields(['physicalQuantity']));
-
-/*
-  //Vitals organizer is not used (flattened out in JSON model)
-  var VitalSignsOrganizer = component.define("VitalSignsOrganizer")
-  .templateRoot("2.16.840.1.113883.10.20.22.4.26")
-  .fields([
-    ["panelName","0..1", "h:code", shared.ConceptDescriptor],
-    ["sourceIds","1..*", "h:id", shared.Identifier],
-    ["vitals", "1..*", VitalSignObservation.xpath(), VitalSignObservation]
-  ]);
-
-
-  exports.VitalSignsSection = Component.define("VitalSignsSection")
-  .templateRoot("2.16.840.1.113883.10.20.22.2.4.1")
-  .fields([
-    //["name","0..1", "h:code", shared.ConceptDescriptor],
-    //["panels","0..*", VitalSignsOrganizer.xpath(), VitalSignsOrganizer],
-    ["vitals","0..*", VitalSignObservation.xpath(), VitalSignObservation],
-  ]);
-  */
-
-exports.vitalSignsSection = exportVitalSignsSection;
-
-exports.vitalSignsEntry = exportVitalSignsSection;
-
-
-/***/ }),
-/* 24 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var shared = __webpack_require__(4);
-var component = __webpack_require__(0).component.withNullFlavor();
-var cleanup = __webpack_require__(5);
-var bbm = __webpack_require__(1);
-
-var exportProblemsSection = function (version) {
-    var sectionIDs = bbm.CCDA["sections" + version];
-    var clinicalStatementsIDs = bbm.CCDA["statements" + version];
-
-    //These three elements aren't used right now, but can be refactored to use in standardized way.
-    var AgeObservation = component.define("AgeObservation")
-        .templateRoot("2.16.840.1.113883.10.20.22.4.31");
-
-    var ProblemStatus = component.define("ProblemStatus")
-        .templateRoot("2.16.840.1.113883.10.20.22.4.6")
-        .fields([
-            ["name", "0..1", "h:value/@displayName"],
-            ["date_time", "0..1", "h:effectiveTime", shared.EffectiveTime],
-        ]).cleanupStep(cleanup.replaceStringFieldWithNullFlavorName("name"));
-
-    var HealthStatus = component.define("HealthStatus")
-        .templateRoot("2.16.840.1.113883.10.20.22.4.5");
-
-    var ProblemObservation = component.define("ProblemObservation2")
-        .templateRoot("2.16.840.1.113883.10.20.22.4.4")
-        .fields([
-            //["name", "0..1", "@displayName"],
-            //["code", "1..1", "@code"],
-            //["system", "1..1", "@codeSystem"],
-            //["code_system_name", "0..1", "@codeSystemName"],
-            //["nullFlavor", "0..1", "@nullFlavor"],
-            ["code", "0..1", "h:value", shared.ConceptDescriptor],
-            ["date_time", "0..1", "h:effectiveTime", shared.EffectiveTime],
-        ]);
-    //.cleanupStep(cleanup.augmentConcept).cleanupStep(cleanup.removeField('system'));
-
-    //TODO:  Cleanup/investigate negation status.
-    var ProblemConcernAct = component.define("ProblemConcernAct")
-        .templateRoot([clinicalStatementsIDs.ProblemObservation])
-        .fields([
-            ["date_time", "0..1", "h:effectiveTime", shared.EffectiveTime],
-            ["identifiers", "0..*", "h:entryRelationship/h:observation/h:id", shared.Identifier],
-            ["negation_indicator", "0..1", "h:entryRelationship/h:observation", shared.NegationIndicator],
-            ["problem", "1..1", ProblemObservation.xpath(), ProblemObservation],
-            ["onset_age", "0..1", "h:entryRelationship/h:observation/h:entryRelationship/h:observation/h:templateId[@root='2.16.840.1.113883.10.20.22.4.31']/../h:value/@value"],
-            ["onset_age_unit", "0..1", "h:entryRelationship/h:observation/h:entryRelationship/h:observation/h:templateId[@root='2.16.840.1.113883.10.20.22.4.31']/../h:value", shared.AgeDescriptor],
-            ["status", "0..1", ProblemStatus.xpath(), ProblemStatus],
-            ["patient_status", "0..1", "h:entryRelationship/h:observation/h:entryRelationship/h:observation/h:templateId[@root='2.16.840.1.113883.10.20.22.4.5']/../h:value/@displayName"],
-            ["source_list_identifiers", "0..*", "h:id", shared.Identifier],
-            ["onset_age_reference", "0..1", "h:entryRelationship/h:observation/h:entryRelationship/h:observation/h:templateId[@root='2.16.840.1.113883.10.20.22.4.31']/../h:value", shared.TextWithReference]
-        ])
-        .cleanupStep(cleanup.renameField("onset_age_reference", "onset_age"))
-        .cleanupStep(cleanup.replaceStringFieldWithNullFlavorName("onset_age"))
-        .cleanupStep(cleanup.replaceStringFieldWithNullFlavorName("onset_age_unit"))
-        .cleanupStep(cleanup.replaceStringFieldWithNullFlavorName("patient_status"));
-
-    var NonProblemObservation = ProblemConcernAct
-        .define("ProblemObservation");
-
-    var ProblemOrganizer = component.define("ProblemOrganizer")
-        .templateRoot([clinicalStatementsIDs.ProblemAct, clinicalStatementsIDs.ProblemConcernAct]);
-
-    var problemsSection = component.define("problemsSection");
-    problemsSection.templateRoot(["2.16.840.1.113883.10.20.22.2.5.1", "2.16.840.1.113883.10.20.1.11"]); // coded entries required
-    problemsSection.fields([
-        ["problems", "0..*", ProblemOrganizer.xpath(), ProblemConcernAct],
-    ]);
-
-    problemsSection.cleanupStep(cleanup.replaceWithField("problems"));
-    return [problemsSection, ProblemConcernAct];
-};
-
-exports.problemsSection = exportProblemsSection;
-exports.problemsEntry = exportProblemsSection;
-
-
-/***/ }),
-/* 25 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var shared = __webpack_require__(4);
-var component = __webpack_require__(0).component.withNullFlavor();
-var cleanup = __webpack_require__(5);
-var bbm = __webpack_require__(1);
-var _ = __webpack_require__(3);
-
-var augmentImmunizationStatus = function () {
-    var tmpStatus = "";
-    if (_.get(this, "js.negation_ind") === "true") {
-        tmpStatus = "refused";
-    } else if (_.get(this, "js.mood_code") === "INT") {
-        tmpStatus = "pending";
-    } else if (_.get(this, "js.mood_code") === "EVN") {
-        tmpStatus = "complete";
-    } else {
-        tmpStatus = "unknown";
-    }
-    this.js = tmpStatus;
-};
-
-var exportImmunizationsSection = function (version) {
-    var sectionIDs = bbm.CCDA["sections" + version];
-    var clinicalStatementsIDs = bbm.CCDA["statements" + version];
-
-    var ImmunizationStatus = component.define("ImmunizationStatus")
-        .fields([
-            ["mood_code", "0..1", "./@moodCode"],
-            ["negation_ind", "0..1", "./@negationInd"],
-        ]).cleanupStep(augmentImmunizationStatus);
-
-    var ImmunizationAdministration = component.define("ImmunizationAdministration")
-        .fields([
-            ["route", "0..1", "h:routeCode", shared.ConceptDescriptor],
-            ["body_site", "0..1", "h:approachSiteCode", shared.ConceptDescriptor],
-            ["dose", "0..1", "h:doseQuantity", shared.PhysicalQuantity],
-            ["form", "0..1", "h:administrationUnitCode", shared.ConceptDescriptor]
-        ]);
-
-    var ImmunizationInstructions = component.define("MedicationInstructions")
-        .fields([
-            ["code", "0..1", "h:code", shared.ConceptDescriptor],
-            ["free_text", "0..1", "h:text", shared.TextWithReference]
-        ]);
-
-    var immunizationActivityProduct = component.define('immunizationActivityProduct')
-        .fields([
-            ["product", "1..1", "h:manufacturedMaterial/h:code", shared.ConceptDescriptor],
-            ["lot_number", "0..1", "h:manufacturedMaterial/h:lotNumberText/text()"],
-            ["manufacturer", "0..1", "h:manufacturerOrganization/h:name/text()"],
-        ]);
-
-    var ImmunizationActivity = component.define("ImmunizationActivity")
-        .templateRoot([clinicalStatementsIDs.ImmunizationActivity, clinicalStatementsIDs.MedicationActivity])
-        .fields([
-            ["date_time", "1..1", "h:effectiveTime", shared.EffectiveTime],
-            ["identifiers", "0..*", "h:id", shared.Identifier],
-            ["status", "0..1", "./../h:substanceAdministration", ImmunizationStatus],
-            ["sequence_number", "0..1", "h:repeatNumber/@value"],
-            ["product", "0..1", "h:consumable/h:manufacturedProduct", immunizationActivityProduct],
-            ["administration", "0..1", "./../h:substanceAdministration", ImmunizationAdministration],
-            ["performer", "0..1", "h:performer/h:assignedEntity", shared.assignedEntity],
-            ["instructions", "0..1", "h:entryRelationship[@typeCode='SUBJ']/h:act", ImmunizationInstructions],
-            ["refusal_reason", "0..1", "h:entryRelationship/h:observation/h:code/@code", shared.SimpleCode("2.16.840.1.113883.5.8")],
-        ]).cleanupStep(function () { // Quick and dirty fix for when refusal_reason catches other observations in Vitera.
-            if (this.js) { // Refusal reason should use the template id
-                if (this.js.refusal_reason && (!_.get(this, "js.refusal_reason.js"))) {
-                    delete this.js.refusal_reason;
-                }
-            }
-        });
-
-    var immunizationsSection = component.define("immunizationsSection");
-    immunizationsSection.templateRoot([sectionIDs.ImmunizationsSection, sectionIDs.ImmunizationsSectionEntriesOptional]);
-    immunizationsSection.fields([
-        ["immunizations", "0..*", ImmunizationActivity.xpath(), ImmunizationActivity]
-    ]);
-
-    immunizationsSection.cleanupStep(cleanup.replaceWithField('immunizations'));
-    return [immunizationsSection, ImmunizationActivity];
-};
-
-exports.immunizationsSection = exportImmunizationsSection;
-exports.immunizationsEntry = exportImmunizationsSection;
-
-
-/***/ }),
-/* 26 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-// NOTE: allergies section not present in ccda-r1.0, so just kept
-// templateIds hard-coded with ccda-r1.1 values
-var shared = __webpack_require__(4);
-var component = __webpack_require__(0).component.withNullFlavor();
-var cleanup = __webpack_require__(5);
-var Processor = __webpack_require__(0).processor;
-
-var exportAllergiesSection = function (version) {
-
-    var allergySeverityObservation = component.define("allergySeverityObservation")
-        .fields([
-            ["code", "0..1", "h:value", shared.ConceptDescriptor],
-            ["interpretation", "0..1", "h:interpretationCode", shared.ConceptDescriptor]
-        ]);
-
-    var allergyReaction = component.define("allergyReaction");
-    allergyReaction.templateRoot(["2.16.840.1.113883.10.20.22.4.9"]);
-    allergyReaction.fields([
-        ["identifiers", "0..*", "h:id", shared.Identifier],
-        ["date_time", "1..1", "h:effectiveTime", shared.EffectiveTime],
-        ["reaction", "1..1", "h:value", shared.ConceptDescriptor],
-        ["free_text_reaction", "0..1", "h:text", shared.TextWithReference],
-        ["severity", "0..1", "h:entryRelationship/h:observation", allergySeverityObservation]
-    ]);
-    allergyReaction.cleanupStep(cleanup.promoteFreeTextIfNoReaction);
-
-    var allergenDescriptor = shared.ConceptDescriptor.define('allergenDescriptor');
-    allergenDescriptor.fields([
-        ["name", "0..1", "h:originalText", shared.TextWithReference, 'epic']
-    ]);
-
-    var allergyObservation = component.define("allergyObservation"); // this is status observation
-    allergyObservation.templateRoot(["2.16.840.1.113883.10.20.22.4.7"]);
-    allergyObservation.fields([
-        ["identifiers", "0..*", "h:id", shared.Identifier],
-        //NOTE: Negation Id (per PragueExpat)
-        ["negation_indicator", "0..1", "./@negationInd", Processor.asBoolean],
-        //NOTE allergen must be optional in case of negationInd = true (per PragueExpat)
-        ["allergen", "0..1", "h:participant/h:participantRole/h:playingEntity/h:code", allergenDescriptor], // (see above) - was 1..1 //Require (optional in spec)
-        ["allergenName", "0..1", "h:participant/h:participantRole/h:playingEntity/h:name", shared.TextWithReference],
-
-        ["intolerance", "0..1", "h:value", shared.ConceptDescriptor],
-        ["date_time", "1..1", "h:effectiveTime", shared.EffectiveTime],
-
-        ["status", "0..1", "h:entryRelationship/h:observation[h:templateId/@root='2.16.840.1.113883.10.20.22.4.28']/h:value", shared.ConceptDescriptor],
-        ["reactions", "0..*", allergyReaction.xpath(), allergyReaction],
-        ["severity", "0..1", "h:entryRelationship/h:observation[h:templateId/@root='2.16.840.1.113883.10.20.22.4.8']", allergySeverityObservation]
-    ]);
-    allergyObservation.cleanupStep(cleanup.promoteAllergenNameIfNoAllergen);
-
-    var problemAct = component.define('problemAct');
-    problemAct.templateRoot(['2.16.840.1.113883.10.20.22.4.30']);
-    problemAct.fields([
-        ["identifiers", "0..*", "h:id", shared.Identifier],
-        ["date_time", "1..1", "h:effectiveTime", shared.EffectiveTime],
-        ["problemStatus", "1..1", "h:statusCode/@code"],
-        ["observation", "1..1", allergyObservation.xpath(), allergyObservation] // Ignore observation cardinality (in spec can be more than 1)
-    ]);
-    problemAct.cleanupStep(cleanup.allergiesProblemStatusToHITSP);
-
-    var allergiesSection = component.define('allergiesSection');
-    allergiesSection.templateRoot(['2.16.840.1.113883.10.20.22.2.6', '2.16.840.1.113883.10.20.22.2.6.1']);
-    allergiesSection.fields([
-        ["problemAct", "1..*", problemAct.xpath(), problemAct]
-    ]);
-    allergiesSection.cleanupStep(cleanup.replaceWithField(["problemAct"]));
-
-    return [allergiesSection, problemAct];
-};
-exports.allergiesSection = exportAllergiesSection;
-exports.allergiesEntry = exportAllergiesSection;
-
-
-/***/ }),
-/* 27 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var shared = __webpack_require__(4);
-var component = __webpack_require__(0).component.withNullFlavor();
-var cleanup = __webpack_require__(5);
-var bbm = __webpack_require__(1);
-
-var exportEncountersSection = function (version) {
-    var sectionIDs = bbm.CCDA["sections" + version];
-    var clinicalStatementsIDs = bbm.CCDA["statements" + version];
-
-    var finding = component.define("finding");
-    finding.templateRoot([clinicalStatementsIDs.Indication]);
-    finding.fields([
-        ["identifiers", "1..*", "h:id", shared.Identifier],
-        ["value", "1..1", "h:value", shared.ConceptDescriptor],
-        ["date_time", "1..1", "h:effectiveTime", shared.EffectiveTime]
-    ]);
-    //finding.cleanupStep(cleanup.extractAllFields(['value']));
-
-    // Iff needed add this later by refactoring Problem Observation from Problems.  They should share.
-    //var diagnosis = component.define("diagnosis");
-    //finding.templateRoot(['2.16.840.1.113883.10.20.22.4.80']);
-    //finding.fields([
-    //  ["code", "1..1", "h:code", shared.ConceptDescriptor]
-    //]);
-    //finding.cleanupStep(cleanup.extractAllFields(['code']));
-
-    var activity = component.define('activity');
-    activity.templateRoot([clinicalStatementsIDs.EncounterActivities, clinicalStatementsIDs.EncounterActivity]);
-    activity.fields([
-        ["encounter", "1..1", "h:code", shared.ConceptDescriptor],
-        ["identifiers", "0..*", "h:id", shared.Identifier],
-        ["date_time", "1..1", "h:effectiveTime", shared.EffectiveTime],
-        ["performers", "0..*", "h:performer/h:assignedEntity", shared.assignedEntity],
-        ["locations", "0..*", "h:participant/h:participantRole", shared.serviceDeliveryLocation],
-        ["findings", "0..*", finding.xpath(), finding] //,
-        //["diagnoses", "0..*", diagnosis.xpath(), diagnosis]
-    ]);
-
-    var encountersSection = component.define('encountersSection');
-    encountersSection.templateRoot([sectionIDs.EncountersSection, sectionIDs.EncountersSectionEntriesOptional]);
-    encountersSection.fields([
-        ["activity", "0..*", activity.xpath(), activity]
-    ]);
-    encountersSection.cleanupStep(cleanup.replaceWithField(["activity"]));
-    return [encountersSection, activity];
-};
-exports.encountersSection = exportEncountersSection;
-exports.encountersEntry = exportEncountersSection;
-
-
-/***/ }),
-/* 28 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var shared = __webpack_require__(4);
-var component = __webpack_require__(0).component.withNullFlavor();
-var cleanup = __webpack_require__(5);
-var bbm = __webpack_require__(1);
-var _ = __webpack_require__(3);
-
-var exportProceduresSection = function (version) {
-    var sectionIDs = bbm.CCDA["sections" + version];
-    var clinicalStatementsIDs = bbm.CCDA["statements" + version];
-
-    /*
-    var organization = component.define('organization');
-    organization.fields([
-        ["name", "0:1", "h:name"],
-        ["address", "0..1", "h:addr", shared.Address],
-        ["identifiers", "0..*", "h:id", shared.Identifier],
-        ["phone", "0..*", shared.phone.xpath(), shared.phone],
-        ["email", "0..*", shared.email.xpath(), shared.email]
-    ]);
-
-    //replaced with shared.assignedEntity to normalize with performer in other sections
-    var provider = component.define('provider');
-    provider.fields([
-        ["address", "1..1", "h:addr", shared.Address],
-        ["identifiers", "0..*", "h:id", shared.Identifier],
-        ["phone", "0..*", shared.phone.xpath(), shared.phone],
-        ["email", "0..*", shared.email.xpath(), shared.email],
-        ["organization", "0..1", "h:representedOrganization", organization]
-    ]);
-    */
-
-    var ProcedureSpecimen = component.define('ProcedureSpecimen')
-        .fields([
-            ["identifiers", "0..*", "h:specimenRole/h:id", shared.Identifier],
-            ["code", "0..1", "h:specimenRole/h:specimenPlayingEntity/h:code", shared.ConceptDescriptor]
-        ]);
-
-    // ..
-    var observationEntry = component.define('procedureObservation');
-    observationEntry.fields([
-        ["procedure", "1..1", "h:code", shared.ConceptDescriptor],
-        ["identifiers", "0..*", "h:id", shared.Identifier],
-        ["status", "1..1", "h:statusCode", shared.simplifiedCodeOID('2.16.840.1.113883.11.20.9.22')],
-        ["date_time", "0..1", "h:effectiveTime", shared.EffectiveTime],
-        ["body_sites", "0..*", "h:targetSiteCode", shared.ConceptDescriptor],
-        ["priority", "0..1", "h:priorityCode", shared.ConceptDescriptor],
-        ["performers", "0..*", "h:performer/h:assignedEntity", shared.assignedEntity],
-        ["locations", "0..*", "h:participant/h:participantRole", shared.serviceDeliveryLocation],
-        ["procedure_type", "1..1", "h:templateId/@root"],
-        ["value", "1..1", "h:value", shared.ConceptDescriptor],
-    ]);
-    observationEntry.cleanupStep(function () {
-        if (this.js && _.has(this, "js.value") && _.isEmpty(this.js.value.js)) {
-            delete this.js.value;
-        }
-    });
-
-    var procedureEntry = component.define('procedureProcedure');
-    procedureEntry.fields([
-        ["procedure", "1..1", "h:code", shared.ConceptDescriptor],
-        ["identifiers", "0..*", "h:id", shared.Identifier],
-        ["status", "1..1", "h:statusCode", shared.simplifiedCodeOID('2.16.840.1.113883.11.20.9.22')],
-        ["date_time", "0..1", "h:effectiveTime", shared.EffectiveTime],
-        ["body_sites", "0..*", "h:targetSiteCode", shared.ConceptDescriptor],
-        ["specimen", "0..1", "h:specimen", ProcedureSpecimen],
-        // should be
-        // ["specimen", "0..*", "h:specimen", ProcedureSpecimen],
-        ["priority", "0..1", "h:priorityCode", shared.ConceptDescriptor],
-        ["performers", "0..*", "h:performer/h:assignedEntity", shared.assignedEntity],
-        ["locations", "0..*", "h:participant/h:participantRole", shared.serviceDeliveryLocation],
-        ["procedure_type", "1..1", "h:templateId/@root"],
-    ]);
-
-    var actEntry = component.define('procedureAct');
-    actEntry.fields([
-        ["procedure", "1..1", "h:code", shared.ConceptDescriptor],
-        ["identifiers", "0..*", "h:id", shared.Identifier],
-        ["status", "1..1", "h:statusCode", shared.simplifiedCodeOID('2.16.840.1.113883.11.20.9.22')],
-        ["date_time", "0..1", "h:effectiveTime", shared.EffectiveTime],
-        ["priority", "0..1", "h:priorityCode", shared.ConceptDescriptor],
-        ["performers", "0..*", "h:performer/h:assignedEntity", shared.assignedEntity],
-        ["locations", "0..*", "h:participant/h:participantRole", shared.serviceDeliveryLocation],
-        ["procedure_type", "1..1", "h:templateId/@root"],
-    ]);
-
-    var procedureUnion = component.define('procedureUnion');
-    procedureUnion.templateRoot(['2.16.840.1.113883.10.20.22.4.12', '2.16.840.1.113883.10.20.22.4.13', '2.16.840.1.113883.10.20.22.4.14', clinicalStatementsIDs.ProcedureActivity]);
-    procedureUnion.fields([
-        ["actEntry", "0..1", ".//h:templateId[@root='2.16.840.1.113883.10.20.22.4.12']/..", actEntry],
-        ["observationEntry", "0..1", ".//h:templateId[@root='2.16.840.1.113883.10.20.22.4.13']/..", observationEntry],
-        ["procedureEntry", "0..1", ".//h:templateId[@root='2.16.840.1.113883.10.20.22.4.14']/..", procedureEntry],
-    ]);
-    procedureUnion.cleanupStep(cleanup.extractAllFields(["actEntry", "observationEntry", "procedureEntry"]));
-    procedureUnion.cleanupStep(function () {
-        var typeMap = {
-            "2.16.840.1.113883.10.20.22.4.12": "act", // ccda
-            "2.16.840.1.113883.10.20.22.4.13": "observation",
-            "2.16.840.1.113883.10.20.22.4.14": "procedure",
-            "2.16.840.1.113883.10.20.1.29": "procedure" // ccda-r1
-        };
-        var t = this.js['procedure_type'];
-        this.js['procedure_type'] = typeMap[t];
-    });
-
-    var proceduresSection = component.define('proceduresSection');
-    proceduresSection.templateRoot([sectionIDs.ProceduresSection, sectionIDs.ProceduresSectionEntriesOptional]);
-    proceduresSection.fields([
-        ["entry", "0..*", procedureUnion.xpath(), procedureUnion]
-    ]);
-    proceduresSection.cleanupStep(cleanup.replaceWithField('entry'));
-    return [proceduresSection, procedureUnion];
-};
-
-exports.proceduresSection = exportProceduresSection;
-exports.proceduresEntry = exportProceduresSection;
-
-
-/***/ }),
-/* 29 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var shared = __webpack_require__(4);
-var component = __webpack_require__(0).component.withNullFlavor();
-var cleanup = __webpack_require__(5);
-var bbm = __webpack_require__(1);
-
-var exportPlanOfCareSection = function (version) {
-    var sectionIDs = bbm.CCDA["sections" + version];
-    var clinicalStatementsIDs = bbm.CCDA["statements" + version];
-
-    var date_time = component.define('date_time');
-    date_time.fields([
-        ["point", "1..1", "h:effectiveTime", shared.EffectiveTime]
-    ]);
-
-    var embeddedInstructions = component.define('embeddedInstructions')
-        .templateRoot([
-            '2.16.840.1.113883.10.20.22.4.20',
-        ])
-        .fields([
-            ["instructions", "0..1", "h:text", shared.TextWithReference]
-        ]);
-
-    var entry = component.define('entry');
-    // observation, act, encounter, procedure
-    // instructions section xpath added manually below
-    entry.templateRoot(['2.16.840.1.113883.10.20.22.4.44',
-        '2.16.840.1.113883.10.20.22.4.39',
-        '2.16.840.1.113883.10.20.22.4.40',
-        '2.16.840.1.113883.10.20.22.4.41',
-        clinicalStatementsIDs.PlanOfCareActivity
-    ]);
-
-    entry.fields([
-        ["plan", "1..1", "h:code", shared.ConceptDescriptor],
-        ["identifiers", "0..*", "h:id", shared.Identifier],
-        ["date_time", "0..1", "h:effectiveTime", shared.EffectiveTime],
-        ["type", "1..1", "h:templateId/@root"],
-        ["status", "0..1", "h:statusCode", shared.ConceptDescriptor],
-        ["instructions", "0..1", embeddedInstructions.xpath(), embeddedInstructions],
-        ["subType", "1..1", "@moodCode"]
-    ]);
-
-    entry.cleanupStep(cleanup.extractAllFields(["instructions"]));
-
-    entry.cleanupStep(function () {
-        var typeMap = {
-            "2.16.840.1.113883.10.20.22.4.44": "observation", // ccda
-            "2.16.840.1.113883.10.20.22.4.39": "act",
-            "2.16.840.1.113883.10.20.22.4.40": "encounter",
-            "2.16.840.1.113883.10.20.22.4.41": "procedure",
-            "2.16.840.1.113883.10.20.1.25": "observation", // ccda-r1
-            "2.16.840.1.113883.3.62.3.16.1": "act",
-            "2.16.840.1.113883.10.20.22.4.20": "instructions"
-        };
-        var t = this.js['type'];
-        this.js['type'] = typeMap[t];
-    });
-    entry.cleanupStep(function () {
-        var moodCodeMap = {
-            "INT": "Intent",
-            "ARQ": "Appointment Request",
-            "GOL": "Goal",
-            "PRMS": "Promise",
-            "PRP": "Proposal",
-            "RQO": "Request"
-        };
-        this.js.subType = moodCodeMap[this.js.subType];
-    });
-
-    // instructions templateId cannot be added via templateRoot because
-    // instructions embedded in other entries will be found and parsed
-    // as separated entries. This manually adds an xpath for instructions
-    // entries to the entry component xpath
-    entry.setXPath([entry.xpath(), "h:entry/h:act/h:templateId[@root='2.16.840.1.113883.10.20.22.4.20']/.."].join(' | '));
-
-    var plan_of_care_section = component.define('plan_of_care_section');
-    plan_of_care_section.templateRoot([sectionIDs.PlanOfCareSection, sectionIDs.PlanOfCareSectionEntriesOptional]);
-    plan_of_care_section.fields([
-        ["entry", "0..*", entry.xpath(), entry]
-    ]);
-    plan_of_care_section.cleanupStep(cleanup.replaceWithField('entry'));
-
-    return [plan_of_care_section, entry];
-};
-
-exports.plan_of_care_section = exportPlanOfCareSection;
-exports.plan_of_care_entry = exportPlanOfCareSection;
-
-
-/***/ }),
-/* 30 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var shared = __webpack_require__(4);
-var component = __webpack_require__(0).component.withNullFlavor();
-var cleanup = __webpack_require__(5);
-var bbm = __webpack_require__(1);
-
-var exportPayersSection = function (version) {
-    var sectionIDs = bbm.CCDA["sections" + version];
-    var clinicalStatementsIDs = bbm.CCDA["statements" + version];
-
-    var procedure = component.define('procedure');
-    procedure.fields([
-        ["code", "1..1", "h:code", shared.ConceptDescriptor]
-    ]);
-
-    var authorization = component.define('authorization');
-    authorization.fields([
-        ["identifiers", "0..*", "h:id", shared.Identifier],
-        ["procedure", "1..1", "h:entryRelationship/h:procedure", procedure]
-    ]);
-
-    var policy_holder = component.define('policy_holder');
-    policy_holder.fields([
-        ["performer", "1..1", "h:participantRole", shared.assignedEntity]
-    ]);
-
-    var participant = component.define('participant');
-    participant.fields([
-        ["date_time", "0..1", "h:time", shared.EffectiveTime],
-        ["code", "1..1", "h:participantRole/h:code", shared.ConceptDescriptor],
-        ["performer", "1..1", "h:participantRole", shared.assignedEntity],
-        ["name", "0..*", "h:participantRole/h:playingEntity/h:name", shared.IndividualName]
-    ]);
-
-    var guarantor = component.define('guarantor');
-    guarantor.fields([
-        ["code", "1..1", "../h:assignedEntity/h:code", shared.ConceptDescriptor],
-        ["identifiers", "0..*", "../h:assignedEntity/h:id", shared.Identifier],
-        ["name", "0..*", "../h:assignedEntity/h:assignedPerson/h:name", shared.IndividualName],
-        ["address", "0..*", "../h:assignedEntity/h:addr", shared.Address],
-        ["email", "0..*", "../h:assignedEntity/" + shared.email.xpath(), shared.email],
-        ["phone", "0..*", "../h:assignedEntity/" + shared.phone.xpath(), shared.phone]
-    ]);
-
-    var organization = component.define('organization');
-    organization.fields([
-        ["address", "0..1", "h:addr", shared.Address],
-        ["identifiers", "0..*", "h:id", shared.Identifier],
-        ["phone", "0..*", shared.phone.xpath(), shared.phone],
-        ["email", "0..*", shared.email.xpath(), shared.email]
-    ]);
-
-    var insurance = component.define('insurance');
-    insurance.fields([
-        ["code", "1..1", "h:assignedEntity/h:code", shared.ConceptDescriptor],
-        ["performer", "0..1", "h:assignedEntity", shared.assignedEntity]
-    ]);
-
-    var policy = component.define('policy');
-    policy.fields([
-        ["identifiers", "0..*", "h:id", shared.Identifier],
-        ["code", "1..1", "h:code", shared.ConceptDescriptor],
-        ["insurance", "1..1", "h:performer", insurance]
-    ]);
-
-    var entry = component.define('entry');
-    entry.templateRoot([clinicalStatementsIDs.CoverageActivity]);
-    entry.fields([
-        ["identifiers", "0..*", "h:id", shared.Identifier],
-        ["policy", "1..1", "h:entryRelationship/h:act", policy],
-        ["guarantor", "1..1", "h:entryRelationship/h:act/h:performer/h:templateId[not (@root='2.16.840.1.113883.10.20.22.4.87')]", guarantor],
-        ["participant", "1..1", "h:entryRelationship/h:act/h:participant", participant],
-        ["policy_holder", "1..1", "h:entryRelationship/h:act/h:participant[not (@typeCode='COV')]", policy_holder],
-        ["authorization", "1..1", "h:entryRelationship/h:act/h:entryRelationship/h:act", authorization]
-    ]);
-
-    var payers_section = component.define('payers_section');
-    payers_section.templateRoot([sectionIDs.PayersSection, sectionIDs.PayersSectionEntriesOptional]);
-    payers_section.fields([
-        ["entry", "0..*", entry.xpath(), entry]
-    ]);
-    payers_section.cleanupStep(cleanup.replaceWithField('entry'));
-
-    return [payers_section, entry];
-};
-
-exports.payers_section = exportPayersSection;
-exports.payers_entry = exportPayersSection;
-
-
-/***/ }),
-/* 31 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var shared = __webpack_require__(4);
-var component = __webpack_require__(0).component.withNullFlavor();
-var processor = __webpack_require__(0).processor;
-var cleanup = __webpack_require__(5);
-var bbm = __webpack_require__(1);
-
-var exportHospitalDischargeMedicationsSection = function (version) {
-    var medication_activity = __webpack_require__(12).medicationsSection(version)[1];
-    var sectionIDs = bbm.CCDA["sections" + version];
-    var clinicalStatementsIDs = bbm.CCDA["statements" + version];
-
-    var hospital_discharge_medications_section = component.define("HospitalDischargeMedicationsSection");
-    hospital_discharge_medications_section.templateRoot([sectionIDs.HospitalDischargeMedicationsSection, sectionIDs.HospitalDischargeMedicationsSectionEntriesOptional]);
-    hospital_discharge_medications_section.fields([
-        ["medications", "0..*", medication_activity.xpath(), medication_activity]
-    ]);
-    hospital_discharge_medications_section.cleanupStep(cleanup.replaceWithField("medications"));
-    return [hospital_discharge_medications_section, medication_activity];
-};
-
-exports.hospital_discharge_medications_section = exportHospitalDischargeMedicationsSection;
-
-
-/***/ }),
-/* 32 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var shared = __webpack_require__(4);
-var component = __webpack_require__(0).component.withNullFlavor();
-var cleanup = __webpack_require__(5);
-var bbm = __webpack_require__(1);
-
-var exportFunctionalStatusSection = function (version) {
-    var sectionIDs = bbm.CCDA["sections" + version];
-    var clinicalStatementsIDs = bbm.CCDA["statements" + version];
-
-    var status = component.define('functionalStatusEntry');
-    status.templateRoot([clinicalStatementsIDs.FunctionalStatusProblemObservation, clinicalStatementsIDs.CognitiveStatusProblemObservation]);
-    status.fields([
-            ["identifiers", "0..*", "h:id", shared.Identifier],
-            ["type", "1..1", "h:code", shared.ConceptDescriptor],
-            ["date_time", "0..1", "h:effectiveTime", shared.EffectiveTime],
-            ["code", "0..1", "h:value", shared.ConceptDescriptor],
-            ["status", "0..1", "./@negationInd"]
-        ])
-        // cleanup to map present @negationInd to {"status": "negative"},
-        // and absent @negationInd to {"status": "completed"}
-        .cleanupStep(cleanup.replaceWithObject("status", "negative"))
-        .cleanupStep(function () {
-            if (this.js && !this.js["status"]) {
-                this.js["status"] = "completed";
-            }
-        });
-
-    var functionalStatusSection = component.define('functionalStatusSection');
-    functionalStatusSection.templateRoot([sectionIDs.FunctionalStatusSection]);
-    functionalStatusSection.fields([
-        ["statuses", "0..*", status.xpath(), status]
-    ]);
-    functionalStatusSection.cleanupStep(cleanup.replaceWithField(["statuses"]));
-    return [functionalStatusSection, status];
-};
-exports.functionalStatusSection = exportFunctionalStatusSection;
-exports.functionStatusEntry = exportFunctionalStatusSection;
-
-
-/***/ }),
-/* 33 */
+/* 3 */
 /***/ (function(module, exports) {
 
 module.exports = require("bootstrap-sass/assets/fonts/bootstrap/glyphicons-halflings-regular.eot");
 
 /***/ }),
-/* 34 */
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const lodash_1 = __webpack_require__(3);
+const lodash_1 = __webpack_require__(1);
 lodash_1.default.mixin({
     move: function (array, fromIndex, toIndex) {
         array.splice(toIndex, 0, array.splice(fromIndex, 1)[0]);
@@ -2935,13 +130,13 @@ lodash_1.default.mixin({
 
 
 /***/ }),
-/* 35 */
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const lodash = __webpack_require__(3);
+const lodash = __webpack_require__(1);
 function updateSortOrder(sections) {
     lodash.each(sections, (v, k) => {
         v.sort = k;
@@ -2952,14 +147,14 @@ exports.updateSortOrder = updateSortOrder;
 
 
 /***/ }),
-/* 36 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const lodash = __webpack_require__(3);
-const jquery_1 = __webpack_require__(37);
+const lodash = __webpack_require__(1);
+const jquery_1 = __webpack_require__(7);
 function getElementIndex(node) {
     let children = lodash.filter([].slice.call(node.parentNode.childNodes), { nodeType: 1 });
     return Array.prototype.indexOf.call(children, node);
@@ -2977,20 +172,20 @@ exports.bootstrapize = bootstrapize;
 
 
 /***/ }),
-/* 37 */
+/* 7 */
 /***/ (function(module, exports) {
 
 module.exports = require("jquery");
 
 /***/ }),
-/* 38 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const models_1 = __webpack_require__(58);
-const lodash_1 = __webpack_require__(3);
+const models_1 = __webpack_require__(21);
+const lodash_1 = __webpack_require__(1);
 class PreferencesService {
     save(opts) {
         let enabled = lodash_1.default.filter(opts.sections, (item) => {
@@ -3025,473 +220,23 @@ exports.PreferencesService = PreferencesService;
 
 
 /***/ }),
-/* 39 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-//sense.js - Determining file content type e.g. CCDA or C32 or BB.json/JSON or text/other formats.
-
-
-
-var xml = __webpack_require__(0).xmlUtil;
-
-//Sense document type based on XML object
-var senseXml = function (doc) {
-    //data must be an object
-    if (!doc || typeof (doc) !== "object") {
-        //TODO: throw a proper error here
-        return null;
-    }
-
-    var c32Result = xml.xpath(doc, 'h:templateId[@root=\"2.16.840.1.113883.3.88.11.32.1\"]');
-    if (c32Result && c32Result.length > 0) {
-        return {
-            type: "c32"
-        };
-    }
-
-    var cdaResult = xml.xpath(doc, 'h:templateId[@root=\"2.16.840.1.113883.10.20.1\"]');
-    var cdaTemplateResult = xml.xpath(doc, 'h:code[@code=\"34133-9\"][@codeSystem=\"2.16.840.1.113883.6.1\"]');
-    if ((cdaResult && cdaResult.length > 0) && (cdaTemplateResult && cdaTemplateResult.length > 0)) {
-        return {
-            type: "cda"
-        };
-    }
-
-    var ccdResult = xml.xpath(doc, 'h:templateId[@root=\"2.16.840.1.113883.10.20.22.1.1\"] | h:templateId[@root=\"2.16.840.1.113883.10.20.22.1.2\"]');
-    if (ccdResult && ccdResult.length > 0) {
-        return {
-            type: "ccda"
-        };
-    }
-
-    var ncpdpResult = xml.xpath(doc, '//Message/Body/*');
-    if (ncpdpResult && ncpdpResult.length > 0) {
-        try {
-            /*require.resolve*/(!(function webpackMissingModule() { var e = new Error("Cannot find module \"blue-button-ncpdp\""); e.code = 'MODULE_NOT_FOUND'; throw e; }())); // check if the module is present
-            return {
-                type: "ncpdp"
-            };
-        } catch (ex) {}
-    }
-
-    return {
-        type: "xml"
-    };
-};
-
-//Sense document type based on String
-var senseString = function (data) {
-    //data must be a string
-
-    if (!data || typeof (data) !== "string") {
-        //TODO: throw a proper error here
-        return null;
-    }
-
-    //console.log(data);
-    var doc;
-    var result;
-    var version = "";
-    var reg_exp_v;
-
-    //TODO: better xml detection needed
-    if (data.indexOf("<?xml") !== -1 || data.indexOf("<ClinicalDocument") !== -1) {
-        //parse xml object...
-        try {
-            doc = xml.parse(data);
-        } catch (ex) {
-            return {
-                type: "unknown",
-                error: ex
-            };
-        }
-
-        result = senseXml(doc);
-        result.xml = doc;
-
-        return result;
-
-    } else if (data.trim().indexOf("<") === 0) {
-        //sensing xml with no xml declaration
-        //TODO: there should be a better way (like comparing first and last tags and see if they match)
-
-        doc;
-        try {
-            doc = xml.parse(data);
-        } catch (ex) {
-            return {
-                type: "unknown",
-                error: ex
-            };
-        }
-
-        result = senseXml(doc);
-        result.xml = doc;
-
-        return result;
-    } else {
-        //parse json or determine if text object...
-        try {
-            var json = JSON.parse(data); // {}
-
-            if (json.data && json.meta) {
-                return {
-                    type: "blue-button.js",
-                    json: json
-                };
-
-            } else {
-
-                return {
-                    type: "json",
-                    json: json
-                };
-            }
-        } catch (e) {
-            //console.error("Parsing error:", e);
-
-            if (data.indexOf("MYMEDICARE.GOV PERSONAL HEALTH INFORMATION") > 0 &&
-                data.indexOf("Produced by the Blue Button") > 0) {
-                version = "";
-
-                reg_exp_v = /Produced by the Blue Button \(v(\d+\.\d+)\)/g;
-                version = reg_exp_v.exec(data)[1];
-
-                return {
-                    type: "cms",
-                    version: version
-                };
-            } else if (data.indexOf("MY HEALTHEVET PERSONAL INFORMATION REPORT") > 0) {
-                version = "";
-
-                reg_exp_v = /utton \(v(\d+.\d+|\d+)\)/g;
-                version = reg_exp_v.exec(data)[1];
-
-                return {
-                    type: "va",
-                    version: version
-                };
-            } else if (data.indexOf("%PDF") === 0) {
-                return {
-                    type: "pdf"
-                };
-            } else if (data.indexOf("+\n  Disclaimer:") > 0) {
-                return {
-                    type: "format-x"
-                };
-            }
-
-            return {
-                type: "unknown"
-            };
-        }
-    }
-
-    return {
-        type: "unknown"
-    };
-};
-
-module.exports = {
-    senseXml: senseXml,
-    senseString: senseString
-};
-
-
-/***/ }),
-/* 40 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var shared = __webpack_require__(6);
-var processor = __webpack_require__(0).processor;
-var component = __webpack_require__(0).component;
-
-var Guardian = component.define("Guardian")
-    .fields([
-        ["relation", "0..1", "h:code", shared.ConceptDescriptor],
-        ["addresses", "0..*", "h:addr", shared.Address],
-        ["names", "1..*", "h:guardianPerson/h:name", shared.IndividualName],
-        ["phone", "0..*", shared.phone.xpath(), shared.phone],
-        ["email", "0..*", shared.email.xpath(), shared.email],
-    ]);
-
-var LanguageCommunication = component.define("LanguageCommunication")
-    .fields([
-        ["language", "1..1", "h:languageCode", shared.ConceptDescriptor],
-        ["preferred", "1..1", "h:preferenceInd/@value", processor.asBoolean],
-        ["mode", "0..1", "h:modeCode", shared.ConceptDescriptor],
-        ["proficiency", "0..1", "h:proficiencyLevelCode", shared.ConceptDescriptor]
-    ]);
-
-exports.patient = component.define("Patient")
-    .fields([
-        ["name", "1..1", "h:patient/h:name", shared.IndividualName],
-        ["dob", "1..1", "h:patient/h:birthTime", shared.EffectiveTime],
-        ["gender", "1..1", "h:patient/h:administrativeGenderCode", shared.ConceptDescriptor],
-        ["identifiers", "0..*", "h:id", shared.Identifier],
-        ["marital_status", "0..1", "h:patient/h:maritalStatusCode", shared.ConceptDescriptor],
-        ["addresses", "0..*", "h:addr", shared.Address],
-        ["phone", "0..*", shared.phone.xpath(), shared.phone],
-        ["email", "0..*", shared.email.xpath(), shared.email],
-        ["race", "0..1", "h:patient/h:raceCode", shared.ConceptDescriptor],
-        ["ethnicity", "0..1", "h:patient/h:ethnicGroupCode", shared.ConceptDescriptor],
-        ["languages", "0..*", "h:patient/h:languageCommunication", LanguageCommunication],
-        ["religion", "0..1", "h:patient/h:religiousAffiliationCode", shared.ConceptDescriptor],
-        ["birthplace", "0..1", "h:patient/h:birthplace/h:place/h:addr", shared.Address],
-        ["guardians", "0..*", "h:patient/h:guardian", Guardian]
-    ]);
-
-
-/***/ }),
-/* 41 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var shared = __webpack_require__(4);
-var processor = __webpack_require__(0).processor;
-var component = __webpack_require__(0).component;
-
-var Author = component.define("Author")
-    .fields([
-        ["author", "0..*", "h:assignedAuthor", shared.assignedEntity],
-        ["date_time", "1..1", "h:time", shared.EffectiveTime],
-    ]);
-
-var Performer = component.define("Performer")
-    .fields([
-        ["performer", "0..*", "h:assignedEntity", shared.assignedEntity],
-        ["code", "0..1", "h:functionCode", shared.ConceptDescriptor],
-    ]);
-
-var ServiceEvent = component.define("ServiceEvent")
-    .fields([
-        ["code", "0..1", "h:code", shared.ConceptDescriptor],
-        ["date_time", "1..1", "h:effectiveTime", shared.EffectiveTime],
-        ["performer", "0..*", "h:performer", Performer],
-    ]);
-
-exports.header = component.define("Header")
-    .fields([
-        ["identifiers", "0..*", "h:id", shared.Identifier],
-        ["confidentiality_code", "0..1", "h:confidentialityCode", shared.ConceptDescriptor],
-        ["code", "0..1", "h:code", shared.ConceptDescriptor],
-        ["template", "0..*", "h:templateId/@root", processor.asString],
-        ["title", "0..1", "h:title", processor.asString],
-        ["date_time", "1..1", "h:effectiveTime", shared.EffectiveTime],
-
-        ["author", "0..1", "//h:author", Author],
-        ["data_enterer", "0..1", "//h:dataEnterer/h:assignedEntity", shared.assignedEntity],
-        ["informant", "0..1", "//h:informant/h:assignedEntity", shared.assignedEntity],
-
-        ["custodian", "0..1", "//h:representedCustodianOrganization", shared.Organization],
-
-        ["service_event", "0..1", "//h:documentationOf/h:serviceEvent", ServiceEvent]
-
-    ]);
-
-
-/***/ }),
-/* 42 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var shared = __webpack_require__(4);
-var processor = __webpack_require__(0).processor;
-var component = __webpack_require__(0).component;
-
-var Guardian = component.define("Guardian")
-    .fields([
-        ["relation", "0..1", "h:code", shared.ConceptDescriptor],
-        ["addresses", "0..*", "h:addr", shared.Address],
-        ["names", "1..*", "h:guardianPerson/h:name", shared.IndividualName],
-        ["phone", "0..*", shared.phone.xpath(), shared.phone],
-        ["email", "0..*", shared.email.xpath(), shared.email],
-    ]);
-
-var LanguageCommunication = component.define("LanguageCommunication")
-    .fields([
-        ["language", "1..1", "h:languageCode", shared.ConceptDescriptor],
-        ["preferred", "1..1", "h:preferenceInd/@value", processor.asBoolean],
-        ["mode", "0..1", "h:modeCode", shared.ConceptDescriptor],
-        ["proficiency", "0..1", "h:proficiencyLevelCode", shared.ConceptDescriptor]
-    ]);
-
-exports.patient = component.define("Patient")
-    .fields([
-        ["name", "1..1", "h:patient/h:name", shared.IndividualName],
-        ["dob", "1..1", "h:patient/h:birthTime", shared.EffectiveTime],
-        ["gender", "1..1", "h:patient/h:administrativeGenderCode", shared.ConceptDescriptor],
-        ["identifiers", "0..*", "h:id", shared.Identifier],
-        ["marital_status", "0..1", "h:patient/h:maritalStatusCode", shared.ConceptDescriptor],
-        ["addresses", "0..*", "h:addr", shared.Address],
-        ["phone", "0..*", shared.phone.xpath(), shared.phone],
-        ["email", "0..*", shared.email.xpath(), shared.email],
-        ["race", "0..1", "h:patient/h:raceCode", shared.ConceptDescriptor],
-        ["ethnicity", "0..1", "h:patient/h:ethnicGroupCode", shared.ConceptDescriptor],
-        ["languages", "0..*", "h:patient/h:languageCommunication", LanguageCommunication],
-        ["religion", "0..1", "h:patient/h:religiousAffiliationCode", shared.ConceptDescriptor],
-        ["birthplace", "0..1", "h:patient/h:birthplace/h:place/h:addr", shared.Address],
-        ["guardians", "0..*", "h:patient/h:guardian", Guardian]
-    ]);
-
-
-/***/ }),
-/* 43 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var shared = __webpack_require__(4);
-var component = __webpack_require__(0).component.withNullFlavor();
-var cleanup = __webpack_require__(5);
-var bbm = __webpack_require__(1);
-var _ = __webpack_require__(3);
-
-var exportSocialHistorySection = function (version) {
-    var sectionIDs = bbm.CCDA["sections" + version];
-    var clinicalStatementsIDs = bbm.CCDA["statements" + version];
-
-    var socialHistoryObservation = component.define("socialHistoryObservation")
-        .templateRoot([
-            clinicalStatementsIDs.SocialHistoryObservation, // the correct templateId (smoking status)
-            clinicalStatementsIDs.SmokingStatusObservation,
-            "2.16.840.1.113883.10.22.4.78", // incorrect id published in 1.1 DSTU
-        ])
-        .fields([
-            //["value", "1..1", "h:code[@code!='ASSERTION']/@displayName"],//, shared.SimpleCode("2.16.840.1.113883.11.20.9.38")],
-            //["value2", "1..1", "h:code[@code='ASSERTION']/@codeSystem"],//, shared.SimpleCode("2.16.840.1.113883.11.20.9.38")],
-            ["date_time", "1..1", "h:effectiveTime", shared.EffectiveTime],
-            ["identifiers", "0..*", "h:id", shared.Identifier],
-            ["code", "0..1", "h:code", shared.ConceptDescriptor],
-            ["code2", "0..1", "h:code[@code='ASSERTION']/@codeSystem"],
-            //["observation_value", "0..1", "h:value/@xsi:type"]
-            ["value", "0..1", "h:value[@xsi:type='ST']/text() | h:value[@xsi:type='CD']/@displayName"],
-            //["observation_value2", "0..1", "h:value[@xsi:type='CD']/@displayName"]
-            ["referencedValue", "0..1", "h:value[@xsi:type='ED']", shared.TextWithReference],
-            ["nullCodeReplacementText", "0..1", "h:code/h:originalText", shared.TextWithReference]
-        ])
-        .cleanupStep(cleanup.replaceWithObject("code2", {
-            "name": "Smoking Status"
-        })).cleanupStep(cleanup.renameField("code2", "code"))
-        .cleanupStep(cleanup.renameField("referencedValue", "value"))
-        // custom step to replace nullFlavored code with text from h:originalText child
-        .cleanupStep(function () {
-            if (_.has(this, "js.nullCodeReplacementText")) {
-                if (_.get(this, "js.code.code_system_name") === "Null Flavor" || !_.has(this, "js.code")) {
-                    this.js.code = {
-                        "name": this.js.nullCodeReplacementText
-                    };
-                }
-                delete this.js.nullCodeReplacementText;
-            }
-        })
-        // custom step to put null flavor name on value field if present
-        .cleanupStep(cleanup.replaceStringFieldWithNullFlavorName("value"));
-
-    // when other flavors of social history is implemented (pregnancy, social observation, tobacco use)
-    // this should probably be structured similar to procedures with types.  if another structure
-    // is chosen procedures need to be updated as well.
-    var socialHistorySection = component.define("socialHistorySection")
-        .templateRoot([sectionIDs.SocialHistorySection, sectionIDs.SocialHistorySectionEntriesOptional])
-        .fields([
-            ["smoking_statuses", "0..*", socialHistoryObservation.xpath(), socialHistoryObservation]
-        ]);
-    socialHistorySection.cleanupStep(cleanup.replaceWithField('smoking_statuses'));
-
-    return [socialHistorySection, socialHistoryObservation];
-};
-exports.socialHistorySection = exportSocialHistorySection;
-
-
-/***/ }),
-/* 44 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var shared = __webpack_require__(4);
-var component = __webpack_require__(0).component.withNullFlavor();
-var processor = __webpack_require__(0).processor;
-var cleanup = __webpack_require__(5);
-var bbm = __webpack_require__(1);
-
-var exportReasonForReferralSection = function (version) {
-    var sectionIDs = bbm.CCDA["sections" + version];
-    var clinicalStatementsIDs = bbm.CCDA["statements" + version];
-
-    var reason_for_referral_section = component.define("ReasonForReferralSection");
-    reason_for_referral_section.templateRoot([sectionIDs.ReasonForReferralSection]);
-    reason_for_referral_section.fields([
-        //["code", "1..1", "h:code", shared.ConceptDescriptor],
-        ["title", "0..1", "h:title", shared.TextWithReference],
-        ["text", "0..1", "h:text", processor.asXmlString]
-
-    ]);
-    return [reason_for_referral_section];
-};
-
-exports.reason_for_referral_section = exportReasonForReferralSection;
-
-
-/***/ }),
-/* 45 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var shared = __webpack_require__(4);
-var component = __webpack_require__(0).component.withNullFlavor();
-var processor = __webpack_require__(0).processor;
-var cleanup = __webpack_require__(5);
-var bbm = __webpack_require__(1);
-
-var exportHospitalDischargeInstructionsSection = function (version) {
-    var sectionIDs = bbm.CCDA["sections" + version];
-    var clinicalStatementsIDs = bbm.CCDA["statements" + version];
-
-    var hospital_discharge_instructions_section = component.define("HospitalDischargeInstructionsSection");
-    hospital_discharge_instructions_section.templateRoot([sectionIDs.HospitalDischargeInstructionsSection]);
-    hospital_discharge_instructions_section.fields([
-        //["code", "1..1", "h:code", shared.ConceptDescriptor],
-        ["title", "0..1", "h:title", shared.TextWithReference],
-        ["text", "0..1", "h:text", processor.asXmlString]
-
-    ]);
-    return [hospital_discharge_instructions_section];
-};
-
-exports.hospital_discharge_instructions_section = exportHospitalDischargeInstructionsSection;
-
-
-/***/ }),
-/* 46 */
+/* 9 */
 /***/ (function(module, exports) {
 
 module.exports = require("moment");
 
 /***/ }),
-/* 47 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-__webpack_require__(48);
-__webpack_require__(54);
-__webpack_require__(107);
-const riot_1 = __webpack_require__(2);
-const services_1 = __webpack_require__(10);
+__webpack_require__(11);
+__webpack_require__(17);
+__webpack_require__(55);
+const riot_1 = __webpack_require__(0);
+const services_1 = __webpack_require__(2);
 class App {
     constructor(options, errorHandler) {
         this.service = new services_1.DocumentsService();
@@ -3508,21 +253,21 @@ window['Sialia'] = App;
 
 
 /***/ }),
-/* 48 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(49)(undefined);
+exports = module.exports = __webpack_require__(12)(undefined);
 // imports
 exports.push([module.i, "@import url(https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700);", ""]);
 
 // module
-exports.push([module.i, "\n@charset \"UTF-8\";\n/*!\n *  Font Awesome 4.7.0 by @davegandy - http://fontawesome.io - @fontawesome\n *  License - http://fontawesome.io/license (Font: SIL OFL 1.1, CSS: MIT License)\n */\n/* FONT PATH\n * -------------------------- */\n@font-face {\n  font-family: 'FontAwesome';\n  src: url(\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/fonts//fontawesome-webfont.eot?v=4.7.0\");\n  src: url(\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/fonts//fontawesome-webfont.eot?#iefix&v=4.7.0\") format(\"embedded-opentype\"), url(\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/fonts//fontawesome-webfont.woff2?v=4.7.0\") format(\"woff2\"), url(\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/fonts//fontawesome-webfont.woff?v=4.7.0\") format(\"woff\"), url(\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/fonts//fontawesome-webfont.ttf?v=4.7.0\") format(\"truetype\"), url(\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/fonts//fontawesome-webfont.svg?v=4.7.0#fontawesomeregular\") format(\"svg\");\n  font-weight: normal;\n  font-style: normal; }\n.fa {\n  display: inline-block;\n  font: normal normal normal 14px/1 FontAwesome;\n  font-size: inherit;\n  text-rendering: auto;\n  -webkit-font-smoothing: antialiased;\n  -moz-osx-font-smoothing: grayscale; }\n/* makes the font 33% larger relative to the icon container */\n.fa-lg {\n  font-size: 1.33333em;\n  line-height: 0.75em;\n  vertical-align: -15%; }\n.fa-2x {\n  font-size: 2em; }\n.fa-3x {\n  font-size: 3em; }\n.fa-4x {\n  font-size: 4em; }\n.fa-5x {\n  font-size: 5em; }\n.fa-fw {\n  width: 1.28571em;\n  text-align: center; }\n.fa-ul {\n  padding-left: 0;\n  margin-left: 2.14286em;\n  list-style-type: none; }\n.fa-ul > li {\n    position: relative; }\n.fa-li {\n  position: absolute;\n  left: -2.14286em;\n  width: 2.14286em;\n  top: 0.14286em;\n  text-align: center; }\n.fa-li.fa-lg {\n    left: -1.85714em; }\n.fa-border {\n  padding: .2em .25em .15em;\n  border: solid 0.08em #eee;\n  border-radius: .1em; }\n.fa-pull-left {\n  float: left; }\n.fa-pull-right {\n  float: right; }\n.fa.fa-pull-left {\n  margin-right: .3em; }\n.fa.fa-pull-right {\n  margin-left: .3em; }\n/* Deprecated as of 4.4.0 */\n.pull-right {\n  float: right; }\n.pull-left {\n  float: left; }\n.fa.pull-left {\n  margin-right: .3em; }\n.fa.pull-right {\n  margin-left: .3em; }\n.fa-spin {\n  -webkit-animation: fa-spin 2s infinite linear;\n  animation: fa-spin 2s infinite linear; }\n.fa-pulse {\n  -webkit-animation: fa-spin 1s infinite steps(8);\n  animation: fa-spin 1s infinite steps(8); }\n@-webkit-keyframes fa-spin {\n  0% {\n    -webkit-transform: rotate(0deg);\n    transform: rotate(0deg); }\n  100% {\n    -webkit-transform: rotate(359deg);\n    transform: rotate(359deg); } }\n@keyframes fa-spin {\n  0% {\n    -webkit-transform: rotate(0deg);\n    transform: rotate(0deg); }\n  100% {\n    -webkit-transform: rotate(359deg);\n    transform: rotate(359deg); } }\n.fa-rotate-90 {\n  -ms-filter: \"progid:DXImageTransform.Microsoft.BasicImage(rotation=1)\";\n  -webkit-transform: rotate(90deg);\n  transform: rotate(90deg); }\n.fa-rotate-180 {\n  -ms-filter: \"progid:DXImageTransform.Microsoft.BasicImage(rotation=2)\";\n  -webkit-transform: rotate(180deg);\n  transform: rotate(180deg); }\n.fa-rotate-270 {\n  -ms-filter: \"progid:DXImageTransform.Microsoft.BasicImage(rotation=3)\";\n  -webkit-transform: rotate(270deg);\n  transform: rotate(270deg); }\n.fa-flip-horizontal {\n  -ms-filter: \"progid:DXImageTransform.Microsoft.BasicImage(rotation=0, mirror=1)\";\n  -webkit-transform: scale(-1, 1);\n  transform: scale(-1, 1); }\n.fa-flip-vertical {\n  -ms-filter: \"progid:DXImageTransform.Microsoft.BasicImage(rotation=2, mirror=1)\";\n  -webkit-transform: scale(1, -1);\n  transform: scale(1, -1); }\n:root .fa-rotate-90, :root .fa-rotate-180, :root .fa-rotate-270, :root .fa-flip-horizontal, :root .fa-flip-vertical {\n  -webkit-filter: none;\n          filter: none; }\n.fa-stack {\n  position: relative;\n  display: inline-block;\n  width: 2em;\n  height: 2em;\n  line-height: 2em;\n  vertical-align: middle; }\n.fa-stack-1x, .fa-stack-2x {\n  position: absolute;\n  left: 0;\n  width: 100%;\n  text-align: center; }\n.fa-stack-1x {\n  line-height: inherit; }\n.fa-stack-2x {\n  font-size: 2em; }\n.fa-inverse {\n  color: #fff; }\n/* Font Awesome uses the Unicode Private Use Area (PUA) to ensure screen\n   readers do not read off random characters that represent icons */\n.fa-glass:before {\n  content: \"\\F000\"; }\n.fa-music:before {\n  content: \"\\F001\"; }\n.fa-search:before {\n  content: \"\\F002\"; }\n.fa-envelope-o:before {\n  content: \"\\F003\"; }\n.fa-heart:before {\n  content: \"\\F004\"; }\n.fa-star:before {\n  content: \"\\F005\"; }\n.fa-star-o:before {\n  content: \"\\F006\"; }\n.fa-user:before {\n  content: \"\\F007\"; }\n.fa-film:before {\n  content: \"\\F008\"; }\n.fa-th-large:before {\n  content: \"\\F009\"; }\n.fa-th:before {\n  content: \"\\F00A\"; }\n.fa-th-list:before {\n  content: \"\\F00B\"; }\n.fa-check:before {\n  content: \"\\F00C\"; }\n.fa-remove:before, .fa-close:before, .fa-times:before {\n  content: \"\\F00D\"; }\n.fa-search-plus:before {\n  content: \"\\F00E\"; }\n.fa-search-minus:before {\n  content: \"\\F010\"; }\n.fa-power-off:before {\n  content: \"\\F011\"; }\n.fa-signal:before {\n  content: \"\\F012\"; }\n.fa-gear:before, .fa-cog:before {\n  content: \"\\F013\"; }\n.fa-trash-o:before {\n  content: \"\\F014\"; }\n.fa-home:before {\n  content: \"\\F015\"; }\n.fa-file-o:before {\n  content: \"\\F016\"; }\n.fa-clock-o:before {\n  content: \"\\F017\"; }\n.fa-road:before {\n  content: \"\\F018\"; }\n.fa-download:before {\n  content: \"\\F019\"; }\n.fa-arrow-circle-o-down:before {\n  content: \"\\F01A\"; }\n.fa-arrow-circle-o-up:before {\n  content: \"\\F01B\"; }\n.fa-inbox:before {\n  content: \"\\F01C\"; }\n.fa-play-circle-o:before {\n  content: \"\\F01D\"; }\n.fa-rotate-right:before, .fa-repeat:before {\n  content: \"\\F01E\"; }\n.fa-refresh:before {\n  content: \"\\F021\"; }\n.fa-list-alt:before {\n  content: \"\\F022\"; }\n.fa-lock:before {\n  content: \"\\F023\"; }\n.fa-flag:before {\n  content: \"\\F024\"; }\n.fa-headphones:before {\n  content: \"\\F025\"; }\n.fa-volume-off:before {\n  content: \"\\F026\"; }\n.fa-volume-down:before {\n  content: \"\\F027\"; }\n.fa-volume-up:before {\n  content: \"\\F028\"; }\n.fa-qrcode:before {\n  content: \"\\F029\"; }\n.fa-barcode:before {\n  content: \"\\F02A\"; }\n.fa-tag:before {\n  content: \"\\F02B\"; }\n.fa-tags:before {\n  content: \"\\F02C\"; }\n.fa-book:before {\n  content: \"\\F02D\"; }\n.fa-bookmark:before {\n  content: \"\\F02E\"; }\n.fa-print:before {\n  content: \"\\F02F\"; }\n.fa-camera:before {\n  content: \"\\F030\"; }\n.fa-font:before {\n  content: \"\\F031\"; }\n.fa-bold:before {\n  content: \"\\F032\"; }\n.fa-italic:before {\n  content: \"\\F033\"; }\n.fa-text-height:before {\n  content: \"\\F034\"; }\n.fa-text-width:before {\n  content: \"\\F035\"; }\n.fa-align-left:before {\n  content: \"\\F036\"; }\n.fa-align-center:before {\n  content: \"\\F037\"; }\n.fa-align-right:before {\n  content: \"\\F038\"; }\n.fa-align-justify:before {\n  content: \"\\F039\"; }\n.fa-list:before {\n  content: \"\\F03A\"; }\n.fa-dedent:before, .fa-outdent:before {\n  content: \"\\F03B\"; }\n.fa-indent:before {\n  content: \"\\F03C\"; }\n.fa-video-camera:before {\n  content: \"\\F03D\"; }\n.fa-photo:before, .fa-image:before, .fa-picture-o:before {\n  content: \"\\F03E\"; }\n.fa-pencil:before {\n  content: \"\\F040\"; }\n.fa-map-marker:before {\n  content: \"\\F041\"; }\n.fa-adjust:before {\n  content: \"\\F042\"; }\n.fa-tint:before {\n  content: \"\\F043\"; }\n.fa-edit:before, .fa-pencil-square-o:before {\n  content: \"\\F044\"; }\n.fa-share-square-o:before {\n  content: \"\\F045\"; }\n.fa-check-square-o:before {\n  content: \"\\F046\"; }\n.fa-arrows:before {\n  content: \"\\F047\"; }\n.fa-step-backward:before {\n  content: \"\\F048\"; }\n.fa-fast-backward:before {\n  content: \"\\F049\"; }\n.fa-backward:before {\n  content: \"\\F04A\"; }\n.fa-play:before {\n  content: \"\\F04B\"; }\n.fa-pause:before {\n  content: \"\\F04C\"; }\n.fa-stop:before {\n  content: \"\\F04D\"; }\n.fa-forward:before {\n  content: \"\\F04E\"; }\n.fa-fast-forward:before {\n  content: \"\\F050\"; }\n.fa-step-forward:before {\n  content: \"\\F051\"; }\n.fa-eject:before {\n  content: \"\\F052\"; }\n.fa-chevron-left:before {\n  content: \"\\F053\"; }\n.fa-chevron-right:before {\n  content: \"\\F054\"; }\n.fa-plus-circle:before {\n  content: \"\\F055\"; }\n.fa-minus-circle:before {\n  content: \"\\F056\"; }\n.fa-times-circle:before {\n  content: \"\\F057\"; }\n.fa-check-circle:before {\n  content: \"\\F058\"; }\n.fa-question-circle:before {\n  content: \"\\F059\"; }\n.fa-info-circle:before {\n  content: \"\\F05A\"; }\n.fa-crosshairs:before {\n  content: \"\\F05B\"; }\n.fa-times-circle-o:before {\n  content: \"\\F05C\"; }\n.fa-check-circle-o:before {\n  content: \"\\F05D\"; }\n.fa-ban:before {\n  content: \"\\F05E\"; }\n.fa-arrow-left:before {\n  content: \"\\F060\"; }\n.fa-arrow-right:before {\n  content: \"\\F061\"; }\n.fa-arrow-up:before {\n  content: \"\\F062\"; }\n.fa-arrow-down:before {\n  content: \"\\F063\"; }\n.fa-mail-forward:before, .fa-share:before {\n  content: \"\\F064\"; }\n.fa-expand:before {\n  content: \"\\F065\"; }\n.fa-compress:before {\n  content: \"\\F066\"; }\n.fa-plus:before {\n  content: \"\\F067\"; }\n.fa-minus:before {\n  content: \"\\F068\"; }\n.fa-asterisk:before {\n  content: \"\\F069\"; }\n.fa-exclamation-circle:before {\n  content: \"\\F06A\"; }\n.fa-gift:before {\n  content: \"\\F06B\"; }\n.fa-leaf:before {\n  content: \"\\F06C\"; }\n.fa-fire:before {\n  content: \"\\F06D\"; }\n.fa-eye:before {\n  content: \"\\F06E\"; }\n.fa-eye-slash:before {\n  content: \"\\F070\"; }\n.fa-warning:before, .fa-exclamation-triangle:before {\n  content: \"\\F071\"; }\n.fa-plane:before {\n  content: \"\\F072\"; }\n.fa-calendar:before {\n  content: \"\\F073\"; }\n.fa-random:before {\n  content: \"\\F074\"; }\n.fa-comment:before {\n  content: \"\\F075\"; }\n.fa-magnet:before {\n  content: \"\\F076\"; }\n.fa-chevron-up:before {\n  content: \"\\F077\"; }\n.fa-chevron-down:before {\n  content: \"\\F078\"; }\n.fa-retweet:before {\n  content: \"\\F079\"; }\n.fa-shopping-cart:before {\n  content: \"\\F07A\"; }\n.fa-folder:before {\n  content: \"\\F07B\"; }\n.fa-folder-open:before {\n  content: \"\\F07C\"; }\n.fa-arrows-v:before {\n  content: \"\\F07D\"; }\n.fa-arrows-h:before {\n  content: \"\\F07E\"; }\n.fa-bar-chart-o:before, .fa-bar-chart:before {\n  content: \"\\F080\"; }\n.fa-twitter-square:before {\n  content: \"\\F081\"; }\n.fa-facebook-square:before {\n  content: \"\\F082\"; }\n.fa-camera-retro:before {\n  content: \"\\F083\"; }\n.fa-key:before {\n  content: \"\\F084\"; }\n.fa-gears:before, .fa-cogs:before {\n  content: \"\\F085\"; }\n.fa-comments:before {\n  content: \"\\F086\"; }\n.fa-thumbs-o-up:before {\n  content: \"\\F087\"; }\n.fa-thumbs-o-down:before {\n  content: \"\\F088\"; }\n.fa-star-half:before {\n  content: \"\\F089\"; }\n.fa-heart-o:before {\n  content: \"\\F08A\"; }\n.fa-sign-out:before {\n  content: \"\\F08B\"; }\n.fa-linkedin-square:before {\n  content: \"\\F08C\"; }\n.fa-thumb-tack:before {\n  content: \"\\F08D\"; }\n.fa-external-link:before {\n  content: \"\\F08E\"; }\n.fa-sign-in:before {\n  content: \"\\F090\"; }\n.fa-trophy:before {\n  content: \"\\F091\"; }\n.fa-github-square:before {\n  content: \"\\F092\"; }\n.fa-upload:before {\n  content: \"\\F093\"; }\n.fa-lemon-o:before {\n  content: \"\\F094\"; }\n.fa-phone:before {\n  content: \"\\F095\"; }\n.fa-square-o:before {\n  content: \"\\F096\"; }\n.fa-bookmark-o:before {\n  content: \"\\F097\"; }\n.fa-phone-square:before {\n  content: \"\\F098\"; }\n.fa-twitter:before {\n  content: \"\\F099\"; }\n.fa-facebook-f:before, .fa-facebook:before {\n  content: \"\\F09A\"; }\n.fa-github:before {\n  content: \"\\F09B\"; }\n.fa-unlock:before {\n  content: \"\\F09C\"; }\n.fa-credit-card:before {\n  content: \"\\F09D\"; }\n.fa-feed:before, .fa-rss:before {\n  content: \"\\F09E\"; }\n.fa-hdd-o:before {\n  content: \"\\F0A0\"; }\n.fa-bullhorn:before {\n  content: \"\\F0A1\"; }\n.fa-bell:before {\n  content: \"\\F0F3\"; }\n.fa-certificate:before {\n  content: \"\\F0A3\"; }\n.fa-hand-o-right:before {\n  content: \"\\F0A4\"; }\n.fa-hand-o-left:before {\n  content: \"\\F0A5\"; }\n.fa-hand-o-up:before {\n  content: \"\\F0A6\"; }\n.fa-hand-o-down:before {\n  content: \"\\F0A7\"; }\n.fa-arrow-circle-left:before {\n  content: \"\\F0A8\"; }\n.fa-arrow-circle-right:before {\n  content: \"\\F0A9\"; }\n.fa-arrow-circle-up:before {\n  content: \"\\F0AA\"; }\n.fa-arrow-circle-down:before {\n  content: \"\\F0AB\"; }\n.fa-globe:before {\n  content: \"\\F0AC\"; }\n.fa-wrench:before {\n  content: \"\\F0AD\"; }\n.fa-tasks:before {\n  content: \"\\F0AE\"; }\n.fa-filter:before {\n  content: \"\\F0B0\"; }\n.fa-briefcase:before {\n  content: \"\\F0B1\"; }\n.fa-arrows-alt:before {\n  content: \"\\F0B2\"; }\n.fa-group:before, .fa-users:before {\n  content: \"\\F0C0\"; }\n.fa-chain:before, .fa-link:before {\n  content: \"\\F0C1\"; }\n.fa-cloud:before {\n  content: \"\\F0C2\"; }\n.fa-flask:before {\n  content: \"\\F0C3\"; }\n.fa-cut:before, .fa-scissors:before {\n  content: \"\\F0C4\"; }\n.fa-copy:before, .fa-files-o:before {\n  content: \"\\F0C5\"; }\n.fa-paperclip:before {\n  content: \"\\F0C6\"; }\n.fa-save:before, .fa-floppy-o:before {\n  content: \"\\F0C7\"; }\n.fa-square:before {\n  content: \"\\F0C8\"; }\n.fa-navicon:before, .fa-reorder:before, .fa-bars:before {\n  content: \"\\F0C9\"; }\n.fa-list-ul:before {\n  content: \"\\F0CA\"; }\n.fa-list-ol:before {\n  content: \"\\F0CB\"; }\n.fa-strikethrough:before {\n  content: \"\\F0CC\"; }\n.fa-underline:before {\n  content: \"\\F0CD\"; }\n.fa-table:before {\n  content: \"\\F0CE\"; }\n.fa-magic:before {\n  content: \"\\F0D0\"; }\n.fa-truck:before {\n  content: \"\\F0D1\"; }\n.fa-pinterest:before {\n  content: \"\\F0D2\"; }\n.fa-pinterest-square:before {\n  content: \"\\F0D3\"; }\n.fa-google-plus-square:before {\n  content: \"\\F0D4\"; }\n.fa-google-plus:before {\n  content: \"\\F0D5\"; }\n.fa-money:before {\n  content: \"\\F0D6\"; }\n.fa-caret-down:before {\n  content: \"\\F0D7\"; }\n.fa-caret-up:before {\n  content: \"\\F0D8\"; }\n.fa-caret-left:before {\n  content: \"\\F0D9\"; }\n.fa-caret-right:before {\n  content: \"\\F0DA\"; }\n.fa-columns:before {\n  content: \"\\F0DB\"; }\n.fa-unsorted:before, .fa-sort:before {\n  content: \"\\F0DC\"; }\n.fa-sort-down:before, .fa-sort-desc:before {\n  content: \"\\F0DD\"; }\n.fa-sort-up:before, .fa-sort-asc:before {\n  content: \"\\F0DE\"; }\n.fa-envelope:before {\n  content: \"\\F0E0\"; }\n.fa-linkedin:before {\n  content: \"\\F0E1\"; }\n.fa-rotate-left:before, .fa-undo:before {\n  content: \"\\F0E2\"; }\n.fa-legal:before, .fa-gavel:before {\n  content: \"\\F0E3\"; }\n.fa-dashboard:before, .fa-tachometer:before {\n  content: \"\\F0E4\"; }\n.fa-comment-o:before {\n  content: \"\\F0E5\"; }\n.fa-comments-o:before {\n  content: \"\\F0E6\"; }\n.fa-flash:before, .fa-bolt:before {\n  content: \"\\F0E7\"; }\n.fa-sitemap:before {\n  content: \"\\F0E8\"; }\n.fa-umbrella:before {\n  content: \"\\F0E9\"; }\n.fa-paste:before, .fa-clipboard:before {\n  content: \"\\F0EA\"; }\n.fa-lightbulb-o:before {\n  content: \"\\F0EB\"; }\n.fa-exchange:before {\n  content: \"\\F0EC\"; }\n.fa-cloud-download:before {\n  content: \"\\F0ED\"; }\n.fa-cloud-upload:before {\n  content: \"\\F0EE\"; }\n.fa-user-md:before {\n  content: \"\\F0F0\"; }\n.fa-stethoscope:before {\n  content: \"\\F0F1\"; }\n.fa-suitcase:before {\n  content: \"\\F0F2\"; }\n.fa-bell-o:before {\n  content: \"\\F0A2\"; }\n.fa-coffee:before {\n  content: \"\\F0F4\"; }\n.fa-cutlery:before {\n  content: \"\\F0F5\"; }\n.fa-file-text-o:before {\n  content: \"\\F0F6\"; }\n.fa-building-o:before {\n  content: \"\\F0F7\"; }\n.fa-hospital-o:before {\n  content: \"\\F0F8\"; }\n.fa-ambulance:before {\n  content: \"\\F0F9\"; }\n.fa-medkit:before {\n  content: \"\\F0FA\"; }\n.fa-fighter-jet:before {\n  content: \"\\F0FB\"; }\n.fa-beer:before {\n  content: \"\\F0FC\"; }\n.fa-h-square:before {\n  content: \"\\F0FD\"; }\n.fa-plus-square:before {\n  content: \"\\F0FE\"; }\n.fa-angle-double-left:before {\n  content: \"\\F100\"; }\n.fa-angle-double-right:before {\n  content: \"\\F101\"; }\n.fa-angle-double-up:before {\n  content: \"\\F102\"; }\n.fa-angle-double-down:before {\n  content: \"\\F103\"; }\n.fa-angle-left:before {\n  content: \"\\F104\"; }\n.fa-angle-right:before {\n  content: \"\\F105\"; }\n.fa-angle-up:before {\n  content: \"\\F106\"; }\n.fa-angle-down:before {\n  content: \"\\F107\"; }\n.fa-desktop:before {\n  content: \"\\F108\"; }\n.fa-laptop:before {\n  content: \"\\F109\"; }\n.fa-tablet:before {\n  content: \"\\F10A\"; }\n.fa-mobile-phone:before, .fa-mobile:before {\n  content: \"\\F10B\"; }\n.fa-circle-o:before {\n  content: \"\\F10C\"; }\n.fa-quote-left:before {\n  content: \"\\F10D\"; }\n.fa-quote-right:before {\n  content: \"\\F10E\"; }\n.fa-spinner:before {\n  content: \"\\F110\"; }\n.fa-circle:before {\n  content: \"\\F111\"; }\n.fa-mail-reply:before, .fa-reply:before {\n  content: \"\\F112\"; }\n.fa-github-alt:before {\n  content: \"\\F113\"; }\n.fa-folder-o:before {\n  content: \"\\F114\"; }\n.fa-folder-open-o:before {\n  content: \"\\F115\"; }\n.fa-smile-o:before {\n  content: \"\\F118\"; }\n.fa-frown-o:before {\n  content: \"\\F119\"; }\n.fa-meh-o:before {\n  content: \"\\F11A\"; }\n.fa-gamepad:before {\n  content: \"\\F11B\"; }\n.fa-keyboard-o:before {\n  content: \"\\F11C\"; }\n.fa-flag-o:before {\n  content: \"\\F11D\"; }\n.fa-flag-checkered:before {\n  content: \"\\F11E\"; }\n.fa-terminal:before {\n  content: \"\\F120\"; }\n.fa-code:before {\n  content: \"\\F121\"; }\n.fa-mail-reply-all:before, .fa-reply-all:before {\n  content: \"\\F122\"; }\n.fa-star-half-empty:before, .fa-star-half-full:before, .fa-star-half-o:before {\n  content: \"\\F123\"; }\n.fa-location-arrow:before {\n  content: \"\\F124\"; }\n.fa-crop:before {\n  content: \"\\F125\"; }\n.fa-code-fork:before {\n  content: \"\\F126\"; }\n.fa-unlink:before, .fa-chain-broken:before {\n  content: \"\\F127\"; }\n.fa-question:before {\n  content: \"\\F128\"; }\n.fa-info:before {\n  content: \"\\F129\"; }\n.fa-exclamation:before {\n  content: \"\\F12A\"; }\n.fa-superscript:before {\n  content: \"\\F12B\"; }\n.fa-subscript:before {\n  content: \"\\F12C\"; }\n.fa-eraser:before {\n  content: \"\\F12D\"; }\n.fa-puzzle-piece:before {\n  content: \"\\F12E\"; }\n.fa-microphone:before {\n  content: \"\\F130\"; }\n.fa-microphone-slash:before {\n  content: \"\\F131\"; }\n.fa-shield:before {\n  content: \"\\F132\"; }\n.fa-calendar-o:before {\n  content: \"\\F133\"; }\n.fa-fire-extinguisher:before {\n  content: \"\\F134\"; }\n.fa-rocket:before {\n  content: \"\\F135\"; }\n.fa-maxcdn:before {\n  content: \"\\F136\"; }\n.fa-chevron-circle-left:before {\n  content: \"\\F137\"; }\n.fa-chevron-circle-right:before {\n  content: \"\\F138\"; }\n.fa-chevron-circle-up:before {\n  content: \"\\F139\"; }\n.fa-chevron-circle-down:before {\n  content: \"\\F13A\"; }\n.fa-html5:before {\n  content: \"\\F13B\"; }\n.fa-css3:before {\n  content: \"\\F13C\"; }\n.fa-anchor:before {\n  content: \"\\F13D\"; }\n.fa-unlock-alt:before {\n  content: \"\\F13E\"; }\n.fa-bullseye:before {\n  content: \"\\F140\"; }\n.fa-ellipsis-h:before {\n  content: \"\\F141\"; }\n.fa-ellipsis-v:before {\n  content: \"\\F142\"; }\n.fa-rss-square:before {\n  content: \"\\F143\"; }\n.fa-play-circle:before {\n  content: \"\\F144\"; }\n.fa-ticket:before {\n  content: \"\\F145\"; }\n.fa-minus-square:before {\n  content: \"\\F146\"; }\n.fa-minus-square-o:before {\n  content: \"\\F147\"; }\n.fa-level-up:before {\n  content: \"\\F148\"; }\n.fa-level-down:before {\n  content: \"\\F149\"; }\n.fa-check-square:before {\n  content: \"\\F14A\"; }\n.fa-pencil-square:before {\n  content: \"\\F14B\"; }\n.fa-external-link-square:before {\n  content: \"\\F14C\"; }\n.fa-share-square:before {\n  content: \"\\F14D\"; }\n.fa-compass:before {\n  content: \"\\F14E\"; }\n.fa-toggle-down:before, .fa-caret-square-o-down:before {\n  content: \"\\F150\"; }\n.fa-toggle-up:before, .fa-caret-square-o-up:before {\n  content: \"\\F151\"; }\n.fa-toggle-right:before, .fa-caret-square-o-right:before {\n  content: \"\\F152\"; }\n.fa-euro:before, .fa-eur:before {\n  content: \"\\F153\"; }\n.fa-gbp:before {\n  content: \"\\F154\"; }\n.fa-dollar:before, .fa-usd:before {\n  content: \"\\F155\"; }\n.fa-rupee:before, .fa-inr:before {\n  content: \"\\F156\"; }\n.fa-cny:before, .fa-rmb:before, .fa-yen:before, .fa-jpy:before {\n  content: \"\\F157\"; }\n.fa-ruble:before, .fa-rouble:before, .fa-rub:before {\n  content: \"\\F158\"; }\n.fa-won:before, .fa-krw:before {\n  content: \"\\F159\"; }\n.fa-bitcoin:before, .fa-btc:before {\n  content: \"\\F15A\"; }\n.fa-file:before {\n  content: \"\\F15B\"; }\n.fa-file-text:before {\n  content: \"\\F15C\"; }\n.fa-sort-alpha-asc:before {\n  content: \"\\F15D\"; }\n.fa-sort-alpha-desc:before {\n  content: \"\\F15E\"; }\n.fa-sort-amount-asc:before {\n  content: \"\\F160\"; }\n.fa-sort-amount-desc:before {\n  content: \"\\F161\"; }\n.fa-sort-numeric-asc:before {\n  content: \"\\F162\"; }\n.fa-sort-numeric-desc:before {\n  content: \"\\F163\"; }\n.fa-thumbs-up:before {\n  content: \"\\F164\"; }\n.fa-thumbs-down:before {\n  content: \"\\F165\"; }\n.fa-youtube-square:before {\n  content: \"\\F166\"; }\n.fa-youtube:before {\n  content: \"\\F167\"; }\n.fa-xing:before {\n  content: \"\\F168\"; }\n.fa-xing-square:before {\n  content: \"\\F169\"; }\n.fa-youtube-play:before {\n  content: \"\\F16A\"; }\n.fa-dropbox:before {\n  content: \"\\F16B\"; }\n.fa-stack-overflow:before {\n  content: \"\\F16C\"; }\n.fa-instagram:before {\n  content: \"\\F16D\"; }\n.fa-flickr:before {\n  content: \"\\F16E\"; }\n.fa-adn:before {\n  content: \"\\F170\"; }\n.fa-bitbucket:before {\n  content: \"\\F171\"; }\n.fa-bitbucket-square:before {\n  content: \"\\F172\"; }\n.fa-tumblr:before {\n  content: \"\\F173\"; }\n.fa-tumblr-square:before {\n  content: \"\\F174\"; }\n.fa-long-arrow-down:before {\n  content: \"\\F175\"; }\n.fa-long-arrow-up:before {\n  content: \"\\F176\"; }\n.fa-long-arrow-left:before {\n  content: \"\\F177\"; }\n.fa-long-arrow-right:before {\n  content: \"\\F178\"; }\n.fa-apple:before {\n  content: \"\\F179\"; }\n.fa-windows:before {\n  content: \"\\F17A\"; }\n.fa-android:before {\n  content: \"\\F17B\"; }\n.fa-linux:before {\n  content: \"\\F17C\"; }\n.fa-dribbble:before {\n  content: \"\\F17D\"; }\n.fa-skype:before {\n  content: \"\\F17E\"; }\n.fa-foursquare:before {\n  content: \"\\F180\"; }\n.fa-trello:before {\n  content: \"\\F181\"; }\n.fa-female:before {\n  content: \"\\F182\"; }\n.fa-male:before {\n  content: \"\\F183\"; }\n.fa-gittip:before, .fa-gratipay:before {\n  content: \"\\F184\"; }\n.fa-sun-o:before {\n  content: \"\\F185\"; }\n.fa-moon-o:before {\n  content: \"\\F186\"; }\n.fa-archive:before {\n  content: \"\\F187\"; }\n.fa-bug:before {\n  content: \"\\F188\"; }\n.fa-vk:before {\n  content: \"\\F189\"; }\n.fa-weibo:before {\n  content: \"\\F18A\"; }\n.fa-renren:before {\n  content: \"\\F18B\"; }\n.fa-pagelines:before {\n  content: \"\\F18C\"; }\n.fa-stack-exchange:before {\n  content: \"\\F18D\"; }\n.fa-arrow-circle-o-right:before {\n  content: \"\\F18E\"; }\n.fa-arrow-circle-o-left:before {\n  content: \"\\F190\"; }\n.fa-toggle-left:before, .fa-caret-square-o-left:before {\n  content: \"\\F191\"; }\n.fa-dot-circle-o:before {\n  content: \"\\F192\"; }\n.fa-wheelchair:before {\n  content: \"\\F193\"; }\n.fa-vimeo-square:before {\n  content: \"\\F194\"; }\n.fa-turkish-lira:before, .fa-try:before {\n  content: \"\\F195\"; }\n.fa-plus-square-o:before {\n  content: \"\\F196\"; }\n.fa-space-shuttle:before {\n  content: \"\\F197\"; }\n.fa-slack:before {\n  content: \"\\F198\"; }\n.fa-envelope-square:before {\n  content: \"\\F199\"; }\n.fa-wordpress:before {\n  content: \"\\F19A\"; }\n.fa-openid:before {\n  content: \"\\F19B\"; }\n.fa-institution:before, .fa-bank:before, .fa-university:before {\n  content: \"\\F19C\"; }\n.fa-mortar-board:before, .fa-graduation-cap:before {\n  content: \"\\F19D\"; }\n.fa-yahoo:before {\n  content: \"\\F19E\"; }\n.fa-google:before {\n  content: \"\\F1A0\"; }\n.fa-reddit:before {\n  content: \"\\F1A1\"; }\n.fa-reddit-square:before {\n  content: \"\\F1A2\"; }\n.fa-stumbleupon-circle:before {\n  content: \"\\F1A3\"; }\n.fa-stumbleupon:before {\n  content: \"\\F1A4\"; }\n.fa-delicious:before {\n  content: \"\\F1A5\"; }\n.fa-digg:before {\n  content: \"\\F1A6\"; }\n.fa-pied-piper-pp:before {\n  content: \"\\F1A7\"; }\n.fa-pied-piper-alt:before {\n  content: \"\\F1A8\"; }\n.fa-drupal:before {\n  content: \"\\F1A9\"; }\n.fa-joomla:before {\n  content: \"\\F1AA\"; }\n.fa-language:before {\n  content: \"\\F1AB\"; }\n.fa-fax:before {\n  content: \"\\F1AC\"; }\n.fa-building:before {\n  content: \"\\F1AD\"; }\n.fa-child:before {\n  content: \"\\F1AE\"; }\n.fa-paw:before {\n  content: \"\\F1B0\"; }\n.fa-spoon:before {\n  content: \"\\F1B1\"; }\n.fa-cube:before {\n  content: \"\\F1B2\"; }\n.fa-cubes:before {\n  content: \"\\F1B3\"; }\n.fa-behance:before {\n  content: \"\\F1B4\"; }\n.fa-behance-square:before {\n  content: \"\\F1B5\"; }\n.fa-steam:before {\n  content: \"\\F1B6\"; }\n.fa-steam-square:before {\n  content: \"\\F1B7\"; }\n.fa-recycle:before {\n  content: \"\\F1B8\"; }\n.fa-automobile:before, .fa-car:before {\n  content: \"\\F1B9\"; }\n.fa-cab:before, .fa-taxi:before {\n  content: \"\\F1BA\"; }\n.fa-tree:before {\n  content: \"\\F1BB\"; }\n.fa-spotify:before {\n  content: \"\\F1BC\"; }\n.fa-deviantart:before {\n  content: \"\\F1BD\"; }\n.fa-soundcloud:before {\n  content: \"\\F1BE\"; }\n.fa-database:before {\n  content: \"\\F1C0\"; }\n.fa-file-pdf-o:before {\n  content: \"\\F1C1\"; }\n.fa-file-word-o:before {\n  content: \"\\F1C2\"; }\n.fa-file-excel-o:before {\n  content: \"\\F1C3\"; }\n.fa-file-powerpoint-o:before {\n  content: \"\\F1C4\"; }\n.fa-file-photo-o:before, .fa-file-picture-o:before, .fa-file-image-o:before {\n  content: \"\\F1C5\"; }\n.fa-file-zip-o:before, .fa-file-archive-o:before {\n  content: \"\\F1C6\"; }\n.fa-file-sound-o:before, .fa-file-audio-o:before {\n  content: \"\\F1C7\"; }\n.fa-file-movie-o:before, .fa-file-video-o:before {\n  content: \"\\F1C8\"; }\n.fa-file-code-o:before {\n  content: \"\\F1C9\"; }\n.fa-vine:before {\n  content: \"\\F1CA\"; }\n.fa-codepen:before {\n  content: \"\\F1CB\"; }\n.fa-jsfiddle:before {\n  content: \"\\F1CC\"; }\n.fa-life-bouy:before, .fa-life-buoy:before, .fa-life-saver:before, .fa-support:before, .fa-life-ring:before {\n  content: \"\\F1CD\"; }\n.fa-circle-o-notch:before {\n  content: \"\\F1CE\"; }\n.fa-ra:before, .fa-resistance:before, .fa-rebel:before {\n  content: \"\\F1D0\"; }\n.fa-ge:before, .fa-empire:before {\n  content: \"\\F1D1\"; }\n.fa-git-square:before {\n  content: \"\\F1D2\"; }\n.fa-git:before {\n  content: \"\\F1D3\"; }\n.fa-y-combinator-square:before, .fa-yc-square:before, .fa-hacker-news:before {\n  content: \"\\F1D4\"; }\n.fa-tencent-weibo:before {\n  content: \"\\F1D5\"; }\n.fa-qq:before {\n  content: \"\\F1D6\"; }\n.fa-wechat:before, .fa-weixin:before {\n  content: \"\\F1D7\"; }\n.fa-send:before, .fa-paper-plane:before {\n  content: \"\\F1D8\"; }\n.fa-send-o:before, .fa-paper-plane-o:before {\n  content: \"\\F1D9\"; }\n.fa-history:before {\n  content: \"\\F1DA\"; }\n.fa-circle-thin:before {\n  content: \"\\F1DB\"; }\n.fa-header:before {\n  content: \"\\F1DC\"; }\n.fa-paragraph:before {\n  content: \"\\F1DD\"; }\n.fa-sliders:before {\n  content: \"\\F1DE\"; }\n.fa-share-alt:before {\n  content: \"\\F1E0\"; }\n.fa-share-alt-square:before {\n  content: \"\\F1E1\"; }\n.fa-bomb:before {\n  content: \"\\F1E2\"; }\n.fa-soccer-ball-o:before, .fa-futbol-o:before {\n  content: \"\\F1E3\"; }\n.fa-tty:before {\n  content: \"\\F1E4\"; }\n.fa-binoculars:before {\n  content: \"\\F1E5\"; }\n.fa-plug:before {\n  content: \"\\F1E6\"; }\n.fa-slideshare:before {\n  content: \"\\F1E7\"; }\n.fa-twitch:before {\n  content: \"\\F1E8\"; }\n.fa-yelp:before {\n  content: \"\\F1E9\"; }\n.fa-newspaper-o:before {\n  content: \"\\F1EA\"; }\n.fa-wifi:before {\n  content: \"\\F1EB\"; }\n.fa-calculator:before {\n  content: \"\\F1EC\"; }\n.fa-paypal:before {\n  content: \"\\F1ED\"; }\n.fa-google-wallet:before {\n  content: \"\\F1EE\"; }\n.fa-cc-visa:before {\n  content: \"\\F1F0\"; }\n.fa-cc-mastercard:before {\n  content: \"\\F1F1\"; }\n.fa-cc-discover:before {\n  content: \"\\F1F2\"; }\n.fa-cc-amex:before {\n  content: \"\\F1F3\"; }\n.fa-cc-paypal:before {\n  content: \"\\F1F4\"; }\n.fa-cc-stripe:before {\n  content: \"\\F1F5\"; }\n.fa-bell-slash:before {\n  content: \"\\F1F6\"; }\n.fa-bell-slash-o:before {\n  content: \"\\F1F7\"; }\n.fa-trash:before {\n  content: \"\\F1F8\"; }\n.fa-copyright:before {\n  content: \"\\F1F9\"; }\n.fa-at:before {\n  content: \"\\F1FA\"; }\n.fa-eyedropper:before {\n  content: \"\\F1FB\"; }\n.fa-paint-brush:before {\n  content: \"\\F1FC\"; }\n.fa-birthday-cake:before {\n  content: \"\\F1FD\"; }\n.fa-area-chart:before {\n  content: \"\\F1FE\"; }\n.fa-pie-chart:before {\n  content: \"\\F200\"; }\n.fa-line-chart:before {\n  content: \"\\F201\"; }\n.fa-lastfm:before {\n  content: \"\\F202\"; }\n.fa-lastfm-square:before {\n  content: \"\\F203\"; }\n.fa-toggle-off:before {\n  content: \"\\F204\"; }\n.fa-toggle-on:before {\n  content: \"\\F205\"; }\n.fa-bicycle:before {\n  content: \"\\F206\"; }\n.fa-bus:before {\n  content: \"\\F207\"; }\n.fa-ioxhost:before {\n  content: \"\\F208\"; }\n.fa-angellist:before {\n  content: \"\\F209\"; }\n.fa-cc:before {\n  content: \"\\F20A\"; }\n.fa-shekel:before, .fa-sheqel:before, .fa-ils:before {\n  content: \"\\F20B\"; }\n.fa-meanpath:before {\n  content: \"\\F20C\"; }\n.fa-buysellads:before {\n  content: \"\\F20D\"; }\n.fa-connectdevelop:before {\n  content: \"\\F20E\"; }\n.fa-dashcube:before {\n  content: \"\\F210\"; }\n.fa-forumbee:before {\n  content: \"\\F211\"; }\n.fa-leanpub:before {\n  content: \"\\F212\"; }\n.fa-sellsy:before {\n  content: \"\\F213\"; }\n.fa-shirtsinbulk:before {\n  content: \"\\F214\"; }\n.fa-simplybuilt:before {\n  content: \"\\F215\"; }\n.fa-skyatlas:before {\n  content: \"\\F216\"; }\n.fa-cart-plus:before {\n  content: \"\\F217\"; }\n.fa-cart-arrow-down:before {\n  content: \"\\F218\"; }\n.fa-diamond:before {\n  content: \"\\F219\"; }\n.fa-ship:before {\n  content: \"\\F21A\"; }\n.fa-user-secret:before {\n  content: \"\\F21B\"; }\n.fa-motorcycle:before {\n  content: \"\\F21C\"; }\n.fa-street-view:before {\n  content: \"\\F21D\"; }\n.fa-heartbeat:before {\n  content: \"\\F21E\"; }\n.fa-venus:before {\n  content: \"\\F221\"; }\n.fa-mars:before {\n  content: \"\\F222\"; }\n.fa-mercury:before {\n  content: \"\\F223\"; }\n.fa-intersex:before, .fa-transgender:before {\n  content: \"\\F224\"; }\n.fa-transgender-alt:before {\n  content: \"\\F225\"; }\n.fa-venus-double:before {\n  content: \"\\F226\"; }\n.fa-mars-double:before {\n  content: \"\\F227\"; }\n.fa-venus-mars:before {\n  content: \"\\F228\"; }\n.fa-mars-stroke:before {\n  content: \"\\F229\"; }\n.fa-mars-stroke-v:before {\n  content: \"\\F22A\"; }\n.fa-mars-stroke-h:before {\n  content: \"\\F22B\"; }\n.fa-neuter:before {\n  content: \"\\F22C\"; }\n.fa-genderless:before {\n  content: \"\\F22D\"; }\n.fa-facebook-official:before {\n  content: \"\\F230\"; }\n.fa-pinterest-p:before {\n  content: \"\\F231\"; }\n.fa-whatsapp:before {\n  content: \"\\F232\"; }\n.fa-server:before {\n  content: \"\\F233\"; }\n.fa-user-plus:before {\n  content: \"\\F234\"; }\n.fa-user-times:before {\n  content: \"\\F235\"; }\n.fa-hotel:before, .fa-bed:before {\n  content: \"\\F236\"; }\n.fa-viacoin:before {\n  content: \"\\F237\"; }\n.fa-train:before {\n  content: \"\\F238\"; }\n.fa-subway:before {\n  content: \"\\F239\"; }\n.fa-medium:before {\n  content: \"\\F23A\"; }\n.fa-yc:before, .fa-y-combinator:before {\n  content: \"\\F23B\"; }\n.fa-optin-monster:before {\n  content: \"\\F23C\"; }\n.fa-opencart:before {\n  content: \"\\F23D\"; }\n.fa-expeditedssl:before {\n  content: \"\\F23E\"; }\n.fa-battery-4:before, .fa-battery:before, .fa-battery-full:before {\n  content: \"\\F240\"; }\n.fa-battery-3:before, .fa-battery-three-quarters:before {\n  content: \"\\F241\"; }\n.fa-battery-2:before, .fa-battery-half:before {\n  content: \"\\F242\"; }\n.fa-battery-1:before, .fa-battery-quarter:before {\n  content: \"\\F243\"; }\n.fa-battery-0:before, .fa-battery-empty:before {\n  content: \"\\F244\"; }\n.fa-mouse-pointer:before {\n  content: \"\\F245\"; }\n.fa-i-cursor:before {\n  content: \"\\F246\"; }\n.fa-object-group:before {\n  content: \"\\F247\"; }\n.fa-object-ungroup:before {\n  content: \"\\F248\"; }\n.fa-sticky-note:before {\n  content: \"\\F249\"; }\n.fa-sticky-note-o:before {\n  content: \"\\F24A\"; }\n.fa-cc-jcb:before {\n  content: \"\\F24B\"; }\n.fa-cc-diners-club:before {\n  content: \"\\F24C\"; }\n.fa-clone:before {\n  content: \"\\F24D\"; }\n.fa-balance-scale:before {\n  content: \"\\F24E\"; }\n.fa-hourglass-o:before {\n  content: \"\\F250\"; }\n.fa-hourglass-1:before, .fa-hourglass-start:before {\n  content: \"\\F251\"; }\n.fa-hourglass-2:before, .fa-hourglass-half:before {\n  content: \"\\F252\"; }\n.fa-hourglass-3:before, .fa-hourglass-end:before {\n  content: \"\\F253\"; }\n.fa-hourglass:before {\n  content: \"\\F254\"; }\n.fa-hand-grab-o:before, .fa-hand-rock-o:before {\n  content: \"\\F255\"; }\n.fa-hand-stop-o:before, .fa-hand-paper-o:before {\n  content: \"\\F256\"; }\n.fa-hand-scissors-o:before {\n  content: \"\\F257\"; }\n.fa-hand-lizard-o:before {\n  content: \"\\F258\"; }\n.fa-hand-spock-o:before {\n  content: \"\\F259\"; }\n.fa-hand-pointer-o:before {\n  content: \"\\F25A\"; }\n.fa-hand-peace-o:before {\n  content: \"\\F25B\"; }\n.fa-trademark:before {\n  content: \"\\F25C\"; }\n.fa-registered:before {\n  content: \"\\F25D\"; }\n.fa-creative-commons:before {\n  content: \"\\F25E\"; }\n.fa-gg:before {\n  content: \"\\F260\"; }\n.fa-gg-circle:before {\n  content: \"\\F261\"; }\n.fa-tripadvisor:before {\n  content: \"\\F262\"; }\n.fa-odnoklassniki:before {\n  content: \"\\F263\"; }\n.fa-odnoklassniki-square:before {\n  content: \"\\F264\"; }\n.fa-get-pocket:before {\n  content: \"\\F265\"; }\n.fa-wikipedia-w:before {\n  content: \"\\F266\"; }\n.fa-safari:before {\n  content: \"\\F267\"; }\n.fa-chrome:before {\n  content: \"\\F268\"; }\n.fa-firefox:before {\n  content: \"\\F269\"; }\n.fa-opera:before {\n  content: \"\\F26A\"; }\n.fa-internet-explorer:before {\n  content: \"\\F26B\"; }\n.fa-tv:before, .fa-television:before {\n  content: \"\\F26C\"; }\n.fa-contao:before {\n  content: \"\\F26D\"; }\n.fa-500px:before {\n  content: \"\\F26E\"; }\n.fa-amazon:before {\n  content: \"\\F270\"; }\n.fa-calendar-plus-o:before {\n  content: \"\\F271\"; }\n.fa-calendar-minus-o:before {\n  content: \"\\F272\"; }\n.fa-calendar-times-o:before {\n  content: \"\\F273\"; }\n.fa-calendar-check-o:before {\n  content: \"\\F274\"; }\n.fa-industry:before {\n  content: \"\\F275\"; }\n.fa-map-pin:before {\n  content: \"\\F276\"; }\n.fa-map-signs:before {\n  content: \"\\F277\"; }\n.fa-map-o:before {\n  content: \"\\F278\"; }\n.fa-map:before {\n  content: \"\\F279\"; }\n.fa-commenting:before {\n  content: \"\\F27A\"; }\n.fa-commenting-o:before {\n  content: \"\\F27B\"; }\n.fa-houzz:before {\n  content: \"\\F27C\"; }\n.fa-vimeo:before {\n  content: \"\\F27D\"; }\n.fa-black-tie:before {\n  content: \"\\F27E\"; }\n.fa-fonticons:before {\n  content: \"\\F280\"; }\n.fa-reddit-alien:before {\n  content: \"\\F281\"; }\n.fa-edge:before {\n  content: \"\\F282\"; }\n.fa-credit-card-alt:before {\n  content: \"\\F283\"; }\n.fa-codiepie:before {\n  content: \"\\F284\"; }\n.fa-modx:before {\n  content: \"\\F285\"; }\n.fa-fort-awesome:before {\n  content: \"\\F286\"; }\n.fa-usb:before {\n  content: \"\\F287\"; }\n.fa-product-hunt:before {\n  content: \"\\F288\"; }\n.fa-mixcloud:before {\n  content: \"\\F289\"; }\n.fa-scribd:before {\n  content: \"\\F28A\"; }\n.fa-pause-circle:before {\n  content: \"\\F28B\"; }\n.fa-pause-circle-o:before {\n  content: \"\\F28C\"; }\n.fa-stop-circle:before {\n  content: \"\\F28D\"; }\n.fa-stop-circle-o:before {\n  content: \"\\F28E\"; }\n.fa-shopping-bag:before {\n  content: \"\\F290\"; }\n.fa-shopping-basket:before {\n  content: \"\\F291\"; }\n.fa-hashtag:before {\n  content: \"\\F292\"; }\n.fa-bluetooth:before {\n  content: \"\\F293\"; }\n.fa-bluetooth-b:before {\n  content: \"\\F294\"; }\n.fa-percent:before {\n  content: \"\\F295\"; }\n.fa-gitlab:before {\n  content: \"\\F296\"; }\n.fa-wpbeginner:before {\n  content: \"\\F297\"; }\n.fa-wpforms:before {\n  content: \"\\F298\"; }\n.fa-envira:before {\n  content: \"\\F299\"; }\n.fa-universal-access:before {\n  content: \"\\F29A\"; }\n.fa-wheelchair-alt:before {\n  content: \"\\F29B\"; }\n.fa-question-circle-o:before {\n  content: \"\\F29C\"; }\n.fa-blind:before {\n  content: \"\\F29D\"; }\n.fa-audio-description:before {\n  content: \"\\F29E\"; }\n.fa-volume-control-phone:before {\n  content: \"\\F2A0\"; }\n.fa-braille:before {\n  content: \"\\F2A1\"; }\n.fa-assistive-listening-systems:before {\n  content: \"\\F2A2\"; }\n.fa-asl-interpreting:before, .fa-american-sign-language-interpreting:before {\n  content: \"\\F2A3\"; }\n.fa-deafness:before, .fa-hard-of-hearing:before, .fa-deaf:before {\n  content: \"\\F2A4\"; }\n.fa-glide:before {\n  content: \"\\F2A5\"; }\n.fa-glide-g:before {\n  content: \"\\F2A6\"; }\n.fa-signing:before, .fa-sign-language:before {\n  content: \"\\F2A7\"; }\n.fa-low-vision:before {\n  content: \"\\F2A8\"; }\n.fa-viadeo:before {\n  content: \"\\F2A9\"; }\n.fa-viadeo-square:before {\n  content: \"\\F2AA\"; }\n.fa-snapchat:before {\n  content: \"\\F2AB\"; }\n.fa-snapchat-ghost:before {\n  content: \"\\F2AC\"; }\n.fa-snapchat-square:before {\n  content: \"\\F2AD\"; }\n.fa-pied-piper:before {\n  content: \"\\F2AE\"; }\n.fa-first-order:before {\n  content: \"\\F2B0\"; }\n.fa-yoast:before {\n  content: \"\\F2B1\"; }\n.fa-themeisle:before {\n  content: \"\\F2B2\"; }\n.fa-google-plus-circle:before, .fa-google-plus-official:before {\n  content: \"\\F2B3\"; }\n.fa-fa:before, .fa-font-awesome:before {\n  content: \"\\F2B4\"; }\n.fa-handshake-o:before {\n  content: \"\\F2B5\"; }\n.fa-envelope-open:before {\n  content: \"\\F2B6\"; }\n.fa-envelope-open-o:before {\n  content: \"\\F2B7\"; }\n.fa-linode:before {\n  content: \"\\F2B8\"; }\n.fa-address-book:before {\n  content: \"\\F2B9\"; }\n.fa-address-book-o:before {\n  content: \"\\F2BA\"; }\n.fa-vcard:before, .fa-address-card:before {\n  content: \"\\F2BB\"; }\n.fa-vcard-o:before, .fa-address-card-o:before {\n  content: \"\\F2BC\"; }\n.fa-user-circle:before {\n  content: \"\\F2BD\"; }\n.fa-user-circle-o:before {\n  content: \"\\F2BE\"; }\n.fa-user-o:before {\n  content: \"\\F2C0\"; }\n.fa-id-badge:before {\n  content: \"\\F2C1\"; }\n.fa-drivers-license:before, .fa-id-card:before {\n  content: \"\\F2C2\"; }\n.fa-drivers-license-o:before, .fa-id-card-o:before {\n  content: \"\\F2C3\"; }\n.fa-quora:before {\n  content: \"\\F2C4\"; }\n.fa-free-code-camp:before {\n  content: \"\\F2C5\"; }\n.fa-telegram:before {\n  content: \"\\F2C6\"; }\n.fa-thermometer-4:before, .fa-thermometer:before, .fa-thermometer-full:before {\n  content: \"\\F2C7\"; }\n.fa-thermometer-3:before, .fa-thermometer-three-quarters:before {\n  content: \"\\F2C8\"; }\n.fa-thermometer-2:before, .fa-thermometer-half:before {\n  content: \"\\F2C9\"; }\n.fa-thermometer-1:before, .fa-thermometer-quarter:before {\n  content: \"\\F2CA\"; }\n.fa-thermometer-0:before, .fa-thermometer-empty:before {\n  content: \"\\F2CB\"; }\n.fa-shower:before {\n  content: \"\\F2CC\"; }\n.fa-bathtub:before, .fa-s15:before, .fa-bath:before {\n  content: \"\\F2CD\"; }\n.fa-podcast:before {\n  content: \"\\F2CE\"; }\n.fa-window-maximize:before {\n  content: \"\\F2D0\"; }\n.fa-window-minimize:before {\n  content: \"\\F2D1\"; }\n.fa-window-restore:before {\n  content: \"\\F2D2\"; }\n.fa-times-rectangle:before, .fa-window-close:before {\n  content: \"\\F2D3\"; }\n.fa-times-rectangle-o:before, .fa-window-close-o:before {\n  content: \"\\F2D4\"; }\n.fa-bandcamp:before {\n  content: \"\\F2D5\"; }\n.fa-grav:before {\n  content: \"\\F2D6\"; }\n.fa-etsy:before {\n  content: \"\\F2D7\"; }\n.fa-imdb:before {\n  content: \"\\F2D8\"; }\n.fa-ravelry:before {\n  content: \"\\F2D9\"; }\n.fa-eercast:before {\n  content: \"\\F2DA\"; }\n.fa-microchip:before {\n  content: \"\\F2DB\"; }\n.fa-snowflake-o:before {\n  content: \"\\F2DC\"; }\n.fa-superpowers:before {\n  content: \"\\F2DD\"; }\n.fa-wpexplorer:before {\n  content: \"\\F2DE\"; }\n.fa-meetup:before {\n  content: \"\\F2E0\"; }\n.sr-only {\n  position: absolute;\n  width: 1px;\n  height: 1px;\n  padding: 0;\n  margin: -1px;\n  overflow: hidden;\n  clip: rect(0, 0, 0, 0);\n  border: 0; }\n.sr-only-focusable:active, .sr-only-focusable:focus {\n  position: static;\n  width: auto;\n  height: auto;\n  margin: 0;\n  overflow: visible;\n  clip: auto; }\n/*!\n * Bootstrap v3.3.7 (http://getbootstrap.com)\n * Copyright 2011-2016 Twitter, Inc.\n * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)\n */\n/*! normalize.css v3.0.3 | MIT License | github.com/necolas/normalize.css */\nhtml {\n  font-family: sans-serif;\n  -ms-text-size-adjust: 100%;\n  -webkit-text-size-adjust: 100%; }\nbody {\n  margin: 0; }\narticle, aside, details, figcaption, figure, footer, header, hgroup, main, menu, nav, section, summary {\n  display: block; }\naudio, canvas, progress, video {\n  display: inline-block;\n  vertical-align: baseline; }\naudio:not([controls]) {\n  display: none;\n  height: 0; }\n[hidden], template {\n  display: none; }\na {\n  background-color: transparent; }\na:active, a:hover {\n  outline: 0; }\nabbr[title] {\n  border-bottom: 1px dotted; }\nb, strong {\n  font-weight: bold; }\ndfn {\n  font-style: italic; }\nh1 {\n  font-size: 2em;\n  margin: 0.67em 0; }\nmark {\n  background: #ff0;\n  color: #000; }\nsmall {\n  font-size: 80%; }\nsub, sup {\n  font-size: 75%;\n  line-height: 0;\n  position: relative;\n  vertical-align: baseline; }\nsup {\n  top: -0.5em; }\nsub {\n  bottom: -0.25em; }\nimg {\n  border: 0; }\nsvg:not(:root) {\n  overflow: hidden; }\nfigure {\n  margin: 1em 40px; }\nhr {\n  box-sizing: content-box;\n  height: 0; }\npre {\n  overflow: auto; }\ncode, kbd, pre, samp {\n  font-family: monospace, monospace;\n  font-size: 1em; }\nbutton, input, optgroup, select, textarea {\n  color: inherit;\n  font: inherit;\n  margin: 0; }\nbutton {\n  overflow: visible; }\nbutton, select {\n  text-transform: none; }\nbutton, html input[type=\"button\"], input[type=\"reset\"], input[type=\"submit\"] {\n  -webkit-appearance: button;\n  cursor: pointer; }\nbutton[disabled], html input[disabled] {\n  cursor: default; }\nbutton::-moz-focus-inner, input::-moz-focus-inner {\n  border: 0;\n  padding: 0; }\ninput {\n  line-height: normal; }\ninput[type=\"checkbox\"], input[type=\"radio\"] {\n  box-sizing: border-box;\n  padding: 0; }\ninput[type=\"number\"]::-webkit-inner-spin-button, input[type=\"number\"]::-webkit-outer-spin-button {\n  height: auto; }\ninput[type=\"search\"] {\n  -webkit-appearance: textfield;\n  box-sizing: content-box; }\ninput[type=\"search\"]::-webkit-search-cancel-button, input[type=\"search\"]::-webkit-search-decoration {\n  -webkit-appearance: none; }\nfieldset {\n  border: 1px solid #c0c0c0;\n  margin: 0 2px;\n  padding: 0.35em 0.625em 0.75em; }\nlegend {\n  border: 0;\n  padding: 0; }\ntextarea {\n  overflow: auto; }\noptgroup {\n  font-weight: bold; }\ntable {\n  border-collapse: collapse;\n  border-spacing: 0; }\ntd, th {\n  padding: 0; }\n/*! Source: https://github.com/h5bp/html5-boilerplate/blob/master/src/css/main.css */\n@media print {\n  *, *:before, *:after {\n    background: transparent !important;\n    color: #000 !important;\n    box-shadow: none !important;\n    text-shadow: none !important; }\n  a, a:visited {\n    text-decoration: underline; }\n  a[href]:after {\n    content: \" (\" attr(href) \")\"; }\n  abbr[title]:after {\n    content: \" (\" attr(title) \")\"; }\n  a[href^=\"#\"]:after, a[href^=\"javascript:\"]:after {\n    content: \"\"; }\n  pre, blockquote {\n    border: 1px solid #999;\n    page-break-inside: avoid; }\n  thead {\n    display: table-header-group; }\n  tr, img {\n    page-break-inside: avoid; }\n  img {\n    max-width: 100% !important; }\n  p, h2, h3 {\n    orphans: 3;\n    widows: 3; }\n  h2, h3 {\n    page-break-after: avoid; }\n  .navbar {\n    display: none; }\n  .btn > .caret, .dropup > .btn > .caret {\n    border-top-color: #000 !important; }\n  .label {\n    border: 1px solid #000; }\n  .table {\n    border-collapse: collapse !important; }\n    .table td, .table th {\n      background-color: #fff !important; }\n  .table-bordered th, .table-bordered td {\n    border: 1px solid #ddd !important; } }\n@font-face {\n  font-family: 'Glyphicons Halflings';\n  src: url(" + __webpack_require__(33) + ");\n  src: url(" + __webpack_require__(33) + "?#iefix) format(\"embedded-opentype\"), url(" + __webpack_require__(50) + ") format(\"woff2\"), url(" + __webpack_require__(51) + ") format(\"woff\"), url(" + __webpack_require__(52) + ") format(\"truetype\"), url(" + __webpack_require__(53) + "#glyphicons_halflingsregular) format(\"svg\"); }\n.glyphicon {\n  position: relative;\n  top: 1px;\n  display: inline-block;\n  font-family: 'Glyphicons Halflings';\n  font-style: normal;\n  font-weight: normal;\n  line-height: 1;\n  -webkit-font-smoothing: antialiased;\n  -moz-osx-font-smoothing: grayscale; }\n.glyphicon-asterisk:before {\n  content: \"*\"; }\n.glyphicon-plus:before {\n  content: \"+\"; }\n.glyphicon-euro:before, .glyphicon-eur:before {\n  content: \"\\20AC\"; }\n.glyphicon-minus:before {\n  content: \"\\2212\"; }\n.glyphicon-cloud:before {\n  content: \"\\2601\"; }\n.glyphicon-envelope:before {\n  content: \"\\2709\"; }\n.glyphicon-pencil:before {\n  content: \"\\270F\"; }\n.glyphicon-glass:before {\n  content: \"\\E001\"; }\n.glyphicon-music:before {\n  content: \"\\E002\"; }\n.glyphicon-search:before {\n  content: \"\\E003\"; }\n.glyphicon-heart:before {\n  content: \"\\E005\"; }\n.glyphicon-star:before {\n  content: \"\\E006\"; }\n.glyphicon-star-empty:before {\n  content: \"\\E007\"; }\n.glyphicon-user:before {\n  content: \"\\E008\"; }\n.glyphicon-film:before {\n  content: \"\\E009\"; }\n.glyphicon-th-large:before {\n  content: \"\\E010\"; }\n.glyphicon-th:before {\n  content: \"\\E011\"; }\n.glyphicon-th-list:before {\n  content: \"\\E012\"; }\n.glyphicon-ok:before {\n  content: \"\\E013\"; }\n.glyphicon-remove:before {\n  content: \"\\E014\"; }\n.glyphicon-zoom-in:before {\n  content: \"\\E015\"; }\n.glyphicon-zoom-out:before {\n  content: \"\\E016\"; }\n.glyphicon-off:before {\n  content: \"\\E017\"; }\n.glyphicon-signal:before {\n  content: \"\\E018\"; }\n.glyphicon-cog:before {\n  content: \"\\E019\"; }\n.glyphicon-trash:before {\n  content: \"\\E020\"; }\n.glyphicon-home:before {\n  content: \"\\E021\"; }\n.glyphicon-file:before {\n  content: \"\\E022\"; }\n.glyphicon-time:before {\n  content: \"\\E023\"; }\n.glyphicon-road:before {\n  content: \"\\E024\"; }\n.glyphicon-download-alt:before {\n  content: \"\\E025\"; }\n.glyphicon-download:before {\n  content: \"\\E026\"; }\n.glyphicon-upload:before {\n  content: \"\\E027\"; }\n.glyphicon-inbox:before {\n  content: \"\\E028\"; }\n.glyphicon-play-circle:before {\n  content: \"\\E029\"; }\n.glyphicon-repeat:before {\n  content: \"\\E030\"; }\n.glyphicon-refresh:before {\n  content: \"\\E031\"; }\n.glyphicon-list-alt:before {\n  content: \"\\E032\"; }\n.glyphicon-lock:before {\n  content: \"\\E033\"; }\n.glyphicon-flag:before {\n  content: \"\\E034\"; }\n.glyphicon-headphones:before {\n  content: \"\\E035\"; }\n.glyphicon-volume-off:before {\n  content: \"\\E036\"; }\n.glyphicon-volume-down:before {\n  content: \"\\E037\"; }\n.glyphicon-volume-up:before {\n  content: \"\\E038\"; }\n.glyphicon-qrcode:before {\n  content: \"\\E039\"; }\n.glyphicon-barcode:before {\n  content: \"\\E040\"; }\n.glyphicon-tag:before {\n  content: \"\\E041\"; }\n.glyphicon-tags:before {\n  content: \"\\E042\"; }\n.glyphicon-book:before {\n  content: \"\\E043\"; }\n.glyphicon-bookmark:before {\n  content: \"\\E044\"; }\n.glyphicon-print:before {\n  content: \"\\E045\"; }\n.glyphicon-camera:before {\n  content: \"\\E046\"; }\n.glyphicon-font:before {\n  content: \"\\E047\"; }\n.glyphicon-bold:before {\n  content: \"\\E048\"; }\n.glyphicon-italic:before {\n  content: \"\\E049\"; }\n.glyphicon-text-height:before {\n  content: \"\\E050\"; }\n.glyphicon-text-width:before {\n  content: \"\\E051\"; }\n.glyphicon-align-left:before {\n  content: \"\\E052\"; }\n.glyphicon-align-center:before {\n  content: \"\\E053\"; }\n.glyphicon-align-right:before {\n  content: \"\\E054\"; }\n.glyphicon-align-justify:before {\n  content: \"\\E055\"; }\n.glyphicon-list:before {\n  content: \"\\E056\"; }\n.glyphicon-indent-left:before {\n  content: \"\\E057\"; }\n.glyphicon-indent-right:before {\n  content: \"\\E058\"; }\n.glyphicon-facetime-video:before {\n  content: \"\\E059\"; }\n.glyphicon-picture:before {\n  content: \"\\E060\"; }\n.glyphicon-map-marker:before {\n  content: \"\\E062\"; }\n.glyphicon-adjust:before {\n  content: \"\\E063\"; }\n.glyphicon-tint:before {\n  content: \"\\E064\"; }\n.glyphicon-edit:before {\n  content: \"\\E065\"; }\n.glyphicon-share:before {\n  content: \"\\E066\"; }\n.glyphicon-check:before {\n  content: \"\\E067\"; }\n.glyphicon-move:before {\n  content: \"\\E068\"; }\n.glyphicon-step-backward:before {\n  content: \"\\E069\"; }\n.glyphicon-fast-backward:before {\n  content: \"\\E070\"; }\n.glyphicon-backward:before {\n  content: \"\\E071\"; }\n.glyphicon-play:before {\n  content: \"\\E072\"; }\n.glyphicon-pause:before {\n  content: \"\\E073\"; }\n.glyphicon-stop:before {\n  content: \"\\E074\"; }\n.glyphicon-forward:before {\n  content: \"\\E075\"; }\n.glyphicon-fast-forward:before {\n  content: \"\\E076\"; }\n.glyphicon-step-forward:before {\n  content: \"\\E077\"; }\n.glyphicon-eject:before {\n  content: \"\\E078\"; }\n.glyphicon-chevron-left:before {\n  content: \"\\E079\"; }\n.glyphicon-chevron-right:before {\n  content: \"\\E080\"; }\n.glyphicon-plus-sign:before {\n  content: \"\\E081\"; }\n.glyphicon-minus-sign:before {\n  content: \"\\E082\"; }\n.glyphicon-remove-sign:before {\n  content: \"\\E083\"; }\n.glyphicon-ok-sign:before {\n  content: \"\\E084\"; }\n.glyphicon-question-sign:before {\n  content: \"\\E085\"; }\n.glyphicon-info-sign:before {\n  content: \"\\E086\"; }\n.glyphicon-screenshot:before {\n  content: \"\\E087\"; }\n.glyphicon-remove-circle:before {\n  content: \"\\E088\"; }\n.glyphicon-ok-circle:before {\n  content: \"\\E089\"; }\n.glyphicon-ban-circle:before {\n  content: \"\\E090\"; }\n.glyphicon-arrow-left:before {\n  content: \"\\E091\"; }\n.glyphicon-arrow-right:before {\n  content: \"\\E092\"; }\n.glyphicon-arrow-up:before {\n  content: \"\\E093\"; }\n.glyphicon-arrow-down:before {\n  content: \"\\E094\"; }\n.glyphicon-share-alt:before {\n  content: \"\\E095\"; }\n.glyphicon-resize-full:before {\n  content: \"\\E096\"; }\n.glyphicon-resize-small:before {\n  content: \"\\E097\"; }\n.glyphicon-exclamation-sign:before {\n  content: \"\\E101\"; }\n.glyphicon-gift:before {\n  content: \"\\E102\"; }\n.glyphicon-leaf:before {\n  content: \"\\E103\"; }\n.glyphicon-fire:before {\n  content: \"\\E104\"; }\n.glyphicon-eye-open:before {\n  content: \"\\E105\"; }\n.glyphicon-eye-close:before {\n  content: \"\\E106\"; }\n.glyphicon-warning-sign:before {\n  content: \"\\E107\"; }\n.glyphicon-plane:before {\n  content: \"\\E108\"; }\n.glyphicon-calendar:before {\n  content: \"\\E109\"; }\n.glyphicon-random:before {\n  content: \"\\E110\"; }\n.glyphicon-comment:before {\n  content: \"\\E111\"; }\n.glyphicon-magnet:before {\n  content: \"\\E112\"; }\n.glyphicon-chevron-up:before {\n  content: \"\\E113\"; }\n.glyphicon-chevron-down:before {\n  content: \"\\E114\"; }\n.glyphicon-retweet:before {\n  content: \"\\E115\"; }\n.glyphicon-shopping-cart:before {\n  content: \"\\E116\"; }\n.glyphicon-folder-close:before {\n  content: \"\\E117\"; }\n.glyphicon-folder-open:before {\n  content: \"\\E118\"; }\n.glyphicon-resize-vertical:before {\n  content: \"\\E119\"; }\n.glyphicon-resize-horizontal:before {\n  content: \"\\E120\"; }\n.glyphicon-hdd:before {\n  content: \"\\E121\"; }\n.glyphicon-bullhorn:before {\n  content: \"\\E122\"; }\n.glyphicon-bell:before {\n  content: \"\\E123\"; }\n.glyphicon-certificate:before {\n  content: \"\\E124\"; }\n.glyphicon-thumbs-up:before {\n  content: \"\\E125\"; }\n.glyphicon-thumbs-down:before {\n  content: \"\\E126\"; }\n.glyphicon-hand-right:before {\n  content: \"\\E127\"; }\n.glyphicon-hand-left:before {\n  content: \"\\E128\"; }\n.glyphicon-hand-up:before {\n  content: \"\\E129\"; }\n.glyphicon-hand-down:before {\n  content: \"\\E130\"; }\n.glyphicon-circle-arrow-right:before {\n  content: \"\\E131\"; }\n.glyphicon-circle-arrow-left:before {\n  content: \"\\E132\"; }\n.glyphicon-circle-arrow-up:before {\n  content: \"\\E133\"; }\n.glyphicon-circle-arrow-down:before {\n  content: \"\\E134\"; }\n.glyphicon-globe:before {\n  content: \"\\E135\"; }\n.glyphicon-wrench:before {\n  content: \"\\E136\"; }\n.glyphicon-tasks:before {\n  content: \"\\E137\"; }\n.glyphicon-filter:before {\n  content: \"\\E138\"; }\n.glyphicon-briefcase:before {\n  content: \"\\E139\"; }\n.glyphicon-fullscreen:before {\n  content: \"\\E140\"; }\n.glyphicon-dashboard:before {\n  content: \"\\E141\"; }\n.glyphicon-paperclip:before {\n  content: \"\\E142\"; }\n.glyphicon-heart-empty:before {\n  content: \"\\E143\"; }\n.glyphicon-link:before {\n  content: \"\\E144\"; }\n.glyphicon-phone:before {\n  content: \"\\E145\"; }\n.glyphicon-pushpin:before {\n  content: \"\\E146\"; }\n.glyphicon-usd:before {\n  content: \"\\E148\"; }\n.glyphicon-gbp:before {\n  content: \"\\E149\"; }\n.glyphicon-sort:before {\n  content: \"\\E150\"; }\n.glyphicon-sort-by-alphabet:before {\n  content: \"\\E151\"; }\n.glyphicon-sort-by-alphabet-alt:before {\n  content: \"\\E152\"; }\n.glyphicon-sort-by-order:before {\n  content: \"\\E153\"; }\n.glyphicon-sort-by-order-alt:before {\n  content: \"\\E154\"; }\n.glyphicon-sort-by-attributes:before {\n  content: \"\\E155\"; }\n.glyphicon-sort-by-attributes-alt:before {\n  content: \"\\E156\"; }\n.glyphicon-unchecked:before {\n  content: \"\\E157\"; }\n.glyphicon-expand:before {\n  content: \"\\E158\"; }\n.glyphicon-collapse-down:before {\n  content: \"\\E159\"; }\n.glyphicon-collapse-up:before {\n  content: \"\\E160\"; }\n.glyphicon-log-in:before {\n  content: \"\\E161\"; }\n.glyphicon-flash:before {\n  content: \"\\E162\"; }\n.glyphicon-log-out:before {\n  content: \"\\E163\"; }\n.glyphicon-new-window:before {\n  content: \"\\E164\"; }\n.glyphicon-record:before {\n  content: \"\\E165\"; }\n.glyphicon-save:before {\n  content: \"\\E166\"; }\n.glyphicon-open:before {\n  content: \"\\E167\"; }\n.glyphicon-saved:before {\n  content: \"\\E168\"; }\n.glyphicon-import:before {\n  content: \"\\E169\"; }\n.glyphicon-export:before {\n  content: \"\\E170\"; }\n.glyphicon-send:before {\n  content: \"\\E171\"; }\n.glyphicon-floppy-disk:before {\n  content: \"\\E172\"; }\n.glyphicon-floppy-saved:before {\n  content: \"\\E173\"; }\n.glyphicon-floppy-remove:before {\n  content: \"\\E174\"; }\n.glyphicon-floppy-save:before {\n  content: \"\\E175\"; }\n.glyphicon-floppy-open:before {\n  content: \"\\E176\"; }\n.glyphicon-credit-card:before {\n  content: \"\\E177\"; }\n.glyphicon-transfer:before {\n  content: \"\\E178\"; }\n.glyphicon-cutlery:before {\n  content: \"\\E179\"; }\n.glyphicon-header:before {\n  content: \"\\E180\"; }\n.glyphicon-compressed:before {\n  content: \"\\E181\"; }\n.glyphicon-earphone:before {\n  content: \"\\E182\"; }\n.glyphicon-phone-alt:before {\n  content: \"\\E183\"; }\n.glyphicon-tower:before {\n  content: \"\\E184\"; }\n.glyphicon-stats:before {\n  content: \"\\E185\"; }\n.glyphicon-sd-video:before {\n  content: \"\\E186\"; }\n.glyphicon-hd-video:before {\n  content: \"\\E187\"; }\n.glyphicon-subtitles:before {\n  content: \"\\E188\"; }\n.glyphicon-sound-stereo:before {\n  content: \"\\E189\"; }\n.glyphicon-sound-dolby:before {\n  content: \"\\E190\"; }\n.glyphicon-sound-5-1:before {\n  content: \"\\E191\"; }\n.glyphicon-sound-6-1:before {\n  content: \"\\E192\"; }\n.glyphicon-sound-7-1:before {\n  content: \"\\E193\"; }\n.glyphicon-copyright-mark:before {\n  content: \"\\E194\"; }\n.glyphicon-registration-mark:before {\n  content: \"\\E195\"; }\n.glyphicon-cloud-download:before {\n  content: \"\\E197\"; }\n.glyphicon-cloud-upload:before {\n  content: \"\\E198\"; }\n.glyphicon-tree-conifer:before {\n  content: \"\\E199\"; }\n.glyphicon-tree-deciduous:before {\n  content: \"\\E200\"; }\n.glyphicon-cd:before {\n  content: \"\\E201\"; }\n.glyphicon-save-file:before {\n  content: \"\\E202\"; }\n.glyphicon-open-file:before {\n  content: \"\\E203\"; }\n.glyphicon-level-up:before {\n  content: \"\\E204\"; }\n.glyphicon-copy:before {\n  content: \"\\E205\"; }\n.glyphicon-paste:before {\n  content: \"\\E206\"; }\n.glyphicon-alert:before {\n  content: \"\\E209\"; }\n.glyphicon-equalizer:before {\n  content: \"\\E210\"; }\n.glyphicon-king:before {\n  content: \"\\E211\"; }\n.glyphicon-queen:before {\n  content: \"\\E212\"; }\n.glyphicon-pawn:before {\n  content: \"\\E213\"; }\n.glyphicon-bishop:before {\n  content: \"\\E214\"; }\n.glyphicon-knight:before {\n  content: \"\\E215\"; }\n.glyphicon-baby-formula:before {\n  content: \"\\E216\"; }\n.glyphicon-tent:before {\n  content: \"\\26FA\"; }\n.glyphicon-blackboard:before {\n  content: \"\\E218\"; }\n.glyphicon-bed:before {\n  content: \"\\E219\"; }\n.glyphicon-apple:before {\n  content: \"\\F8FF\"; }\n.glyphicon-erase:before {\n  content: \"\\E221\"; }\n.glyphicon-hourglass:before {\n  content: \"\\231B\"; }\n.glyphicon-lamp:before {\n  content: \"\\E223\"; }\n.glyphicon-duplicate:before {\n  content: \"\\E224\"; }\n.glyphicon-piggy-bank:before {\n  content: \"\\E225\"; }\n.glyphicon-scissors:before {\n  content: \"\\E226\"; }\n.glyphicon-bitcoin:before {\n  content: \"\\E227\"; }\n.glyphicon-btc:before {\n  content: \"\\E227\"; }\n.glyphicon-xbt:before {\n  content: \"\\E227\"; }\n.glyphicon-yen:before {\n  content: \"\\A5\"; }\n.glyphicon-jpy:before {\n  content: \"\\A5\"; }\n.glyphicon-ruble:before {\n  content: \"\\20BD\"; }\n.glyphicon-rub:before {\n  content: \"\\20BD\"; }\n.glyphicon-scale:before {\n  content: \"\\E230\"; }\n.glyphicon-ice-lolly:before {\n  content: \"\\E231\"; }\n.glyphicon-ice-lolly-tasted:before {\n  content: \"\\E232\"; }\n.glyphicon-education:before {\n  content: \"\\E233\"; }\n.glyphicon-option-horizontal:before {\n  content: \"\\E234\"; }\n.glyphicon-option-vertical:before {\n  content: \"\\E235\"; }\n.glyphicon-menu-hamburger:before {\n  content: \"\\E236\"; }\n.glyphicon-modal-window:before {\n  content: \"\\E237\"; }\n.glyphicon-oil:before {\n  content: \"\\E238\"; }\n.glyphicon-grain:before {\n  content: \"\\E239\"; }\n.glyphicon-sunglasses:before {\n  content: \"\\E240\"; }\n.glyphicon-text-size:before {\n  content: \"\\E241\"; }\n.glyphicon-text-color:before {\n  content: \"\\E242\"; }\n.glyphicon-text-background:before {\n  content: \"\\E243\"; }\n.glyphicon-object-align-top:before {\n  content: \"\\E244\"; }\n.glyphicon-object-align-bottom:before {\n  content: \"\\E245\"; }\n.glyphicon-object-align-horizontal:before {\n  content: \"\\E246\"; }\n.glyphicon-object-align-left:before {\n  content: \"\\E247\"; }\n.glyphicon-object-align-vertical:before {\n  content: \"\\E248\"; }\n.glyphicon-object-align-right:before {\n  content: \"\\E249\"; }\n.glyphicon-triangle-right:before {\n  content: \"\\E250\"; }\n.glyphicon-triangle-left:before {\n  content: \"\\E251\"; }\n.glyphicon-triangle-bottom:before {\n  content: \"\\E252\"; }\n.glyphicon-triangle-top:before {\n  content: \"\\E253\"; }\n.glyphicon-console:before {\n  content: \"\\E254\"; }\n.glyphicon-superscript:before {\n  content: \"\\E255\"; }\n.glyphicon-subscript:before {\n  content: \"\\E256\"; }\n.glyphicon-menu-left:before {\n  content: \"\\E257\"; }\n.glyphicon-menu-right:before {\n  content: \"\\E258\"; }\n.glyphicon-menu-down:before {\n  content: \"\\E259\"; }\n.glyphicon-menu-up:before {\n  content: \"\\E260\"; }\n* {\n  box-sizing: border-box; }\n*:before, *:after {\n  box-sizing: border-box; }\nhtml {\n  font-size: 10px;\n  -webkit-tap-highlight-color: transparent; }\nbody {\n  font-family: \"Source Sans Pro\", Calibri, Candara, Arial, sans-serif;\n  font-size: 15px;\n  line-height: 1.42857;\n  color: #333333;\n  background-color: #fff; }\ninput, button, select, textarea {\n  font-family: inherit;\n  font-size: inherit;\n  line-height: inherit; }\na {\n  color: #2780E3;\n  text-decoration: none; }\na:hover, a:focus {\n    color: #165ba8;\n    text-decoration: underline; }\na:focus {\n    outline: 5px auto -webkit-focus-ring-color;\n    outline-offset: -2px; }\nfigure {\n  margin: 0; }\nimg {\n  vertical-align: middle; }\n.img-responsive {\n  display: block;\n  max-width: 100%;\n  height: auto; }\n.img-rounded {\n  border-radius: 0; }\n.img-thumbnail {\n  padding: 4px;\n  line-height: 1.42857;\n  background-color: #fff;\n  border: 1px solid #ddd;\n  border-radius: 0;\n  transition: all 0.2s ease-in-out;\n  display: inline-block;\n  max-width: 100%;\n  height: auto; }\n.img-circle {\n  border-radius: 50%; }\nhr {\n  margin-top: 21px;\n  margin-bottom: 21px;\n  border: 0;\n  border-top: 1px solid #e6e6e6; }\n.sr-only {\n  position: absolute;\n  width: 1px;\n  height: 1px;\n  margin: -1px;\n  padding: 0;\n  overflow: hidden;\n  clip: rect(0, 0, 0, 0);\n  border: 0; }\n.sr-only-focusable:active, .sr-only-focusable:focus {\n  position: static;\n  width: auto;\n  height: auto;\n  margin: 0;\n  overflow: visible;\n  clip: auto; }\n[role=\"button\"] {\n  cursor: pointer; }\nh1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {\n  font-family: \"Source Sans Pro\", Calibri, Candara, Arial, sans-serif;\n  font-weight: 300;\n  line-height: 1.1;\n  color: inherit; }\nh1 small, h1 .small, h2 small, h2 .small, h3 small, h3 .small, h4 small, h4 .small, h5 small, h5 .small, h6 small, h6 .small, .h1 small, .h1 .small, .h2 small, .h2 .small, .h3 small, .h3 .small, .h4 small, .h4 .small, .h5 small, .h5 .small, .h6 small, .h6 .small {\n    font-weight: normal;\n    line-height: 1;\n    color: #999999; }\nh1, .h1, h2, .h2, h3, .h3 {\n  margin-top: 21px;\n  margin-bottom: 10.5px; }\nh1 small, h1 .small, .h1 small, .h1 .small, h2 small, h2 .small, .h2 small, .h2 .small, h3 small, h3 .small, .h3 small, .h3 .small {\n    font-size: 65%; }\nh4, .h4, h5, .h5, h6, .h6 {\n  margin-top: 10.5px;\n  margin-bottom: 10.5px; }\nh4 small, h4 .small, .h4 small, .h4 .small, h5 small, h5 .small, .h5 small, .h5 .small, h6 small, h6 .small, .h6 small, .h6 .small {\n    font-size: 75%; }\nh1, .h1 {\n  font-size: 39px; }\nh2, .h2 {\n  font-size: 32px; }\nh3, .h3 {\n  font-size: 26px; }\nh4, .h4 {\n  font-size: 19px; }\nh5, .h5 {\n  font-size: 15px; }\nh6, .h6 {\n  font-size: 13px; }\np {\n  margin: 0 0 10.5px; }\n.lead {\n  margin-bottom: 21px;\n  font-size: 17px;\n  font-weight: 300;\n  line-height: 1.4; }\n@media (min-width: 768px) {\n    .lead {\n      font-size: 22.5px; } }\nsmall, .small {\n  font-size: 86%; }\nmark, .mark {\n  background-color: #FF7518;\n  padding: .2em; }\n.text-left {\n  text-align: left; }\n.text-right {\n  text-align: right; }\n.text-center {\n  text-align: center; }\n.text-justify {\n  text-align: justify; }\n.text-nowrap {\n  white-space: nowrap; }\n.text-lowercase {\n  text-transform: lowercase; }\n.text-uppercase, .initialism {\n  text-transform: uppercase; }\n.text-capitalize {\n  text-transform: capitalize; }\n.text-muted {\n  color: #999999; }\n.text-primary {\n  color: #2780E3; }\na.text-primary:hover, a.text-primary:focus {\n  color: #1967be; }\n.text-success {\n  color: #fff; }\na.text-success:hover, a.text-success:focus {\n  color: #e6e6e6; }\n.text-info {\n  color: #fff; }\na.text-info:hover, a.text-info:focus {\n  color: #e6e6e6; }\n.text-warning {\n  color: #fff; }\na.text-warning:hover, a.text-warning:focus {\n  color: #e6e6e6; }\n.text-danger {\n  color: #fff; }\na.text-danger:hover, a.text-danger:focus {\n  color: #e6e6e6; }\n.bg-primary {\n  color: #fff; }\n.bg-primary {\n  background-color: #2780E3; }\na.bg-primary:hover, a.bg-primary:focus {\n  background-color: #1967be; }\n.bg-success {\n  background-color: #3FB618; }\na.bg-success:hover, a.bg-success:focus {\n  background-color: #2f8912; }\n.bg-info {\n  background-color: #9954BB; }\na.bg-info:hover, a.bg-info:focus {\n  background-color: #7e3f9d; }\n.bg-warning {\n  background-color: #FF7518; }\na.bg-warning:hover, a.bg-warning:focus {\n  background-color: #e45c00; }\n.bg-danger {\n  background-color: #FF0039; }\na.bg-danger:hover, a.bg-danger:focus {\n  background-color: #cc002e; }\n.page-header {\n  padding-bottom: 9.5px;\n  margin: 42px 0 21px;\n  border-bottom: 1px solid #e6e6e6; }\nul, ol {\n  margin-top: 0;\n  margin-bottom: 10.5px; }\nul ul, ul ol, ol ul, ol ol {\n    margin-bottom: 0; }\n.list-unstyled {\n  padding-left: 0;\n  list-style: none; }\n.list-inline {\n  padding-left: 0;\n  list-style: none;\n  margin-left: -5px; }\n.list-inline > li {\n    display: inline-block;\n    padding-left: 5px;\n    padding-right: 5px; }\ndl {\n  margin-top: 0;\n  margin-bottom: 21px; }\ndt, dd {\n  line-height: 1.42857; }\ndt {\n  font-weight: bold; }\ndd {\n  margin-left: 0; }\n.dl-horizontal dd:before, .dl-horizontal dd:after {\n  content: \" \";\n  display: table; }\n.dl-horizontal dd:after {\n  clear: both; }\n@media (min-width: 768px) {\n  .dl-horizontal dt {\n    float: left;\n    width: 160px;\n    clear: left;\n    text-align: right;\n    overflow: hidden;\n    text-overflow: ellipsis;\n    white-space: nowrap; }\n  .dl-horizontal dd {\n    margin-left: 180px; } }\nabbr[title], abbr[data-original-title] {\n  cursor: help;\n  border-bottom: 1px dotted #999999; }\n.initialism {\n  font-size: 90%; }\nblockquote {\n  padding: 10.5px 21px;\n  margin: 0 0 21px;\n  font-size: 18.75px;\n  border-left: 5px solid #e6e6e6; }\nblockquote p:last-child, blockquote ul:last-child, blockquote ol:last-child {\n    margin-bottom: 0; }\nblockquote footer, blockquote small, blockquote .small {\n    display: block;\n    font-size: 80%;\n    line-height: 1.42857;\n    color: #999999; }\nblockquote footer:before, blockquote small:before, blockquote .small:before {\n      content: '\\2014   \\A0'; }\n.blockquote-reverse, blockquote.pull-right {\n  padding-right: 15px;\n  padding-left: 0;\n  border-right: 5px solid #e6e6e6;\n  border-left: 0;\n  text-align: right; }\n.blockquote-reverse footer:before, .blockquote-reverse small:before, .blockquote-reverse .small:before, blockquote.pull-right footer:before, blockquote.pull-right small:before, blockquote.pull-right .small:before {\n    content: ''; }\n.blockquote-reverse footer:after, .blockquote-reverse small:after, .blockquote-reverse .small:after, blockquote.pull-right footer:after, blockquote.pull-right small:after, blockquote.pull-right .small:after {\n    content: '\\A0   \\2014'; }\naddress {\n  margin-bottom: 21px;\n  font-style: normal;\n  line-height: 1.42857; }\ncode, kbd, pre, samp {\n  font-family: Menlo, Monaco, Consolas, \"Courier New\", monospace; }\ncode {\n  padding: 2px 4px;\n  font-size: 90%;\n  color: #c7254e;\n  background-color: #f9f2f4;\n  border-radius: 0; }\nkbd {\n  padding: 2px 4px;\n  font-size: 90%;\n  color: #fff;\n  background-color: #333;\n  border-radius: 0;\n  box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.25); }\nkbd kbd {\n    padding: 0;\n    font-size: 100%;\n    font-weight: bold;\n    box-shadow: none; }\npre {\n  display: block;\n  padding: 10px;\n  margin: 0 0 10.5px;\n  font-size: 14px;\n  line-height: 1.42857;\n  word-break: break-all;\n  word-wrap: break-word;\n  color: #333333;\n  background-color: #f5f5f5;\n  border: 1px solid #ccc;\n  border-radius: 0; }\npre code {\n    padding: 0;\n    font-size: inherit;\n    color: inherit;\n    white-space: pre-wrap;\n    background-color: transparent;\n    border-radius: 0; }\n.pre-scrollable {\n  max-height: 340px;\n  overflow-y: scroll; }\n.container {\n  margin-right: auto;\n  margin-left: auto;\n  padding-left: 15px;\n  padding-right: 15px; }\n.container:before, .container:after {\n    content: \" \";\n    display: table; }\n.container:after {\n    clear: both; }\n@media (min-width: 768px) {\n    .container {\n      width: 750px; } }\n@media (min-width: 992px) {\n    .container {\n      width: 970px; } }\n@media (min-width: 1200px) {\n    .container {\n      width: 1170px; } }\n.container-fluid {\n  margin-right: auto;\n  margin-left: auto;\n  padding-left: 15px;\n  padding-right: 15px; }\n.container-fluid:before, .container-fluid:after {\n    content: \" \";\n    display: table; }\n.container-fluid:after {\n    clear: both; }\n.row {\n  margin-left: -15px;\n  margin-right: -15px; }\n.row:before, .row:after {\n    content: \" \";\n    display: table; }\n.row:after {\n    clear: both; }\n.col-xs-1, .col-sm-1, .col-md-1, .col-lg-1, .col-xs-2, .col-sm-2, .col-md-2, .col-lg-2, .col-xs-3, .col-sm-3, .col-md-3, .col-lg-3, .col-xs-4, .col-sm-4, .col-md-4, .col-lg-4, .col-xs-5, .col-sm-5, .col-md-5, .col-lg-5, .col-xs-6, .col-sm-6, .col-md-6, .col-lg-6, .col-xs-7, .col-sm-7, .col-md-7, .col-lg-7, .col-xs-8, .col-sm-8, .col-md-8, .col-lg-8, .col-xs-9, .col-sm-9, .col-md-9, .col-lg-9, .col-xs-10, .col-sm-10, .col-md-10, .col-lg-10, .col-xs-11, .col-sm-11, .col-md-11, .col-lg-11, .col-xs-12, .col-sm-12, .col-md-12, .col-lg-12 {\n  position: relative;\n  min-height: 1px;\n  padding-left: 15px;\n  padding-right: 15px; }\n.col-xs-1, .col-xs-2, .col-xs-3, .col-xs-4, .col-xs-5, .col-xs-6, .col-xs-7, .col-xs-8, .col-xs-9, .col-xs-10, .col-xs-11, .col-xs-12 {\n  float: left; }\n.col-xs-1 {\n  width: 8.33333%; }\n.col-xs-2 {\n  width: 16.66667%; }\n.col-xs-3 {\n  width: 25%; }\n.col-xs-4 {\n  width: 33.33333%; }\n.col-xs-5 {\n  width: 41.66667%; }\n.col-xs-6 {\n  width: 50%; }\n.col-xs-7 {\n  width: 58.33333%; }\n.col-xs-8 {\n  width: 66.66667%; }\n.col-xs-9 {\n  width: 75%; }\n.col-xs-10 {\n  width: 83.33333%; }\n.col-xs-11 {\n  width: 91.66667%; }\n.col-xs-12 {\n  width: 100%; }\n.col-xs-pull-0 {\n  right: auto; }\n.col-xs-pull-1 {\n  right: 8.33333%; }\n.col-xs-pull-2 {\n  right: 16.66667%; }\n.col-xs-pull-3 {\n  right: 25%; }\n.col-xs-pull-4 {\n  right: 33.33333%; }\n.col-xs-pull-5 {\n  right: 41.66667%; }\n.col-xs-pull-6 {\n  right: 50%; }\n.col-xs-pull-7 {\n  right: 58.33333%; }\n.col-xs-pull-8 {\n  right: 66.66667%; }\n.col-xs-pull-9 {\n  right: 75%; }\n.col-xs-pull-10 {\n  right: 83.33333%; }\n.col-xs-pull-11 {\n  right: 91.66667%; }\n.col-xs-pull-12 {\n  right: 100%; }\n.col-xs-push-0 {\n  left: auto; }\n.col-xs-push-1 {\n  left: 8.33333%; }\n.col-xs-push-2 {\n  left: 16.66667%; }\n.col-xs-push-3 {\n  left: 25%; }\n.col-xs-push-4 {\n  left: 33.33333%; }\n.col-xs-push-5 {\n  left: 41.66667%; }\n.col-xs-push-6 {\n  left: 50%; }\n.col-xs-push-7 {\n  left: 58.33333%; }\n.col-xs-push-8 {\n  left: 66.66667%; }\n.col-xs-push-9 {\n  left: 75%; }\n.col-xs-push-10 {\n  left: 83.33333%; }\n.col-xs-push-11 {\n  left: 91.66667%; }\n.col-xs-push-12 {\n  left: 100%; }\n.col-xs-offset-0 {\n  margin-left: 0%; }\n.col-xs-offset-1 {\n  margin-left: 8.33333%; }\n.col-xs-offset-2 {\n  margin-left: 16.66667%; }\n.col-xs-offset-3 {\n  margin-left: 25%; }\n.col-xs-offset-4 {\n  margin-left: 33.33333%; }\n.col-xs-offset-5 {\n  margin-left: 41.66667%; }\n.col-xs-offset-6 {\n  margin-left: 50%; }\n.col-xs-offset-7 {\n  margin-left: 58.33333%; }\n.col-xs-offset-8 {\n  margin-left: 66.66667%; }\n.col-xs-offset-9 {\n  margin-left: 75%; }\n.col-xs-offset-10 {\n  margin-left: 83.33333%; }\n.col-xs-offset-11 {\n  margin-left: 91.66667%; }\n.col-xs-offset-12 {\n  margin-left: 100%; }\n@media (min-width: 768px) {\n  .col-sm-1, .col-sm-2, .col-sm-3, .col-sm-4, .col-sm-5, .col-sm-6, .col-sm-7, .col-sm-8, .col-sm-9, .col-sm-10, .col-sm-11, .col-sm-12 {\n    float: left; }\n  .col-sm-1 {\n    width: 8.33333%; }\n  .col-sm-2 {\n    width: 16.66667%; }\n  .col-sm-3 {\n    width: 25%; }\n  .col-sm-4 {\n    width: 33.33333%; }\n  .col-sm-5 {\n    width: 41.66667%; }\n  .col-sm-6 {\n    width: 50%; }\n  .col-sm-7 {\n    width: 58.33333%; }\n  .col-sm-8 {\n    width: 66.66667%; }\n  .col-sm-9 {\n    width: 75%; }\n  .col-sm-10 {\n    width: 83.33333%; }\n  .col-sm-11 {\n    width: 91.66667%; }\n  .col-sm-12 {\n    width: 100%; }\n  .col-sm-pull-0 {\n    right: auto; }\n  .col-sm-pull-1 {\n    right: 8.33333%; }\n  .col-sm-pull-2 {\n    right: 16.66667%; }\n  .col-sm-pull-3 {\n    right: 25%; }\n  .col-sm-pull-4 {\n    right: 33.33333%; }\n  .col-sm-pull-5 {\n    right: 41.66667%; }\n  .col-sm-pull-6 {\n    right: 50%; }\n  .col-sm-pull-7 {\n    right: 58.33333%; }\n  .col-sm-pull-8 {\n    right: 66.66667%; }\n  .col-sm-pull-9 {\n    right: 75%; }\n  .col-sm-pull-10 {\n    right: 83.33333%; }\n  .col-sm-pull-11 {\n    right: 91.66667%; }\n  .col-sm-pull-12 {\n    right: 100%; }\n  .col-sm-push-0 {\n    left: auto; }\n  .col-sm-push-1 {\n    left: 8.33333%; }\n  .col-sm-push-2 {\n    left: 16.66667%; }\n  .col-sm-push-3 {\n    left: 25%; }\n  .col-sm-push-4 {\n    left: 33.33333%; }\n  .col-sm-push-5 {\n    left: 41.66667%; }\n  .col-sm-push-6 {\n    left: 50%; }\n  .col-sm-push-7 {\n    left: 58.33333%; }\n  .col-sm-push-8 {\n    left: 66.66667%; }\n  .col-sm-push-9 {\n    left: 75%; }\n  .col-sm-push-10 {\n    left: 83.33333%; }\n  .col-sm-push-11 {\n    left: 91.66667%; }\n  .col-sm-push-12 {\n    left: 100%; }\n  .col-sm-offset-0 {\n    margin-left: 0%; }\n  .col-sm-offset-1 {\n    margin-left: 8.33333%; }\n  .col-sm-offset-2 {\n    margin-left: 16.66667%; }\n  .col-sm-offset-3 {\n    margin-left: 25%; }\n  .col-sm-offset-4 {\n    margin-left: 33.33333%; }\n  .col-sm-offset-5 {\n    margin-left: 41.66667%; }\n  .col-sm-offset-6 {\n    margin-left: 50%; }\n  .col-sm-offset-7 {\n    margin-left: 58.33333%; }\n  .col-sm-offset-8 {\n    margin-left: 66.66667%; }\n  .col-sm-offset-9 {\n    margin-left: 75%; }\n  .col-sm-offset-10 {\n    margin-left: 83.33333%; }\n  .col-sm-offset-11 {\n    margin-left: 91.66667%; }\n  .col-sm-offset-12 {\n    margin-left: 100%; } }\n@media (min-width: 992px) {\n  .col-md-1, .col-md-2, .col-md-3, .col-md-4, .col-md-5, .col-md-6, .col-md-7, .col-md-8, .col-md-9, .col-md-10, .col-md-11, .col-md-12 {\n    float: left; }\n  .col-md-1 {\n    width: 8.33333%; }\n  .col-md-2 {\n    width: 16.66667%; }\n  .col-md-3 {\n    width: 25%; }\n  .col-md-4 {\n    width: 33.33333%; }\n  .col-md-5 {\n    width: 41.66667%; }\n  .col-md-6 {\n    width: 50%; }\n  .col-md-7 {\n    width: 58.33333%; }\n  .col-md-8 {\n    width: 66.66667%; }\n  .col-md-9 {\n    width: 75%; }\n  .col-md-10 {\n    width: 83.33333%; }\n  .col-md-11 {\n    width: 91.66667%; }\n  .col-md-12 {\n    width: 100%; }\n  .col-md-pull-0 {\n    right: auto; }\n  .col-md-pull-1 {\n    right: 8.33333%; }\n  .col-md-pull-2 {\n    right: 16.66667%; }\n  .col-md-pull-3 {\n    right: 25%; }\n  .col-md-pull-4 {\n    right: 33.33333%; }\n  .col-md-pull-5 {\n    right: 41.66667%; }\n  .col-md-pull-6 {\n    right: 50%; }\n  .col-md-pull-7 {\n    right: 58.33333%; }\n  .col-md-pull-8 {\n    right: 66.66667%; }\n  .col-md-pull-9 {\n    right: 75%; }\n  .col-md-pull-10 {\n    right: 83.33333%; }\n  .col-md-pull-11 {\n    right: 91.66667%; }\n  .col-md-pull-12 {\n    right: 100%; }\n  .col-md-push-0 {\n    left: auto; }\n  .col-md-push-1 {\n    left: 8.33333%; }\n  .col-md-push-2 {\n    left: 16.66667%; }\n  .col-md-push-3 {\n    left: 25%; }\n  .col-md-push-4 {\n    left: 33.33333%; }\n  .col-md-push-5 {\n    left: 41.66667%; }\n  .col-md-push-6 {\n    left: 50%; }\n  .col-md-push-7 {\n    left: 58.33333%; }\n  .col-md-push-8 {\n    left: 66.66667%; }\n  .col-md-push-9 {\n    left: 75%; }\n  .col-md-push-10 {\n    left: 83.33333%; }\n  .col-md-push-11 {\n    left: 91.66667%; }\n  .col-md-push-12 {\n    left: 100%; }\n  .col-md-offset-0 {\n    margin-left: 0%; }\n  .col-md-offset-1 {\n    margin-left: 8.33333%; }\n  .col-md-offset-2 {\n    margin-left: 16.66667%; }\n  .col-md-offset-3 {\n    margin-left: 25%; }\n  .col-md-offset-4 {\n    margin-left: 33.33333%; }\n  .col-md-offset-5 {\n    margin-left: 41.66667%; }\n  .col-md-offset-6 {\n    margin-left: 50%; }\n  .col-md-offset-7 {\n    margin-left: 58.33333%; }\n  .col-md-offset-8 {\n    margin-left: 66.66667%; }\n  .col-md-offset-9 {\n    margin-left: 75%; }\n  .col-md-offset-10 {\n    margin-left: 83.33333%; }\n  .col-md-offset-11 {\n    margin-left: 91.66667%; }\n  .col-md-offset-12 {\n    margin-left: 100%; } }\n@media (min-width: 1200px) {\n  .col-lg-1, .col-lg-2, .col-lg-3, .col-lg-4, .col-lg-5, .col-lg-6, .col-lg-7, .col-lg-8, .col-lg-9, .col-lg-10, .col-lg-11, .col-lg-12 {\n    float: left; }\n  .col-lg-1 {\n    width: 8.33333%; }\n  .col-lg-2 {\n    width: 16.66667%; }\n  .col-lg-3 {\n    width: 25%; }\n  .col-lg-4 {\n    width: 33.33333%; }\n  .col-lg-5 {\n    width: 41.66667%; }\n  .col-lg-6 {\n    width: 50%; }\n  .col-lg-7 {\n    width: 58.33333%; }\n  .col-lg-8 {\n    width: 66.66667%; }\n  .col-lg-9 {\n    width: 75%; }\n  .col-lg-10 {\n    width: 83.33333%; }\n  .col-lg-11 {\n    width: 91.66667%; }\n  .col-lg-12 {\n    width: 100%; }\n  .col-lg-pull-0 {\n    right: auto; }\n  .col-lg-pull-1 {\n    right: 8.33333%; }\n  .col-lg-pull-2 {\n    right: 16.66667%; }\n  .col-lg-pull-3 {\n    right: 25%; }\n  .col-lg-pull-4 {\n    right: 33.33333%; }\n  .col-lg-pull-5 {\n    right: 41.66667%; }\n  .col-lg-pull-6 {\n    right: 50%; }\n  .col-lg-pull-7 {\n    right: 58.33333%; }\n  .col-lg-pull-8 {\n    right: 66.66667%; }\n  .col-lg-pull-9 {\n    right: 75%; }\n  .col-lg-pull-10 {\n    right: 83.33333%; }\n  .col-lg-pull-11 {\n    right: 91.66667%; }\n  .col-lg-pull-12 {\n    right: 100%; }\n  .col-lg-push-0 {\n    left: auto; }\n  .col-lg-push-1 {\n    left: 8.33333%; }\n  .col-lg-push-2 {\n    left: 16.66667%; }\n  .col-lg-push-3 {\n    left: 25%; }\n  .col-lg-push-4 {\n    left: 33.33333%; }\n  .col-lg-push-5 {\n    left: 41.66667%; }\n  .col-lg-push-6 {\n    left: 50%; }\n  .col-lg-push-7 {\n    left: 58.33333%; }\n  .col-lg-push-8 {\n    left: 66.66667%; }\n  .col-lg-push-9 {\n    left: 75%; }\n  .col-lg-push-10 {\n    left: 83.33333%; }\n  .col-lg-push-11 {\n    left: 91.66667%; }\n  .col-lg-push-12 {\n    left: 100%; }\n  .col-lg-offset-0 {\n    margin-left: 0%; }\n  .col-lg-offset-1 {\n    margin-left: 8.33333%; }\n  .col-lg-offset-2 {\n    margin-left: 16.66667%; }\n  .col-lg-offset-3 {\n    margin-left: 25%; }\n  .col-lg-offset-4 {\n    margin-left: 33.33333%; }\n  .col-lg-offset-5 {\n    margin-left: 41.66667%; }\n  .col-lg-offset-6 {\n    margin-left: 50%; }\n  .col-lg-offset-7 {\n    margin-left: 58.33333%; }\n  .col-lg-offset-8 {\n    margin-left: 66.66667%; }\n  .col-lg-offset-9 {\n    margin-left: 75%; }\n  .col-lg-offset-10 {\n    margin-left: 83.33333%; }\n  .col-lg-offset-11 {\n    margin-left: 91.66667%; }\n  .col-lg-offset-12 {\n    margin-left: 100%; } }\ntable {\n  background-color: transparent; }\ncaption {\n  padding-top: 8px;\n  padding-bottom: 8px;\n  color: #999999;\n  text-align: left; }\nth {\n  text-align: left; }\n.table {\n  width: 100%;\n  max-width: 100%;\n  margin-bottom: 21px; }\n.table > thead > tr > th, .table > thead > tr > td, .table > tbody > tr > th, .table > tbody > tr > td, .table > tfoot > tr > th, .table > tfoot > tr > td {\n    padding: 8px;\n    line-height: 1.42857;\n    vertical-align: top;\n    border-top: 1px solid #ddd; }\n.table > thead > tr > th {\n    vertical-align: bottom;\n    border-bottom: 2px solid #ddd; }\n.table > caption + thead > tr:first-child > th, .table > caption + thead > tr:first-child > td, .table > colgroup + thead > tr:first-child > th, .table > colgroup + thead > tr:first-child > td, .table > thead:first-child > tr:first-child > th, .table > thead:first-child > tr:first-child > td {\n    border-top: 0; }\n.table > tbody + tbody {\n    border-top: 2px solid #ddd; }\n.table .table {\n    background-color: #fff; }\n.table-condensed > thead > tr > th, .table-condensed > thead > tr > td, .table-condensed > tbody > tr > th, .table-condensed > tbody > tr > td, .table-condensed > tfoot > tr > th, .table-condensed > tfoot > tr > td {\n  padding: 5px; }\n.table-bordered {\n  border: 1px solid #ddd; }\n.table-bordered > thead > tr > th, .table-bordered > thead > tr > td, .table-bordered > tbody > tr > th, .table-bordered > tbody > tr > td, .table-bordered > tfoot > tr > th, .table-bordered > tfoot > tr > td {\n    border: 1px solid #ddd; }\n.table-bordered > thead > tr > th, .table-bordered > thead > tr > td {\n    border-bottom-width: 2px; }\n.table-striped > tbody > tr:nth-of-type(odd) {\n  background-color: #f9f9f9; }\n.table-hover > tbody > tr:hover {\n  background-color: #f5f5f5; }\ntable col[class*=\"col-\"] {\n  position: static;\n  float: none;\n  display: table-column; }\ntable td[class*=\"col-\"], table th[class*=\"col-\"] {\n  position: static;\n  float: none;\n  display: table-cell; }\n.table > thead > tr > td.active, .table > thead > tr > th.active, .table > thead > tr.active > td, .table > thead > tr.active > th, .table > tbody > tr > td.active, .table > tbody > tr > th.active, .table > tbody > tr.active > td, .table > tbody > tr.active > th, .table > tfoot > tr > td.active, .table > tfoot > tr > th.active, .table > tfoot > tr.active > td, .table > tfoot > tr.active > th {\n  background-color: #f5f5f5; }\n.table-hover > tbody > tr > td.active:hover, .table-hover > tbody > tr > th.active:hover, .table-hover > tbody > tr.active:hover > td, .table-hover > tbody > tr:hover > .active, .table-hover > tbody > tr.active:hover > th {\n  background-color: #e8e8e8; }\n.table > thead > tr > td.success, .table > thead > tr > th.success, .table > thead > tr.success > td, .table > thead > tr.success > th, .table > tbody > tr > td.success, .table > tbody > tr > th.success, .table > tbody > tr.success > td, .table > tbody > tr.success > th, .table > tfoot > tr > td.success, .table > tfoot > tr > th.success, .table > tfoot > tr.success > td, .table > tfoot > tr.success > th {\n  background-color: #3FB618; }\n.table-hover > tbody > tr > td.success:hover, .table-hover > tbody > tr > th.success:hover, .table-hover > tbody > tr.success:hover > td, .table-hover > tbody > tr:hover > .success, .table-hover > tbody > tr.success:hover > th {\n  background-color: #379f15; }\n.table > thead > tr > td.info, .table > thead > tr > th.info, .table > thead > tr.info > td, .table > thead > tr.info > th, .table > tbody > tr > td.info, .table > tbody > tr > th.info, .table > tbody > tr.info > td, .table > tbody > tr.info > th, .table > tfoot > tr > td.info, .table > tfoot > tr > th.info, .table > tfoot > tr.info > td, .table > tfoot > tr.info > th {\n  background-color: #9954BB; }\n.table-hover > tbody > tr > td.info:hover, .table-hover > tbody > tr > th.info:hover, .table-hover > tbody > tr.info:hover > td, .table-hover > tbody > tr:hover > .info, .table-hover > tbody > tr.info:hover > th {\n  background-color: #8d46b0; }\n.table > thead > tr > td.warning, .table > thead > tr > th.warning, .table > thead > tr.warning > td, .table > thead > tr.warning > th, .table > tbody > tr > td.warning, .table > tbody > tr > th.warning, .table > tbody > tr.warning > td, .table > tbody > tr.warning > th, .table > tfoot > tr > td.warning, .table > tfoot > tr > th.warning, .table > tfoot > tr.warning > td, .table > tfoot > tr.warning > th {\n  background-color: #FF7518; }\n.table-hover > tbody > tr > td.warning:hover, .table-hover > tbody > tr > th.warning:hover, .table-hover > tbody > tr.warning:hover > td, .table-hover > tbody > tr:hover > .warning, .table-hover > tbody > tr.warning:hover > th {\n  background-color: #fe6600; }\n.table > thead > tr > td.danger, .table > thead > tr > th.danger, .table > thead > tr.danger > td, .table > thead > tr.danger > th, .table > tbody > tr > td.danger, .table > tbody > tr > th.danger, .table > tbody > tr.danger > td, .table > tbody > tr.danger > th, .table > tfoot > tr > td.danger, .table > tfoot > tr > th.danger, .table > tfoot > tr.danger > td, .table > tfoot > tr.danger > th {\n  background-color: #FF0039; }\n.table-hover > tbody > tr > td.danger:hover, .table-hover > tbody > tr > th.danger:hover, .table-hover > tbody > tr.danger:hover > td, .table-hover > tbody > tr:hover > .danger, .table-hover > tbody > tr.danger:hover > th {\n  background-color: #e60033; }\n.table-responsive {\n  overflow-x: auto;\n  min-height: 0.01%; }\n@media screen and (max-width: 767px) {\n    .table-responsive {\n      width: 100%;\n      margin-bottom: 15.75px;\n      overflow-y: hidden;\n      -ms-overflow-style: -ms-autohiding-scrollbar;\n      border: 1px solid #ddd; }\n      .table-responsive > .table {\n        margin-bottom: 0; }\n        .table-responsive > .table > thead > tr > th, .table-responsive > .table > thead > tr > td, .table-responsive > .table > tbody > tr > th, .table-responsive > .table > tbody > tr > td, .table-responsive > .table > tfoot > tr > th, .table-responsive > .table > tfoot > tr > td {\n          white-space: nowrap; }\n      .table-responsive > .table-bordered {\n        border: 0; }\n        .table-responsive > .table-bordered > thead > tr > th:first-child, .table-responsive > .table-bordered > thead > tr > td:first-child, .table-responsive > .table-bordered > tbody > tr > th:first-child, .table-responsive > .table-bordered > tbody > tr > td:first-child, .table-responsive > .table-bordered > tfoot > tr > th:first-child, .table-responsive > .table-bordered > tfoot > tr > td:first-child {\n          border-left: 0; }\n        .table-responsive > .table-bordered > thead > tr > th:last-child, .table-responsive > .table-bordered > thead > tr > td:last-child, .table-responsive > .table-bordered > tbody > tr > th:last-child, .table-responsive > .table-bordered > tbody > tr > td:last-child, .table-responsive > .table-bordered > tfoot > tr > th:last-child, .table-responsive > .table-bordered > tfoot > tr > td:last-child {\n          border-right: 0; }\n        .table-responsive > .table-bordered > tbody > tr:last-child > th, .table-responsive > .table-bordered > tbody > tr:last-child > td, .table-responsive > .table-bordered > tfoot > tr:last-child > th, .table-responsive > .table-bordered > tfoot > tr:last-child > td {\n          border-bottom: 0; } }\nfieldset {\n  padding: 0;\n  margin: 0;\n  border: 0;\n  min-width: 0; }\nlegend {\n  display: block;\n  width: 100%;\n  padding: 0;\n  margin-bottom: 21px;\n  font-size: 22.5px;\n  line-height: inherit;\n  color: #333333;\n  border: 0;\n  border-bottom: 1px solid #e5e5e5; }\nlabel {\n  display: inline-block;\n  max-width: 100%;\n  margin-bottom: 5px;\n  font-weight: bold; }\ninput[type=\"search\"] {\n  box-sizing: border-box; }\ninput[type=\"radio\"], input[type=\"checkbox\"] {\n  margin: 4px 0 0;\n  margin-top: 1px \\9;\n  line-height: normal; }\ninput[type=\"file\"] {\n  display: block; }\ninput[type=\"range\"] {\n  display: block;\n  width: 100%; }\nselect[multiple], select[size] {\n  height: auto; }\ninput[type=\"file\"]:focus, input[type=\"radio\"]:focus, input[type=\"checkbox\"]:focus {\n  outline: 5px auto -webkit-focus-ring-color;\n  outline-offset: -2px; }\noutput {\n  display: block;\n  padding-top: 11px;\n  font-size: 15px;\n  line-height: 1.42857;\n  color: #333333; }\n.form-control {\n  display: block;\n  width: 100%;\n  height: 43px;\n  padding: 10px 18px;\n  font-size: 15px;\n  line-height: 1.42857;\n  color: #333333;\n  background-color: #fff;\n  background-image: none;\n  border: 1px solid #ccc;\n  border-radius: 0;\n  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);\n  transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s; }\n.form-control:focus {\n    border-color: #66afe9;\n    outline: 0;\n    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(102, 175, 233, 0.6); }\n.form-control::-moz-placeholder {\n    color: #999999;\n    opacity: 1; }\n.form-control:-ms-input-placeholder {\n    color: #999999; }\n.form-control::-webkit-input-placeholder {\n    color: #999999; }\n.form-control::-ms-expand {\n    border: 0;\n    background-color: transparent; }\n.form-control[disabled], .form-control[readonly], fieldset[disabled] .form-control {\n    background-color: #e6e6e6;\n    opacity: 1; }\n.form-control[disabled], fieldset[disabled] .form-control {\n    cursor: not-allowed; }\ntextarea.form-control {\n  height: auto; }\ninput[type=\"search\"] {\n  -webkit-appearance: none; }\n@media screen and (-webkit-min-device-pixel-ratio: 0) {\n  input[type=\"date\"].form-control, input[type=\"time\"].form-control, input[type=\"datetime-local\"].form-control, input[type=\"month\"].form-control {\n    line-height: 43px; }\n  input[type=\"date\"].input-sm, .input-group-sm > input[type=\"date\"].form-control, .input-group-sm > input[type=\"date\"].input-group-addon, .input-group-sm > .input-group-btn > input[type=\"date\"].btn, .input-group-sm input[type=\"date\"], input[type=\"time\"].input-sm, .input-group-sm > input[type=\"time\"].form-control, .input-group-sm > input[type=\"time\"].input-group-addon, .input-group-sm > .input-group-btn > input[type=\"time\"].btn, .input-group-sm\n  input[type=\"time\"], input[type=\"datetime-local\"].input-sm, .input-group-sm > input[type=\"datetime-local\"].form-control, .input-group-sm > input[type=\"datetime-local\"].input-group-addon, .input-group-sm > .input-group-btn > input[type=\"datetime-local\"].btn, .input-group-sm\n  input[type=\"datetime-local\"], input[type=\"month\"].input-sm, .input-group-sm > input[type=\"month\"].form-control, .input-group-sm > input[type=\"month\"].input-group-addon, .input-group-sm > .input-group-btn > input[type=\"month\"].btn, .input-group-sm\n  input[type=\"month\"] {\n    line-height: 31px; }\n  input[type=\"date\"].input-lg, .input-group-lg > input[type=\"date\"].form-control, .input-group-lg > input[type=\"date\"].input-group-addon, .input-group-lg > .input-group-btn > input[type=\"date\"].btn, .input-group-lg input[type=\"date\"], input[type=\"time\"].input-lg, .input-group-lg > input[type=\"time\"].form-control, .input-group-lg > input[type=\"time\"].input-group-addon, .input-group-lg > .input-group-btn > input[type=\"time\"].btn, .input-group-lg\n  input[type=\"time\"], input[type=\"datetime-local\"].input-lg, .input-group-lg > input[type=\"datetime-local\"].form-control, .input-group-lg > input[type=\"datetime-local\"].input-group-addon, .input-group-lg > .input-group-btn > input[type=\"datetime-local\"].btn, .input-group-lg\n  input[type=\"datetime-local\"], input[type=\"month\"].input-lg, .input-group-lg > input[type=\"month\"].form-control, .input-group-lg > input[type=\"month\"].input-group-addon, .input-group-lg > .input-group-btn > input[type=\"month\"].btn, .input-group-lg\n  input[type=\"month\"] {\n    line-height: 64px; } }\n.form-group {\n  margin-bottom: 15px; }\n.radio, .checkbox {\n  position: relative;\n  display: block;\n  margin-top: 10px;\n  margin-bottom: 10px; }\n.radio label, .checkbox label {\n    min-height: 21px;\n    padding-left: 20px;\n    margin-bottom: 0;\n    font-weight: normal;\n    cursor: pointer; }\n.radio input[type=\"radio\"], .radio-inline input[type=\"radio\"], .checkbox input[type=\"checkbox\"], .checkbox-inline input[type=\"checkbox\"] {\n  position: absolute;\n  margin-left: -20px;\n  margin-top: 4px \\9; }\n.radio + .radio, .checkbox + .checkbox {\n  margin-top: -5px; }\n.radio-inline, .checkbox-inline {\n  position: relative;\n  display: inline-block;\n  padding-left: 20px;\n  margin-bottom: 0;\n  vertical-align: middle;\n  font-weight: normal;\n  cursor: pointer; }\n.radio-inline + .radio-inline, .checkbox-inline + .checkbox-inline {\n  margin-top: 0;\n  margin-left: 10px; }\ninput[type=\"radio\"][disabled], input[type=\"radio\"].disabled, fieldset[disabled] input[type=\"radio\"], input[type=\"checkbox\"][disabled], input[type=\"checkbox\"].disabled, fieldset[disabled]\ninput[type=\"checkbox\"] {\n  cursor: not-allowed; }\n.radio-inline.disabled, fieldset[disabled] .radio-inline, .checkbox-inline.disabled, fieldset[disabled]\n.checkbox-inline {\n  cursor: not-allowed; }\n.radio.disabled label, fieldset[disabled] .radio label, .checkbox.disabled label, fieldset[disabled]\n.checkbox label {\n  cursor: not-allowed; }\n.form-control-static {\n  padding-top: 11px;\n  padding-bottom: 11px;\n  margin-bottom: 0;\n  min-height: 36px; }\n.form-control-static.input-lg, .input-group-lg > .form-control-static.form-control, .input-group-lg > .form-control-static.input-group-addon, .input-group-lg > .input-group-btn > .form-control-static.btn, .form-control-static.input-sm, .input-group-sm > .form-control-static.form-control, .input-group-sm > .form-control-static.input-group-addon, .input-group-sm > .input-group-btn > .form-control-static.btn {\n    padding-left: 0;\n    padding-right: 0; }\n.input-sm, .input-group-sm > .form-control, .input-group-sm > .input-group-addon, .input-group-sm > .input-group-btn > .btn {\n  height: 31px;\n  padding: 5px 10px;\n  font-size: 13px;\n  line-height: 1.5;\n  border-radius: 0; }\nselect.input-sm, .input-group-sm > select.form-control, .input-group-sm > select.input-group-addon, .input-group-sm > .input-group-btn > select.btn {\n  height: 31px;\n  line-height: 31px; }\ntextarea.input-sm, .input-group-sm > textarea.form-control, .input-group-sm > textarea.input-group-addon, .input-group-sm > .input-group-btn > textarea.btn, select[multiple].input-sm, .input-group-sm > select[multiple].form-control, .input-group-sm > select[multiple].input-group-addon, .input-group-sm > .input-group-btn > select[multiple].btn {\n  height: auto; }\n.form-group-sm .form-control {\n  height: 31px;\n  padding: 5px 10px;\n  font-size: 13px;\n  line-height: 1.5;\n  border-radius: 0; }\n.form-group-sm select.form-control {\n  height: 31px;\n  line-height: 31px; }\n.form-group-sm textarea.form-control, .form-group-sm select[multiple].form-control {\n  height: auto; }\n.form-group-sm .form-control-static {\n  height: 31px;\n  min-height: 34px;\n  padding: 6px 10px;\n  font-size: 13px;\n  line-height: 1.5; }\n.input-lg, .input-group-lg > .form-control, .input-group-lg > .input-group-addon, .input-group-lg > .input-group-btn > .btn {\n  height: 64px;\n  padding: 18px 30px;\n  font-size: 19px;\n  line-height: 1.33333;\n  border-radius: 0; }\nselect.input-lg, .input-group-lg > select.form-control, .input-group-lg > select.input-group-addon, .input-group-lg > .input-group-btn > select.btn {\n  height: 64px;\n  line-height: 64px; }\ntextarea.input-lg, .input-group-lg > textarea.form-control, .input-group-lg > textarea.input-group-addon, .input-group-lg > .input-group-btn > textarea.btn, select[multiple].input-lg, .input-group-lg > select[multiple].form-control, .input-group-lg > select[multiple].input-group-addon, .input-group-lg > .input-group-btn > select[multiple].btn {\n  height: auto; }\n.form-group-lg .form-control {\n  height: 64px;\n  padding: 18px 30px;\n  font-size: 19px;\n  line-height: 1.33333;\n  border-radius: 0; }\n.form-group-lg select.form-control {\n  height: 64px;\n  line-height: 64px; }\n.form-group-lg textarea.form-control, .form-group-lg select[multiple].form-control {\n  height: auto; }\n.form-group-lg .form-control-static {\n  height: 64px;\n  min-height: 40px;\n  padding: 19px 30px;\n  font-size: 19px;\n  line-height: 1.33333; }\n.has-feedback {\n  position: relative; }\n.has-feedback .form-control {\n    padding-right: 53.75px; }\n.form-control-feedback {\n  position: absolute;\n  top: 0;\n  right: 0;\n  z-index: 2;\n  display: block;\n  width: 43px;\n  height: 43px;\n  line-height: 43px;\n  text-align: center;\n  pointer-events: none; }\n.input-lg + .form-control-feedback, .input-group-lg > .form-control + .form-control-feedback, .input-group-lg > .input-group-addon + .form-control-feedback, .input-group-lg > .input-group-btn > .btn + .form-control-feedback, .input-group-lg + .form-control-feedback, .form-group-lg .form-control + .form-control-feedback {\n  width: 64px;\n  height: 64px;\n  line-height: 64px; }\n.input-sm + .form-control-feedback, .input-group-sm > .form-control + .form-control-feedback, .input-group-sm > .input-group-addon + .form-control-feedback, .input-group-sm > .input-group-btn > .btn + .form-control-feedback, .input-group-sm + .form-control-feedback, .form-group-sm .form-control + .form-control-feedback {\n  width: 31px;\n  height: 31px;\n  line-height: 31px; }\n.has-success .help-block, .has-success .control-label, .has-success .radio, .has-success .checkbox, .has-success .radio-inline, .has-success .checkbox-inline, .has-success.radio label, .has-success.checkbox label, .has-success.radio-inline label, .has-success.checkbox-inline label {\n  color: #fff; }\n.has-success .form-control {\n  border-color: #fff;\n  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075); }\n.has-success .form-control:focus {\n    border-color: #e6e6e6;\n    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px white; }\n.has-success .input-group-addon {\n  color: #fff;\n  border-color: #fff;\n  background-color: #3FB618; }\n.has-success .form-control-feedback {\n  color: #fff; }\n.has-warning .help-block, .has-warning .control-label, .has-warning .radio, .has-warning .checkbox, .has-warning .radio-inline, .has-warning .checkbox-inline, .has-warning.radio label, .has-warning.checkbox label, .has-warning.radio-inline label, .has-warning.checkbox-inline label {\n  color: #fff; }\n.has-warning .form-control {\n  border-color: #fff;\n  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075); }\n.has-warning .form-control:focus {\n    border-color: #e6e6e6;\n    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px white; }\n.has-warning .input-group-addon {\n  color: #fff;\n  border-color: #fff;\n  background-color: #FF7518; }\n.has-warning .form-control-feedback {\n  color: #fff; }\n.has-error .help-block, .has-error .control-label, .has-error .radio, .has-error .checkbox, .has-error .radio-inline, .has-error .checkbox-inline, .has-error.radio label, .has-error.checkbox label, .has-error.radio-inline label, .has-error.checkbox-inline label {\n  color: #fff; }\n.has-error .form-control {\n  border-color: #fff;\n  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075); }\n.has-error .form-control:focus {\n    border-color: #e6e6e6;\n    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px white; }\n.has-error .input-group-addon {\n  color: #fff;\n  border-color: #fff;\n  background-color: #FF0039; }\n.has-error .form-control-feedback {\n  color: #fff; }\n.has-feedback label ~ .form-control-feedback {\n  top: 26px; }\n.has-feedback label.sr-only ~ .form-control-feedback {\n  top: 0; }\n.help-block {\n  display: block;\n  margin-top: 5px;\n  margin-bottom: 10px;\n  color: #737373; }\n@media (min-width: 768px) {\n  .form-inline .form-group {\n    display: inline-block;\n    margin-bottom: 0;\n    vertical-align: middle; }\n  .form-inline .form-control {\n    display: inline-block;\n    width: auto;\n    vertical-align: middle; }\n  .form-inline .form-control-static {\n    display: inline-block; }\n  .form-inline .input-group {\n    display: inline-table;\n    vertical-align: middle; }\n    .form-inline .input-group .input-group-addon, .form-inline .input-group .input-group-btn, .form-inline .input-group .form-control {\n      width: auto; }\n  .form-inline .input-group > .form-control {\n    width: 100%; }\n  .form-inline .control-label {\n    margin-bottom: 0;\n    vertical-align: middle; }\n  .form-inline .radio, .form-inline .checkbox {\n    display: inline-block;\n    margin-top: 0;\n    margin-bottom: 0;\n    vertical-align: middle; }\n    .form-inline .radio label, .form-inline .checkbox label {\n      padding-left: 0; }\n  .form-inline .radio input[type=\"radio\"], .form-inline .checkbox input[type=\"checkbox\"] {\n    position: relative;\n    margin-left: 0; }\n  .form-inline .has-feedback .form-control-feedback {\n    top: 0; } }\n.form-horizontal .radio, .form-horizontal .checkbox, .form-horizontal .radio-inline, .form-horizontal .checkbox-inline {\n  margin-top: 0;\n  margin-bottom: 0;\n  padding-top: 11px; }\n.form-horizontal .radio, .form-horizontal .checkbox {\n  min-height: 32px; }\n.form-horizontal .form-group {\n  margin-left: -15px;\n  margin-right: -15px; }\n.form-horizontal .form-group:before, .form-horizontal .form-group:after {\n    content: \" \";\n    display: table; }\n.form-horizontal .form-group:after {\n    clear: both; }\n@media (min-width: 768px) {\n  .form-horizontal .control-label {\n    text-align: right;\n    margin-bottom: 0;\n    padding-top: 11px; } }\n.form-horizontal .has-feedback .form-control-feedback {\n  right: 15px; }\n@media (min-width: 768px) {\n  .form-horizontal .form-group-lg .control-label {\n    padding-top: 19px;\n    font-size: 19px; } }\n@media (min-width: 768px) {\n  .form-horizontal .form-group-sm .control-label {\n    padding-top: 6px;\n    font-size: 13px; } }\n.btn {\n  display: inline-block;\n  margin-bottom: 0;\n  font-weight: normal;\n  text-align: center;\n  vertical-align: middle;\n  -ms-touch-action: manipulation;\n      touch-action: manipulation;\n  cursor: pointer;\n  background-image: none;\n  border: 1px solid transparent;\n  white-space: nowrap;\n  padding: 10px 18px;\n  font-size: 15px;\n  line-height: 1.42857;\n  border-radius: 0;\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none; }\n.btn:focus, .btn.focus, .btn:active:focus, .btn:active.focus, .btn.active:focus, .btn.active.focus {\n    outline: 5px auto -webkit-focus-ring-color;\n    outline-offset: -2px; }\n.btn:hover, .btn:focus, .btn.focus {\n    color: #fff;\n    text-decoration: none; }\n.btn:active, .btn.active {\n    outline: 0;\n    background-image: none;\n    box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125); }\n.btn.disabled, .btn[disabled], fieldset[disabled] .btn {\n    cursor: not-allowed;\n    opacity: 0.65;\n    filter: alpha(opacity=65);\n    box-shadow: none; }\na.btn.disabled, fieldset[disabled] a.btn {\n  pointer-events: none; }\n.btn-default {\n  color: #fff;\n  background-color: #222222;\n  border-color: #222222; }\n.btn-default:focus, .btn-default.focus {\n    color: #fff;\n    background-color: #090909;\n    border-color: black; }\n.btn-default:hover {\n    color: #fff;\n    background-color: #090909;\n    border-color: #040404; }\n.btn-default:active, .btn-default.active, .open > .btn-default.dropdown-toggle {\n    color: #fff;\n    background-color: #090909;\n    border-color: #040404; }\n.btn-default:active:hover, .btn-default:active:focus, .btn-default:active.focus, .btn-default.active:hover, .btn-default.active:focus, .btn-default.active.focus, .open > .btn-default.dropdown-toggle:hover, .open > .btn-default.dropdown-toggle:focus, .open > .btn-default.dropdown-toggle.focus {\n      color: #fff;\n      background-color: black;\n      border-color: black; }\n.btn-default:active, .btn-default.active, .open > .btn-default.dropdown-toggle {\n    background-image: none; }\n.btn-default.disabled:hover, .btn-default.disabled:focus, .btn-default.disabled.focus, .btn-default[disabled]:hover, .btn-default[disabled]:focus, .btn-default[disabled].focus, fieldset[disabled] .btn-default:hover, fieldset[disabled] .btn-default:focus, fieldset[disabled] .btn-default.focus {\n    background-color: #222222;\n    border-color: #222222; }\n.btn-default .badge {\n    color: #222222;\n    background-color: #fff; }\n.btn-primary {\n  color: #fff;\n  background-color: #2780E3;\n  border-color: #2780E3; }\n.btn-primary:focus, .btn-primary.focus {\n    color: #fff;\n    background-color: #1967be;\n    border-color: #10427b; }\n.btn-primary:hover {\n    color: #fff;\n    background-color: #1967be;\n    border-color: #1862b5; }\n.btn-primary:active, .btn-primary.active, .open > .btn-primary.dropdown-toggle {\n    color: #fff;\n    background-color: #1967be;\n    border-color: #1862b5; }\n.btn-primary:active:hover, .btn-primary:active:focus, .btn-primary:active.focus, .btn-primary.active:hover, .btn-primary.active:focus, .btn-primary.active.focus, .open > .btn-primary.dropdown-toggle:hover, .open > .btn-primary.dropdown-toggle:focus, .open > .btn-primary.dropdown-toggle.focus {\n      color: #fff;\n      background-color: #15569f;\n      border-color: #10427b; }\n.btn-primary:active, .btn-primary.active, .open > .btn-primary.dropdown-toggle {\n    background-image: none; }\n.btn-primary.disabled:hover, .btn-primary.disabled:focus, .btn-primary.disabled.focus, .btn-primary[disabled]:hover, .btn-primary[disabled]:focus, .btn-primary[disabled].focus, fieldset[disabled] .btn-primary:hover, fieldset[disabled] .btn-primary:focus, fieldset[disabled] .btn-primary.focus {\n    background-color: #2780E3;\n    border-color: #2780E3; }\n.btn-primary .badge {\n    color: #2780E3;\n    background-color: #fff; }\n.btn-success {\n  color: #fff;\n  background-color: #3FB618;\n  border-color: #3FB618; }\n.btn-success:focus, .btn-success.focus {\n    color: #fff;\n    background-color: #2f8912;\n    border-color: #184509; }\n.btn-success:hover {\n    color: #fff;\n    background-color: #2f8912;\n    border-color: #2c8011; }\n.btn-success:active, .btn-success.active, .open > .btn-success.dropdown-toggle {\n    color: #fff;\n    background-color: #2f8912;\n    border-color: #2c8011; }\n.btn-success:active:hover, .btn-success:active:focus, .btn-success:active.focus, .btn-success.active:hover, .btn-success.active:focus, .btn-success.active.focus, .open > .btn-success.dropdown-toggle:hover, .open > .btn-success.dropdown-toggle:focus, .open > .btn-success.dropdown-toggle.focus {\n      color: #fff;\n      background-color: #24690e;\n      border-color: #184509; }\n.btn-success:active, .btn-success.active, .open > .btn-success.dropdown-toggle {\n    background-image: none; }\n.btn-success.disabled:hover, .btn-success.disabled:focus, .btn-success.disabled.focus, .btn-success[disabled]:hover, .btn-success[disabled]:focus, .btn-success[disabled].focus, fieldset[disabled] .btn-success:hover, fieldset[disabled] .btn-success:focus, fieldset[disabled] .btn-success.focus {\n    background-color: #3FB618;\n    border-color: #3FB618; }\n.btn-success .badge {\n    color: #3FB618;\n    background-color: #fff; }\n.btn-info {\n  color: #fff;\n  background-color: #9954BB;\n  border-color: #9954BB; }\n.btn-info:focus, .btn-info.focus {\n    color: #fff;\n    background-color: #7e3f9d;\n    border-color: #522967; }\n.btn-info:hover {\n    color: #fff;\n    background-color: #7e3f9d;\n    border-color: #783c96; }\n.btn-info:active, .btn-info.active, .open > .btn-info.dropdown-toggle {\n    color: #fff;\n    background-color: #7e3f9d;\n    border-color: #783c96; }\n.btn-info:active:hover, .btn-info:active:focus, .btn-info:active.focus, .btn-info.active:hover, .btn-info.active:focus, .btn-info.active.focus, .open > .btn-info.dropdown-toggle:hover, .open > .btn-info.dropdown-toggle:focus, .open > .btn-info.dropdown-toggle.focus {\n      color: #fff;\n      background-color: #6a3484;\n      border-color: #522967; }\n.btn-info:active, .btn-info.active, .open > .btn-info.dropdown-toggle {\n    background-image: none; }\n.btn-info.disabled:hover, .btn-info.disabled:focus, .btn-info.disabled.focus, .btn-info[disabled]:hover, .btn-info[disabled]:focus, .btn-info[disabled].focus, fieldset[disabled] .btn-info:hover, fieldset[disabled] .btn-info:focus, fieldset[disabled] .btn-info.focus {\n    background-color: #9954BB;\n    border-color: #9954BB; }\n.btn-info .badge {\n    color: #9954BB;\n    background-color: #fff; }\n.btn-warning {\n  color: #fff;\n  background-color: #FF7518;\n  border-color: #FF7518; }\n.btn-warning:focus, .btn-warning.focus {\n    color: #fff;\n    background-color: #e45c00;\n    border-color: #983d00; }\n.btn-warning:hover {\n    color: #fff;\n    background-color: #e45c00;\n    border-color: #da5800; }\n.btn-warning:active, .btn-warning.active, .open > .btn-warning.dropdown-toggle {\n    color: #fff;\n    background-color: #e45c00;\n    border-color: #da5800; }\n.btn-warning:active:hover, .btn-warning:active:focus, .btn-warning:active.focus, .btn-warning.active:hover, .btn-warning.active:focus, .btn-warning.active.focus, .open > .btn-warning.dropdown-toggle:hover, .open > .btn-warning.dropdown-toggle:focus, .open > .btn-warning.dropdown-toggle.focus {\n      color: #fff;\n      background-color: #c04d00;\n      border-color: #983d00; }\n.btn-warning:active, .btn-warning.active, .open > .btn-warning.dropdown-toggle {\n    background-image: none; }\n.btn-warning.disabled:hover, .btn-warning.disabled:focus, .btn-warning.disabled.focus, .btn-warning[disabled]:hover, .btn-warning[disabled]:focus, .btn-warning[disabled].focus, fieldset[disabled] .btn-warning:hover, fieldset[disabled] .btn-warning:focus, fieldset[disabled] .btn-warning.focus {\n    background-color: #FF7518;\n    border-color: #FF7518; }\n.btn-warning .badge {\n    color: #FF7518;\n    background-color: #fff; }\n.btn-danger {\n  color: #fff;\n  background-color: #FF0039;\n  border-color: #FF0039; }\n.btn-danger:focus, .btn-danger.focus {\n    color: #fff;\n    background-color: #cc002e;\n    border-color: #80001d; }\n.btn-danger:hover {\n    color: #fff;\n    background-color: #cc002e;\n    border-color: #c2002b; }\n.btn-danger:active, .btn-danger.active, .open > .btn-danger.dropdown-toggle {\n    color: #fff;\n    background-color: #cc002e;\n    border-color: #c2002b; }\n.btn-danger:active:hover, .btn-danger:active:focus, .btn-danger:active.focus, .btn-danger.active:hover, .btn-danger.active:focus, .btn-danger.active.focus, .open > .btn-danger.dropdown-toggle:hover, .open > .btn-danger.dropdown-toggle:focus, .open > .btn-danger.dropdown-toggle.focus {\n      color: #fff;\n      background-color: #a80026;\n      border-color: #80001d; }\n.btn-danger:active, .btn-danger.active, .open > .btn-danger.dropdown-toggle {\n    background-image: none; }\n.btn-danger.disabled:hover, .btn-danger.disabled:focus, .btn-danger.disabled.focus, .btn-danger[disabled]:hover, .btn-danger[disabled]:focus, .btn-danger[disabled].focus, fieldset[disabled] .btn-danger:hover, fieldset[disabled] .btn-danger:focus, fieldset[disabled] .btn-danger.focus {\n    background-color: #FF0039;\n    border-color: #FF0039; }\n.btn-danger .badge {\n    color: #FF0039;\n    background-color: #fff; }\n.btn-link {\n  color: #2780E3;\n  font-weight: normal;\n  border-radius: 0; }\n.btn-link, .btn-link:active, .btn-link.active, .btn-link[disabled], fieldset[disabled] .btn-link {\n    background-color: transparent;\n    box-shadow: none; }\n.btn-link, .btn-link:hover, .btn-link:focus, .btn-link:active {\n    border-color: transparent; }\n.btn-link:hover, .btn-link:focus {\n    color: #165ba8;\n    text-decoration: underline;\n    background-color: transparent; }\n.btn-link[disabled]:hover, .btn-link[disabled]:focus, fieldset[disabled] .btn-link:hover, fieldset[disabled] .btn-link:focus {\n    color: #999999;\n    text-decoration: none; }\n.btn-lg, .btn-group-lg > .btn {\n  padding: 18px 30px;\n  font-size: 19px;\n  line-height: 1.33333;\n  border-radius: 0; }\n.btn-sm, .btn-group-sm > .btn {\n  padding: 5px 10px;\n  font-size: 13px;\n  line-height: 1.5;\n  border-radius: 0; }\n.btn-xs, .btn-group-xs > .btn {\n  padding: 1px 5px;\n  font-size: 13px;\n  line-height: 1.5;\n  border-radius: 0; }\n.btn-block {\n  display: block;\n  width: 100%; }\n.btn-block + .btn-block {\n  margin-top: 5px; }\ninput[type=\"submit\"].btn-block, input[type=\"reset\"].btn-block, input[type=\"button\"].btn-block {\n  width: 100%; }\n.fade {\n  opacity: 0;\n  transition: opacity 0.15s linear; }\n.fade.in {\n    opacity: 1; }\n.collapse {\n  display: none; }\n.collapse.in {\n    display: block; }\ntr.collapse.in {\n  display: table-row; }\ntbody.collapse.in {\n  display: table-row-group; }\n.collapsing {\n  position: relative;\n  height: 0;\n  overflow: hidden;\n  transition-property: height, visibility;\n  transition-duration: 0.35s;\n  transition-timing-function: ease; }\n.caret {\n  display: inline-block;\n  width: 0;\n  height: 0;\n  margin-left: 2px;\n  vertical-align: middle;\n  border-top: 4px dashed;\n  border-top: 4px solid \\9;\n  border-right: 4px solid transparent;\n  border-left: 4px solid transparent; }\n.dropup, .dropdown {\n  position: relative; }\n.dropdown-toggle:focus {\n  outline: 0; }\n.dropdown-menu {\n  position: absolute;\n  top: 100%;\n  left: 0;\n  z-index: 1000;\n  display: none;\n  float: left;\n  min-width: 160px;\n  padding: 5px 0;\n  margin: 2px 0 0;\n  list-style: none;\n  font-size: 15px;\n  text-align: left;\n  background-color: #fff;\n  border: 1px solid #ccc;\n  border: 1px solid rgba(0, 0, 0, 0.15);\n  border-radius: 0;\n  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);\n  background-clip: padding-box; }\n.dropdown-menu.pull-right {\n    right: 0;\n    left: auto; }\n.dropdown-menu .divider {\n    height: 1px;\n    margin: 9.5px 0;\n    overflow: hidden;\n    background-color: #e5e5e5; }\n.dropdown-menu > li > a {\n    display: block;\n    padding: 3px 20px;\n    clear: both;\n    font-weight: normal;\n    line-height: 1.42857;\n    color: #333333;\n    white-space: nowrap; }\n.dropdown-menu > li > a:hover, .dropdown-menu > li > a:focus {\n  text-decoration: none;\n  color: #fff;\n  background-color: #2780E3; }\n.dropdown-menu > .active > a, .dropdown-menu > .active > a:hover, .dropdown-menu > .active > a:focus {\n  color: #fff;\n  text-decoration: none;\n  outline: 0;\n  background-color: #2780E3; }\n.dropdown-menu > .disabled > a, .dropdown-menu > .disabled > a:hover, .dropdown-menu > .disabled > a:focus {\n  color: #999999; }\n.dropdown-menu > .disabled > a:hover, .dropdown-menu > .disabled > a:focus {\n  text-decoration: none;\n  background-color: transparent;\n  background-image: none;\n  filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);\n  cursor: not-allowed; }\n.open > .dropdown-menu {\n  display: block; }\n.open > a {\n  outline: 0; }\n.dropdown-menu-right {\n  left: auto;\n  right: 0; }\n.dropdown-menu-left {\n  left: 0;\n  right: auto; }\n.dropdown-header {\n  display: block;\n  padding: 3px 20px;\n  font-size: 13px;\n  line-height: 1.42857;\n  color: #999999;\n  white-space: nowrap; }\n.dropdown-backdrop {\n  position: fixed;\n  left: 0;\n  right: 0;\n  bottom: 0;\n  top: 0;\n  z-index: 990; }\n.pull-right > .dropdown-menu {\n  right: 0;\n  left: auto; }\n.dropup .caret, .navbar-fixed-bottom .dropdown .caret {\n  border-top: 0;\n  border-bottom: 4px dashed;\n  border-bottom: 4px solid \\9;\n  content: \"\"; }\n.dropup .dropdown-menu, .navbar-fixed-bottom .dropdown .dropdown-menu {\n  top: auto;\n  bottom: 100%;\n  margin-bottom: 2px; }\n@media (min-width: 768px) {\n  .navbar-right .dropdown-menu {\n    right: 0;\n    left: auto; }\n  .navbar-right .dropdown-menu-left {\n    left: 0;\n    right: auto; } }\n.btn-group, .btn-group-vertical {\n  position: relative;\n  display: inline-block;\n  vertical-align: middle; }\n.btn-group > .btn, .btn-group-vertical > .btn {\n    position: relative;\n    float: left; }\n.btn-group > .btn:hover, .btn-group > .btn:focus, .btn-group > .btn:active, .btn-group > .btn.active, .btn-group-vertical > .btn:hover, .btn-group-vertical > .btn:focus, .btn-group-vertical > .btn:active, .btn-group-vertical > .btn.active {\n      z-index: 2; }\n.btn-group .btn + .btn, .btn-group .btn + .btn-group, .btn-group .btn-group + .btn, .btn-group .btn-group + .btn-group {\n  margin-left: -1px; }\n.btn-toolbar {\n  margin-left: -5px; }\n.btn-toolbar:before, .btn-toolbar:after {\n    content: \" \";\n    display: table; }\n.btn-toolbar:after {\n    clear: both; }\n.btn-toolbar .btn, .btn-toolbar .btn-group, .btn-toolbar .input-group {\n    float: left; }\n.btn-toolbar > .btn, .btn-toolbar > .btn-group, .btn-toolbar > .input-group {\n    margin-left: 5px; }\n.btn-group > .btn:not(:first-child):not(:last-child):not(.dropdown-toggle) {\n  border-radius: 0; }\n.btn-group > .btn:first-child {\n  margin-left: 0; }\n.btn-group > .btn:first-child:not(:last-child):not(.dropdown-toggle) {\n    border-bottom-right-radius: 0;\n    border-top-right-radius: 0; }\n.btn-group > .btn:last-child:not(:first-child), .btn-group > .dropdown-toggle:not(:first-child) {\n  border-bottom-left-radius: 0;\n  border-top-left-radius: 0; }\n.btn-group > .btn-group {\n  float: left; }\n.btn-group > .btn-group:not(:first-child):not(:last-child) > .btn {\n  border-radius: 0; }\n.btn-group > .btn-group:first-child:not(:last-child) > .btn:last-child, .btn-group > .btn-group:first-child:not(:last-child) > .dropdown-toggle {\n  border-bottom-right-radius: 0;\n  border-top-right-radius: 0; }\n.btn-group > .btn-group:last-child:not(:first-child) > .btn:first-child {\n  border-bottom-left-radius: 0;\n  border-top-left-radius: 0; }\n.btn-group .dropdown-toggle:active, .btn-group.open .dropdown-toggle {\n  outline: 0; }\n.btn-group > .btn + .dropdown-toggle {\n  padding-left: 8px;\n  padding-right: 8px; }\n.btn-group > .btn-lg + .dropdown-toggle, .btn-group-lg.btn-group > .btn + .dropdown-toggle {\n  padding-left: 12px;\n  padding-right: 12px; }\n.btn-group.open .dropdown-toggle {\n  box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125); }\n.btn-group.open .dropdown-toggle.btn-link {\n    box-shadow: none; }\n.btn .caret {\n  margin-left: 0; }\n.btn-lg .caret, .btn-group-lg > .btn .caret {\n  border-width: 5px 5px 0;\n  border-bottom-width: 0; }\n.dropup .btn-lg .caret, .dropup .btn-group-lg > .btn .caret {\n  border-width: 0 5px 5px; }\n.btn-group-vertical > .btn, .btn-group-vertical > .btn-group, .btn-group-vertical > .btn-group > .btn {\n  display: block;\n  float: none;\n  width: 100%;\n  max-width: 100%; }\n.btn-group-vertical > .btn-group:before, .btn-group-vertical > .btn-group:after {\n  content: \" \";\n  display: table; }\n.btn-group-vertical > .btn-group:after {\n  clear: both; }\n.btn-group-vertical > .btn-group > .btn {\n  float: none; }\n.btn-group-vertical > .btn + .btn, .btn-group-vertical > .btn + .btn-group, .btn-group-vertical > .btn-group + .btn, .btn-group-vertical > .btn-group + .btn-group {\n  margin-top: -1px;\n  margin-left: 0; }\n.btn-group-vertical > .btn:not(:first-child):not(:last-child) {\n  border-radius: 0; }\n.btn-group-vertical > .btn:first-child:not(:last-child) {\n  border-top-right-radius: 0;\n  border-top-left-radius: 0;\n  border-bottom-right-radius: 0;\n  border-bottom-left-radius: 0; }\n.btn-group-vertical > .btn:last-child:not(:first-child) {\n  border-top-right-radius: 0;\n  border-top-left-radius: 0;\n  border-bottom-right-radius: 0;\n  border-bottom-left-radius: 0; }\n.btn-group-vertical > .btn-group:not(:first-child):not(:last-child) > .btn {\n  border-radius: 0; }\n.btn-group-vertical > .btn-group:first-child:not(:last-child) > .btn:last-child, .btn-group-vertical > .btn-group:first-child:not(:last-child) > .dropdown-toggle {\n  border-bottom-right-radius: 0;\n  border-bottom-left-radius: 0; }\n.btn-group-vertical > .btn-group:last-child:not(:first-child) > .btn:first-child {\n  border-top-right-radius: 0;\n  border-top-left-radius: 0; }\n.btn-group-justified {\n  display: table;\n  width: 100%;\n  table-layout: fixed;\n  border-collapse: separate; }\n.btn-group-justified > .btn, .btn-group-justified > .btn-group {\n    float: none;\n    display: table-cell;\n    width: 1%; }\n.btn-group-justified > .btn-group .btn {\n    width: 100%; }\n.btn-group-justified > .btn-group .dropdown-menu {\n    left: auto; }\n[data-toggle=\"buttons\"] > .btn input[type=\"radio\"], [data-toggle=\"buttons\"] > .btn input[type=\"checkbox\"], [data-toggle=\"buttons\"] > .btn-group > .btn input[type=\"radio\"], [data-toggle=\"buttons\"] > .btn-group > .btn input[type=\"checkbox\"] {\n  position: absolute;\n  clip: rect(0, 0, 0, 0);\n  pointer-events: none; }\n.input-group {\n  position: relative;\n  display: table;\n  border-collapse: separate; }\n.input-group[class*=\"col-\"] {\n    float: none;\n    padding-left: 0;\n    padding-right: 0; }\n.input-group .form-control {\n    position: relative;\n    z-index: 2;\n    float: left;\n    width: 100%;\n    margin-bottom: 0; }\n.input-group .form-control:focus {\n      z-index: 3; }\n.input-group-addon, .input-group-btn, .input-group .form-control {\n  display: table-cell; }\n.input-group-addon:not(:first-child):not(:last-child), .input-group-btn:not(:first-child):not(:last-child), .input-group .form-control:not(:first-child):not(:last-child) {\n    border-radius: 0; }\n.input-group-addon, .input-group-btn {\n  width: 1%;\n  white-space: nowrap;\n  vertical-align: middle; }\n.input-group-addon {\n  padding: 10px 18px;\n  font-size: 15px;\n  font-weight: normal;\n  line-height: 1;\n  color: #333333;\n  text-align: center;\n  background-color: #e6e6e6;\n  border: 1px solid #ccc;\n  border-radius: 0; }\n.input-group-addon.input-sm, .input-group-sm > .input-group-addon, .input-group-sm > .input-group-btn > .input-group-addon.btn {\n    padding: 5px 10px;\n    font-size: 13px;\n    border-radius: 0; }\n.input-group-addon.input-lg, .input-group-lg > .input-group-addon, .input-group-lg > .input-group-btn > .input-group-addon.btn {\n    padding: 18px 30px;\n    font-size: 19px;\n    border-radius: 0; }\n.input-group-addon input[type=\"radio\"], .input-group-addon input[type=\"checkbox\"] {\n    margin-top: 0; }\n.input-group .form-control:first-child, .input-group-addon:first-child, .input-group-btn:first-child > .btn, .input-group-btn:first-child > .btn-group > .btn, .input-group-btn:first-child > .dropdown-toggle, .input-group-btn:last-child > .btn:not(:last-child):not(.dropdown-toggle), .input-group-btn:last-child > .btn-group:not(:last-child) > .btn {\n  border-bottom-right-radius: 0;\n  border-top-right-radius: 0; }\n.input-group-addon:first-child {\n  border-right: 0; }\n.input-group .form-control:last-child, .input-group-addon:last-child, .input-group-btn:last-child > .btn, .input-group-btn:last-child > .btn-group > .btn, .input-group-btn:last-child > .dropdown-toggle, .input-group-btn:first-child > .btn:not(:first-child), .input-group-btn:first-child > .btn-group:not(:first-child) > .btn {\n  border-bottom-left-radius: 0;\n  border-top-left-radius: 0; }\n.input-group-addon:last-child {\n  border-left: 0; }\n.input-group-btn {\n  position: relative;\n  font-size: 0;\n  white-space: nowrap; }\n.input-group-btn > .btn {\n    position: relative; }\n.input-group-btn > .btn + .btn {\n      margin-left: -1px; }\n.input-group-btn > .btn:hover, .input-group-btn > .btn:focus, .input-group-btn > .btn:active {\n      z-index: 2; }\n.input-group-btn:first-child > .btn, .input-group-btn:first-child > .btn-group {\n    margin-right: -1px; }\n.input-group-btn:last-child > .btn, .input-group-btn:last-child > .btn-group {\n    z-index: 2;\n    margin-left: -1px; }\n.nav {\n  margin-bottom: 0;\n  padding-left: 0;\n  list-style: none; }\n.nav:before, .nav:after {\n    content: \" \";\n    display: table; }\n.nav:after {\n    clear: both; }\n.nav > li {\n    position: relative;\n    display: block; }\n.nav > li > a {\n      position: relative;\n      display: block;\n      padding: 10px 15px; }\n.nav > li > a:hover, .nav > li > a:focus {\n        text-decoration: none;\n        background-color: #e6e6e6; }\n.nav > li.disabled > a {\n      color: #999999; }\n.nav > li.disabled > a:hover, .nav > li.disabled > a:focus {\n        color: #999999;\n        text-decoration: none;\n        background-color: transparent;\n        cursor: not-allowed; }\n.nav .open > a, .nav .open > a:hover, .nav .open > a:focus {\n    background-color: #e6e6e6;\n    border-color: #2780E3; }\n.nav .nav-divider {\n    height: 1px;\n    margin: 9.5px 0;\n    overflow: hidden;\n    background-color: #e5e5e5; }\n.nav > li > a > img {\n    max-width: none; }\n.nav-tabs {\n  border-bottom: 1px solid #ddd; }\n.nav-tabs > li {\n    float: left;\n    margin-bottom: -1px; }\n.nav-tabs > li > a {\n      margin-right: 2px;\n      line-height: 1.42857;\n      border: 1px solid transparent;\n      border-radius: 0 0 0 0; }\n.nav-tabs > li > a:hover {\n        border-color: #e6e6e6 #e6e6e6 #ddd; }\n.nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs > li.active > a:focus {\n      color: #555555;\n      background-color: #fff;\n      border: 1px solid #ddd;\n      border-bottom-color: transparent;\n      cursor: default; }\n.nav-pills > li {\n  float: left; }\n.nav-pills > li > a {\n    border-radius: 0; }\n.nav-pills > li + li {\n    margin-left: 2px; }\n.nav-pills > li.active > a, .nav-pills > li.active > a:hover, .nav-pills > li.active > a:focus {\n    color: #fff;\n    background-color: #2780E3; }\n.nav-stacked > li {\n  float: none; }\n.nav-stacked > li + li {\n    margin-top: 2px;\n    margin-left: 0; }\n.nav-justified, .nav-tabs.nav-justified {\n  width: 100%; }\n.nav-justified > li, .nav-tabs.nav-justified > li {\n    float: none; }\n.nav-justified > li > a, .nav-tabs.nav-justified > li > a {\n      text-align: center;\n      margin-bottom: 5px; }\n.nav-justified > .dropdown .dropdown-menu {\n    top: auto;\n    left: auto; }\n@media (min-width: 768px) {\n    .nav-justified > li, .nav-tabs.nav-justified > li {\n      display: table-cell;\n      width: 1%; }\n      .nav-justified > li > a, .nav-tabs.nav-justified > li > a {\n        margin-bottom: 0; } }\n.nav-tabs-justified, .nav-tabs.nav-justified {\n  border-bottom: 0; }\n.nav-tabs-justified > li > a, .nav-tabs.nav-justified > li > a {\n    margin-right: 0;\n    border-radius: 0; }\n.nav-tabs-justified > .active > a, .nav-tabs.nav-justified > .active > a, .nav-tabs-justified > .active > a:hover, .nav-tabs.nav-justified > .active > a:hover, .nav-tabs-justified > .active > a:focus, .nav-tabs.nav-justified > .active > a:focus {\n    border: 1px solid #ddd; }\n@media (min-width: 768px) {\n    .nav-tabs-justified > li > a, .nav-tabs.nav-justified > li > a {\n      border-bottom: 1px solid #ddd;\n      border-radius: 0 0 0 0; }\n    .nav-tabs-justified > .active > a, .nav-tabs.nav-justified > .active > a, .nav-tabs-justified > .active > a:hover, .nav-tabs.nav-justified > .active > a:hover, .nav-tabs-justified > .active > a:focus, .nav-tabs.nav-justified > .active > a:focus {\n      border-bottom-color: #fff; } }\n.tab-content > .tab-pane {\n  display: none; }\n.tab-content > .active {\n  display: block; }\n.nav-tabs .dropdown-menu {\n  margin-top: -1px;\n  border-top-right-radius: 0;\n  border-top-left-radius: 0; }\n.navbar {\n  position: relative;\n  min-height: 50px;\n  margin-bottom: 21px;\n  border: 1px solid transparent; }\n.navbar:before, .navbar:after {\n    content: \" \";\n    display: table; }\n.navbar:after {\n    clear: both; }\n@media (min-width: 768px) {\n    .navbar {\n      border-radius: 0; } }\n.navbar-header:before, .navbar-header:after {\n  content: \" \";\n  display: table; }\n.navbar-header:after {\n  clear: both; }\n@media (min-width: 768px) {\n  .navbar-header {\n    float: left; } }\n.navbar-collapse {\n  overflow-x: visible;\n  padding-right: 15px;\n  padding-left: 15px;\n  border-top: 1px solid transparent;\n  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);\n  -webkit-overflow-scrolling: touch; }\n.navbar-collapse:before, .navbar-collapse:after {\n    content: \" \";\n    display: table; }\n.navbar-collapse:after {\n    clear: both; }\n.navbar-collapse.in {\n    overflow-y: auto; }\n@media (min-width: 768px) {\n    .navbar-collapse {\n      width: auto;\n      border-top: 0;\n      box-shadow: none; }\n      .navbar-collapse.collapse {\n        display: block !important;\n        height: auto !important;\n        padding-bottom: 0;\n        overflow: visible !important; }\n      .navbar-collapse.in {\n        overflow-y: visible; }\n      .navbar-fixed-top .navbar-collapse, .navbar-static-top .navbar-collapse, .navbar-fixed-bottom .navbar-collapse {\n        padding-left: 0;\n        padding-right: 0; } }\n.navbar-fixed-top .navbar-collapse, .navbar-fixed-bottom .navbar-collapse {\n  max-height: 340px; }\n@media (max-device-width: 480px) and (orientation: landscape) {\n    .navbar-fixed-top .navbar-collapse, .navbar-fixed-bottom .navbar-collapse {\n      max-height: 200px; } }\n.container > .navbar-header, .container > .navbar-collapse, .container-fluid > .navbar-header, .container-fluid > .navbar-collapse {\n  margin-right: -15px;\n  margin-left: -15px; }\n@media (min-width: 768px) {\n    .container > .navbar-header, .container > .navbar-collapse, .container-fluid > .navbar-header, .container-fluid > .navbar-collapse {\n      margin-right: 0;\n      margin-left: 0; } }\n.navbar-static-top {\n  z-index: 1000;\n  border-width: 0 0 1px; }\n@media (min-width: 768px) {\n    .navbar-static-top {\n      border-radius: 0; } }\n.navbar-fixed-top, .navbar-fixed-bottom {\n  position: fixed;\n  right: 0;\n  left: 0;\n  z-index: 1030; }\n@media (min-width: 768px) {\n    .navbar-fixed-top, .navbar-fixed-bottom {\n      border-radius: 0; } }\n.navbar-fixed-top {\n  top: 0;\n  border-width: 0 0 1px; }\n.navbar-fixed-bottom {\n  bottom: 0;\n  margin-bottom: 0;\n  border-width: 1px 0 0; }\n.navbar-brand {\n  float: left;\n  padding: 14.5px 15px;\n  font-size: 19px;\n  line-height: 21px;\n  height: 50px; }\n.navbar-brand:hover, .navbar-brand:focus {\n    text-decoration: none; }\n.navbar-brand > img {\n    display: block; }\n@media (min-width: 768px) {\n    .navbar > .container .navbar-brand, .navbar > .container-fluid .navbar-brand {\n      margin-left: -15px; } }\n.navbar-toggle {\n  position: relative;\n  float: right;\n  margin-right: 15px;\n  padding: 9px 10px;\n  margin-top: 8px;\n  margin-bottom: 8px;\n  background-color: transparent;\n  background-image: none;\n  border: 1px solid transparent;\n  border-radius: 0; }\n.navbar-toggle:focus {\n    outline: 0; }\n.navbar-toggle .icon-bar {\n    display: block;\n    width: 22px;\n    height: 2px;\n    border-radius: 1px; }\n.navbar-toggle .icon-bar + .icon-bar {\n    margin-top: 4px; }\n@media (min-width: 768px) {\n    .navbar-toggle {\n      display: none; } }\n.navbar-nav {\n  margin: 7.25px -15px; }\n.navbar-nav > li > a {\n    padding-top: 10px;\n    padding-bottom: 10px;\n    line-height: 21px; }\n@media (max-width: 767px) {\n    .navbar-nav .open .dropdown-menu {\n      position: static;\n      float: none;\n      width: auto;\n      margin-top: 0;\n      background-color: transparent;\n      border: 0;\n      box-shadow: none; }\n      .navbar-nav .open .dropdown-menu > li > a, .navbar-nav .open .dropdown-menu .dropdown-header {\n        padding: 5px 15px 5px 25px; }\n      .navbar-nav .open .dropdown-menu > li > a {\n        line-height: 21px; }\n        .navbar-nav .open .dropdown-menu > li > a:hover, .navbar-nav .open .dropdown-menu > li > a:focus {\n          background-image: none; } }\n@media (min-width: 768px) {\n    .navbar-nav {\n      float: left;\n      margin: 0; }\n      .navbar-nav > li {\n        float: left; }\n        .navbar-nav > li > a {\n          padding-top: 14.5px;\n          padding-bottom: 14.5px; } }\n.navbar-form {\n  margin-left: -15px;\n  margin-right: -15px;\n  padding: 10px 15px;\n  border-top: 1px solid transparent;\n  border-bottom: 1px solid transparent;\n  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 0 rgba(255, 255, 255, 0.1);\n  margin-top: 3.5px;\n  margin-bottom: 3.5px; }\n@media (min-width: 768px) {\n    .navbar-form .form-group {\n      display: inline-block;\n      margin-bottom: 0;\n      vertical-align: middle; }\n    .navbar-form .form-control {\n      display: inline-block;\n      width: auto;\n      vertical-align: middle; }\n    .navbar-form .form-control-static {\n      display: inline-block; }\n    .navbar-form .input-group {\n      display: inline-table;\n      vertical-align: middle; }\n      .navbar-form .input-group .input-group-addon, .navbar-form .input-group .input-group-btn, .navbar-form .input-group .form-control {\n        width: auto; }\n    .navbar-form .input-group > .form-control {\n      width: 100%; }\n    .navbar-form .control-label {\n      margin-bottom: 0;\n      vertical-align: middle; }\n    .navbar-form .radio, .navbar-form .checkbox {\n      display: inline-block;\n      margin-top: 0;\n      margin-bottom: 0;\n      vertical-align: middle; }\n      .navbar-form .radio label, .navbar-form .checkbox label {\n        padding-left: 0; }\n    .navbar-form .radio input[type=\"radio\"], .navbar-form .checkbox input[type=\"checkbox\"] {\n      position: relative;\n      margin-left: 0; }\n    .navbar-form .has-feedback .form-control-feedback {\n      top: 0; } }\n@media (max-width: 767px) {\n    .navbar-form .form-group {\n      margin-bottom: 5px; }\n      .navbar-form .form-group:last-child {\n        margin-bottom: 0; } }\n@media (min-width: 768px) {\n    .navbar-form {\n      width: auto;\n      border: 0;\n      margin-left: 0;\n      margin-right: 0;\n      padding-top: 0;\n      padding-bottom: 0;\n      box-shadow: none; } }\n.navbar-nav > li > .dropdown-menu {\n  margin-top: 0;\n  border-top-right-radius: 0;\n  border-top-left-radius: 0; }\n.navbar-fixed-bottom .navbar-nav > li > .dropdown-menu {\n  margin-bottom: 0;\n  border-top-right-radius: 0;\n  border-top-left-radius: 0;\n  border-bottom-right-radius: 0;\n  border-bottom-left-radius: 0; }\n.navbar-btn {\n  margin-top: 3.5px;\n  margin-bottom: 3.5px; }\n.navbar-btn.btn-sm, .btn-group-sm > .navbar-btn.btn {\n    margin-top: 9.5px;\n    margin-bottom: 9.5px; }\n.navbar-btn.btn-xs, .btn-group-xs > .navbar-btn.btn {\n    margin-top: 14px;\n    margin-bottom: 14px; }\n.navbar-text {\n  margin-top: 14.5px;\n  margin-bottom: 14.5px; }\n@media (min-width: 768px) {\n    .navbar-text {\n      float: left;\n      margin-left: 15px;\n      margin-right: 15px; } }\n@media (min-width: 768px) {\n  .navbar-left {\n    float: left !important; }\n  .navbar-right {\n    float: right !important;\n    margin-right: -15px; }\n    .navbar-right ~ .navbar-right {\n      margin-right: 0; } }\n.navbar-default {\n  background-color: #222222;\n  border-color: #121212; }\n.navbar-default .navbar-brand {\n    color: #fff; }\n.navbar-default .navbar-brand:hover, .navbar-default .navbar-brand:focus {\n      color: #fff;\n      background-color: none; }\n.navbar-default .navbar-text {\n    color: #fff; }\n.navbar-default .navbar-nav > li > a {\n    color: #fff; }\n.navbar-default .navbar-nav > li > a:hover, .navbar-default .navbar-nav > li > a:focus {\n      color: #fff;\n      background-color: #090909; }\n.navbar-default .navbar-nav > .active > a, .navbar-default .navbar-nav > .active > a:hover, .navbar-default .navbar-nav > .active > a:focus {\n    color: #fff;\n    background-color: #090909; }\n.navbar-default .navbar-nav > .disabled > a, .navbar-default .navbar-nav > .disabled > a:hover, .navbar-default .navbar-nav > .disabled > a:focus {\n    color: #ccc;\n    background-color: transparent; }\n.navbar-default .navbar-toggle {\n    border-color: transparent; }\n.navbar-default .navbar-toggle:hover, .navbar-default .navbar-toggle:focus {\n      background-color: #090909; }\n.navbar-default .navbar-toggle .icon-bar {\n      background-color: #fff; }\n.navbar-default .navbar-collapse, .navbar-default .navbar-form {\n    border-color: #121212; }\n.navbar-default .navbar-nav > .open > a, .navbar-default .navbar-nav > .open > a:hover, .navbar-default .navbar-nav > .open > a:focus {\n    background-color: #090909;\n    color: #fff; }\n@media (max-width: 767px) {\n    .navbar-default .navbar-nav .open .dropdown-menu > li > a {\n      color: #fff; }\n      .navbar-default .navbar-nav .open .dropdown-menu > li > a:hover, .navbar-default .navbar-nav .open .dropdown-menu > li > a:focus {\n        color: #fff;\n        background-color: #090909; }\n    .navbar-default .navbar-nav .open .dropdown-menu > .active > a, .navbar-default .navbar-nav .open .dropdown-menu > .active > a:hover, .navbar-default .navbar-nav .open .dropdown-menu > .active > a:focus {\n      color: #fff;\n      background-color: #090909; }\n    .navbar-default .navbar-nav .open .dropdown-menu > .disabled > a, .navbar-default .navbar-nav .open .dropdown-menu > .disabled > a:hover, .navbar-default .navbar-nav .open .dropdown-menu > .disabled > a:focus {\n      color: #ccc;\n      background-color: transparent; } }\n.navbar-default .navbar-link {\n    color: #fff; }\n.navbar-default .navbar-link:hover {\n      color: #fff; }\n.navbar-default .btn-link {\n    color: #fff; }\n.navbar-default .btn-link:hover, .navbar-default .btn-link:focus {\n      color: #fff; }\n.navbar-default .btn-link[disabled]:hover, .navbar-default .btn-link[disabled]:focus, fieldset[disabled] .navbar-default .btn-link:hover, fieldset[disabled] .navbar-default .btn-link:focus {\n      color: #ccc; }\n.navbar-inverse {\n  background-color: #2780E3;\n  border-color: #1967be; }\n.navbar-inverse .navbar-brand {\n    color: #fff; }\n.navbar-inverse .navbar-brand:hover, .navbar-inverse .navbar-brand:focus {\n      color: #fff;\n      background-color: none; }\n.navbar-inverse .navbar-text {\n    color: #fff; }\n.navbar-inverse .navbar-nav > li > a {\n    color: #fff; }\n.navbar-inverse .navbar-nav > li > a:hover, .navbar-inverse .navbar-nav > li > a:focus {\n      color: #fff;\n      background-color: #1967be; }\n.navbar-inverse .navbar-nav > .active > a, .navbar-inverse .navbar-nav > .active > a:hover, .navbar-inverse .navbar-nav > .active > a:focus {\n    color: #fff;\n    background-color: #1967be; }\n.navbar-inverse .navbar-nav > .disabled > a, .navbar-inverse .navbar-nav > .disabled > a:hover, .navbar-inverse .navbar-nav > .disabled > a:focus {\n    color: #fff;\n    background-color: transparent; }\n.navbar-inverse .navbar-toggle {\n    border-color: transparent; }\n.navbar-inverse .navbar-toggle:hover, .navbar-inverse .navbar-toggle:focus {\n      background-color: #1967be; }\n.navbar-inverse .navbar-toggle .icon-bar {\n      background-color: #fff; }\n.navbar-inverse .navbar-collapse, .navbar-inverse .navbar-form {\n    border-color: #1a6ecc; }\n.navbar-inverse .navbar-nav > .open > a, .navbar-inverse .navbar-nav > .open > a:hover, .navbar-inverse .navbar-nav > .open > a:focus {\n    background-color: #1967be;\n    color: #fff; }\n@media (max-width: 767px) {\n    .navbar-inverse .navbar-nav .open .dropdown-menu > .dropdown-header {\n      border-color: #1967be; }\n    .navbar-inverse .navbar-nav .open .dropdown-menu .divider {\n      background-color: #1967be; }\n    .navbar-inverse .navbar-nav .open .dropdown-menu > li > a {\n      color: #fff; }\n      .navbar-inverse .navbar-nav .open .dropdown-menu > li > a:hover, .navbar-inverse .navbar-nav .open .dropdown-menu > li > a:focus {\n        color: #fff;\n        background-color: #1967be; }\n    .navbar-inverse .navbar-nav .open .dropdown-menu > .active > a, .navbar-inverse .navbar-nav .open .dropdown-menu > .active > a:hover, .navbar-inverse .navbar-nav .open .dropdown-menu > .active > a:focus {\n      color: #fff;\n      background-color: #1967be; }\n    .navbar-inverse .navbar-nav .open .dropdown-menu > .disabled > a, .navbar-inverse .navbar-nav .open .dropdown-menu > .disabled > a:hover, .navbar-inverse .navbar-nav .open .dropdown-menu > .disabled > a:focus {\n      color: #fff;\n      background-color: transparent; } }\n.navbar-inverse .navbar-link {\n    color: #fff; }\n.navbar-inverse .navbar-link:hover {\n      color: #fff; }\n.navbar-inverse .btn-link {\n    color: #fff; }\n.navbar-inverse .btn-link:hover, .navbar-inverse .btn-link:focus {\n      color: #fff; }\n.navbar-inverse .btn-link[disabled]:hover, .navbar-inverse .btn-link[disabled]:focus, fieldset[disabled] .navbar-inverse .btn-link:hover, fieldset[disabled] .navbar-inverse .btn-link:focus {\n      color: #fff; }\n.breadcrumb {\n  padding: 8px 15px;\n  margin-bottom: 21px;\n  list-style: none;\n  background-color: #f5f5f5;\n  border-radius: 0; }\n.breadcrumb > li {\n    display: inline-block; }\n.breadcrumb > li + li:before {\n      content: \"/\\A0\";\n      padding: 0 5px;\n      color: #ccc; }\n.breadcrumb > .active {\n    color: #999999; }\n.pagination {\n  display: inline-block;\n  padding-left: 0;\n  margin: 21px 0;\n  border-radius: 0; }\n.pagination > li {\n    display: inline; }\n.pagination > li > a, .pagination > li > span {\n      position: relative;\n      float: left;\n      padding: 10px 18px;\n      line-height: 1.42857;\n      text-decoration: none;\n      color: #2780E3;\n      background-color: #fff;\n      border: 1px solid #ddd;\n      margin-left: -1px; }\n.pagination > li:first-child > a, .pagination > li:first-child > span {\n      margin-left: 0;\n      border-bottom-left-radius: 0;\n      border-top-left-radius: 0; }\n.pagination > li:last-child > a, .pagination > li:last-child > span {\n      border-bottom-right-radius: 0;\n      border-top-right-radius: 0; }\n.pagination > li > a:hover, .pagination > li > a:focus, .pagination > li > span:hover, .pagination > li > span:focus {\n    z-index: 2;\n    color: #165ba8;\n    background-color: #e6e6e6;\n    border-color: #ddd; }\n.pagination > .active > a, .pagination > .active > a:hover, .pagination > .active > a:focus, .pagination > .active > span, .pagination > .active > span:hover, .pagination > .active > span:focus {\n    z-index: 3;\n    color: #999999;\n    background-color: #f5f5f5;\n    border-color: #ddd;\n    cursor: default; }\n.pagination > .disabled > span, .pagination > .disabled > span:hover, .pagination > .disabled > span:focus, .pagination > .disabled > a, .pagination > .disabled > a:hover, .pagination > .disabled > a:focus {\n    color: #999999;\n    background-color: #fff;\n    border-color: #ddd;\n    cursor: not-allowed; }\n.pagination-lg > li > a, .pagination-lg > li > span {\n  padding: 18px 30px;\n  font-size: 19px;\n  line-height: 1.33333; }\n.pagination-lg > li:first-child > a, .pagination-lg > li:first-child > span {\n  border-bottom-left-radius: 0;\n  border-top-left-radius: 0; }\n.pagination-lg > li:last-child > a, .pagination-lg > li:last-child > span {\n  border-bottom-right-radius: 0;\n  border-top-right-radius: 0; }\n.pagination-sm > li > a, .pagination-sm > li > span {\n  padding: 5px 10px;\n  font-size: 13px;\n  line-height: 1.5; }\n.pagination-sm > li:first-child > a, .pagination-sm > li:first-child > span {\n  border-bottom-left-radius: 0;\n  border-top-left-radius: 0; }\n.pagination-sm > li:last-child > a, .pagination-sm > li:last-child > span {\n  border-bottom-right-radius: 0;\n  border-top-right-radius: 0; }\n.pager {\n  padding-left: 0;\n  margin: 21px 0;\n  list-style: none;\n  text-align: center; }\n.pager:before, .pager:after {\n    content: \" \";\n    display: table; }\n.pager:after {\n    clear: both; }\n.pager li {\n    display: inline; }\n.pager li > a, .pager li > span {\n      display: inline-block;\n      padding: 5px 14px;\n      background-color: #fff;\n      border: 1px solid #ddd;\n      border-radius: 0; }\n.pager li > a:hover, .pager li > a:focus {\n      text-decoration: none;\n      background-color: #e6e6e6; }\n.pager .next > a, .pager .next > span {\n    float: right; }\n.pager .previous > a, .pager .previous > span {\n    float: left; }\n.pager .disabled > a, .pager .disabled > a:hover, .pager .disabled > a:focus, .pager .disabled > span {\n    color: #999999;\n    background-color: #fff;\n    cursor: not-allowed; }\n.label {\n  display: inline;\n  padding: .2em .6em .3em;\n  font-size: 75%;\n  font-weight: bold;\n  line-height: 1;\n  color: #fff;\n  text-align: center;\n  white-space: nowrap;\n  vertical-align: baseline;\n  border-radius: .25em; }\n.label:empty {\n    display: none; }\n.btn .label {\n    position: relative;\n    top: -1px; }\na.label:hover, a.label:focus {\n  color: #fff;\n  text-decoration: none;\n  cursor: pointer; }\n.label-default {\n  background-color: #222222; }\n.label-default[href]:hover, .label-default[href]:focus {\n    background-color: #090909; }\n.label-primary {\n  background-color: #2780E3; }\n.label-primary[href]:hover, .label-primary[href]:focus {\n    background-color: #1967be; }\n.label-success {\n  background-color: #3FB618; }\n.label-success[href]:hover, .label-success[href]:focus {\n    background-color: #2f8912; }\n.label-info {\n  background-color: #9954BB; }\n.label-info[href]:hover, .label-info[href]:focus {\n    background-color: #7e3f9d; }\n.label-warning {\n  background-color: #FF7518; }\n.label-warning[href]:hover, .label-warning[href]:focus {\n    background-color: #e45c00; }\n.label-danger {\n  background-color: #FF0039; }\n.label-danger[href]:hover, .label-danger[href]:focus {\n    background-color: #cc002e; }\n.badge {\n  display: inline-block;\n  min-width: 10px;\n  padding: 3px 7px;\n  font-size: 13px;\n  font-weight: bold;\n  color: #fff;\n  line-height: 1;\n  vertical-align: middle;\n  white-space: nowrap;\n  text-align: center;\n  background-color: #2780E3;\n  border-radius: 10px; }\n.badge:empty {\n    display: none; }\n.btn .badge {\n    position: relative;\n    top: -1px; }\n.btn-xs .badge, .btn-group-xs > .btn .badge, .btn-group-xs > .btn .badge {\n    top: 0;\n    padding: 1px 5px; }\n.list-group-item.active > .badge, .nav-pills > .active > a > .badge {\n    color: #2780E3;\n    background-color: #fff; }\n.list-group-item > .badge {\n    float: right; }\n.list-group-item > .badge + .badge {\n    margin-right: 5px; }\n.nav-pills > li > a > .badge {\n    margin-left: 3px; }\na.badge:hover, a.badge:focus {\n  color: #fff;\n  text-decoration: none;\n  cursor: pointer; }\n.jumbotron {\n  padding-top: 30px;\n  padding-bottom: 30px;\n  margin-bottom: 30px;\n  color: inherit;\n  background-color: #e6e6e6; }\n.jumbotron h1, .jumbotron .h1 {\n    color: inherit; }\n.jumbotron p {\n    margin-bottom: 15px;\n    font-size: 23px;\n    font-weight: 200; }\n.jumbotron > hr {\n    border-top-color: #cccccc; }\n.container .jumbotron, .container-fluid .jumbotron {\n    border-radius: 0;\n    padding-left: 15px;\n    padding-right: 15px; }\n.jumbotron .container {\n    max-width: 100%; }\n@media screen and (min-width: 768px) {\n    .jumbotron {\n      padding-top: 48px;\n      padding-bottom: 48px; }\n      .container .jumbotron, .container-fluid .jumbotron {\n        padding-left: 60px;\n        padding-right: 60px; }\n      .jumbotron h1, .jumbotron .h1 {\n        font-size: 68px; } }\n.thumbnail {\n  display: block;\n  padding: 4px;\n  margin-bottom: 21px;\n  line-height: 1.42857;\n  background-color: #fff;\n  border: 1px solid #ddd;\n  border-radius: 0;\n  transition: border 0.2s ease-in-out; }\n.thumbnail > img, .thumbnail a > img {\n    display: block;\n    max-width: 100%;\n    height: auto;\n    margin-left: auto;\n    margin-right: auto; }\n.thumbnail .caption {\n    padding: 9px;\n    color: #333333; }\na.thumbnail:hover, a.thumbnail:focus, a.thumbnail.active {\n  border-color: #2780E3; }\n.alert {\n  padding: 15px;\n  margin-bottom: 21px;\n  border: 1px solid transparent;\n  border-radius: 0; }\n.alert h4 {\n    margin-top: 0;\n    color: inherit; }\n.alert .alert-link {\n    font-weight: bold; }\n.alert > p, .alert > ul {\n    margin-bottom: 0; }\n.alert > p + p {\n    margin-top: 5px; }\n.alert-dismissable, .alert-dismissible {\n  padding-right: 35px; }\n.alert-dismissable .close, .alert-dismissible .close {\n    position: relative;\n    top: -2px;\n    right: -21px;\n    color: inherit; }\n.alert-success {\n  background-color: #3FB618;\n  border-color: #4e9f15;\n  color: #fff; }\n.alert-success hr {\n    border-top-color: #438912; }\n.alert-success .alert-link {\n    color: #e6e6e6; }\n.alert-info {\n  background-color: #9954BB;\n  border-color: #7643a8;\n  color: #fff; }\n.alert-info hr {\n    border-top-color: #693c96; }\n.alert-info .alert-link {\n    color: #e6e6e6; }\n.alert-warning {\n  background-color: #FF7518;\n  border-color: #ff4309;\n  color: #fff; }\n.alert-warning hr {\n    border-top-color: #ee3800; }\n.alert-warning .alert-link {\n    color: #e6e6e6; }\n.alert-danger {\n  background-color: #FF0039;\n  border-color: #f0005e;\n  color: #fff; }\n.alert-danger hr {\n    border-top-color: #d60054; }\n.alert-danger .alert-link {\n    color: #e6e6e6; }\n@-webkit-keyframes progress-bar-stripes {\n  from {\n    background-position: 40px 0; }\n  to {\n    background-position: 0 0; } }\n@keyframes progress-bar-stripes {\n  from {\n    background-position: 40px 0; }\n  to {\n    background-position: 0 0; } }\n.progress {\n  overflow: hidden;\n  height: 21px;\n  margin-bottom: 21px;\n  background-color: #ccc;\n  border-radius: 0;\n  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1); }\n.progress-bar {\n  float: left;\n  width: 0%;\n  height: 100%;\n  font-size: 13px;\n  line-height: 21px;\n  color: #fff;\n  text-align: center;\n  background-color: #2780E3;\n  box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.15);\n  transition: width 0.6s ease; }\n.progress-striped .progress-bar, .progress-bar-striped {\n  background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);\n  background-size: 40px 40px; }\n.progress.active .progress-bar, .progress-bar.active {\n  -webkit-animation: progress-bar-stripes 2s linear infinite;\n  animation: progress-bar-stripes 2s linear infinite; }\n.progress-bar-success {\n  background-color: #3FB618; }\n.progress-striped .progress-bar-success {\n    background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent); }\n.progress-bar-info {\n  background-color: #9954BB; }\n.progress-striped .progress-bar-info {\n    background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent); }\n.progress-bar-warning {\n  background-color: #FF7518; }\n.progress-striped .progress-bar-warning {\n    background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent); }\n.progress-bar-danger {\n  background-color: #FF0039; }\n.progress-striped .progress-bar-danger {\n    background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent); }\n.media {\n  margin-top: 15px; }\n.media:first-child {\n    margin-top: 0; }\n.media, .media-body {\n  zoom: 1;\n  overflow: hidden; }\n.media-body {\n  width: 10000px; }\n.media-object {\n  display: block; }\n.media-object.img-thumbnail {\n    max-width: none; }\n.media-right, .media > .pull-right {\n  padding-left: 10px; }\n.media-left, .media > .pull-left {\n  padding-right: 10px; }\n.media-left, .media-right, .media-body {\n  display: table-cell;\n  vertical-align: top; }\n.media-middle {\n  vertical-align: middle; }\n.media-bottom {\n  vertical-align: bottom; }\n.media-heading {\n  margin-top: 0;\n  margin-bottom: 5px; }\n.media-list {\n  padding-left: 0;\n  list-style: none; }\n.list-group {\n  margin-bottom: 20px;\n  padding-left: 0; }\n.list-group-item {\n  position: relative;\n  display: block;\n  padding: 10px 15px;\n  margin-bottom: -1px;\n  background-color: #fff;\n  border: 1px solid #ddd; }\n.list-group-item:first-child {\n    border-top-right-radius: 0;\n    border-top-left-radius: 0; }\n.list-group-item:last-child {\n    margin-bottom: 0;\n    border-bottom-right-radius: 0;\n    border-bottom-left-radius: 0; }\na.list-group-item, button.list-group-item {\n  color: #555; }\na.list-group-item .list-group-item-heading, button.list-group-item .list-group-item-heading {\n    color: #333; }\na.list-group-item:hover, a.list-group-item:focus, button.list-group-item:hover, button.list-group-item:focus {\n    text-decoration: none;\n    color: #555;\n    background-color: #f5f5f5; }\nbutton.list-group-item {\n  width: 100%;\n  text-align: left; }\n.list-group-item.disabled, .list-group-item.disabled:hover, .list-group-item.disabled:focus {\n  background-color: #e6e6e6;\n  color: #999999;\n  cursor: not-allowed; }\n.list-group-item.disabled .list-group-item-heading, .list-group-item.disabled:hover .list-group-item-heading, .list-group-item.disabled:focus .list-group-item-heading {\n    color: inherit; }\n.list-group-item.disabled .list-group-item-text, .list-group-item.disabled:hover .list-group-item-text, .list-group-item.disabled:focus .list-group-item-text {\n    color: #999999; }\n.list-group-item.active, .list-group-item.active:hover, .list-group-item.active:focus {\n  z-index: 2;\n  color: #fff;\n  background-color: #2780E3;\n  border-color: #ddd; }\n.list-group-item.active .list-group-item-heading, .list-group-item.active .list-group-item-heading > small, .list-group-item.active .list-group-item-heading > .small, .list-group-item.active:hover .list-group-item-heading, .list-group-item.active:hover .list-group-item-heading > small, .list-group-item.active:hover .list-group-item-heading > .small, .list-group-item.active:focus .list-group-item-heading, .list-group-item.active:focus .list-group-item-heading > small, .list-group-item.active:focus .list-group-item-heading > .small {\n    color: inherit; }\n.list-group-item.active .list-group-item-text, .list-group-item.active:hover .list-group-item-text, .list-group-item.active:focus .list-group-item-text {\n    color: #dceafa; }\n.list-group-item-success {\n  color: #fff;\n  background-color: #3FB618; }\na.list-group-item-success, button.list-group-item-success {\n  color: #fff; }\na.list-group-item-success .list-group-item-heading, button.list-group-item-success .list-group-item-heading {\n    color: inherit; }\na.list-group-item-success:hover, a.list-group-item-success:focus, button.list-group-item-success:hover, button.list-group-item-success:focus {\n    color: #fff;\n    background-color: #379f15; }\na.list-group-item-success.active, a.list-group-item-success.active:hover, a.list-group-item-success.active:focus, button.list-group-item-success.active, button.list-group-item-success.active:hover, button.list-group-item-success.active:focus {\n    color: #fff;\n    background-color: #fff;\n    border-color: #fff; }\n.list-group-item-info {\n  color: #fff;\n  background-color: #9954BB; }\na.list-group-item-info, button.list-group-item-info {\n  color: #fff; }\na.list-group-item-info .list-group-item-heading, button.list-group-item-info .list-group-item-heading {\n    color: inherit; }\na.list-group-item-info:hover, a.list-group-item-info:focus, button.list-group-item-info:hover, button.list-group-item-info:focus {\n    color: #fff;\n    background-color: #8d46b0; }\na.list-group-item-info.active, a.list-group-item-info.active:hover, a.list-group-item-info.active:focus, button.list-group-item-info.active, button.list-group-item-info.active:hover, button.list-group-item-info.active:focus {\n    color: #fff;\n    background-color: #fff;\n    border-color: #fff; }\n.list-group-item-warning {\n  color: #fff;\n  background-color: #FF7518; }\na.list-group-item-warning, button.list-group-item-warning {\n  color: #fff; }\na.list-group-item-warning .list-group-item-heading, button.list-group-item-warning .list-group-item-heading {\n    color: inherit; }\na.list-group-item-warning:hover, a.list-group-item-warning:focus, button.list-group-item-warning:hover, button.list-group-item-warning:focus {\n    color: #fff;\n    background-color: #fe6600; }\na.list-group-item-warning.active, a.list-group-item-warning.active:hover, a.list-group-item-warning.active:focus, button.list-group-item-warning.active, button.list-group-item-warning.active:hover, button.list-group-item-warning.active:focus {\n    color: #fff;\n    background-color: #fff;\n    border-color: #fff; }\n.list-group-item-danger {\n  color: #fff;\n  background-color: #FF0039; }\na.list-group-item-danger, button.list-group-item-danger {\n  color: #fff; }\na.list-group-item-danger .list-group-item-heading, button.list-group-item-danger .list-group-item-heading {\n    color: inherit; }\na.list-group-item-danger:hover, a.list-group-item-danger:focus, button.list-group-item-danger:hover, button.list-group-item-danger:focus {\n    color: #fff;\n    background-color: #e60033; }\na.list-group-item-danger.active, a.list-group-item-danger.active:hover, a.list-group-item-danger.active:focus, button.list-group-item-danger.active, button.list-group-item-danger.active:hover, button.list-group-item-danger.active:focus {\n    color: #fff;\n    background-color: #fff;\n    border-color: #fff; }\n.list-group-item-heading {\n  margin-top: 0;\n  margin-bottom: 5px; }\n.list-group-item-text {\n  margin-bottom: 0;\n  line-height: 1.3; }\n.panel {\n  margin-bottom: 21px;\n  background-color: #fff;\n  border: 1px solid transparent;\n  border-radius: 0;\n  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05); }\n.panel-body {\n  padding: 15px; }\n.panel-body:before, .panel-body:after {\n    content: \" \";\n    display: table; }\n.panel-body:after {\n    clear: both; }\n.panel-heading {\n  padding: 10px 15px;\n  border-bottom: 1px solid transparent;\n  border-top-right-radius: -1;\n  border-top-left-radius: -1; }\n.panel-heading > .dropdown .dropdown-toggle {\n    color: inherit; }\n.panel-title {\n  margin-top: 0;\n  margin-bottom: 0;\n  font-size: 17px;\n  color: inherit; }\n.panel-title > a, .panel-title > small, .panel-title > .small, .panel-title > small > a, .panel-title > .small > a {\n    color: inherit; }\n.panel-footer {\n  padding: 10px 15px;\n  background-color: #f5f5f5;\n  border-top: 1px solid #ddd;\n  border-bottom-right-radius: -1;\n  border-bottom-left-radius: -1; }\n.panel > .list-group, .panel > .panel-collapse > .list-group {\n  margin-bottom: 0; }\n.panel > .list-group .list-group-item, .panel > .panel-collapse > .list-group .list-group-item {\n    border-width: 1px 0;\n    border-radius: 0; }\n.panel > .list-group:first-child .list-group-item:first-child, .panel > .panel-collapse > .list-group:first-child .list-group-item:first-child {\n    border-top: 0;\n    border-top-right-radius: -1;\n    border-top-left-radius: -1; }\n.panel > .list-group:last-child .list-group-item:last-child, .panel > .panel-collapse > .list-group:last-child .list-group-item:last-child {\n    border-bottom: 0;\n    border-bottom-right-radius: -1;\n    border-bottom-left-radius: -1; }\n.panel > .panel-heading + .panel-collapse > .list-group .list-group-item:first-child {\n  border-top-right-radius: 0;\n  border-top-left-radius: 0; }\n.panel-heading + .list-group .list-group-item:first-child {\n  border-top-width: 0; }\n.list-group + .panel-footer {\n  border-top-width: 0; }\n.panel > .table, .panel > .table-responsive > .table, .panel > .panel-collapse > .table {\n  margin-bottom: 0; }\n.panel > .table caption, .panel > .table-responsive > .table caption, .panel > .panel-collapse > .table caption {\n    padding-left: 15px;\n    padding-right: 15px; }\n.panel > .table:first-child, .panel > .table-responsive:first-child > .table:first-child {\n  border-top-right-radius: -1;\n  border-top-left-radius: -1; }\n.panel > .table:first-child > thead:first-child > tr:first-child, .panel > .table:first-child > tbody:first-child > tr:first-child, .panel > .table-responsive:first-child > .table:first-child > thead:first-child > tr:first-child, .panel > .table-responsive:first-child > .table:first-child > tbody:first-child > tr:first-child {\n    border-top-left-radius: -1;\n    border-top-right-radius: -1; }\n.panel > .table:first-child > thead:first-child > tr:first-child td:first-child, .panel > .table:first-child > thead:first-child > tr:first-child th:first-child, .panel > .table:first-child > tbody:first-child > tr:first-child td:first-child, .panel > .table:first-child > tbody:first-child > tr:first-child th:first-child, .panel > .table-responsive:first-child > .table:first-child > thead:first-child > tr:first-child td:first-child, .panel > .table-responsive:first-child > .table:first-child > thead:first-child > tr:first-child th:first-child, .panel > .table-responsive:first-child > .table:first-child > tbody:first-child > tr:first-child td:first-child, .panel > .table-responsive:first-child > .table:first-child > tbody:first-child > tr:first-child th:first-child {\n      border-top-left-radius: -1; }\n.panel > .table:first-child > thead:first-child > tr:first-child td:last-child, .panel > .table:first-child > thead:first-child > tr:first-child th:last-child, .panel > .table:first-child > tbody:first-child > tr:first-child td:last-child, .panel > .table:first-child > tbody:first-child > tr:first-child th:last-child, .panel > .table-responsive:first-child > .table:first-child > thead:first-child > tr:first-child td:last-child, .panel > .table-responsive:first-child > .table:first-child > thead:first-child > tr:first-child th:last-child, .panel > .table-responsive:first-child > .table:first-child > tbody:first-child > tr:first-child td:last-child, .panel > .table-responsive:first-child > .table:first-child > tbody:first-child > tr:first-child th:last-child {\n      border-top-right-radius: -1; }\n.panel > .table:last-child, .panel > .table-responsive:last-child > .table:last-child {\n  border-bottom-right-radius: -1;\n  border-bottom-left-radius: -1; }\n.panel > .table:last-child > tbody:last-child > tr:last-child, .panel > .table:last-child > tfoot:last-child > tr:last-child, .panel > .table-responsive:last-child > .table:last-child > tbody:last-child > tr:last-child, .panel > .table-responsive:last-child > .table:last-child > tfoot:last-child > tr:last-child {\n    border-bottom-left-radius: -1;\n    border-bottom-right-radius: -1; }\n.panel > .table:last-child > tbody:last-child > tr:last-child td:first-child, .panel > .table:last-child > tbody:last-child > tr:last-child th:first-child, .panel > .table:last-child > tfoot:last-child > tr:last-child td:first-child, .panel > .table:last-child > tfoot:last-child > tr:last-child th:first-child, .panel > .table-responsive:last-child > .table:last-child > tbody:last-child > tr:last-child td:first-child, .panel > .table-responsive:last-child > .table:last-child > tbody:last-child > tr:last-child th:first-child, .panel > .table-responsive:last-child > .table:last-child > tfoot:last-child > tr:last-child td:first-child, .panel > .table-responsive:last-child > .table:last-child > tfoot:last-child > tr:last-child th:first-child {\n      border-bottom-left-radius: -1; }\n.panel > .table:last-child > tbody:last-child > tr:last-child td:last-child, .panel > .table:last-child > tbody:last-child > tr:last-child th:last-child, .panel > .table:last-child > tfoot:last-child > tr:last-child td:last-child, .panel > .table:last-child > tfoot:last-child > tr:last-child th:last-child, .panel > .table-responsive:last-child > .table:last-child > tbody:last-child > tr:last-child td:last-child, .panel > .table-responsive:last-child > .table:last-child > tbody:last-child > tr:last-child th:last-child, .panel > .table-responsive:last-child > .table:last-child > tfoot:last-child > tr:last-child td:last-child, .panel > .table-responsive:last-child > .table:last-child > tfoot:last-child > tr:last-child th:last-child {\n      border-bottom-right-radius: -1; }\n.panel > .panel-body + .table, .panel > .panel-body + .table-responsive, .panel > .table + .panel-body, .panel > .table-responsive + .panel-body {\n  border-top: 1px solid #ddd; }\n.panel > .table > tbody:first-child > tr:first-child th, .panel > .table > tbody:first-child > tr:first-child td {\n  border-top: 0; }\n.panel > .table-bordered, .panel > .table-responsive > .table-bordered {\n  border: 0; }\n.panel > .table-bordered > thead > tr > th:first-child, .panel > .table-bordered > thead > tr > td:first-child, .panel > .table-bordered > tbody > tr > th:first-child, .panel > .table-bordered > tbody > tr > td:first-child, .panel > .table-bordered > tfoot > tr > th:first-child, .panel > .table-bordered > tfoot > tr > td:first-child, .panel > .table-responsive > .table-bordered > thead > tr > th:first-child, .panel > .table-responsive > .table-bordered > thead > tr > td:first-child, .panel > .table-responsive > .table-bordered > tbody > tr > th:first-child, .panel > .table-responsive > .table-bordered > tbody > tr > td:first-child, .panel > .table-responsive > .table-bordered > tfoot > tr > th:first-child, .panel > .table-responsive > .table-bordered > tfoot > tr > td:first-child {\n    border-left: 0; }\n.panel > .table-bordered > thead > tr > th:last-child, .panel > .table-bordered > thead > tr > td:last-child, .panel > .table-bordered > tbody > tr > th:last-child, .panel > .table-bordered > tbody > tr > td:last-child, .panel > .table-bordered > tfoot > tr > th:last-child, .panel > .table-bordered > tfoot > tr > td:last-child, .panel > .table-responsive > .table-bordered > thead > tr > th:last-child, .panel > .table-responsive > .table-bordered > thead > tr > td:last-child, .panel > .table-responsive > .table-bordered > tbody > tr > th:last-child, .panel > .table-responsive > .table-bordered > tbody > tr > td:last-child, .panel > .table-responsive > .table-bordered > tfoot > tr > th:last-child, .panel > .table-responsive > .table-bordered > tfoot > tr > td:last-child {\n    border-right: 0; }\n.panel > .table-bordered > thead > tr:first-child > td, .panel > .table-bordered > thead > tr:first-child > th, .panel > .table-bordered > tbody > tr:first-child > td, .panel > .table-bordered > tbody > tr:first-child > th, .panel > .table-responsive > .table-bordered > thead > tr:first-child > td, .panel > .table-responsive > .table-bordered > thead > tr:first-child > th, .panel > .table-responsive > .table-bordered > tbody > tr:first-child > td, .panel > .table-responsive > .table-bordered > tbody > tr:first-child > th {\n    border-bottom: 0; }\n.panel > .table-bordered > tbody > tr:last-child > td, .panel > .table-bordered > tbody > tr:last-child > th, .panel > .table-bordered > tfoot > tr:last-child > td, .panel > .table-bordered > tfoot > tr:last-child > th, .panel > .table-responsive > .table-bordered > tbody > tr:last-child > td, .panel > .table-responsive > .table-bordered > tbody > tr:last-child > th, .panel > .table-responsive > .table-bordered > tfoot > tr:last-child > td, .panel > .table-responsive > .table-bordered > tfoot > tr:last-child > th {\n    border-bottom: 0; }\n.panel > .table-responsive {\n  border: 0;\n  margin-bottom: 0; }\n.panel-group {\n  margin-bottom: 21px; }\n.panel-group .panel {\n    margin-bottom: 0;\n    border-radius: 0; }\n.panel-group .panel + .panel {\n      margin-top: 5px; }\n.panel-group .panel-heading {\n    border-bottom: 0; }\n.panel-group .panel-heading + .panel-collapse > .panel-body, .panel-group .panel-heading + .panel-collapse > .list-group {\n      border-top: 1px solid #ddd; }\n.panel-group .panel-footer {\n    border-top: 0; }\n.panel-group .panel-footer + .panel-collapse .panel-body {\n      border-bottom: 1px solid #ddd; }\n.panel-default {\n  border-color: #ddd; }\n.panel-default > .panel-heading {\n    color: #333333;\n    background-color: #f5f5f5;\n    border-color: #ddd; }\n.panel-default > .panel-heading + .panel-collapse > .panel-body {\n      border-top-color: #ddd; }\n.panel-default > .panel-heading .badge {\n      color: #f5f5f5;\n      background-color: #333333; }\n.panel-default > .panel-footer + .panel-collapse > .panel-body {\n    border-bottom-color: #ddd; }\n.panel-primary {\n  border-color: #2780E3; }\n.panel-primary > .panel-heading {\n    color: #fff;\n    background-color: #2780E3;\n    border-color: #2780E3; }\n.panel-primary > .panel-heading + .panel-collapse > .panel-body {\n      border-top-color: #2780E3; }\n.panel-primary > .panel-heading .badge {\n      color: #2780E3;\n      background-color: #fff; }\n.panel-primary > .panel-footer + .panel-collapse > .panel-body {\n    border-bottom-color: #2780E3; }\n.panel-success {\n  border-color: #4e9f15; }\n.panel-success > .panel-heading {\n    color: #fff;\n    background-color: #3FB618;\n    border-color: #4e9f15; }\n.panel-success > .panel-heading + .panel-collapse > .panel-body {\n      border-top-color: #4e9f15; }\n.panel-success > .panel-heading .badge {\n      color: #3FB618;\n      background-color: #fff; }\n.panel-success > .panel-footer + .panel-collapse > .panel-body {\n    border-bottom-color: #4e9f15; }\n.panel-info {\n  border-color: #7643a8; }\n.panel-info > .panel-heading {\n    color: #fff;\n    background-color: #9954BB;\n    border-color: #7643a8; }\n.panel-info > .panel-heading + .panel-collapse > .panel-body {\n      border-top-color: #7643a8; }\n.panel-info > .panel-heading .badge {\n      color: #9954BB;\n      background-color: #fff; }\n.panel-info > .panel-footer + .panel-collapse > .panel-body {\n    border-bottom-color: #7643a8; }\n.panel-warning {\n  border-color: #ff4309; }\n.panel-warning > .panel-heading {\n    color: #fff;\n    background-color: #FF7518;\n    border-color: #ff4309; }\n.panel-warning > .panel-heading + .panel-collapse > .panel-body {\n      border-top-color: #ff4309; }\n.panel-warning > .panel-heading .badge {\n      color: #FF7518;\n      background-color: #fff; }\n.panel-warning > .panel-footer + .panel-collapse > .panel-body {\n    border-bottom-color: #ff4309; }\n.panel-danger {\n  border-color: #f0005e; }\n.panel-danger > .panel-heading {\n    color: #fff;\n    background-color: #FF0039;\n    border-color: #f0005e; }\n.panel-danger > .panel-heading + .panel-collapse > .panel-body {\n      border-top-color: #f0005e; }\n.panel-danger > .panel-heading .badge {\n      color: #FF0039;\n      background-color: #fff; }\n.panel-danger > .panel-footer + .panel-collapse > .panel-body {\n    border-bottom-color: #f0005e; }\n.embed-responsive {\n  position: relative;\n  display: block;\n  height: 0;\n  padding: 0;\n  overflow: hidden; }\n.embed-responsive .embed-responsive-item, .embed-responsive iframe, .embed-responsive embed, .embed-responsive object, .embed-responsive video {\n    position: absolute;\n    top: 0;\n    left: 0;\n    bottom: 0;\n    height: 100%;\n    width: 100%;\n    border: 0; }\n.embed-responsive-16by9 {\n  padding-bottom: 56.25%; }\n.embed-responsive-4by3 {\n  padding-bottom: 75%; }\n.well {\n  min-height: 20px;\n  padding: 19px;\n  margin-bottom: 20px;\n  background-color: #f5f5f5;\n  border: 1px solid #e3e3e3;\n  border-radius: 0;\n  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05); }\n.well blockquote {\n    border-color: #ddd;\n    border-color: rgba(0, 0, 0, 0.15); }\n.well-lg {\n  padding: 24px;\n  border-radius: 0; }\n.well-sm {\n  padding: 9px;\n  border-radius: 0; }\n.close {\n  float: right;\n  font-size: 22.5px;\n  font-weight: bold;\n  line-height: 1;\n  color: #fff;\n  text-shadow: 0 1px 0 #fff;\n  opacity: 0.2;\n  filter: alpha(opacity=20); }\n.close:hover, .close:focus {\n    color: #fff;\n    text-decoration: none;\n    cursor: pointer;\n    opacity: 0.5;\n    filter: alpha(opacity=50); }\nbutton.close {\n  padding: 0;\n  cursor: pointer;\n  background: transparent;\n  border: 0;\n  -webkit-appearance: none; }\n.modal-open {\n  overflow: hidden; }\n.modal {\n  display: none;\n  overflow: hidden;\n  position: fixed;\n  top: 0;\n  right: 0;\n  bottom: 0;\n  left: 0;\n  z-index: 1050;\n  -webkit-overflow-scrolling: touch;\n  outline: 0; }\n.modal.fade .modal-dialog {\n    -webkit-transform: translate(0, -25%);\n    transform: translate(0, -25%);\n    transition: -webkit-transform 0.3s ease-out;\n    transition: transform 0.3s ease-out;\n    transition: transform 0.3s ease-out, -webkit-transform 0.3s ease-out; }\n.modal.in .modal-dialog {\n    -webkit-transform: translate(0, 0);\n    transform: translate(0, 0); }\n.modal-open .modal {\n  overflow-x: hidden;\n  overflow-y: auto; }\n.modal-dialog {\n  position: relative;\n  width: auto;\n  margin: 10px; }\n.modal-content {\n  position: relative;\n  background-color: #fff;\n  border: 1px solid #999;\n  border: 1px solid transparent;\n  border-radius: 0;\n  box-shadow: 0 3px 9px rgba(0, 0, 0, 0.5);\n  background-clip: padding-box;\n  outline: 0; }\n.modal-backdrop {\n  position: fixed;\n  top: 0;\n  right: 0;\n  bottom: 0;\n  left: 0;\n  z-index: 1040;\n  background-color: #000; }\n.modal-backdrop.fade {\n    opacity: 0;\n    filter: alpha(opacity=0); }\n.modal-backdrop.in {\n    opacity: 0.5;\n    filter: alpha(opacity=50); }\n.modal-header {\n  padding: 15px;\n  border-bottom: 1px solid #e5e5e5; }\n.modal-header:before, .modal-header:after {\n    content: \" \";\n    display: table; }\n.modal-header:after {\n    clear: both; }\n.modal-header .close {\n  margin-top: -2px; }\n.modal-title {\n  margin: 0;\n  line-height: 1.42857; }\n.modal-body {\n  position: relative;\n  padding: 20px; }\n.modal-footer {\n  padding: 20px;\n  text-align: right;\n  border-top: 1px solid #e5e5e5; }\n.modal-footer:before, .modal-footer:after {\n    content: \" \";\n    display: table; }\n.modal-footer:after {\n    clear: both; }\n.modal-footer .btn + .btn {\n    margin-left: 5px;\n    margin-bottom: 0; }\n.modal-footer .btn-group .btn + .btn {\n    margin-left: -1px; }\n.modal-footer .btn-block + .btn-block {\n    margin-left: 0; }\n.modal-scrollbar-measure {\n  position: absolute;\n  top: -9999px;\n  width: 50px;\n  height: 50px;\n  overflow: scroll; }\n@media (min-width: 768px) {\n  .modal-dialog {\n    width: 600px;\n    margin: 30px auto; }\n  .modal-content {\n    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5); }\n  .modal-sm {\n    width: 300px; } }\n@media (min-width: 992px) {\n  .modal-lg {\n    width: 900px; } }\n.tooltip {\n  position: absolute;\n  z-index: 1070;\n  display: block;\n  font-family: \"Source Sans Pro\", Calibri, Candara, Arial, sans-serif;\n  font-style: normal;\n  font-weight: normal;\n  letter-spacing: normal;\n  line-break: auto;\n  line-height: 1.42857;\n  text-align: left;\n  text-align: start;\n  text-decoration: none;\n  text-shadow: none;\n  text-transform: none;\n  white-space: normal;\n  word-break: normal;\n  word-spacing: normal;\n  word-wrap: normal;\n  font-size: 13px;\n  opacity: 0;\n  filter: alpha(opacity=0); }\n.tooltip.in {\n    opacity: 0.9;\n    filter: alpha(opacity=90); }\n.tooltip.top {\n    margin-top: -3px;\n    padding: 5px 0; }\n.tooltip.right {\n    margin-left: 3px;\n    padding: 0 5px; }\n.tooltip.bottom {\n    margin-top: 3px;\n    padding: 5px 0; }\n.tooltip.left {\n    margin-left: -3px;\n    padding: 0 5px; }\n.tooltip-inner {\n  max-width: 200px;\n  padding: 3px 8px;\n  color: #fff;\n  text-align: center;\n  background-color: #000;\n  border-radius: 0; }\n.tooltip-arrow {\n  position: absolute;\n  width: 0;\n  height: 0;\n  border-color: transparent;\n  border-style: solid; }\n.tooltip.top .tooltip-arrow {\n  bottom: 0;\n  left: 50%;\n  margin-left: -5px;\n  border-width: 5px 5px 0;\n  border-top-color: #000; }\n.tooltip.top-left .tooltip-arrow {\n  bottom: 0;\n  right: 5px;\n  margin-bottom: -5px;\n  border-width: 5px 5px 0;\n  border-top-color: #000; }\n.tooltip.top-right .tooltip-arrow {\n  bottom: 0;\n  left: 5px;\n  margin-bottom: -5px;\n  border-width: 5px 5px 0;\n  border-top-color: #000; }\n.tooltip.right .tooltip-arrow {\n  top: 50%;\n  left: 0;\n  margin-top: -5px;\n  border-width: 5px 5px 5px 0;\n  border-right-color: #000; }\n.tooltip.left .tooltip-arrow {\n  top: 50%;\n  right: 0;\n  margin-top: -5px;\n  border-width: 5px 0 5px 5px;\n  border-left-color: #000; }\n.tooltip.bottom .tooltip-arrow {\n  top: 0;\n  left: 50%;\n  margin-left: -5px;\n  border-width: 0 5px 5px;\n  border-bottom-color: #000; }\n.tooltip.bottom-left .tooltip-arrow {\n  top: 0;\n  right: 5px;\n  margin-top: -5px;\n  border-width: 0 5px 5px;\n  border-bottom-color: #000; }\n.tooltip.bottom-right .tooltip-arrow {\n  top: 0;\n  left: 5px;\n  margin-top: -5px;\n  border-width: 0 5px 5px;\n  border-bottom-color: #000; }\n.popover {\n  position: absolute;\n  top: 0;\n  left: 0;\n  z-index: 1060;\n  display: none;\n  max-width: 276px;\n  padding: 1px;\n  font-family: \"Source Sans Pro\", Calibri, Candara, Arial, sans-serif;\n  font-style: normal;\n  font-weight: normal;\n  letter-spacing: normal;\n  line-break: auto;\n  line-height: 1.42857;\n  text-align: left;\n  text-align: start;\n  text-decoration: none;\n  text-shadow: none;\n  text-transform: none;\n  white-space: normal;\n  word-break: normal;\n  word-spacing: normal;\n  word-wrap: normal;\n  font-size: 15px;\n  background-color: #fff;\n  background-clip: padding-box;\n  border: 1px solid #ccc;\n  border: 1px solid rgba(0, 0, 0, 0.2);\n  border-radius: 0;\n  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2); }\n.popover.top {\n    margin-top: -10px; }\n.popover.right {\n    margin-left: 10px; }\n.popover.bottom {\n    margin-top: 10px; }\n.popover.left {\n    margin-left: -10px; }\n.popover-title {\n  margin: 0;\n  padding: 8px 14px;\n  font-size: 15px;\n  background-color: #f7f7f7;\n  border-bottom: 1px solid #ebebeb;\n  border-radius: -1 -1 0 0; }\n.popover-content {\n  padding: 9px 14px; }\n.popover > .arrow, .popover > .arrow:after {\n  position: absolute;\n  display: block;\n  width: 0;\n  height: 0;\n  border-color: transparent;\n  border-style: solid; }\n.popover > .arrow {\n  border-width: 11px; }\n.popover > .arrow:after {\n  border-width: 10px;\n  content: \"\"; }\n.popover.top > .arrow {\n  left: 50%;\n  margin-left: -11px;\n  border-bottom-width: 0;\n  border-top-color: #999999;\n  border-top-color: fadein(rgba(0, 0, 0, 0.2), 5%);\n  bottom: -11px; }\n.popover.top > .arrow:after {\n    content: \" \";\n    bottom: 1px;\n    margin-left: -10px;\n    border-bottom-width: 0;\n    border-top-color: #fff; }\n.popover.right > .arrow {\n  top: 50%;\n  left: -11px;\n  margin-top: -11px;\n  border-left-width: 0;\n  border-right-color: #999999;\n  border-right-color: fadein(rgba(0, 0, 0, 0.2), 5%); }\n.popover.right > .arrow:after {\n    content: \" \";\n    left: 1px;\n    bottom: -10px;\n    border-left-width: 0;\n    border-right-color: #fff; }\n.popover.bottom > .arrow {\n  left: 50%;\n  margin-left: -11px;\n  border-top-width: 0;\n  border-bottom-color: #999999;\n  border-bottom-color: fadein(rgba(0, 0, 0, 0.2), 5%);\n  top: -11px; }\n.popover.bottom > .arrow:after {\n    content: \" \";\n    top: 1px;\n    margin-left: -10px;\n    border-top-width: 0;\n    border-bottom-color: #fff; }\n.popover.left > .arrow {\n  top: 50%;\n  right: -11px;\n  margin-top: -11px;\n  border-right-width: 0;\n  border-left-color: #999999;\n  border-left-color: fadein(rgba(0, 0, 0, 0.2), 5%); }\n.popover.left > .arrow:after {\n    content: \" \";\n    right: 1px;\n    border-right-width: 0;\n    border-left-color: #fff;\n    bottom: -10px; }\n.carousel {\n  position: relative; }\n.carousel-inner {\n  position: relative;\n  overflow: hidden;\n  width: 100%; }\n.carousel-inner > .item {\n    display: none;\n    position: relative;\n    transition: 0.6s ease-in-out left; }\n.carousel-inner > .item > img, .carousel-inner > .item > a > img {\n      display: block;\n      max-width: 100%;\n      height: auto;\n      line-height: 1; }\n@media all and (transform-3d), (-webkit-transform-3d) {\n      .carousel-inner > .item {\n        transition: -webkit-transform 0.6s ease-in-out;\n        transition: transform 0.6s ease-in-out;\n        transition: transform 0.6s ease-in-out, -webkit-transform 0.6s ease-in-out;\n        -webkit-backface-visibility: hidden;\n        backface-visibility: hidden;\n        -webkit-perspective: 1000px;\n        perspective: 1000px; }\n        .carousel-inner > .item.next, .carousel-inner > .item.active.right {\n          -webkit-transform: translate3d(100%, 0, 0);\n          transform: translate3d(100%, 0, 0);\n          left: 0; }\n        .carousel-inner > .item.prev, .carousel-inner > .item.active.left {\n          -webkit-transform: translate3d(-100%, 0, 0);\n          transform: translate3d(-100%, 0, 0);\n          left: 0; }\n        .carousel-inner > .item.next.left, .carousel-inner > .item.prev.right, .carousel-inner > .item.active {\n          -webkit-transform: translate3d(0, 0, 0);\n          transform: translate3d(0, 0, 0);\n          left: 0; } }\n.carousel-inner > .active, .carousel-inner > .next, .carousel-inner > .prev {\n    display: block; }\n.carousel-inner > .active {\n    left: 0; }\n.carousel-inner > .next, .carousel-inner > .prev {\n    position: absolute;\n    top: 0;\n    width: 100%; }\n.carousel-inner > .next {\n    left: 100%; }\n.carousel-inner > .prev {\n    left: -100%; }\n.carousel-inner > .next.left, .carousel-inner > .prev.right {\n    left: 0; }\n.carousel-inner > .active.left {\n    left: -100%; }\n.carousel-inner > .active.right {\n    left: 100%; }\n.carousel-control {\n  position: absolute;\n  top: 0;\n  left: 0;\n  bottom: 0;\n  width: 15%;\n  opacity: 0.5;\n  filter: alpha(opacity=50);\n  font-size: 20px;\n  color: #fff;\n  text-align: center;\n  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);\n  background-color: transparent; }\n.carousel-control.left {\n    background-image: linear-gradient(to right, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.0001) 100%);\n    background-repeat: repeat-x;\n    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#80000000', endColorstr='#00000000', GradientType=1); }\n.carousel-control.right {\n    left: auto;\n    right: 0;\n    background-image: linear-gradient(to right, rgba(0, 0, 0, 0.0001) 0%, rgba(0, 0, 0, 0.5) 100%);\n    background-repeat: repeat-x;\n    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#00000000', endColorstr='#80000000', GradientType=1); }\n.carousel-control:hover, .carousel-control:focus {\n    outline: 0;\n    color: #fff;\n    text-decoration: none;\n    opacity: 0.9;\n    filter: alpha(opacity=90); }\n.carousel-control .icon-prev, .carousel-control .icon-next, .carousel-control .glyphicon-chevron-left, .carousel-control .glyphicon-chevron-right {\n    position: absolute;\n    top: 50%;\n    margin-top: -10px;\n    z-index: 5;\n    display: inline-block; }\n.carousel-control .icon-prev, .carousel-control .glyphicon-chevron-left {\n    left: 50%;\n    margin-left: -10px; }\n.carousel-control .icon-next, .carousel-control .glyphicon-chevron-right {\n    right: 50%;\n    margin-right: -10px; }\n.carousel-control .icon-prev, .carousel-control .icon-next {\n    width: 20px;\n    height: 20px;\n    line-height: 1;\n    font-family: serif; }\n.carousel-control .icon-prev:before {\n    content: '\\2039'; }\n.carousel-control .icon-next:before {\n    content: '\\203A'; }\n.carousel-indicators {\n  position: absolute;\n  bottom: 10px;\n  left: 50%;\n  z-index: 15;\n  width: 60%;\n  margin-left: -30%;\n  padding-left: 0;\n  list-style: none;\n  text-align: center; }\n.carousel-indicators li {\n    display: inline-block;\n    width: 10px;\n    height: 10px;\n    margin: 1px;\n    text-indent: -999px;\n    border: 1px solid #fff;\n    border-radius: 10px;\n    cursor: pointer;\n    background-color: #000 \\9;\n    background-color: transparent; }\n.carousel-indicators .active {\n    margin: 0;\n    width: 12px;\n    height: 12px;\n    background-color: #fff; }\n.carousel-caption {\n  position: absolute;\n  left: 15%;\n  right: 15%;\n  bottom: 20px;\n  z-index: 10;\n  padding-top: 20px;\n  padding-bottom: 20px;\n  color: #fff;\n  text-align: center;\n  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6); }\n.carousel-caption .btn {\n    text-shadow: none; }\n@media screen and (min-width: 768px) {\n  .carousel-control .glyphicon-chevron-left, .carousel-control .glyphicon-chevron-right, .carousel-control .icon-prev, .carousel-control .icon-next {\n    width: 30px;\n    height: 30px;\n    margin-top: -10px;\n    font-size: 30px; }\n  .carousel-control .glyphicon-chevron-left, .carousel-control .icon-prev {\n    margin-left: -10px; }\n  .carousel-control .glyphicon-chevron-right, .carousel-control .icon-next {\n    margin-right: -10px; }\n  .carousel-caption {\n    left: 20%;\n    right: 20%;\n    padding-bottom: 30px; }\n  .carousel-indicators {\n    bottom: 20px; } }\n.clearfix:before, .clearfix:after {\n  content: \" \";\n  display: table; }\n.clearfix:after {\n  clear: both; }\n.center-block {\n  display: block;\n  margin-left: auto;\n  margin-right: auto; }\n.pull-right {\n  float: right !important; }\n.pull-left {\n  float: left !important; }\n.hide {\n  display: none !important; }\n.show {\n  display: block !important; }\n.invisible {\n  visibility: hidden; }\n.text-hide {\n  font: 0/0 a;\n  color: transparent;\n  text-shadow: none;\n  background-color: transparent;\n  border: 0; }\n.hidden {\n  display: none !important; }\n.affix {\n  position: fixed; }\n@-ms-viewport {\n  width: device-width; }\n.visible-xs {\n  display: none !important; }\n.visible-sm {\n  display: none !important; }\n.visible-md {\n  display: none !important; }\n.visible-lg {\n  display: none !important; }\n.visible-xs-block, .visible-xs-inline, .visible-xs-inline-block, .visible-sm-block, .visible-sm-inline, .visible-sm-inline-block, .visible-md-block, .visible-md-inline, .visible-md-inline-block, .visible-lg-block, .visible-lg-inline, .visible-lg-inline-block {\n  display: none !important; }\n@media (max-width: 767px) {\n  .visible-xs {\n    display: block !important; }\n  table.visible-xs {\n    display: table !important; }\n  tr.visible-xs {\n    display: table-row !important; }\n  th.visible-xs, td.visible-xs {\n    display: table-cell !important; } }\n@media (max-width: 767px) {\n  .visible-xs-block {\n    display: block !important; } }\n@media (max-width: 767px) {\n  .visible-xs-inline {\n    display: inline !important; } }\n@media (max-width: 767px) {\n  .visible-xs-inline-block {\n    display: inline-block !important; } }\n@media (min-width: 768px) and (max-width: 991px) {\n  .visible-sm {\n    display: block !important; }\n  table.visible-sm {\n    display: table !important; }\n  tr.visible-sm {\n    display: table-row !important; }\n  th.visible-sm, td.visible-sm {\n    display: table-cell !important; } }\n@media (min-width: 768px) and (max-width: 991px) {\n  .visible-sm-block {\n    display: block !important; } }\n@media (min-width: 768px) and (max-width: 991px) {\n  .visible-sm-inline {\n    display: inline !important; } }\n@media (min-width: 768px) and (max-width: 991px) {\n  .visible-sm-inline-block {\n    display: inline-block !important; } }\n@media (min-width: 992px) and (max-width: 1199px) {\n  .visible-md {\n    display: block !important; }\n  table.visible-md {\n    display: table !important; }\n  tr.visible-md {\n    display: table-row !important; }\n  th.visible-md, td.visible-md {\n    display: table-cell !important; } }\n@media (min-width: 992px) and (max-width: 1199px) {\n  .visible-md-block {\n    display: block !important; } }\n@media (min-width: 992px) and (max-width: 1199px) {\n  .visible-md-inline {\n    display: inline !important; } }\n@media (min-width: 992px) and (max-width: 1199px) {\n  .visible-md-inline-block {\n    display: inline-block !important; } }\n@media (min-width: 1200px) {\n  .visible-lg {\n    display: block !important; }\n  table.visible-lg {\n    display: table !important; }\n  tr.visible-lg {\n    display: table-row !important; }\n  th.visible-lg, td.visible-lg {\n    display: table-cell !important; } }\n@media (min-width: 1200px) {\n  .visible-lg-block {\n    display: block !important; } }\n@media (min-width: 1200px) {\n  .visible-lg-inline {\n    display: inline !important; } }\n@media (min-width: 1200px) {\n  .visible-lg-inline-block {\n    display: inline-block !important; } }\n@media (max-width: 767px) {\n  .hidden-xs {\n    display: none !important; } }\n@media (min-width: 768px) and (max-width: 991px) {\n  .hidden-sm {\n    display: none !important; } }\n@media (min-width: 992px) and (max-width: 1199px) {\n  .hidden-md {\n    display: none !important; } }\n@media (min-width: 1200px) {\n  .hidden-lg {\n    display: none !important; } }\n.visible-print {\n  display: none !important; }\n@media print {\n  .visible-print {\n    display: block !important; }\n  table.visible-print {\n    display: table !important; }\n  tr.visible-print {\n    display: table-row !important; }\n  th.visible-print, td.visible-print {\n    display: table-cell !important; } }\n.visible-print-block {\n  display: none !important; }\n@media print {\n    .visible-print-block {\n      display: block !important; } }\n.visible-print-inline {\n  display: none !important; }\n@media print {\n    .visible-print-inline {\n      display: inline !important; } }\n.visible-print-inline-block {\n  display: none !important; }\n@media print {\n    .visible-print-inline-block {\n      display: inline-block !important; } }\n@media print {\n  .hidden-print {\n    display: none !important; } }\n.navbar-inverse .badge {\n  background-color: #fff;\n  color: #2780E3; }\nbody {\n  -webkit-font-smoothing: antialiased; }\n.text-primary, .text-primary:hover {\n  color: #2780E3; }\n.text-success, .text-success:hover {\n  color: #3FB618; }\n.text-danger, .text-danger:hover {\n  color: #FF0039; }\n.text-warning, .text-warning:hover {\n  color: #FF7518; }\n.text-info, .text-info:hover {\n  color: #9954BB; }\ntable a:not(.btn), .table a:not(.btn) {\n  text-decoration: underline; }\ntable .dropdown-menu a, .table .dropdown-menu a {\n  text-decoration: none; }\ntable .success, table .warning, table .danger, table .info, .table .success, .table .warning, .table .danger, .table .info {\n  color: #fff; }\ntable .success a, table .warning a, table .danger a, table .info a, .table .success a, .table .warning a, .table .danger a, .table .info a {\n    color: #fff; }\n.has-warning .help-block, .has-warning .control-label, .has-warning .radio, .has-warning .checkbox, .has-warning .radio-inline, .has-warning .checkbox-inline, .has-warning.radio label, .has-warning.checkbox label, .has-warning.radio-inline label, .has-warning.checkbox-inline label, .has-warning .form-control-feedback {\n  color: #FF7518; }\n.has-warning .form-control, .has-warning .form-control:focus, .has-warning .input-group-addon {\n  border: 1px solid #FF7518; }\n.has-error .help-block, .has-error .control-label, .has-error .radio, .has-error .checkbox, .has-error .radio-inline, .has-error .checkbox-inline, .has-error.radio label, .has-error.checkbox label, .has-error.radio-inline label, .has-error.checkbox-inline label, .has-error .form-control-feedback {\n  color: #FF0039; }\n.has-error .form-control, .has-error .form-control:focus, .has-error .input-group-addon {\n  border: 1px solid #FF0039; }\n.has-success .help-block, .has-success .control-label, .has-success .radio, .has-success .checkbox, .has-success .radio-inline, .has-success .checkbox-inline, .has-success.radio label, .has-success.checkbox label, .has-success.radio-inline label, .has-success.checkbox-inline label, .has-success .form-control-feedback {\n  color: #3FB618; }\n.has-success .form-control, .has-success .form-control:focus, .has-success .input-group-addon {\n  border: 1px solid #3FB618; }\n.nav-pills > li > a {\n  border-radius: 0; }\n.dropdown-menu > li > a:hover, .dropdown-menu > li > a:focus {\n  background-image: none; }\n.close {\n  text-decoration: none;\n  text-shadow: none;\n  opacity: 0.4; }\n.close:hover, .close:focus {\n    opacity: 1; }\n.alert {\n  border: none; }\n.alert .alert-link {\n    text-decoration: underline;\n    color: #fff; }\n.label {\n  border-radius: 0; }\n.progress {\n  height: 8px;\n  box-shadow: none; }\n.progress .progress-bar {\n    font-size: 8px;\n    line-height: 8px; }\n.panel-heading, .panel-footer {\n  border-top-right-radius: 0;\n  border-top-left-radius: 0; }\n.panel-default .close {\n  color: #333333; }\na.list-group-item-success.active {\n  background-color: #3FB618; }\na.list-group-item-success.active:hover, a.list-group-item-success.active:focus {\n  background-color: #379f15; }\na.list-group-item-warning.active {\n  background-color: #FF7518; }\na.list-group-item-warning.active:hover, a.list-group-item-warning.active:focus {\n  background-color: #fe6600; }\na.list-group-item-danger.active {\n  background-color: #FF0039; }\na.list-group-item-danger.active:hover, a.list-group-item-danger.active:focus {\n  background-color: #e60033; }\n.modal .close {\n  color: #333333; }\n.popover {\n  color: #333333; }\n.gu-mirror {\n  position: fixed !important;\n  margin: 0 !important;\n  z-index: 9999 !important;\n  opacity: 0.8;\n  -ms-filter: \"progid:DXImageTransform.Microsoft.Alpha(Opacity=80)\";\n  filter: alpha(opacity=80); }\n.gu-hide {\n  display: none !important; }\n.gu-unselectable {\n  -webkit-user-select: none !important;\n  -moz-user-select: none !important;\n  -ms-user-select: none !important;\n  user-select: none !important; }\n.gu-transit {\n  opacity: 0.2;\n  -ms-filter: \"progid:DXImageTransform.Microsoft.Alpha(Opacity=20)\";\n  filter: alpha(opacity=20); }\nsialia {\n  background-color: #f2f2f2; }\nsialia .sialia-body {\n    padding-top: 65px; }\nsialia h1 {\n    margin-bottom: 20px;\n    color: #666; }\nsialia .panel-heading h2 {\n    margin: 10px 0 15px; }\nsialia .panel .toggle-body {\n    z-index: 1;\n    color: #000; }\nsialia .alert-info {\n    font-size: .94em;\n    background-color: #eee;\n    padding: 15px;\n    color: #666; }\nsialia .document-info {\n    font-size: .8em;\n    margin-top: -15px; }\nsialia .header-name {\n    display: block; }\nsialia .header-date {\n    display: inline-block; }\nsialia .header-small {\n    font-size: .8em;\n    font-color: #ccc; }\nsialia .header-row {\n    border-bottom: 1px solid #eee;\n    margin: 0 10px 10px 10px;\n    padding-bottom: 5px; }\nsialia .table-borderless tbody tr td, sialia .table-borderless tbody tr th, sialia .table-borderless thead tr th {\n    border: none; }\nsialia .alert-mild {\n    background-color: #ffdc67;\n    border-color: #ffdc67;\n    color: #000; }\nsialia .alert-mild hr {\n      border-top-color: #ffd64e; }\nsialia .alert-mild .alert-link {\n      color: black; }\nsialia .reasons {\n    padding: 3px;\n    background-color: #fafafa;\n    border: 1px solid #eee; }\n@media (min-width: 768px) {\n    sialia #left {\n      position: fixed;\n      padding-right: 8px; }\n    sialia #right {\n      padding-left: 7px; }\n    sialia #jump-nav {\n      margin-right: 15px; } }\nsialia #demographics .fa-ul {\n    margin-left: 24px; }\nsialia #demographics address {\n    margin-bottom: 10px; }\nsialia .panel-heading {\n    position: relative; }\nsialia .panel-heading .toggle-body {\n      position: absolute;\n      bottom: 11px;\n      right: 15px; }\nsialia .panel-body > *:last-child, sialia .panel-heading > *:last-child {\n    margin-bottom: 0; }\n#demographics-summary sialia .panel-body > ul:last-child > li:last-child > *:last-child, sialia .panel-body > ul:last-child > li:last-child > *:last-child {\n    margin-bottom: 0; }\nsialia panel.collapsed .panel-body {\n    display: none; }\nsialia panel.expanded.fade {\n    opacity: 1; }\nsialia .section-icon {\n    margin-right: 8px; }\nsialia .section-item-count {\n    margin-left: 5px;\n    vertical-align: bottom; }\nsialia .badge-muted, sialia .panel-default > .panel-heading .badge-muted {\n    background-color: #bbb; }\nsialia preferences {\n    display: block; }\nsialia preferences h2 {\n      line-height: 44px; }\nsialia preference-section {\n    display: block; }\nsialia preference-section.gu-mirror {\n      cursor: -webkit-grabbing;\n      cursor: grabbing; }\nsialia .preferences-section {\n    cursor: move;\n    cursor: -webkit-grab;\n    cursor: grab; }\nsialia .section-toggle {\n    cursor: pointer; }\nsialia .section-toggle .fa {\n      transition: all 0.05s ease; }\nsialia .fade {\n    opacity: .45; }\nsialia list {\n    display: block; }\nsialia list item {\n      display: list-item;\n      list-style-type: none;\n      margin-bottom: 10px; }\nsialia list item content[id^=problem] {\n        display: block;\n        font-weight: bold; }\nsialia paragraph {\n    display: block; }\nsialia paragraph[stylecode=Bold] {\n      font-weight: bold; }\n", ""]);
+exports.push([module.i, "\n@charset \"UTF-8\";\n/*!\n *  Font Awesome 4.7.0 by @davegandy - http://fontawesome.io - @fontawesome\n *  License - http://fontawesome.io/license (Font: SIL OFL 1.1, CSS: MIT License)\n */\n/* FONT PATH\n * -------------------------- */\n@font-face {\n  font-family: 'FontAwesome';\n  src: url(\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/fonts//fontawesome-webfont.eot?v=4.7.0\");\n  src: url(\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/fonts//fontawesome-webfont.eot?#iefix&v=4.7.0\") format(\"embedded-opentype\"), url(\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/fonts//fontawesome-webfont.woff2?v=4.7.0\") format(\"woff2\"), url(\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/fonts//fontawesome-webfont.woff?v=4.7.0\") format(\"woff\"), url(\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/fonts//fontawesome-webfont.ttf?v=4.7.0\") format(\"truetype\"), url(\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/fonts//fontawesome-webfont.svg?v=4.7.0#fontawesomeregular\") format(\"svg\");\n  font-weight: normal;\n  font-style: normal; }\n.fa {\n  display: inline-block;\n  font: normal normal normal 14px/1 FontAwesome;\n  font-size: inherit;\n  text-rendering: auto;\n  -webkit-font-smoothing: antialiased;\n  -moz-osx-font-smoothing: grayscale; }\n/* makes the font 33% larger relative to the icon container */\n.fa-lg {\n  font-size: 1.33333em;\n  line-height: 0.75em;\n  vertical-align: -15%; }\n.fa-2x {\n  font-size: 2em; }\n.fa-3x {\n  font-size: 3em; }\n.fa-4x {\n  font-size: 4em; }\n.fa-5x {\n  font-size: 5em; }\n.fa-fw {\n  width: 1.28571em;\n  text-align: center; }\n.fa-ul {\n  padding-left: 0;\n  margin-left: 2.14286em;\n  list-style-type: none; }\n.fa-ul > li {\n    position: relative; }\n.fa-li {\n  position: absolute;\n  left: -2.14286em;\n  width: 2.14286em;\n  top: 0.14286em;\n  text-align: center; }\n.fa-li.fa-lg {\n    left: -1.85714em; }\n.fa-border {\n  padding: .2em .25em .15em;\n  border: solid 0.08em #eee;\n  border-radius: .1em; }\n.fa-pull-left {\n  float: left; }\n.fa-pull-right {\n  float: right; }\n.fa.fa-pull-left {\n  margin-right: .3em; }\n.fa.fa-pull-right {\n  margin-left: .3em; }\n/* Deprecated as of 4.4.0 */\n.pull-right {\n  float: right; }\n.pull-left {\n  float: left; }\n.fa.pull-left {\n  margin-right: .3em; }\n.fa.pull-right {\n  margin-left: .3em; }\n.fa-spin {\n  -webkit-animation: fa-spin 2s infinite linear;\n  animation: fa-spin 2s infinite linear; }\n.fa-pulse {\n  -webkit-animation: fa-spin 1s infinite steps(8);\n  animation: fa-spin 1s infinite steps(8); }\n@-webkit-keyframes fa-spin {\n  0% {\n    -webkit-transform: rotate(0deg);\n    transform: rotate(0deg); }\n  100% {\n    -webkit-transform: rotate(359deg);\n    transform: rotate(359deg); } }\n@keyframes fa-spin {\n  0% {\n    -webkit-transform: rotate(0deg);\n    transform: rotate(0deg); }\n  100% {\n    -webkit-transform: rotate(359deg);\n    transform: rotate(359deg); } }\n.fa-rotate-90 {\n  -ms-filter: \"progid:DXImageTransform.Microsoft.BasicImage(rotation=1)\";\n  -webkit-transform: rotate(90deg);\n  transform: rotate(90deg); }\n.fa-rotate-180 {\n  -ms-filter: \"progid:DXImageTransform.Microsoft.BasicImage(rotation=2)\";\n  -webkit-transform: rotate(180deg);\n  transform: rotate(180deg); }\n.fa-rotate-270 {\n  -ms-filter: \"progid:DXImageTransform.Microsoft.BasicImage(rotation=3)\";\n  -webkit-transform: rotate(270deg);\n  transform: rotate(270deg); }\n.fa-flip-horizontal {\n  -ms-filter: \"progid:DXImageTransform.Microsoft.BasicImage(rotation=0, mirror=1)\";\n  -webkit-transform: scale(-1, 1);\n  transform: scale(-1, 1); }\n.fa-flip-vertical {\n  -ms-filter: \"progid:DXImageTransform.Microsoft.BasicImage(rotation=2, mirror=1)\";\n  -webkit-transform: scale(1, -1);\n  transform: scale(1, -1); }\n:root .fa-rotate-90, :root .fa-rotate-180, :root .fa-rotate-270, :root .fa-flip-horizontal, :root .fa-flip-vertical {\n  -webkit-filter: none;\n          filter: none; }\n.fa-stack {\n  position: relative;\n  display: inline-block;\n  width: 2em;\n  height: 2em;\n  line-height: 2em;\n  vertical-align: middle; }\n.fa-stack-1x, .fa-stack-2x {\n  position: absolute;\n  left: 0;\n  width: 100%;\n  text-align: center; }\n.fa-stack-1x {\n  line-height: inherit; }\n.fa-stack-2x {\n  font-size: 2em; }\n.fa-inverse {\n  color: #fff; }\n/* Font Awesome uses the Unicode Private Use Area (PUA) to ensure screen\n   readers do not read off random characters that represent icons */\n.fa-glass:before {\n  content: \"\\F000\"; }\n.fa-music:before {\n  content: \"\\F001\"; }\n.fa-search:before {\n  content: \"\\F002\"; }\n.fa-envelope-o:before {\n  content: \"\\F003\"; }\n.fa-heart:before {\n  content: \"\\F004\"; }\n.fa-star:before {\n  content: \"\\F005\"; }\n.fa-star-o:before {\n  content: \"\\F006\"; }\n.fa-user:before {\n  content: \"\\F007\"; }\n.fa-film:before {\n  content: \"\\F008\"; }\n.fa-th-large:before {\n  content: \"\\F009\"; }\n.fa-th:before {\n  content: \"\\F00A\"; }\n.fa-th-list:before {\n  content: \"\\F00B\"; }\n.fa-check:before {\n  content: \"\\F00C\"; }\n.fa-remove:before, .fa-close:before, .fa-times:before {\n  content: \"\\F00D\"; }\n.fa-search-plus:before {\n  content: \"\\F00E\"; }\n.fa-search-minus:before {\n  content: \"\\F010\"; }\n.fa-power-off:before {\n  content: \"\\F011\"; }\n.fa-signal:before {\n  content: \"\\F012\"; }\n.fa-gear:before, .fa-cog:before {\n  content: \"\\F013\"; }\n.fa-trash-o:before {\n  content: \"\\F014\"; }\n.fa-home:before {\n  content: \"\\F015\"; }\n.fa-file-o:before {\n  content: \"\\F016\"; }\n.fa-clock-o:before {\n  content: \"\\F017\"; }\n.fa-road:before {\n  content: \"\\F018\"; }\n.fa-download:before {\n  content: \"\\F019\"; }\n.fa-arrow-circle-o-down:before {\n  content: \"\\F01A\"; }\n.fa-arrow-circle-o-up:before {\n  content: \"\\F01B\"; }\n.fa-inbox:before {\n  content: \"\\F01C\"; }\n.fa-play-circle-o:before {\n  content: \"\\F01D\"; }\n.fa-rotate-right:before, .fa-repeat:before {\n  content: \"\\F01E\"; }\n.fa-refresh:before {\n  content: \"\\F021\"; }\n.fa-list-alt:before {\n  content: \"\\F022\"; }\n.fa-lock:before {\n  content: \"\\F023\"; }\n.fa-flag:before {\n  content: \"\\F024\"; }\n.fa-headphones:before {\n  content: \"\\F025\"; }\n.fa-volume-off:before {\n  content: \"\\F026\"; }\n.fa-volume-down:before {\n  content: \"\\F027\"; }\n.fa-volume-up:before {\n  content: \"\\F028\"; }\n.fa-qrcode:before {\n  content: \"\\F029\"; }\n.fa-barcode:before {\n  content: \"\\F02A\"; }\n.fa-tag:before {\n  content: \"\\F02B\"; }\n.fa-tags:before {\n  content: \"\\F02C\"; }\n.fa-book:before {\n  content: \"\\F02D\"; }\n.fa-bookmark:before {\n  content: \"\\F02E\"; }\n.fa-print:before {\n  content: \"\\F02F\"; }\n.fa-camera:before {\n  content: \"\\F030\"; }\n.fa-font:before {\n  content: \"\\F031\"; }\n.fa-bold:before {\n  content: \"\\F032\"; }\n.fa-italic:before {\n  content: \"\\F033\"; }\n.fa-text-height:before {\n  content: \"\\F034\"; }\n.fa-text-width:before {\n  content: \"\\F035\"; }\n.fa-align-left:before {\n  content: \"\\F036\"; }\n.fa-align-center:before {\n  content: \"\\F037\"; }\n.fa-align-right:before {\n  content: \"\\F038\"; }\n.fa-align-justify:before {\n  content: \"\\F039\"; }\n.fa-list:before {\n  content: \"\\F03A\"; }\n.fa-dedent:before, .fa-outdent:before {\n  content: \"\\F03B\"; }\n.fa-indent:before {\n  content: \"\\F03C\"; }\n.fa-video-camera:before {\n  content: \"\\F03D\"; }\n.fa-photo:before, .fa-image:before, .fa-picture-o:before {\n  content: \"\\F03E\"; }\n.fa-pencil:before {\n  content: \"\\F040\"; }\n.fa-map-marker:before {\n  content: \"\\F041\"; }\n.fa-adjust:before {\n  content: \"\\F042\"; }\n.fa-tint:before {\n  content: \"\\F043\"; }\n.fa-edit:before, .fa-pencil-square-o:before {\n  content: \"\\F044\"; }\n.fa-share-square-o:before {\n  content: \"\\F045\"; }\n.fa-check-square-o:before {\n  content: \"\\F046\"; }\n.fa-arrows:before {\n  content: \"\\F047\"; }\n.fa-step-backward:before {\n  content: \"\\F048\"; }\n.fa-fast-backward:before {\n  content: \"\\F049\"; }\n.fa-backward:before {\n  content: \"\\F04A\"; }\n.fa-play:before {\n  content: \"\\F04B\"; }\n.fa-pause:before {\n  content: \"\\F04C\"; }\n.fa-stop:before {\n  content: \"\\F04D\"; }\n.fa-forward:before {\n  content: \"\\F04E\"; }\n.fa-fast-forward:before {\n  content: \"\\F050\"; }\n.fa-step-forward:before {\n  content: \"\\F051\"; }\n.fa-eject:before {\n  content: \"\\F052\"; }\n.fa-chevron-left:before {\n  content: \"\\F053\"; }\n.fa-chevron-right:before {\n  content: \"\\F054\"; }\n.fa-plus-circle:before {\n  content: \"\\F055\"; }\n.fa-minus-circle:before {\n  content: \"\\F056\"; }\n.fa-times-circle:before {\n  content: \"\\F057\"; }\n.fa-check-circle:before {\n  content: \"\\F058\"; }\n.fa-question-circle:before {\n  content: \"\\F059\"; }\n.fa-info-circle:before {\n  content: \"\\F05A\"; }\n.fa-crosshairs:before {\n  content: \"\\F05B\"; }\n.fa-times-circle-o:before {\n  content: \"\\F05C\"; }\n.fa-check-circle-o:before {\n  content: \"\\F05D\"; }\n.fa-ban:before {\n  content: \"\\F05E\"; }\n.fa-arrow-left:before {\n  content: \"\\F060\"; }\n.fa-arrow-right:before {\n  content: \"\\F061\"; }\n.fa-arrow-up:before {\n  content: \"\\F062\"; }\n.fa-arrow-down:before {\n  content: \"\\F063\"; }\n.fa-mail-forward:before, .fa-share:before {\n  content: \"\\F064\"; }\n.fa-expand:before {\n  content: \"\\F065\"; }\n.fa-compress:before {\n  content: \"\\F066\"; }\n.fa-plus:before {\n  content: \"\\F067\"; }\n.fa-minus:before {\n  content: \"\\F068\"; }\n.fa-asterisk:before {\n  content: \"\\F069\"; }\n.fa-exclamation-circle:before {\n  content: \"\\F06A\"; }\n.fa-gift:before {\n  content: \"\\F06B\"; }\n.fa-leaf:before {\n  content: \"\\F06C\"; }\n.fa-fire:before {\n  content: \"\\F06D\"; }\n.fa-eye:before {\n  content: \"\\F06E\"; }\n.fa-eye-slash:before {\n  content: \"\\F070\"; }\n.fa-warning:before, .fa-exclamation-triangle:before {\n  content: \"\\F071\"; }\n.fa-plane:before {\n  content: \"\\F072\"; }\n.fa-calendar:before {\n  content: \"\\F073\"; }\n.fa-random:before {\n  content: \"\\F074\"; }\n.fa-comment:before {\n  content: \"\\F075\"; }\n.fa-magnet:before {\n  content: \"\\F076\"; }\n.fa-chevron-up:before {\n  content: \"\\F077\"; }\n.fa-chevron-down:before {\n  content: \"\\F078\"; }\n.fa-retweet:before {\n  content: \"\\F079\"; }\n.fa-shopping-cart:before {\n  content: \"\\F07A\"; }\n.fa-folder:before {\n  content: \"\\F07B\"; }\n.fa-folder-open:before {\n  content: \"\\F07C\"; }\n.fa-arrows-v:before {\n  content: \"\\F07D\"; }\n.fa-arrows-h:before {\n  content: \"\\F07E\"; }\n.fa-bar-chart-o:before, .fa-bar-chart:before {\n  content: \"\\F080\"; }\n.fa-twitter-square:before {\n  content: \"\\F081\"; }\n.fa-facebook-square:before {\n  content: \"\\F082\"; }\n.fa-camera-retro:before {\n  content: \"\\F083\"; }\n.fa-key:before {\n  content: \"\\F084\"; }\n.fa-gears:before, .fa-cogs:before {\n  content: \"\\F085\"; }\n.fa-comments:before {\n  content: \"\\F086\"; }\n.fa-thumbs-o-up:before {\n  content: \"\\F087\"; }\n.fa-thumbs-o-down:before {\n  content: \"\\F088\"; }\n.fa-star-half:before {\n  content: \"\\F089\"; }\n.fa-heart-o:before {\n  content: \"\\F08A\"; }\n.fa-sign-out:before {\n  content: \"\\F08B\"; }\n.fa-linkedin-square:before {\n  content: \"\\F08C\"; }\n.fa-thumb-tack:before {\n  content: \"\\F08D\"; }\n.fa-external-link:before {\n  content: \"\\F08E\"; }\n.fa-sign-in:before {\n  content: \"\\F090\"; }\n.fa-trophy:before {\n  content: \"\\F091\"; }\n.fa-github-square:before {\n  content: \"\\F092\"; }\n.fa-upload:before {\n  content: \"\\F093\"; }\n.fa-lemon-o:before {\n  content: \"\\F094\"; }\n.fa-phone:before {\n  content: \"\\F095\"; }\n.fa-square-o:before {\n  content: \"\\F096\"; }\n.fa-bookmark-o:before {\n  content: \"\\F097\"; }\n.fa-phone-square:before {\n  content: \"\\F098\"; }\n.fa-twitter:before {\n  content: \"\\F099\"; }\n.fa-facebook-f:before, .fa-facebook:before {\n  content: \"\\F09A\"; }\n.fa-github:before {\n  content: \"\\F09B\"; }\n.fa-unlock:before {\n  content: \"\\F09C\"; }\n.fa-credit-card:before {\n  content: \"\\F09D\"; }\n.fa-feed:before, .fa-rss:before {\n  content: \"\\F09E\"; }\n.fa-hdd-o:before {\n  content: \"\\F0A0\"; }\n.fa-bullhorn:before {\n  content: \"\\F0A1\"; }\n.fa-bell:before {\n  content: \"\\F0F3\"; }\n.fa-certificate:before {\n  content: \"\\F0A3\"; }\n.fa-hand-o-right:before {\n  content: \"\\F0A4\"; }\n.fa-hand-o-left:before {\n  content: \"\\F0A5\"; }\n.fa-hand-o-up:before {\n  content: \"\\F0A6\"; }\n.fa-hand-o-down:before {\n  content: \"\\F0A7\"; }\n.fa-arrow-circle-left:before {\n  content: \"\\F0A8\"; }\n.fa-arrow-circle-right:before {\n  content: \"\\F0A9\"; }\n.fa-arrow-circle-up:before {\n  content: \"\\F0AA\"; }\n.fa-arrow-circle-down:before {\n  content: \"\\F0AB\"; }\n.fa-globe:before {\n  content: \"\\F0AC\"; }\n.fa-wrench:before {\n  content: \"\\F0AD\"; }\n.fa-tasks:before {\n  content: \"\\F0AE\"; }\n.fa-filter:before {\n  content: \"\\F0B0\"; }\n.fa-briefcase:before {\n  content: \"\\F0B1\"; }\n.fa-arrows-alt:before {\n  content: \"\\F0B2\"; }\n.fa-group:before, .fa-users:before {\n  content: \"\\F0C0\"; }\n.fa-chain:before, .fa-link:before {\n  content: \"\\F0C1\"; }\n.fa-cloud:before {\n  content: \"\\F0C2\"; }\n.fa-flask:before {\n  content: \"\\F0C3\"; }\n.fa-cut:before, .fa-scissors:before {\n  content: \"\\F0C4\"; }\n.fa-copy:before, .fa-files-o:before {\n  content: \"\\F0C5\"; }\n.fa-paperclip:before {\n  content: \"\\F0C6\"; }\n.fa-save:before, .fa-floppy-o:before {\n  content: \"\\F0C7\"; }\n.fa-square:before {\n  content: \"\\F0C8\"; }\n.fa-navicon:before, .fa-reorder:before, .fa-bars:before {\n  content: \"\\F0C9\"; }\n.fa-list-ul:before {\n  content: \"\\F0CA\"; }\n.fa-list-ol:before {\n  content: \"\\F0CB\"; }\n.fa-strikethrough:before {\n  content: \"\\F0CC\"; }\n.fa-underline:before {\n  content: \"\\F0CD\"; }\n.fa-table:before {\n  content: \"\\F0CE\"; }\n.fa-magic:before {\n  content: \"\\F0D0\"; }\n.fa-truck:before {\n  content: \"\\F0D1\"; }\n.fa-pinterest:before {\n  content: \"\\F0D2\"; }\n.fa-pinterest-square:before {\n  content: \"\\F0D3\"; }\n.fa-google-plus-square:before {\n  content: \"\\F0D4\"; }\n.fa-google-plus:before {\n  content: \"\\F0D5\"; }\n.fa-money:before {\n  content: \"\\F0D6\"; }\n.fa-caret-down:before {\n  content: \"\\F0D7\"; }\n.fa-caret-up:before {\n  content: \"\\F0D8\"; }\n.fa-caret-left:before {\n  content: \"\\F0D9\"; }\n.fa-caret-right:before {\n  content: \"\\F0DA\"; }\n.fa-columns:before {\n  content: \"\\F0DB\"; }\n.fa-unsorted:before, .fa-sort:before {\n  content: \"\\F0DC\"; }\n.fa-sort-down:before, .fa-sort-desc:before {\n  content: \"\\F0DD\"; }\n.fa-sort-up:before, .fa-sort-asc:before {\n  content: \"\\F0DE\"; }\n.fa-envelope:before {\n  content: \"\\F0E0\"; }\n.fa-linkedin:before {\n  content: \"\\F0E1\"; }\n.fa-rotate-left:before, .fa-undo:before {\n  content: \"\\F0E2\"; }\n.fa-legal:before, .fa-gavel:before {\n  content: \"\\F0E3\"; }\n.fa-dashboard:before, .fa-tachometer:before {\n  content: \"\\F0E4\"; }\n.fa-comment-o:before {\n  content: \"\\F0E5\"; }\n.fa-comments-o:before {\n  content: \"\\F0E6\"; }\n.fa-flash:before, .fa-bolt:before {\n  content: \"\\F0E7\"; }\n.fa-sitemap:before {\n  content: \"\\F0E8\"; }\n.fa-umbrella:before {\n  content: \"\\F0E9\"; }\n.fa-paste:before, .fa-clipboard:before {\n  content: \"\\F0EA\"; }\n.fa-lightbulb-o:before {\n  content: \"\\F0EB\"; }\n.fa-exchange:before {\n  content: \"\\F0EC\"; }\n.fa-cloud-download:before {\n  content: \"\\F0ED\"; }\n.fa-cloud-upload:before {\n  content: \"\\F0EE\"; }\n.fa-user-md:before {\n  content: \"\\F0F0\"; }\n.fa-stethoscope:before {\n  content: \"\\F0F1\"; }\n.fa-suitcase:before {\n  content: \"\\F0F2\"; }\n.fa-bell-o:before {\n  content: \"\\F0A2\"; }\n.fa-coffee:before {\n  content: \"\\F0F4\"; }\n.fa-cutlery:before {\n  content: \"\\F0F5\"; }\n.fa-file-text-o:before {\n  content: \"\\F0F6\"; }\n.fa-building-o:before {\n  content: \"\\F0F7\"; }\n.fa-hospital-o:before {\n  content: \"\\F0F8\"; }\n.fa-ambulance:before {\n  content: \"\\F0F9\"; }\n.fa-medkit:before {\n  content: \"\\F0FA\"; }\n.fa-fighter-jet:before {\n  content: \"\\F0FB\"; }\n.fa-beer:before {\n  content: \"\\F0FC\"; }\n.fa-h-square:before {\n  content: \"\\F0FD\"; }\n.fa-plus-square:before {\n  content: \"\\F0FE\"; }\n.fa-angle-double-left:before {\n  content: \"\\F100\"; }\n.fa-angle-double-right:before {\n  content: \"\\F101\"; }\n.fa-angle-double-up:before {\n  content: \"\\F102\"; }\n.fa-angle-double-down:before {\n  content: \"\\F103\"; }\n.fa-angle-left:before {\n  content: \"\\F104\"; }\n.fa-angle-right:before {\n  content: \"\\F105\"; }\n.fa-angle-up:before {\n  content: \"\\F106\"; }\n.fa-angle-down:before {\n  content: \"\\F107\"; }\n.fa-desktop:before {\n  content: \"\\F108\"; }\n.fa-laptop:before {\n  content: \"\\F109\"; }\n.fa-tablet:before {\n  content: \"\\F10A\"; }\n.fa-mobile-phone:before, .fa-mobile:before {\n  content: \"\\F10B\"; }\n.fa-circle-o:before {\n  content: \"\\F10C\"; }\n.fa-quote-left:before {\n  content: \"\\F10D\"; }\n.fa-quote-right:before {\n  content: \"\\F10E\"; }\n.fa-spinner:before {\n  content: \"\\F110\"; }\n.fa-circle:before {\n  content: \"\\F111\"; }\n.fa-mail-reply:before, .fa-reply:before {\n  content: \"\\F112\"; }\n.fa-github-alt:before {\n  content: \"\\F113\"; }\n.fa-folder-o:before {\n  content: \"\\F114\"; }\n.fa-folder-open-o:before {\n  content: \"\\F115\"; }\n.fa-smile-o:before {\n  content: \"\\F118\"; }\n.fa-frown-o:before {\n  content: \"\\F119\"; }\n.fa-meh-o:before {\n  content: \"\\F11A\"; }\n.fa-gamepad:before {\n  content: \"\\F11B\"; }\n.fa-keyboard-o:before {\n  content: \"\\F11C\"; }\n.fa-flag-o:before {\n  content: \"\\F11D\"; }\n.fa-flag-checkered:before {\n  content: \"\\F11E\"; }\n.fa-terminal:before {\n  content: \"\\F120\"; }\n.fa-code:before {\n  content: \"\\F121\"; }\n.fa-mail-reply-all:before, .fa-reply-all:before {\n  content: \"\\F122\"; }\n.fa-star-half-empty:before, .fa-star-half-full:before, .fa-star-half-o:before {\n  content: \"\\F123\"; }\n.fa-location-arrow:before {\n  content: \"\\F124\"; }\n.fa-crop:before {\n  content: \"\\F125\"; }\n.fa-code-fork:before {\n  content: \"\\F126\"; }\n.fa-unlink:before, .fa-chain-broken:before {\n  content: \"\\F127\"; }\n.fa-question:before {\n  content: \"\\F128\"; }\n.fa-info:before {\n  content: \"\\F129\"; }\n.fa-exclamation:before {\n  content: \"\\F12A\"; }\n.fa-superscript:before {\n  content: \"\\F12B\"; }\n.fa-subscript:before {\n  content: \"\\F12C\"; }\n.fa-eraser:before {\n  content: \"\\F12D\"; }\n.fa-puzzle-piece:before {\n  content: \"\\F12E\"; }\n.fa-microphone:before {\n  content: \"\\F130\"; }\n.fa-microphone-slash:before {\n  content: \"\\F131\"; }\n.fa-shield:before {\n  content: \"\\F132\"; }\n.fa-calendar-o:before {\n  content: \"\\F133\"; }\n.fa-fire-extinguisher:before {\n  content: \"\\F134\"; }\n.fa-rocket:before {\n  content: \"\\F135\"; }\n.fa-maxcdn:before {\n  content: \"\\F136\"; }\n.fa-chevron-circle-left:before {\n  content: \"\\F137\"; }\n.fa-chevron-circle-right:before {\n  content: \"\\F138\"; }\n.fa-chevron-circle-up:before {\n  content: \"\\F139\"; }\n.fa-chevron-circle-down:before {\n  content: \"\\F13A\"; }\n.fa-html5:before {\n  content: \"\\F13B\"; }\n.fa-css3:before {\n  content: \"\\F13C\"; }\n.fa-anchor:before {\n  content: \"\\F13D\"; }\n.fa-unlock-alt:before {\n  content: \"\\F13E\"; }\n.fa-bullseye:before {\n  content: \"\\F140\"; }\n.fa-ellipsis-h:before {\n  content: \"\\F141\"; }\n.fa-ellipsis-v:before {\n  content: \"\\F142\"; }\n.fa-rss-square:before {\n  content: \"\\F143\"; }\n.fa-play-circle:before {\n  content: \"\\F144\"; }\n.fa-ticket:before {\n  content: \"\\F145\"; }\n.fa-minus-square:before {\n  content: \"\\F146\"; }\n.fa-minus-square-o:before {\n  content: \"\\F147\"; }\n.fa-level-up:before {\n  content: \"\\F148\"; }\n.fa-level-down:before {\n  content: \"\\F149\"; }\n.fa-check-square:before {\n  content: \"\\F14A\"; }\n.fa-pencil-square:before {\n  content: \"\\F14B\"; }\n.fa-external-link-square:before {\n  content: \"\\F14C\"; }\n.fa-share-square:before {\n  content: \"\\F14D\"; }\n.fa-compass:before {\n  content: \"\\F14E\"; }\n.fa-toggle-down:before, .fa-caret-square-o-down:before {\n  content: \"\\F150\"; }\n.fa-toggle-up:before, .fa-caret-square-o-up:before {\n  content: \"\\F151\"; }\n.fa-toggle-right:before, .fa-caret-square-o-right:before {\n  content: \"\\F152\"; }\n.fa-euro:before, .fa-eur:before {\n  content: \"\\F153\"; }\n.fa-gbp:before {\n  content: \"\\F154\"; }\n.fa-dollar:before, .fa-usd:before {\n  content: \"\\F155\"; }\n.fa-rupee:before, .fa-inr:before {\n  content: \"\\F156\"; }\n.fa-cny:before, .fa-rmb:before, .fa-yen:before, .fa-jpy:before {\n  content: \"\\F157\"; }\n.fa-ruble:before, .fa-rouble:before, .fa-rub:before {\n  content: \"\\F158\"; }\n.fa-won:before, .fa-krw:before {\n  content: \"\\F159\"; }\n.fa-bitcoin:before, .fa-btc:before {\n  content: \"\\F15A\"; }\n.fa-file:before {\n  content: \"\\F15B\"; }\n.fa-file-text:before {\n  content: \"\\F15C\"; }\n.fa-sort-alpha-asc:before {\n  content: \"\\F15D\"; }\n.fa-sort-alpha-desc:before {\n  content: \"\\F15E\"; }\n.fa-sort-amount-asc:before {\n  content: \"\\F160\"; }\n.fa-sort-amount-desc:before {\n  content: \"\\F161\"; }\n.fa-sort-numeric-asc:before {\n  content: \"\\F162\"; }\n.fa-sort-numeric-desc:before {\n  content: \"\\F163\"; }\n.fa-thumbs-up:before {\n  content: \"\\F164\"; }\n.fa-thumbs-down:before {\n  content: \"\\F165\"; }\n.fa-youtube-square:before {\n  content: \"\\F166\"; }\n.fa-youtube:before {\n  content: \"\\F167\"; }\n.fa-xing:before {\n  content: \"\\F168\"; }\n.fa-xing-square:before {\n  content: \"\\F169\"; }\n.fa-youtube-play:before {\n  content: \"\\F16A\"; }\n.fa-dropbox:before {\n  content: \"\\F16B\"; }\n.fa-stack-overflow:before {\n  content: \"\\F16C\"; }\n.fa-instagram:before {\n  content: \"\\F16D\"; }\n.fa-flickr:before {\n  content: \"\\F16E\"; }\n.fa-adn:before {\n  content: \"\\F170\"; }\n.fa-bitbucket:before {\n  content: \"\\F171\"; }\n.fa-bitbucket-square:before {\n  content: \"\\F172\"; }\n.fa-tumblr:before {\n  content: \"\\F173\"; }\n.fa-tumblr-square:before {\n  content: \"\\F174\"; }\n.fa-long-arrow-down:before {\n  content: \"\\F175\"; }\n.fa-long-arrow-up:before {\n  content: \"\\F176\"; }\n.fa-long-arrow-left:before {\n  content: \"\\F177\"; }\n.fa-long-arrow-right:before {\n  content: \"\\F178\"; }\n.fa-apple:before {\n  content: \"\\F179\"; }\n.fa-windows:before {\n  content: \"\\F17A\"; }\n.fa-android:before {\n  content: \"\\F17B\"; }\n.fa-linux:before {\n  content: \"\\F17C\"; }\n.fa-dribbble:before {\n  content: \"\\F17D\"; }\n.fa-skype:before {\n  content: \"\\F17E\"; }\n.fa-foursquare:before {\n  content: \"\\F180\"; }\n.fa-trello:before {\n  content: \"\\F181\"; }\n.fa-female:before {\n  content: \"\\F182\"; }\n.fa-male:before {\n  content: \"\\F183\"; }\n.fa-gittip:before, .fa-gratipay:before {\n  content: \"\\F184\"; }\n.fa-sun-o:before {\n  content: \"\\F185\"; }\n.fa-moon-o:before {\n  content: \"\\F186\"; }\n.fa-archive:before {\n  content: \"\\F187\"; }\n.fa-bug:before {\n  content: \"\\F188\"; }\n.fa-vk:before {\n  content: \"\\F189\"; }\n.fa-weibo:before {\n  content: \"\\F18A\"; }\n.fa-renren:before {\n  content: \"\\F18B\"; }\n.fa-pagelines:before {\n  content: \"\\F18C\"; }\n.fa-stack-exchange:before {\n  content: \"\\F18D\"; }\n.fa-arrow-circle-o-right:before {\n  content: \"\\F18E\"; }\n.fa-arrow-circle-o-left:before {\n  content: \"\\F190\"; }\n.fa-toggle-left:before, .fa-caret-square-o-left:before {\n  content: \"\\F191\"; }\n.fa-dot-circle-o:before {\n  content: \"\\F192\"; }\n.fa-wheelchair:before {\n  content: \"\\F193\"; }\n.fa-vimeo-square:before {\n  content: \"\\F194\"; }\n.fa-turkish-lira:before, .fa-try:before {\n  content: \"\\F195\"; }\n.fa-plus-square-o:before {\n  content: \"\\F196\"; }\n.fa-space-shuttle:before {\n  content: \"\\F197\"; }\n.fa-slack:before {\n  content: \"\\F198\"; }\n.fa-envelope-square:before {\n  content: \"\\F199\"; }\n.fa-wordpress:before {\n  content: \"\\F19A\"; }\n.fa-openid:before {\n  content: \"\\F19B\"; }\n.fa-institution:before, .fa-bank:before, .fa-university:before {\n  content: \"\\F19C\"; }\n.fa-mortar-board:before, .fa-graduation-cap:before {\n  content: \"\\F19D\"; }\n.fa-yahoo:before {\n  content: \"\\F19E\"; }\n.fa-google:before {\n  content: \"\\F1A0\"; }\n.fa-reddit:before {\n  content: \"\\F1A1\"; }\n.fa-reddit-square:before {\n  content: \"\\F1A2\"; }\n.fa-stumbleupon-circle:before {\n  content: \"\\F1A3\"; }\n.fa-stumbleupon:before {\n  content: \"\\F1A4\"; }\n.fa-delicious:before {\n  content: \"\\F1A5\"; }\n.fa-digg:before {\n  content: \"\\F1A6\"; }\n.fa-pied-piper-pp:before {\n  content: \"\\F1A7\"; }\n.fa-pied-piper-alt:before {\n  content: \"\\F1A8\"; }\n.fa-drupal:before {\n  content: \"\\F1A9\"; }\n.fa-joomla:before {\n  content: \"\\F1AA\"; }\n.fa-language:before {\n  content: \"\\F1AB\"; }\n.fa-fax:before {\n  content: \"\\F1AC\"; }\n.fa-building:before {\n  content: \"\\F1AD\"; }\n.fa-child:before {\n  content: \"\\F1AE\"; }\n.fa-paw:before {\n  content: \"\\F1B0\"; }\n.fa-spoon:before {\n  content: \"\\F1B1\"; }\n.fa-cube:before {\n  content: \"\\F1B2\"; }\n.fa-cubes:before {\n  content: \"\\F1B3\"; }\n.fa-behance:before {\n  content: \"\\F1B4\"; }\n.fa-behance-square:before {\n  content: \"\\F1B5\"; }\n.fa-steam:before {\n  content: \"\\F1B6\"; }\n.fa-steam-square:before {\n  content: \"\\F1B7\"; }\n.fa-recycle:before {\n  content: \"\\F1B8\"; }\n.fa-automobile:before, .fa-car:before {\n  content: \"\\F1B9\"; }\n.fa-cab:before, .fa-taxi:before {\n  content: \"\\F1BA\"; }\n.fa-tree:before {\n  content: \"\\F1BB\"; }\n.fa-spotify:before {\n  content: \"\\F1BC\"; }\n.fa-deviantart:before {\n  content: \"\\F1BD\"; }\n.fa-soundcloud:before {\n  content: \"\\F1BE\"; }\n.fa-database:before {\n  content: \"\\F1C0\"; }\n.fa-file-pdf-o:before {\n  content: \"\\F1C1\"; }\n.fa-file-word-o:before {\n  content: \"\\F1C2\"; }\n.fa-file-excel-o:before {\n  content: \"\\F1C3\"; }\n.fa-file-powerpoint-o:before {\n  content: \"\\F1C4\"; }\n.fa-file-photo-o:before, .fa-file-picture-o:before, .fa-file-image-o:before {\n  content: \"\\F1C5\"; }\n.fa-file-zip-o:before, .fa-file-archive-o:before {\n  content: \"\\F1C6\"; }\n.fa-file-sound-o:before, .fa-file-audio-o:before {\n  content: \"\\F1C7\"; }\n.fa-file-movie-o:before, .fa-file-video-o:before {\n  content: \"\\F1C8\"; }\n.fa-file-code-o:before {\n  content: \"\\F1C9\"; }\n.fa-vine:before {\n  content: \"\\F1CA\"; }\n.fa-codepen:before {\n  content: \"\\F1CB\"; }\n.fa-jsfiddle:before {\n  content: \"\\F1CC\"; }\n.fa-life-bouy:before, .fa-life-buoy:before, .fa-life-saver:before, .fa-support:before, .fa-life-ring:before {\n  content: \"\\F1CD\"; }\n.fa-circle-o-notch:before {\n  content: \"\\F1CE\"; }\n.fa-ra:before, .fa-resistance:before, .fa-rebel:before {\n  content: \"\\F1D0\"; }\n.fa-ge:before, .fa-empire:before {\n  content: \"\\F1D1\"; }\n.fa-git-square:before {\n  content: \"\\F1D2\"; }\n.fa-git:before {\n  content: \"\\F1D3\"; }\n.fa-y-combinator-square:before, .fa-yc-square:before, .fa-hacker-news:before {\n  content: \"\\F1D4\"; }\n.fa-tencent-weibo:before {\n  content: \"\\F1D5\"; }\n.fa-qq:before {\n  content: \"\\F1D6\"; }\n.fa-wechat:before, .fa-weixin:before {\n  content: \"\\F1D7\"; }\n.fa-send:before, .fa-paper-plane:before {\n  content: \"\\F1D8\"; }\n.fa-send-o:before, .fa-paper-plane-o:before {\n  content: \"\\F1D9\"; }\n.fa-history:before {\n  content: \"\\F1DA\"; }\n.fa-circle-thin:before {\n  content: \"\\F1DB\"; }\n.fa-header:before {\n  content: \"\\F1DC\"; }\n.fa-paragraph:before {\n  content: \"\\F1DD\"; }\n.fa-sliders:before {\n  content: \"\\F1DE\"; }\n.fa-share-alt:before {\n  content: \"\\F1E0\"; }\n.fa-share-alt-square:before {\n  content: \"\\F1E1\"; }\n.fa-bomb:before {\n  content: \"\\F1E2\"; }\n.fa-soccer-ball-o:before, .fa-futbol-o:before {\n  content: \"\\F1E3\"; }\n.fa-tty:before {\n  content: \"\\F1E4\"; }\n.fa-binoculars:before {\n  content: \"\\F1E5\"; }\n.fa-plug:before {\n  content: \"\\F1E6\"; }\n.fa-slideshare:before {\n  content: \"\\F1E7\"; }\n.fa-twitch:before {\n  content: \"\\F1E8\"; }\n.fa-yelp:before {\n  content: \"\\F1E9\"; }\n.fa-newspaper-o:before {\n  content: \"\\F1EA\"; }\n.fa-wifi:before {\n  content: \"\\F1EB\"; }\n.fa-calculator:before {\n  content: \"\\F1EC\"; }\n.fa-paypal:before {\n  content: \"\\F1ED\"; }\n.fa-google-wallet:before {\n  content: \"\\F1EE\"; }\n.fa-cc-visa:before {\n  content: \"\\F1F0\"; }\n.fa-cc-mastercard:before {\n  content: \"\\F1F1\"; }\n.fa-cc-discover:before {\n  content: \"\\F1F2\"; }\n.fa-cc-amex:before {\n  content: \"\\F1F3\"; }\n.fa-cc-paypal:before {\n  content: \"\\F1F4\"; }\n.fa-cc-stripe:before {\n  content: \"\\F1F5\"; }\n.fa-bell-slash:before {\n  content: \"\\F1F6\"; }\n.fa-bell-slash-o:before {\n  content: \"\\F1F7\"; }\n.fa-trash:before {\n  content: \"\\F1F8\"; }\n.fa-copyright:before {\n  content: \"\\F1F9\"; }\n.fa-at:before {\n  content: \"\\F1FA\"; }\n.fa-eyedropper:before {\n  content: \"\\F1FB\"; }\n.fa-paint-brush:before {\n  content: \"\\F1FC\"; }\n.fa-birthday-cake:before {\n  content: \"\\F1FD\"; }\n.fa-area-chart:before {\n  content: \"\\F1FE\"; }\n.fa-pie-chart:before {\n  content: \"\\F200\"; }\n.fa-line-chart:before {\n  content: \"\\F201\"; }\n.fa-lastfm:before {\n  content: \"\\F202\"; }\n.fa-lastfm-square:before {\n  content: \"\\F203\"; }\n.fa-toggle-off:before {\n  content: \"\\F204\"; }\n.fa-toggle-on:before {\n  content: \"\\F205\"; }\n.fa-bicycle:before {\n  content: \"\\F206\"; }\n.fa-bus:before {\n  content: \"\\F207\"; }\n.fa-ioxhost:before {\n  content: \"\\F208\"; }\n.fa-angellist:before {\n  content: \"\\F209\"; }\n.fa-cc:before {\n  content: \"\\F20A\"; }\n.fa-shekel:before, .fa-sheqel:before, .fa-ils:before {\n  content: \"\\F20B\"; }\n.fa-meanpath:before {\n  content: \"\\F20C\"; }\n.fa-buysellads:before {\n  content: \"\\F20D\"; }\n.fa-connectdevelop:before {\n  content: \"\\F20E\"; }\n.fa-dashcube:before {\n  content: \"\\F210\"; }\n.fa-forumbee:before {\n  content: \"\\F211\"; }\n.fa-leanpub:before {\n  content: \"\\F212\"; }\n.fa-sellsy:before {\n  content: \"\\F213\"; }\n.fa-shirtsinbulk:before {\n  content: \"\\F214\"; }\n.fa-simplybuilt:before {\n  content: \"\\F215\"; }\n.fa-skyatlas:before {\n  content: \"\\F216\"; }\n.fa-cart-plus:before {\n  content: \"\\F217\"; }\n.fa-cart-arrow-down:before {\n  content: \"\\F218\"; }\n.fa-diamond:before {\n  content: \"\\F219\"; }\n.fa-ship:before {\n  content: \"\\F21A\"; }\n.fa-user-secret:before {\n  content: \"\\F21B\"; }\n.fa-motorcycle:before {\n  content: \"\\F21C\"; }\n.fa-street-view:before {\n  content: \"\\F21D\"; }\n.fa-heartbeat:before {\n  content: \"\\F21E\"; }\n.fa-venus:before {\n  content: \"\\F221\"; }\n.fa-mars:before {\n  content: \"\\F222\"; }\n.fa-mercury:before {\n  content: \"\\F223\"; }\n.fa-intersex:before, .fa-transgender:before {\n  content: \"\\F224\"; }\n.fa-transgender-alt:before {\n  content: \"\\F225\"; }\n.fa-venus-double:before {\n  content: \"\\F226\"; }\n.fa-mars-double:before {\n  content: \"\\F227\"; }\n.fa-venus-mars:before {\n  content: \"\\F228\"; }\n.fa-mars-stroke:before {\n  content: \"\\F229\"; }\n.fa-mars-stroke-v:before {\n  content: \"\\F22A\"; }\n.fa-mars-stroke-h:before {\n  content: \"\\F22B\"; }\n.fa-neuter:before {\n  content: \"\\F22C\"; }\n.fa-genderless:before {\n  content: \"\\F22D\"; }\n.fa-facebook-official:before {\n  content: \"\\F230\"; }\n.fa-pinterest-p:before {\n  content: \"\\F231\"; }\n.fa-whatsapp:before {\n  content: \"\\F232\"; }\n.fa-server:before {\n  content: \"\\F233\"; }\n.fa-user-plus:before {\n  content: \"\\F234\"; }\n.fa-user-times:before {\n  content: \"\\F235\"; }\n.fa-hotel:before, .fa-bed:before {\n  content: \"\\F236\"; }\n.fa-viacoin:before {\n  content: \"\\F237\"; }\n.fa-train:before {\n  content: \"\\F238\"; }\n.fa-subway:before {\n  content: \"\\F239\"; }\n.fa-medium:before {\n  content: \"\\F23A\"; }\n.fa-yc:before, .fa-y-combinator:before {\n  content: \"\\F23B\"; }\n.fa-optin-monster:before {\n  content: \"\\F23C\"; }\n.fa-opencart:before {\n  content: \"\\F23D\"; }\n.fa-expeditedssl:before {\n  content: \"\\F23E\"; }\n.fa-battery-4:before, .fa-battery:before, .fa-battery-full:before {\n  content: \"\\F240\"; }\n.fa-battery-3:before, .fa-battery-three-quarters:before {\n  content: \"\\F241\"; }\n.fa-battery-2:before, .fa-battery-half:before {\n  content: \"\\F242\"; }\n.fa-battery-1:before, .fa-battery-quarter:before {\n  content: \"\\F243\"; }\n.fa-battery-0:before, .fa-battery-empty:before {\n  content: \"\\F244\"; }\n.fa-mouse-pointer:before {\n  content: \"\\F245\"; }\n.fa-i-cursor:before {\n  content: \"\\F246\"; }\n.fa-object-group:before {\n  content: \"\\F247\"; }\n.fa-object-ungroup:before {\n  content: \"\\F248\"; }\n.fa-sticky-note:before {\n  content: \"\\F249\"; }\n.fa-sticky-note-o:before {\n  content: \"\\F24A\"; }\n.fa-cc-jcb:before {\n  content: \"\\F24B\"; }\n.fa-cc-diners-club:before {\n  content: \"\\F24C\"; }\n.fa-clone:before {\n  content: \"\\F24D\"; }\n.fa-balance-scale:before {\n  content: \"\\F24E\"; }\n.fa-hourglass-o:before {\n  content: \"\\F250\"; }\n.fa-hourglass-1:before, .fa-hourglass-start:before {\n  content: \"\\F251\"; }\n.fa-hourglass-2:before, .fa-hourglass-half:before {\n  content: \"\\F252\"; }\n.fa-hourglass-3:before, .fa-hourglass-end:before {\n  content: \"\\F253\"; }\n.fa-hourglass:before {\n  content: \"\\F254\"; }\n.fa-hand-grab-o:before, .fa-hand-rock-o:before {\n  content: \"\\F255\"; }\n.fa-hand-stop-o:before, .fa-hand-paper-o:before {\n  content: \"\\F256\"; }\n.fa-hand-scissors-o:before {\n  content: \"\\F257\"; }\n.fa-hand-lizard-o:before {\n  content: \"\\F258\"; }\n.fa-hand-spock-o:before {\n  content: \"\\F259\"; }\n.fa-hand-pointer-o:before {\n  content: \"\\F25A\"; }\n.fa-hand-peace-o:before {\n  content: \"\\F25B\"; }\n.fa-trademark:before {\n  content: \"\\F25C\"; }\n.fa-registered:before {\n  content: \"\\F25D\"; }\n.fa-creative-commons:before {\n  content: \"\\F25E\"; }\n.fa-gg:before {\n  content: \"\\F260\"; }\n.fa-gg-circle:before {\n  content: \"\\F261\"; }\n.fa-tripadvisor:before {\n  content: \"\\F262\"; }\n.fa-odnoklassniki:before {\n  content: \"\\F263\"; }\n.fa-odnoklassniki-square:before {\n  content: \"\\F264\"; }\n.fa-get-pocket:before {\n  content: \"\\F265\"; }\n.fa-wikipedia-w:before {\n  content: \"\\F266\"; }\n.fa-safari:before {\n  content: \"\\F267\"; }\n.fa-chrome:before {\n  content: \"\\F268\"; }\n.fa-firefox:before {\n  content: \"\\F269\"; }\n.fa-opera:before {\n  content: \"\\F26A\"; }\n.fa-internet-explorer:before {\n  content: \"\\F26B\"; }\n.fa-tv:before, .fa-television:before {\n  content: \"\\F26C\"; }\n.fa-contao:before {\n  content: \"\\F26D\"; }\n.fa-500px:before {\n  content: \"\\F26E\"; }\n.fa-amazon:before {\n  content: \"\\F270\"; }\n.fa-calendar-plus-o:before {\n  content: \"\\F271\"; }\n.fa-calendar-minus-o:before {\n  content: \"\\F272\"; }\n.fa-calendar-times-o:before {\n  content: \"\\F273\"; }\n.fa-calendar-check-o:before {\n  content: \"\\F274\"; }\n.fa-industry:before {\n  content: \"\\F275\"; }\n.fa-map-pin:before {\n  content: \"\\F276\"; }\n.fa-map-signs:before {\n  content: \"\\F277\"; }\n.fa-map-o:before {\n  content: \"\\F278\"; }\n.fa-map:before {\n  content: \"\\F279\"; }\n.fa-commenting:before {\n  content: \"\\F27A\"; }\n.fa-commenting-o:before {\n  content: \"\\F27B\"; }\n.fa-houzz:before {\n  content: \"\\F27C\"; }\n.fa-vimeo:before {\n  content: \"\\F27D\"; }\n.fa-black-tie:before {\n  content: \"\\F27E\"; }\n.fa-fonticons:before {\n  content: \"\\F280\"; }\n.fa-reddit-alien:before {\n  content: \"\\F281\"; }\n.fa-edge:before {\n  content: \"\\F282\"; }\n.fa-credit-card-alt:before {\n  content: \"\\F283\"; }\n.fa-codiepie:before {\n  content: \"\\F284\"; }\n.fa-modx:before {\n  content: \"\\F285\"; }\n.fa-fort-awesome:before {\n  content: \"\\F286\"; }\n.fa-usb:before {\n  content: \"\\F287\"; }\n.fa-product-hunt:before {\n  content: \"\\F288\"; }\n.fa-mixcloud:before {\n  content: \"\\F289\"; }\n.fa-scribd:before {\n  content: \"\\F28A\"; }\n.fa-pause-circle:before {\n  content: \"\\F28B\"; }\n.fa-pause-circle-o:before {\n  content: \"\\F28C\"; }\n.fa-stop-circle:before {\n  content: \"\\F28D\"; }\n.fa-stop-circle-o:before {\n  content: \"\\F28E\"; }\n.fa-shopping-bag:before {\n  content: \"\\F290\"; }\n.fa-shopping-basket:before {\n  content: \"\\F291\"; }\n.fa-hashtag:before {\n  content: \"\\F292\"; }\n.fa-bluetooth:before {\n  content: \"\\F293\"; }\n.fa-bluetooth-b:before {\n  content: \"\\F294\"; }\n.fa-percent:before {\n  content: \"\\F295\"; }\n.fa-gitlab:before {\n  content: \"\\F296\"; }\n.fa-wpbeginner:before {\n  content: \"\\F297\"; }\n.fa-wpforms:before {\n  content: \"\\F298\"; }\n.fa-envira:before {\n  content: \"\\F299\"; }\n.fa-universal-access:before {\n  content: \"\\F29A\"; }\n.fa-wheelchair-alt:before {\n  content: \"\\F29B\"; }\n.fa-question-circle-o:before {\n  content: \"\\F29C\"; }\n.fa-blind:before {\n  content: \"\\F29D\"; }\n.fa-audio-description:before {\n  content: \"\\F29E\"; }\n.fa-volume-control-phone:before {\n  content: \"\\F2A0\"; }\n.fa-braille:before {\n  content: \"\\F2A1\"; }\n.fa-assistive-listening-systems:before {\n  content: \"\\F2A2\"; }\n.fa-asl-interpreting:before, .fa-american-sign-language-interpreting:before {\n  content: \"\\F2A3\"; }\n.fa-deafness:before, .fa-hard-of-hearing:before, .fa-deaf:before {\n  content: \"\\F2A4\"; }\n.fa-glide:before {\n  content: \"\\F2A5\"; }\n.fa-glide-g:before {\n  content: \"\\F2A6\"; }\n.fa-signing:before, .fa-sign-language:before {\n  content: \"\\F2A7\"; }\n.fa-low-vision:before {\n  content: \"\\F2A8\"; }\n.fa-viadeo:before {\n  content: \"\\F2A9\"; }\n.fa-viadeo-square:before {\n  content: \"\\F2AA\"; }\n.fa-snapchat:before {\n  content: \"\\F2AB\"; }\n.fa-snapchat-ghost:before {\n  content: \"\\F2AC\"; }\n.fa-snapchat-square:before {\n  content: \"\\F2AD\"; }\n.fa-pied-piper:before {\n  content: \"\\F2AE\"; }\n.fa-first-order:before {\n  content: \"\\F2B0\"; }\n.fa-yoast:before {\n  content: \"\\F2B1\"; }\n.fa-themeisle:before {\n  content: \"\\F2B2\"; }\n.fa-google-plus-circle:before, .fa-google-plus-official:before {\n  content: \"\\F2B3\"; }\n.fa-fa:before, .fa-font-awesome:before {\n  content: \"\\F2B4\"; }\n.fa-handshake-o:before {\n  content: \"\\F2B5\"; }\n.fa-envelope-open:before {\n  content: \"\\F2B6\"; }\n.fa-envelope-open-o:before {\n  content: \"\\F2B7\"; }\n.fa-linode:before {\n  content: \"\\F2B8\"; }\n.fa-address-book:before {\n  content: \"\\F2B9\"; }\n.fa-address-book-o:before {\n  content: \"\\F2BA\"; }\n.fa-vcard:before, .fa-address-card:before {\n  content: \"\\F2BB\"; }\n.fa-vcard-o:before, .fa-address-card-o:before {\n  content: \"\\F2BC\"; }\n.fa-user-circle:before {\n  content: \"\\F2BD\"; }\n.fa-user-circle-o:before {\n  content: \"\\F2BE\"; }\n.fa-user-o:before {\n  content: \"\\F2C0\"; }\n.fa-id-badge:before {\n  content: \"\\F2C1\"; }\n.fa-drivers-license:before, .fa-id-card:before {\n  content: \"\\F2C2\"; }\n.fa-drivers-license-o:before, .fa-id-card-o:before {\n  content: \"\\F2C3\"; }\n.fa-quora:before {\n  content: \"\\F2C4\"; }\n.fa-free-code-camp:before {\n  content: \"\\F2C5\"; }\n.fa-telegram:before {\n  content: \"\\F2C6\"; }\n.fa-thermometer-4:before, .fa-thermometer:before, .fa-thermometer-full:before {\n  content: \"\\F2C7\"; }\n.fa-thermometer-3:before, .fa-thermometer-three-quarters:before {\n  content: \"\\F2C8\"; }\n.fa-thermometer-2:before, .fa-thermometer-half:before {\n  content: \"\\F2C9\"; }\n.fa-thermometer-1:before, .fa-thermometer-quarter:before {\n  content: \"\\F2CA\"; }\n.fa-thermometer-0:before, .fa-thermometer-empty:before {\n  content: \"\\F2CB\"; }\n.fa-shower:before {\n  content: \"\\F2CC\"; }\n.fa-bathtub:before, .fa-s15:before, .fa-bath:before {\n  content: \"\\F2CD\"; }\n.fa-podcast:before {\n  content: \"\\F2CE\"; }\n.fa-window-maximize:before {\n  content: \"\\F2D0\"; }\n.fa-window-minimize:before {\n  content: \"\\F2D1\"; }\n.fa-window-restore:before {\n  content: \"\\F2D2\"; }\n.fa-times-rectangle:before, .fa-window-close:before {\n  content: \"\\F2D3\"; }\n.fa-times-rectangle-o:before, .fa-window-close-o:before {\n  content: \"\\F2D4\"; }\n.fa-bandcamp:before {\n  content: \"\\F2D5\"; }\n.fa-grav:before {\n  content: \"\\F2D6\"; }\n.fa-etsy:before {\n  content: \"\\F2D7\"; }\n.fa-imdb:before {\n  content: \"\\F2D8\"; }\n.fa-ravelry:before {\n  content: \"\\F2D9\"; }\n.fa-eercast:before {\n  content: \"\\F2DA\"; }\n.fa-microchip:before {\n  content: \"\\F2DB\"; }\n.fa-snowflake-o:before {\n  content: \"\\F2DC\"; }\n.fa-superpowers:before {\n  content: \"\\F2DD\"; }\n.fa-wpexplorer:before {\n  content: \"\\F2DE\"; }\n.fa-meetup:before {\n  content: \"\\F2E0\"; }\n.sr-only {\n  position: absolute;\n  width: 1px;\n  height: 1px;\n  padding: 0;\n  margin: -1px;\n  overflow: hidden;\n  clip: rect(0, 0, 0, 0);\n  border: 0; }\n.sr-only-focusable:active, .sr-only-focusable:focus {\n  position: static;\n  width: auto;\n  height: auto;\n  margin: 0;\n  overflow: visible;\n  clip: auto; }\n/*!\n * Bootstrap v3.3.7 (http://getbootstrap.com)\n * Copyright 2011-2016 Twitter, Inc.\n * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)\n */\n/*! normalize.css v3.0.3 | MIT License | github.com/necolas/normalize.css */\nhtml {\n  font-family: sans-serif;\n  -ms-text-size-adjust: 100%;\n  -webkit-text-size-adjust: 100%; }\nbody {\n  margin: 0; }\narticle, aside, details, figcaption, figure, footer, header, hgroup, main, menu, nav, section, summary {\n  display: block; }\naudio, canvas, progress, video {\n  display: inline-block;\n  vertical-align: baseline; }\naudio:not([controls]) {\n  display: none;\n  height: 0; }\n[hidden], template {\n  display: none; }\na {\n  background-color: transparent; }\na:active, a:hover {\n  outline: 0; }\nabbr[title] {\n  border-bottom: 1px dotted; }\nb, strong {\n  font-weight: bold; }\ndfn {\n  font-style: italic; }\nh1 {\n  font-size: 2em;\n  margin: 0.67em 0; }\nmark {\n  background: #ff0;\n  color: #000; }\nsmall {\n  font-size: 80%; }\nsub, sup {\n  font-size: 75%;\n  line-height: 0;\n  position: relative;\n  vertical-align: baseline; }\nsup {\n  top: -0.5em; }\nsub {\n  bottom: -0.25em; }\nimg {\n  border: 0; }\nsvg:not(:root) {\n  overflow: hidden; }\nfigure {\n  margin: 1em 40px; }\nhr {\n  box-sizing: content-box;\n  height: 0; }\npre {\n  overflow: auto; }\ncode, kbd, pre, samp {\n  font-family: monospace, monospace;\n  font-size: 1em; }\nbutton, input, optgroup, select, textarea {\n  color: inherit;\n  font: inherit;\n  margin: 0; }\nbutton {\n  overflow: visible; }\nbutton, select {\n  text-transform: none; }\nbutton, html input[type=\"button\"], input[type=\"reset\"], input[type=\"submit\"] {\n  -webkit-appearance: button;\n  cursor: pointer; }\nbutton[disabled], html input[disabled] {\n  cursor: default; }\nbutton::-moz-focus-inner, input::-moz-focus-inner {\n  border: 0;\n  padding: 0; }\ninput {\n  line-height: normal; }\ninput[type=\"checkbox\"], input[type=\"radio\"] {\n  box-sizing: border-box;\n  padding: 0; }\ninput[type=\"number\"]::-webkit-inner-spin-button, input[type=\"number\"]::-webkit-outer-spin-button {\n  height: auto; }\ninput[type=\"search\"] {\n  -webkit-appearance: textfield;\n  box-sizing: content-box; }\ninput[type=\"search\"]::-webkit-search-cancel-button, input[type=\"search\"]::-webkit-search-decoration {\n  -webkit-appearance: none; }\nfieldset {\n  border: 1px solid #c0c0c0;\n  margin: 0 2px;\n  padding: 0.35em 0.625em 0.75em; }\nlegend {\n  border: 0;\n  padding: 0; }\ntextarea {\n  overflow: auto; }\noptgroup {\n  font-weight: bold; }\ntable {\n  border-collapse: collapse;\n  border-spacing: 0; }\ntd, th {\n  padding: 0; }\n/*! Source: https://github.com/h5bp/html5-boilerplate/blob/master/src/css/main.css */\n@media print {\n  *, *:before, *:after {\n    background: transparent !important;\n    color: #000 !important;\n    box-shadow: none !important;\n    text-shadow: none !important; }\n  a, a:visited {\n    text-decoration: underline; }\n  a[href]:after {\n    content: \" (\" attr(href) \")\"; }\n  abbr[title]:after {\n    content: \" (\" attr(title) \")\"; }\n  a[href^=\"#\"]:after, a[href^=\"javascript:\"]:after {\n    content: \"\"; }\n  pre, blockquote {\n    border: 1px solid #999;\n    page-break-inside: avoid; }\n  thead {\n    display: table-header-group; }\n  tr, img {\n    page-break-inside: avoid; }\n  img {\n    max-width: 100% !important; }\n  p, h2, h3 {\n    orphans: 3;\n    widows: 3; }\n  h2, h3 {\n    page-break-after: avoid; }\n  .navbar {\n    display: none; }\n  .btn > .caret, .dropup > .btn > .caret {\n    border-top-color: #000 !important; }\n  .label {\n    border: 1px solid #000; }\n  .table {\n    border-collapse: collapse !important; }\n    .table td, .table th {\n      background-color: #fff !important; }\n  .table-bordered th, .table-bordered td {\n    border: 1px solid #ddd !important; } }\n@font-face {\n  font-family: 'Glyphicons Halflings';\n  src: url(" + __webpack_require__(3) + ");\n  src: url(" + __webpack_require__(3) + "?#iefix) format(\"embedded-opentype\"), url(" + __webpack_require__(13) + ") format(\"woff2\"), url(" + __webpack_require__(14) + ") format(\"woff\"), url(" + __webpack_require__(15) + ") format(\"truetype\"), url(" + __webpack_require__(16) + "#glyphicons_halflingsregular) format(\"svg\"); }\n.glyphicon {\n  position: relative;\n  top: 1px;\n  display: inline-block;\n  font-family: 'Glyphicons Halflings';\n  font-style: normal;\n  font-weight: normal;\n  line-height: 1;\n  -webkit-font-smoothing: antialiased;\n  -moz-osx-font-smoothing: grayscale; }\n.glyphicon-asterisk:before {\n  content: \"*\"; }\n.glyphicon-plus:before {\n  content: \"+\"; }\n.glyphicon-euro:before, .glyphicon-eur:before {\n  content: \"\\20AC\"; }\n.glyphicon-minus:before {\n  content: \"\\2212\"; }\n.glyphicon-cloud:before {\n  content: \"\\2601\"; }\n.glyphicon-envelope:before {\n  content: \"\\2709\"; }\n.glyphicon-pencil:before {\n  content: \"\\270F\"; }\n.glyphicon-glass:before {\n  content: \"\\E001\"; }\n.glyphicon-music:before {\n  content: \"\\E002\"; }\n.glyphicon-search:before {\n  content: \"\\E003\"; }\n.glyphicon-heart:before {\n  content: \"\\E005\"; }\n.glyphicon-star:before {\n  content: \"\\E006\"; }\n.glyphicon-star-empty:before {\n  content: \"\\E007\"; }\n.glyphicon-user:before {\n  content: \"\\E008\"; }\n.glyphicon-film:before {\n  content: \"\\E009\"; }\n.glyphicon-th-large:before {\n  content: \"\\E010\"; }\n.glyphicon-th:before {\n  content: \"\\E011\"; }\n.glyphicon-th-list:before {\n  content: \"\\E012\"; }\n.glyphicon-ok:before {\n  content: \"\\E013\"; }\n.glyphicon-remove:before {\n  content: \"\\E014\"; }\n.glyphicon-zoom-in:before {\n  content: \"\\E015\"; }\n.glyphicon-zoom-out:before {\n  content: \"\\E016\"; }\n.glyphicon-off:before {\n  content: \"\\E017\"; }\n.glyphicon-signal:before {\n  content: \"\\E018\"; }\n.glyphicon-cog:before {\n  content: \"\\E019\"; }\n.glyphicon-trash:before {\n  content: \"\\E020\"; }\n.glyphicon-home:before {\n  content: \"\\E021\"; }\n.glyphicon-file:before {\n  content: \"\\E022\"; }\n.glyphicon-time:before {\n  content: \"\\E023\"; }\n.glyphicon-road:before {\n  content: \"\\E024\"; }\n.glyphicon-download-alt:before {\n  content: \"\\E025\"; }\n.glyphicon-download:before {\n  content: \"\\E026\"; }\n.glyphicon-upload:before {\n  content: \"\\E027\"; }\n.glyphicon-inbox:before {\n  content: \"\\E028\"; }\n.glyphicon-play-circle:before {\n  content: \"\\E029\"; }\n.glyphicon-repeat:before {\n  content: \"\\E030\"; }\n.glyphicon-refresh:before {\n  content: \"\\E031\"; }\n.glyphicon-list-alt:before {\n  content: \"\\E032\"; }\n.glyphicon-lock:before {\n  content: \"\\E033\"; }\n.glyphicon-flag:before {\n  content: \"\\E034\"; }\n.glyphicon-headphones:before {\n  content: \"\\E035\"; }\n.glyphicon-volume-off:before {\n  content: \"\\E036\"; }\n.glyphicon-volume-down:before {\n  content: \"\\E037\"; }\n.glyphicon-volume-up:before {\n  content: \"\\E038\"; }\n.glyphicon-qrcode:before {\n  content: \"\\E039\"; }\n.glyphicon-barcode:before {\n  content: \"\\E040\"; }\n.glyphicon-tag:before {\n  content: \"\\E041\"; }\n.glyphicon-tags:before {\n  content: \"\\E042\"; }\n.glyphicon-book:before {\n  content: \"\\E043\"; }\n.glyphicon-bookmark:before {\n  content: \"\\E044\"; }\n.glyphicon-print:before {\n  content: \"\\E045\"; }\n.glyphicon-camera:before {\n  content: \"\\E046\"; }\n.glyphicon-font:before {\n  content: \"\\E047\"; }\n.glyphicon-bold:before {\n  content: \"\\E048\"; }\n.glyphicon-italic:before {\n  content: \"\\E049\"; }\n.glyphicon-text-height:before {\n  content: \"\\E050\"; }\n.glyphicon-text-width:before {\n  content: \"\\E051\"; }\n.glyphicon-align-left:before {\n  content: \"\\E052\"; }\n.glyphicon-align-center:before {\n  content: \"\\E053\"; }\n.glyphicon-align-right:before {\n  content: \"\\E054\"; }\n.glyphicon-align-justify:before {\n  content: \"\\E055\"; }\n.glyphicon-list:before {\n  content: \"\\E056\"; }\n.glyphicon-indent-left:before {\n  content: \"\\E057\"; }\n.glyphicon-indent-right:before {\n  content: \"\\E058\"; }\n.glyphicon-facetime-video:before {\n  content: \"\\E059\"; }\n.glyphicon-picture:before {\n  content: \"\\E060\"; }\n.glyphicon-map-marker:before {\n  content: \"\\E062\"; }\n.glyphicon-adjust:before {\n  content: \"\\E063\"; }\n.glyphicon-tint:before {\n  content: \"\\E064\"; }\n.glyphicon-edit:before {\n  content: \"\\E065\"; }\n.glyphicon-share:before {\n  content: \"\\E066\"; }\n.glyphicon-check:before {\n  content: \"\\E067\"; }\n.glyphicon-move:before {\n  content: \"\\E068\"; }\n.glyphicon-step-backward:before {\n  content: \"\\E069\"; }\n.glyphicon-fast-backward:before {\n  content: \"\\E070\"; }\n.glyphicon-backward:before {\n  content: \"\\E071\"; }\n.glyphicon-play:before {\n  content: \"\\E072\"; }\n.glyphicon-pause:before {\n  content: \"\\E073\"; }\n.glyphicon-stop:before {\n  content: \"\\E074\"; }\n.glyphicon-forward:before {\n  content: \"\\E075\"; }\n.glyphicon-fast-forward:before {\n  content: \"\\E076\"; }\n.glyphicon-step-forward:before {\n  content: \"\\E077\"; }\n.glyphicon-eject:before {\n  content: \"\\E078\"; }\n.glyphicon-chevron-left:before {\n  content: \"\\E079\"; }\n.glyphicon-chevron-right:before {\n  content: \"\\E080\"; }\n.glyphicon-plus-sign:before {\n  content: \"\\E081\"; }\n.glyphicon-minus-sign:before {\n  content: \"\\E082\"; }\n.glyphicon-remove-sign:before {\n  content: \"\\E083\"; }\n.glyphicon-ok-sign:before {\n  content: \"\\E084\"; }\n.glyphicon-question-sign:before {\n  content: \"\\E085\"; }\n.glyphicon-info-sign:before {\n  content: \"\\E086\"; }\n.glyphicon-screenshot:before {\n  content: \"\\E087\"; }\n.glyphicon-remove-circle:before {\n  content: \"\\E088\"; }\n.glyphicon-ok-circle:before {\n  content: \"\\E089\"; }\n.glyphicon-ban-circle:before {\n  content: \"\\E090\"; }\n.glyphicon-arrow-left:before {\n  content: \"\\E091\"; }\n.glyphicon-arrow-right:before {\n  content: \"\\E092\"; }\n.glyphicon-arrow-up:before {\n  content: \"\\E093\"; }\n.glyphicon-arrow-down:before {\n  content: \"\\E094\"; }\n.glyphicon-share-alt:before {\n  content: \"\\E095\"; }\n.glyphicon-resize-full:before {\n  content: \"\\E096\"; }\n.glyphicon-resize-small:before {\n  content: \"\\E097\"; }\n.glyphicon-exclamation-sign:before {\n  content: \"\\E101\"; }\n.glyphicon-gift:before {\n  content: \"\\E102\"; }\n.glyphicon-leaf:before {\n  content: \"\\E103\"; }\n.glyphicon-fire:before {\n  content: \"\\E104\"; }\n.glyphicon-eye-open:before {\n  content: \"\\E105\"; }\n.glyphicon-eye-close:before {\n  content: \"\\E106\"; }\n.glyphicon-warning-sign:before {\n  content: \"\\E107\"; }\n.glyphicon-plane:before {\n  content: \"\\E108\"; }\n.glyphicon-calendar:before {\n  content: \"\\E109\"; }\n.glyphicon-random:before {\n  content: \"\\E110\"; }\n.glyphicon-comment:before {\n  content: \"\\E111\"; }\n.glyphicon-magnet:before {\n  content: \"\\E112\"; }\n.glyphicon-chevron-up:before {\n  content: \"\\E113\"; }\n.glyphicon-chevron-down:before {\n  content: \"\\E114\"; }\n.glyphicon-retweet:before {\n  content: \"\\E115\"; }\n.glyphicon-shopping-cart:before {\n  content: \"\\E116\"; }\n.glyphicon-folder-close:before {\n  content: \"\\E117\"; }\n.glyphicon-folder-open:before {\n  content: \"\\E118\"; }\n.glyphicon-resize-vertical:before {\n  content: \"\\E119\"; }\n.glyphicon-resize-horizontal:before {\n  content: \"\\E120\"; }\n.glyphicon-hdd:before {\n  content: \"\\E121\"; }\n.glyphicon-bullhorn:before {\n  content: \"\\E122\"; }\n.glyphicon-bell:before {\n  content: \"\\E123\"; }\n.glyphicon-certificate:before {\n  content: \"\\E124\"; }\n.glyphicon-thumbs-up:before {\n  content: \"\\E125\"; }\n.glyphicon-thumbs-down:before {\n  content: \"\\E126\"; }\n.glyphicon-hand-right:before {\n  content: \"\\E127\"; }\n.glyphicon-hand-left:before {\n  content: \"\\E128\"; }\n.glyphicon-hand-up:before {\n  content: \"\\E129\"; }\n.glyphicon-hand-down:before {\n  content: \"\\E130\"; }\n.glyphicon-circle-arrow-right:before {\n  content: \"\\E131\"; }\n.glyphicon-circle-arrow-left:before {\n  content: \"\\E132\"; }\n.glyphicon-circle-arrow-up:before {\n  content: \"\\E133\"; }\n.glyphicon-circle-arrow-down:before {\n  content: \"\\E134\"; }\n.glyphicon-globe:before {\n  content: \"\\E135\"; }\n.glyphicon-wrench:before {\n  content: \"\\E136\"; }\n.glyphicon-tasks:before {\n  content: \"\\E137\"; }\n.glyphicon-filter:before {\n  content: \"\\E138\"; }\n.glyphicon-briefcase:before {\n  content: \"\\E139\"; }\n.glyphicon-fullscreen:before {\n  content: \"\\E140\"; }\n.glyphicon-dashboard:before {\n  content: \"\\E141\"; }\n.glyphicon-paperclip:before {\n  content: \"\\E142\"; }\n.glyphicon-heart-empty:before {\n  content: \"\\E143\"; }\n.glyphicon-link:before {\n  content: \"\\E144\"; }\n.glyphicon-phone:before {\n  content: \"\\E145\"; }\n.glyphicon-pushpin:before {\n  content: \"\\E146\"; }\n.glyphicon-usd:before {\n  content: \"\\E148\"; }\n.glyphicon-gbp:before {\n  content: \"\\E149\"; }\n.glyphicon-sort:before {\n  content: \"\\E150\"; }\n.glyphicon-sort-by-alphabet:before {\n  content: \"\\E151\"; }\n.glyphicon-sort-by-alphabet-alt:before {\n  content: \"\\E152\"; }\n.glyphicon-sort-by-order:before {\n  content: \"\\E153\"; }\n.glyphicon-sort-by-order-alt:before {\n  content: \"\\E154\"; }\n.glyphicon-sort-by-attributes:before {\n  content: \"\\E155\"; }\n.glyphicon-sort-by-attributes-alt:before {\n  content: \"\\E156\"; }\n.glyphicon-unchecked:before {\n  content: \"\\E157\"; }\n.glyphicon-expand:before {\n  content: \"\\E158\"; }\n.glyphicon-collapse-down:before {\n  content: \"\\E159\"; }\n.glyphicon-collapse-up:before {\n  content: \"\\E160\"; }\n.glyphicon-log-in:before {\n  content: \"\\E161\"; }\n.glyphicon-flash:before {\n  content: \"\\E162\"; }\n.glyphicon-log-out:before {\n  content: \"\\E163\"; }\n.glyphicon-new-window:before {\n  content: \"\\E164\"; }\n.glyphicon-record:before {\n  content: \"\\E165\"; }\n.glyphicon-save:before {\n  content: \"\\E166\"; }\n.glyphicon-open:before {\n  content: \"\\E167\"; }\n.glyphicon-saved:before {\n  content: \"\\E168\"; }\n.glyphicon-import:before {\n  content: \"\\E169\"; }\n.glyphicon-export:before {\n  content: \"\\E170\"; }\n.glyphicon-send:before {\n  content: \"\\E171\"; }\n.glyphicon-floppy-disk:before {\n  content: \"\\E172\"; }\n.glyphicon-floppy-saved:before {\n  content: \"\\E173\"; }\n.glyphicon-floppy-remove:before {\n  content: \"\\E174\"; }\n.glyphicon-floppy-save:before {\n  content: \"\\E175\"; }\n.glyphicon-floppy-open:before {\n  content: \"\\E176\"; }\n.glyphicon-credit-card:before {\n  content: \"\\E177\"; }\n.glyphicon-transfer:before {\n  content: \"\\E178\"; }\n.glyphicon-cutlery:before {\n  content: \"\\E179\"; }\n.glyphicon-header:before {\n  content: \"\\E180\"; }\n.glyphicon-compressed:before {\n  content: \"\\E181\"; }\n.glyphicon-earphone:before {\n  content: \"\\E182\"; }\n.glyphicon-phone-alt:before {\n  content: \"\\E183\"; }\n.glyphicon-tower:before {\n  content: \"\\E184\"; }\n.glyphicon-stats:before {\n  content: \"\\E185\"; }\n.glyphicon-sd-video:before {\n  content: \"\\E186\"; }\n.glyphicon-hd-video:before {\n  content: \"\\E187\"; }\n.glyphicon-subtitles:before {\n  content: \"\\E188\"; }\n.glyphicon-sound-stereo:before {\n  content: \"\\E189\"; }\n.glyphicon-sound-dolby:before {\n  content: \"\\E190\"; }\n.glyphicon-sound-5-1:before {\n  content: \"\\E191\"; }\n.glyphicon-sound-6-1:before {\n  content: \"\\E192\"; }\n.glyphicon-sound-7-1:before {\n  content: \"\\E193\"; }\n.glyphicon-copyright-mark:before {\n  content: \"\\E194\"; }\n.glyphicon-registration-mark:before {\n  content: \"\\E195\"; }\n.glyphicon-cloud-download:before {\n  content: \"\\E197\"; }\n.glyphicon-cloud-upload:before {\n  content: \"\\E198\"; }\n.glyphicon-tree-conifer:before {\n  content: \"\\E199\"; }\n.glyphicon-tree-deciduous:before {\n  content: \"\\E200\"; }\n.glyphicon-cd:before {\n  content: \"\\E201\"; }\n.glyphicon-save-file:before {\n  content: \"\\E202\"; }\n.glyphicon-open-file:before {\n  content: \"\\E203\"; }\n.glyphicon-level-up:before {\n  content: \"\\E204\"; }\n.glyphicon-copy:before {\n  content: \"\\E205\"; }\n.glyphicon-paste:before {\n  content: \"\\E206\"; }\n.glyphicon-alert:before {\n  content: \"\\E209\"; }\n.glyphicon-equalizer:before {\n  content: \"\\E210\"; }\n.glyphicon-king:before {\n  content: \"\\E211\"; }\n.glyphicon-queen:before {\n  content: \"\\E212\"; }\n.glyphicon-pawn:before {\n  content: \"\\E213\"; }\n.glyphicon-bishop:before {\n  content: \"\\E214\"; }\n.glyphicon-knight:before {\n  content: \"\\E215\"; }\n.glyphicon-baby-formula:before {\n  content: \"\\E216\"; }\n.glyphicon-tent:before {\n  content: \"\\26FA\"; }\n.glyphicon-blackboard:before {\n  content: \"\\E218\"; }\n.glyphicon-bed:before {\n  content: \"\\E219\"; }\n.glyphicon-apple:before {\n  content: \"\\F8FF\"; }\n.glyphicon-erase:before {\n  content: \"\\E221\"; }\n.glyphicon-hourglass:before {\n  content: \"\\231B\"; }\n.glyphicon-lamp:before {\n  content: \"\\E223\"; }\n.glyphicon-duplicate:before {\n  content: \"\\E224\"; }\n.glyphicon-piggy-bank:before {\n  content: \"\\E225\"; }\n.glyphicon-scissors:before {\n  content: \"\\E226\"; }\n.glyphicon-bitcoin:before {\n  content: \"\\E227\"; }\n.glyphicon-btc:before {\n  content: \"\\E227\"; }\n.glyphicon-xbt:before {\n  content: \"\\E227\"; }\n.glyphicon-yen:before {\n  content: \"\\A5\"; }\n.glyphicon-jpy:before {\n  content: \"\\A5\"; }\n.glyphicon-ruble:before {\n  content: \"\\20BD\"; }\n.glyphicon-rub:before {\n  content: \"\\20BD\"; }\n.glyphicon-scale:before {\n  content: \"\\E230\"; }\n.glyphicon-ice-lolly:before {\n  content: \"\\E231\"; }\n.glyphicon-ice-lolly-tasted:before {\n  content: \"\\E232\"; }\n.glyphicon-education:before {\n  content: \"\\E233\"; }\n.glyphicon-option-horizontal:before {\n  content: \"\\E234\"; }\n.glyphicon-option-vertical:before {\n  content: \"\\E235\"; }\n.glyphicon-menu-hamburger:before {\n  content: \"\\E236\"; }\n.glyphicon-modal-window:before {\n  content: \"\\E237\"; }\n.glyphicon-oil:before {\n  content: \"\\E238\"; }\n.glyphicon-grain:before {\n  content: \"\\E239\"; }\n.glyphicon-sunglasses:before {\n  content: \"\\E240\"; }\n.glyphicon-text-size:before {\n  content: \"\\E241\"; }\n.glyphicon-text-color:before {\n  content: \"\\E242\"; }\n.glyphicon-text-background:before {\n  content: \"\\E243\"; }\n.glyphicon-object-align-top:before {\n  content: \"\\E244\"; }\n.glyphicon-object-align-bottom:before {\n  content: \"\\E245\"; }\n.glyphicon-object-align-horizontal:before {\n  content: \"\\E246\"; }\n.glyphicon-object-align-left:before {\n  content: \"\\E247\"; }\n.glyphicon-object-align-vertical:before {\n  content: \"\\E248\"; }\n.glyphicon-object-align-right:before {\n  content: \"\\E249\"; }\n.glyphicon-triangle-right:before {\n  content: \"\\E250\"; }\n.glyphicon-triangle-left:before {\n  content: \"\\E251\"; }\n.glyphicon-triangle-bottom:before {\n  content: \"\\E252\"; }\n.glyphicon-triangle-top:before {\n  content: \"\\E253\"; }\n.glyphicon-console:before {\n  content: \"\\E254\"; }\n.glyphicon-superscript:before {\n  content: \"\\E255\"; }\n.glyphicon-subscript:before {\n  content: \"\\E256\"; }\n.glyphicon-menu-left:before {\n  content: \"\\E257\"; }\n.glyphicon-menu-right:before {\n  content: \"\\E258\"; }\n.glyphicon-menu-down:before {\n  content: \"\\E259\"; }\n.glyphicon-menu-up:before {\n  content: \"\\E260\"; }\n* {\n  box-sizing: border-box; }\n*:before, *:after {\n  box-sizing: border-box; }\nhtml {\n  font-size: 10px;\n  -webkit-tap-highlight-color: transparent; }\nbody {\n  font-family: \"Source Sans Pro\", Calibri, Candara, Arial, sans-serif;\n  font-size: 15px;\n  line-height: 1.42857;\n  color: #333333;\n  background-color: #fff; }\ninput, button, select, textarea {\n  font-family: inherit;\n  font-size: inherit;\n  line-height: inherit; }\na {\n  color: #2780E3;\n  text-decoration: none; }\na:hover, a:focus {\n    color: #165ba8;\n    text-decoration: underline; }\na:focus {\n    outline: 5px auto -webkit-focus-ring-color;\n    outline-offset: -2px; }\nfigure {\n  margin: 0; }\nimg {\n  vertical-align: middle; }\n.img-responsive {\n  display: block;\n  max-width: 100%;\n  height: auto; }\n.img-rounded {\n  border-radius: 0; }\n.img-thumbnail {\n  padding: 4px;\n  line-height: 1.42857;\n  background-color: #fff;\n  border: 1px solid #ddd;\n  border-radius: 0;\n  transition: all 0.2s ease-in-out;\n  display: inline-block;\n  max-width: 100%;\n  height: auto; }\n.img-circle {\n  border-radius: 50%; }\nhr {\n  margin-top: 21px;\n  margin-bottom: 21px;\n  border: 0;\n  border-top: 1px solid #e6e6e6; }\n.sr-only {\n  position: absolute;\n  width: 1px;\n  height: 1px;\n  margin: -1px;\n  padding: 0;\n  overflow: hidden;\n  clip: rect(0, 0, 0, 0);\n  border: 0; }\n.sr-only-focusable:active, .sr-only-focusable:focus {\n  position: static;\n  width: auto;\n  height: auto;\n  margin: 0;\n  overflow: visible;\n  clip: auto; }\n[role=\"button\"] {\n  cursor: pointer; }\nh1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {\n  font-family: \"Source Sans Pro\", Calibri, Candara, Arial, sans-serif;\n  font-weight: 300;\n  line-height: 1.1;\n  color: inherit; }\nh1 small, h1 .small, h2 small, h2 .small, h3 small, h3 .small, h4 small, h4 .small, h5 small, h5 .small, h6 small, h6 .small, .h1 small, .h1 .small, .h2 small, .h2 .small, .h3 small, .h3 .small, .h4 small, .h4 .small, .h5 small, .h5 .small, .h6 small, .h6 .small {\n    font-weight: normal;\n    line-height: 1;\n    color: #999999; }\nh1, .h1, h2, .h2, h3, .h3 {\n  margin-top: 21px;\n  margin-bottom: 10.5px; }\nh1 small, h1 .small, .h1 small, .h1 .small, h2 small, h2 .small, .h2 small, .h2 .small, h3 small, h3 .small, .h3 small, .h3 .small {\n    font-size: 65%; }\nh4, .h4, h5, .h5, h6, .h6 {\n  margin-top: 10.5px;\n  margin-bottom: 10.5px; }\nh4 small, h4 .small, .h4 small, .h4 .small, h5 small, h5 .small, .h5 small, .h5 .small, h6 small, h6 .small, .h6 small, .h6 .small {\n    font-size: 75%; }\nh1, .h1 {\n  font-size: 39px; }\nh2, .h2 {\n  font-size: 32px; }\nh3, .h3 {\n  font-size: 26px; }\nh4, .h4 {\n  font-size: 19px; }\nh5, .h5 {\n  font-size: 15px; }\nh6, .h6 {\n  font-size: 13px; }\np {\n  margin: 0 0 10.5px; }\n.lead {\n  margin-bottom: 21px;\n  font-size: 17px;\n  font-weight: 300;\n  line-height: 1.4; }\n@media (min-width: 768px) {\n    .lead {\n      font-size: 22.5px; } }\nsmall, .small {\n  font-size: 86%; }\nmark, .mark {\n  background-color: #FF7518;\n  padding: .2em; }\n.text-left {\n  text-align: left; }\n.text-right {\n  text-align: right; }\n.text-center {\n  text-align: center; }\n.text-justify {\n  text-align: justify; }\n.text-nowrap {\n  white-space: nowrap; }\n.text-lowercase {\n  text-transform: lowercase; }\n.text-uppercase, .initialism {\n  text-transform: uppercase; }\n.text-capitalize {\n  text-transform: capitalize; }\n.text-muted {\n  color: #999999; }\n.text-primary {\n  color: #2780E3; }\na.text-primary:hover, a.text-primary:focus {\n  color: #1967be; }\n.text-success {\n  color: #fff; }\na.text-success:hover, a.text-success:focus {\n  color: #e6e6e6; }\n.text-info {\n  color: #fff; }\na.text-info:hover, a.text-info:focus {\n  color: #e6e6e6; }\n.text-warning {\n  color: #fff; }\na.text-warning:hover, a.text-warning:focus {\n  color: #e6e6e6; }\n.text-danger {\n  color: #fff; }\na.text-danger:hover, a.text-danger:focus {\n  color: #e6e6e6; }\n.bg-primary {\n  color: #fff; }\n.bg-primary {\n  background-color: #2780E3; }\na.bg-primary:hover, a.bg-primary:focus {\n  background-color: #1967be; }\n.bg-success {\n  background-color: #3FB618; }\na.bg-success:hover, a.bg-success:focus {\n  background-color: #2f8912; }\n.bg-info {\n  background-color: #9954BB; }\na.bg-info:hover, a.bg-info:focus {\n  background-color: #7e3f9d; }\n.bg-warning {\n  background-color: #FF7518; }\na.bg-warning:hover, a.bg-warning:focus {\n  background-color: #e45c00; }\n.bg-danger {\n  background-color: #FF0039; }\na.bg-danger:hover, a.bg-danger:focus {\n  background-color: #cc002e; }\n.page-header {\n  padding-bottom: 9.5px;\n  margin: 42px 0 21px;\n  border-bottom: 1px solid #e6e6e6; }\nul, ol {\n  margin-top: 0;\n  margin-bottom: 10.5px; }\nul ul, ul ol, ol ul, ol ol {\n    margin-bottom: 0; }\n.list-unstyled {\n  padding-left: 0;\n  list-style: none; }\n.list-inline {\n  padding-left: 0;\n  list-style: none;\n  margin-left: -5px; }\n.list-inline > li {\n    display: inline-block;\n    padding-left: 5px;\n    padding-right: 5px; }\ndl {\n  margin-top: 0;\n  margin-bottom: 21px; }\ndt, dd {\n  line-height: 1.42857; }\ndt {\n  font-weight: bold; }\ndd {\n  margin-left: 0; }\n.dl-horizontal dd:before, .dl-horizontal dd:after {\n  content: \" \";\n  display: table; }\n.dl-horizontal dd:after {\n  clear: both; }\n@media (min-width: 768px) {\n  .dl-horizontal dt {\n    float: left;\n    width: 160px;\n    clear: left;\n    text-align: right;\n    overflow: hidden;\n    text-overflow: ellipsis;\n    white-space: nowrap; }\n  .dl-horizontal dd {\n    margin-left: 180px; } }\nabbr[title], abbr[data-original-title] {\n  cursor: help;\n  border-bottom: 1px dotted #999999; }\n.initialism {\n  font-size: 90%; }\nblockquote {\n  padding: 10.5px 21px;\n  margin: 0 0 21px;\n  font-size: 18.75px;\n  border-left: 5px solid #e6e6e6; }\nblockquote p:last-child, blockquote ul:last-child, blockquote ol:last-child {\n    margin-bottom: 0; }\nblockquote footer, blockquote small, blockquote .small {\n    display: block;\n    font-size: 80%;\n    line-height: 1.42857;\n    color: #999999; }\nblockquote footer:before, blockquote small:before, blockquote .small:before {\n      content: '\\2014   \\A0'; }\n.blockquote-reverse, blockquote.pull-right {\n  padding-right: 15px;\n  padding-left: 0;\n  border-right: 5px solid #e6e6e6;\n  border-left: 0;\n  text-align: right; }\n.blockquote-reverse footer:before, .blockquote-reverse small:before, .blockquote-reverse .small:before, blockquote.pull-right footer:before, blockquote.pull-right small:before, blockquote.pull-right .small:before {\n    content: ''; }\n.blockquote-reverse footer:after, .blockquote-reverse small:after, .blockquote-reverse .small:after, blockquote.pull-right footer:after, blockquote.pull-right small:after, blockquote.pull-right .small:after {\n    content: '\\A0   \\2014'; }\naddress {\n  margin-bottom: 21px;\n  font-style: normal;\n  line-height: 1.42857; }\ncode, kbd, pre, samp {\n  font-family: Menlo, Monaco, Consolas, \"Courier New\", monospace; }\ncode {\n  padding: 2px 4px;\n  font-size: 90%;\n  color: #c7254e;\n  background-color: #f9f2f4;\n  border-radius: 0; }\nkbd {\n  padding: 2px 4px;\n  font-size: 90%;\n  color: #fff;\n  background-color: #333;\n  border-radius: 0;\n  box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.25); }\nkbd kbd {\n    padding: 0;\n    font-size: 100%;\n    font-weight: bold;\n    box-shadow: none; }\npre {\n  display: block;\n  padding: 10px;\n  margin: 0 0 10.5px;\n  font-size: 14px;\n  line-height: 1.42857;\n  word-break: break-all;\n  word-wrap: break-word;\n  color: #333333;\n  background-color: #f5f5f5;\n  border: 1px solid #ccc;\n  border-radius: 0; }\npre code {\n    padding: 0;\n    font-size: inherit;\n    color: inherit;\n    white-space: pre-wrap;\n    background-color: transparent;\n    border-radius: 0; }\n.pre-scrollable {\n  max-height: 340px;\n  overflow-y: scroll; }\n.container {\n  margin-right: auto;\n  margin-left: auto;\n  padding-left: 15px;\n  padding-right: 15px; }\n.container:before, .container:after {\n    content: \" \";\n    display: table; }\n.container:after {\n    clear: both; }\n@media (min-width: 768px) {\n    .container {\n      width: 750px; } }\n@media (min-width: 992px) {\n    .container {\n      width: 970px; } }\n@media (min-width: 1200px) {\n    .container {\n      width: 1170px; } }\n.container-fluid {\n  margin-right: auto;\n  margin-left: auto;\n  padding-left: 15px;\n  padding-right: 15px; }\n.container-fluid:before, .container-fluid:after {\n    content: \" \";\n    display: table; }\n.container-fluid:after {\n    clear: both; }\n.row {\n  margin-left: -15px;\n  margin-right: -15px; }\n.row:before, .row:after {\n    content: \" \";\n    display: table; }\n.row:after {\n    clear: both; }\n.col-xs-1, .col-sm-1, .col-md-1, .col-lg-1, .col-xs-2, .col-sm-2, .col-md-2, .col-lg-2, .col-xs-3, .col-sm-3, .col-md-3, .col-lg-3, .col-xs-4, .col-sm-4, .col-md-4, .col-lg-4, .col-xs-5, .col-sm-5, .col-md-5, .col-lg-5, .col-xs-6, .col-sm-6, .col-md-6, .col-lg-6, .col-xs-7, .col-sm-7, .col-md-7, .col-lg-7, .col-xs-8, .col-sm-8, .col-md-8, .col-lg-8, .col-xs-9, .col-sm-9, .col-md-9, .col-lg-9, .col-xs-10, .col-sm-10, .col-md-10, .col-lg-10, .col-xs-11, .col-sm-11, .col-md-11, .col-lg-11, .col-xs-12, .col-sm-12, .col-md-12, .col-lg-12 {\n  position: relative;\n  min-height: 1px;\n  padding-left: 15px;\n  padding-right: 15px; }\n.col-xs-1, .col-xs-2, .col-xs-3, .col-xs-4, .col-xs-5, .col-xs-6, .col-xs-7, .col-xs-8, .col-xs-9, .col-xs-10, .col-xs-11, .col-xs-12 {\n  float: left; }\n.col-xs-1 {\n  width: 8.33333%; }\n.col-xs-2 {\n  width: 16.66667%; }\n.col-xs-3 {\n  width: 25%; }\n.col-xs-4 {\n  width: 33.33333%; }\n.col-xs-5 {\n  width: 41.66667%; }\n.col-xs-6 {\n  width: 50%; }\n.col-xs-7 {\n  width: 58.33333%; }\n.col-xs-8 {\n  width: 66.66667%; }\n.col-xs-9 {\n  width: 75%; }\n.col-xs-10 {\n  width: 83.33333%; }\n.col-xs-11 {\n  width: 91.66667%; }\n.col-xs-12 {\n  width: 100%; }\n.col-xs-pull-0 {\n  right: auto; }\n.col-xs-pull-1 {\n  right: 8.33333%; }\n.col-xs-pull-2 {\n  right: 16.66667%; }\n.col-xs-pull-3 {\n  right: 25%; }\n.col-xs-pull-4 {\n  right: 33.33333%; }\n.col-xs-pull-5 {\n  right: 41.66667%; }\n.col-xs-pull-6 {\n  right: 50%; }\n.col-xs-pull-7 {\n  right: 58.33333%; }\n.col-xs-pull-8 {\n  right: 66.66667%; }\n.col-xs-pull-9 {\n  right: 75%; }\n.col-xs-pull-10 {\n  right: 83.33333%; }\n.col-xs-pull-11 {\n  right: 91.66667%; }\n.col-xs-pull-12 {\n  right: 100%; }\n.col-xs-push-0 {\n  left: auto; }\n.col-xs-push-1 {\n  left: 8.33333%; }\n.col-xs-push-2 {\n  left: 16.66667%; }\n.col-xs-push-3 {\n  left: 25%; }\n.col-xs-push-4 {\n  left: 33.33333%; }\n.col-xs-push-5 {\n  left: 41.66667%; }\n.col-xs-push-6 {\n  left: 50%; }\n.col-xs-push-7 {\n  left: 58.33333%; }\n.col-xs-push-8 {\n  left: 66.66667%; }\n.col-xs-push-9 {\n  left: 75%; }\n.col-xs-push-10 {\n  left: 83.33333%; }\n.col-xs-push-11 {\n  left: 91.66667%; }\n.col-xs-push-12 {\n  left: 100%; }\n.col-xs-offset-0 {\n  margin-left: 0%; }\n.col-xs-offset-1 {\n  margin-left: 8.33333%; }\n.col-xs-offset-2 {\n  margin-left: 16.66667%; }\n.col-xs-offset-3 {\n  margin-left: 25%; }\n.col-xs-offset-4 {\n  margin-left: 33.33333%; }\n.col-xs-offset-5 {\n  margin-left: 41.66667%; }\n.col-xs-offset-6 {\n  margin-left: 50%; }\n.col-xs-offset-7 {\n  margin-left: 58.33333%; }\n.col-xs-offset-8 {\n  margin-left: 66.66667%; }\n.col-xs-offset-9 {\n  margin-left: 75%; }\n.col-xs-offset-10 {\n  margin-left: 83.33333%; }\n.col-xs-offset-11 {\n  margin-left: 91.66667%; }\n.col-xs-offset-12 {\n  margin-left: 100%; }\n@media (min-width: 768px) {\n  .col-sm-1, .col-sm-2, .col-sm-3, .col-sm-4, .col-sm-5, .col-sm-6, .col-sm-7, .col-sm-8, .col-sm-9, .col-sm-10, .col-sm-11, .col-sm-12 {\n    float: left; }\n  .col-sm-1 {\n    width: 8.33333%; }\n  .col-sm-2 {\n    width: 16.66667%; }\n  .col-sm-3 {\n    width: 25%; }\n  .col-sm-4 {\n    width: 33.33333%; }\n  .col-sm-5 {\n    width: 41.66667%; }\n  .col-sm-6 {\n    width: 50%; }\n  .col-sm-7 {\n    width: 58.33333%; }\n  .col-sm-8 {\n    width: 66.66667%; }\n  .col-sm-9 {\n    width: 75%; }\n  .col-sm-10 {\n    width: 83.33333%; }\n  .col-sm-11 {\n    width: 91.66667%; }\n  .col-sm-12 {\n    width: 100%; }\n  .col-sm-pull-0 {\n    right: auto; }\n  .col-sm-pull-1 {\n    right: 8.33333%; }\n  .col-sm-pull-2 {\n    right: 16.66667%; }\n  .col-sm-pull-3 {\n    right: 25%; }\n  .col-sm-pull-4 {\n    right: 33.33333%; }\n  .col-sm-pull-5 {\n    right: 41.66667%; }\n  .col-sm-pull-6 {\n    right: 50%; }\n  .col-sm-pull-7 {\n    right: 58.33333%; }\n  .col-sm-pull-8 {\n    right: 66.66667%; }\n  .col-sm-pull-9 {\n    right: 75%; }\n  .col-sm-pull-10 {\n    right: 83.33333%; }\n  .col-sm-pull-11 {\n    right: 91.66667%; }\n  .col-sm-pull-12 {\n    right: 100%; }\n  .col-sm-push-0 {\n    left: auto; }\n  .col-sm-push-1 {\n    left: 8.33333%; }\n  .col-sm-push-2 {\n    left: 16.66667%; }\n  .col-sm-push-3 {\n    left: 25%; }\n  .col-sm-push-4 {\n    left: 33.33333%; }\n  .col-sm-push-5 {\n    left: 41.66667%; }\n  .col-sm-push-6 {\n    left: 50%; }\n  .col-sm-push-7 {\n    left: 58.33333%; }\n  .col-sm-push-8 {\n    left: 66.66667%; }\n  .col-sm-push-9 {\n    left: 75%; }\n  .col-sm-push-10 {\n    left: 83.33333%; }\n  .col-sm-push-11 {\n    left: 91.66667%; }\n  .col-sm-push-12 {\n    left: 100%; }\n  .col-sm-offset-0 {\n    margin-left: 0%; }\n  .col-sm-offset-1 {\n    margin-left: 8.33333%; }\n  .col-sm-offset-2 {\n    margin-left: 16.66667%; }\n  .col-sm-offset-3 {\n    margin-left: 25%; }\n  .col-sm-offset-4 {\n    margin-left: 33.33333%; }\n  .col-sm-offset-5 {\n    margin-left: 41.66667%; }\n  .col-sm-offset-6 {\n    margin-left: 50%; }\n  .col-sm-offset-7 {\n    margin-left: 58.33333%; }\n  .col-sm-offset-8 {\n    margin-left: 66.66667%; }\n  .col-sm-offset-9 {\n    margin-left: 75%; }\n  .col-sm-offset-10 {\n    margin-left: 83.33333%; }\n  .col-sm-offset-11 {\n    margin-left: 91.66667%; }\n  .col-sm-offset-12 {\n    margin-left: 100%; } }\n@media (min-width: 992px) {\n  .col-md-1, .col-md-2, .col-md-3, .col-md-4, .col-md-5, .col-md-6, .col-md-7, .col-md-8, .col-md-9, .col-md-10, .col-md-11, .col-md-12 {\n    float: left; }\n  .col-md-1 {\n    width: 8.33333%; }\n  .col-md-2 {\n    width: 16.66667%; }\n  .col-md-3 {\n    width: 25%; }\n  .col-md-4 {\n    width: 33.33333%; }\n  .col-md-5 {\n    width: 41.66667%; }\n  .col-md-6 {\n    width: 50%; }\n  .col-md-7 {\n    width: 58.33333%; }\n  .col-md-8 {\n    width: 66.66667%; }\n  .col-md-9 {\n    width: 75%; }\n  .col-md-10 {\n    width: 83.33333%; }\n  .col-md-11 {\n    width: 91.66667%; }\n  .col-md-12 {\n    width: 100%; }\n  .col-md-pull-0 {\n    right: auto; }\n  .col-md-pull-1 {\n    right: 8.33333%; }\n  .col-md-pull-2 {\n    right: 16.66667%; }\n  .col-md-pull-3 {\n    right: 25%; }\n  .col-md-pull-4 {\n    right: 33.33333%; }\n  .col-md-pull-5 {\n    right: 41.66667%; }\n  .col-md-pull-6 {\n    right: 50%; }\n  .col-md-pull-7 {\n    right: 58.33333%; }\n  .col-md-pull-8 {\n    right: 66.66667%; }\n  .col-md-pull-9 {\n    right: 75%; }\n  .col-md-pull-10 {\n    right: 83.33333%; }\n  .col-md-pull-11 {\n    right: 91.66667%; }\n  .col-md-pull-12 {\n    right: 100%; }\n  .col-md-push-0 {\n    left: auto; }\n  .col-md-push-1 {\n    left: 8.33333%; }\n  .col-md-push-2 {\n    left: 16.66667%; }\n  .col-md-push-3 {\n    left: 25%; }\n  .col-md-push-4 {\n    left: 33.33333%; }\n  .col-md-push-5 {\n    left: 41.66667%; }\n  .col-md-push-6 {\n    left: 50%; }\n  .col-md-push-7 {\n    left: 58.33333%; }\n  .col-md-push-8 {\n    left: 66.66667%; }\n  .col-md-push-9 {\n    left: 75%; }\n  .col-md-push-10 {\n    left: 83.33333%; }\n  .col-md-push-11 {\n    left: 91.66667%; }\n  .col-md-push-12 {\n    left: 100%; }\n  .col-md-offset-0 {\n    margin-left: 0%; }\n  .col-md-offset-1 {\n    margin-left: 8.33333%; }\n  .col-md-offset-2 {\n    margin-left: 16.66667%; }\n  .col-md-offset-3 {\n    margin-left: 25%; }\n  .col-md-offset-4 {\n    margin-left: 33.33333%; }\n  .col-md-offset-5 {\n    margin-left: 41.66667%; }\n  .col-md-offset-6 {\n    margin-left: 50%; }\n  .col-md-offset-7 {\n    margin-left: 58.33333%; }\n  .col-md-offset-8 {\n    margin-left: 66.66667%; }\n  .col-md-offset-9 {\n    margin-left: 75%; }\n  .col-md-offset-10 {\n    margin-left: 83.33333%; }\n  .col-md-offset-11 {\n    margin-left: 91.66667%; }\n  .col-md-offset-12 {\n    margin-left: 100%; } }\n@media (min-width: 1200px) {\n  .col-lg-1, .col-lg-2, .col-lg-3, .col-lg-4, .col-lg-5, .col-lg-6, .col-lg-7, .col-lg-8, .col-lg-9, .col-lg-10, .col-lg-11, .col-lg-12 {\n    float: left; }\n  .col-lg-1 {\n    width: 8.33333%; }\n  .col-lg-2 {\n    width: 16.66667%; }\n  .col-lg-3 {\n    width: 25%; }\n  .col-lg-4 {\n    width: 33.33333%; }\n  .col-lg-5 {\n    width: 41.66667%; }\n  .col-lg-6 {\n    width: 50%; }\n  .col-lg-7 {\n    width: 58.33333%; }\n  .col-lg-8 {\n    width: 66.66667%; }\n  .col-lg-9 {\n    width: 75%; }\n  .col-lg-10 {\n    width: 83.33333%; }\n  .col-lg-11 {\n    width: 91.66667%; }\n  .col-lg-12 {\n    width: 100%; }\n  .col-lg-pull-0 {\n    right: auto; }\n  .col-lg-pull-1 {\n    right: 8.33333%; }\n  .col-lg-pull-2 {\n    right: 16.66667%; }\n  .col-lg-pull-3 {\n    right: 25%; }\n  .col-lg-pull-4 {\n    right: 33.33333%; }\n  .col-lg-pull-5 {\n    right: 41.66667%; }\n  .col-lg-pull-6 {\n    right: 50%; }\n  .col-lg-pull-7 {\n    right: 58.33333%; }\n  .col-lg-pull-8 {\n    right: 66.66667%; }\n  .col-lg-pull-9 {\n    right: 75%; }\n  .col-lg-pull-10 {\n    right: 83.33333%; }\n  .col-lg-pull-11 {\n    right: 91.66667%; }\n  .col-lg-pull-12 {\n    right: 100%; }\n  .col-lg-push-0 {\n    left: auto; }\n  .col-lg-push-1 {\n    left: 8.33333%; }\n  .col-lg-push-2 {\n    left: 16.66667%; }\n  .col-lg-push-3 {\n    left: 25%; }\n  .col-lg-push-4 {\n    left: 33.33333%; }\n  .col-lg-push-5 {\n    left: 41.66667%; }\n  .col-lg-push-6 {\n    left: 50%; }\n  .col-lg-push-7 {\n    left: 58.33333%; }\n  .col-lg-push-8 {\n    left: 66.66667%; }\n  .col-lg-push-9 {\n    left: 75%; }\n  .col-lg-push-10 {\n    left: 83.33333%; }\n  .col-lg-push-11 {\n    left: 91.66667%; }\n  .col-lg-push-12 {\n    left: 100%; }\n  .col-lg-offset-0 {\n    margin-left: 0%; }\n  .col-lg-offset-1 {\n    margin-left: 8.33333%; }\n  .col-lg-offset-2 {\n    margin-left: 16.66667%; }\n  .col-lg-offset-3 {\n    margin-left: 25%; }\n  .col-lg-offset-4 {\n    margin-left: 33.33333%; }\n  .col-lg-offset-5 {\n    margin-left: 41.66667%; }\n  .col-lg-offset-6 {\n    margin-left: 50%; }\n  .col-lg-offset-7 {\n    margin-left: 58.33333%; }\n  .col-lg-offset-8 {\n    margin-left: 66.66667%; }\n  .col-lg-offset-9 {\n    margin-left: 75%; }\n  .col-lg-offset-10 {\n    margin-left: 83.33333%; }\n  .col-lg-offset-11 {\n    margin-left: 91.66667%; }\n  .col-lg-offset-12 {\n    margin-left: 100%; } }\ntable {\n  background-color: transparent; }\ncaption {\n  padding-top: 8px;\n  padding-bottom: 8px;\n  color: #999999;\n  text-align: left; }\nth {\n  text-align: left; }\n.table {\n  width: 100%;\n  max-width: 100%;\n  margin-bottom: 21px; }\n.table > thead > tr > th, .table > thead > tr > td, .table > tbody > tr > th, .table > tbody > tr > td, .table > tfoot > tr > th, .table > tfoot > tr > td {\n    padding: 8px;\n    line-height: 1.42857;\n    vertical-align: top;\n    border-top: 1px solid #ddd; }\n.table > thead > tr > th {\n    vertical-align: bottom;\n    border-bottom: 2px solid #ddd; }\n.table > caption + thead > tr:first-child > th, .table > caption + thead > tr:first-child > td, .table > colgroup + thead > tr:first-child > th, .table > colgroup + thead > tr:first-child > td, .table > thead:first-child > tr:first-child > th, .table > thead:first-child > tr:first-child > td {\n    border-top: 0; }\n.table > tbody + tbody {\n    border-top: 2px solid #ddd; }\n.table .table {\n    background-color: #fff; }\n.table-condensed > thead > tr > th, .table-condensed > thead > tr > td, .table-condensed > tbody > tr > th, .table-condensed > tbody > tr > td, .table-condensed > tfoot > tr > th, .table-condensed > tfoot > tr > td {\n  padding: 5px; }\n.table-bordered {\n  border: 1px solid #ddd; }\n.table-bordered > thead > tr > th, .table-bordered > thead > tr > td, .table-bordered > tbody > tr > th, .table-bordered > tbody > tr > td, .table-bordered > tfoot > tr > th, .table-bordered > tfoot > tr > td {\n    border: 1px solid #ddd; }\n.table-bordered > thead > tr > th, .table-bordered > thead > tr > td {\n    border-bottom-width: 2px; }\n.table-striped > tbody > tr:nth-of-type(odd) {\n  background-color: #f9f9f9; }\n.table-hover > tbody > tr:hover {\n  background-color: #f5f5f5; }\ntable col[class*=\"col-\"] {\n  position: static;\n  float: none;\n  display: table-column; }\ntable td[class*=\"col-\"], table th[class*=\"col-\"] {\n  position: static;\n  float: none;\n  display: table-cell; }\n.table > thead > tr > td.active, .table > thead > tr > th.active, .table > thead > tr.active > td, .table > thead > tr.active > th, .table > tbody > tr > td.active, .table > tbody > tr > th.active, .table > tbody > tr.active > td, .table > tbody > tr.active > th, .table > tfoot > tr > td.active, .table > tfoot > tr > th.active, .table > tfoot > tr.active > td, .table > tfoot > tr.active > th {\n  background-color: #f5f5f5; }\n.table-hover > tbody > tr > td.active:hover, .table-hover > tbody > tr > th.active:hover, .table-hover > tbody > tr.active:hover > td, .table-hover > tbody > tr:hover > .active, .table-hover > tbody > tr.active:hover > th {\n  background-color: #e8e8e8; }\n.table > thead > tr > td.success, .table > thead > tr > th.success, .table > thead > tr.success > td, .table > thead > tr.success > th, .table > tbody > tr > td.success, .table > tbody > tr > th.success, .table > tbody > tr.success > td, .table > tbody > tr.success > th, .table > tfoot > tr > td.success, .table > tfoot > tr > th.success, .table > tfoot > tr.success > td, .table > tfoot > tr.success > th {\n  background-color: #3FB618; }\n.table-hover > tbody > tr > td.success:hover, .table-hover > tbody > tr > th.success:hover, .table-hover > tbody > tr.success:hover > td, .table-hover > tbody > tr:hover > .success, .table-hover > tbody > tr.success:hover > th {\n  background-color: #379f15; }\n.table > thead > tr > td.info, .table > thead > tr > th.info, .table > thead > tr.info > td, .table > thead > tr.info > th, .table > tbody > tr > td.info, .table > tbody > tr > th.info, .table > tbody > tr.info > td, .table > tbody > tr.info > th, .table > tfoot > tr > td.info, .table > tfoot > tr > th.info, .table > tfoot > tr.info > td, .table > tfoot > tr.info > th {\n  background-color: #9954BB; }\n.table-hover > tbody > tr > td.info:hover, .table-hover > tbody > tr > th.info:hover, .table-hover > tbody > tr.info:hover > td, .table-hover > tbody > tr:hover > .info, .table-hover > tbody > tr.info:hover > th {\n  background-color: #8d46b0; }\n.table > thead > tr > td.warning, .table > thead > tr > th.warning, .table > thead > tr.warning > td, .table > thead > tr.warning > th, .table > tbody > tr > td.warning, .table > tbody > tr > th.warning, .table > tbody > tr.warning > td, .table > tbody > tr.warning > th, .table > tfoot > tr > td.warning, .table > tfoot > tr > th.warning, .table > tfoot > tr.warning > td, .table > tfoot > tr.warning > th {\n  background-color: #FF7518; }\n.table-hover > tbody > tr > td.warning:hover, .table-hover > tbody > tr > th.warning:hover, .table-hover > tbody > tr.warning:hover > td, .table-hover > tbody > tr:hover > .warning, .table-hover > tbody > tr.warning:hover > th {\n  background-color: #fe6600; }\n.table > thead > tr > td.danger, .table > thead > tr > th.danger, .table > thead > tr.danger > td, .table > thead > tr.danger > th, .table > tbody > tr > td.danger, .table > tbody > tr > th.danger, .table > tbody > tr.danger > td, .table > tbody > tr.danger > th, .table > tfoot > tr > td.danger, .table > tfoot > tr > th.danger, .table > tfoot > tr.danger > td, .table > tfoot > tr.danger > th {\n  background-color: #FF0039; }\n.table-hover > tbody > tr > td.danger:hover, .table-hover > tbody > tr > th.danger:hover, .table-hover > tbody > tr.danger:hover > td, .table-hover > tbody > tr:hover > .danger, .table-hover > tbody > tr.danger:hover > th {\n  background-color: #e60033; }\n.table-responsive {\n  overflow-x: auto;\n  min-height: 0.01%; }\n@media screen and (max-width: 767px) {\n    .table-responsive {\n      width: 100%;\n      margin-bottom: 15.75px;\n      overflow-y: hidden;\n      -ms-overflow-style: -ms-autohiding-scrollbar;\n      border: 1px solid #ddd; }\n      .table-responsive > .table {\n        margin-bottom: 0; }\n        .table-responsive > .table > thead > tr > th, .table-responsive > .table > thead > tr > td, .table-responsive > .table > tbody > tr > th, .table-responsive > .table > tbody > tr > td, .table-responsive > .table > tfoot > tr > th, .table-responsive > .table > tfoot > tr > td {\n          white-space: nowrap; }\n      .table-responsive > .table-bordered {\n        border: 0; }\n        .table-responsive > .table-bordered > thead > tr > th:first-child, .table-responsive > .table-bordered > thead > tr > td:first-child, .table-responsive > .table-bordered > tbody > tr > th:first-child, .table-responsive > .table-bordered > tbody > tr > td:first-child, .table-responsive > .table-bordered > tfoot > tr > th:first-child, .table-responsive > .table-bordered > tfoot > tr > td:first-child {\n          border-left: 0; }\n        .table-responsive > .table-bordered > thead > tr > th:last-child, .table-responsive > .table-bordered > thead > tr > td:last-child, .table-responsive > .table-bordered > tbody > tr > th:last-child, .table-responsive > .table-bordered > tbody > tr > td:last-child, .table-responsive > .table-bordered > tfoot > tr > th:last-child, .table-responsive > .table-bordered > tfoot > tr > td:last-child {\n          border-right: 0; }\n        .table-responsive > .table-bordered > tbody > tr:last-child > th, .table-responsive > .table-bordered > tbody > tr:last-child > td, .table-responsive > .table-bordered > tfoot > tr:last-child > th, .table-responsive > .table-bordered > tfoot > tr:last-child > td {\n          border-bottom: 0; } }\nfieldset {\n  padding: 0;\n  margin: 0;\n  border: 0;\n  min-width: 0; }\nlegend {\n  display: block;\n  width: 100%;\n  padding: 0;\n  margin-bottom: 21px;\n  font-size: 22.5px;\n  line-height: inherit;\n  color: #333333;\n  border: 0;\n  border-bottom: 1px solid #e5e5e5; }\nlabel {\n  display: inline-block;\n  max-width: 100%;\n  margin-bottom: 5px;\n  font-weight: bold; }\ninput[type=\"search\"] {\n  box-sizing: border-box; }\ninput[type=\"radio\"], input[type=\"checkbox\"] {\n  margin: 4px 0 0;\n  margin-top: 1px \\9;\n  line-height: normal; }\ninput[type=\"file\"] {\n  display: block; }\ninput[type=\"range\"] {\n  display: block;\n  width: 100%; }\nselect[multiple], select[size] {\n  height: auto; }\ninput[type=\"file\"]:focus, input[type=\"radio\"]:focus, input[type=\"checkbox\"]:focus {\n  outline: 5px auto -webkit-focus-ring-color;\n  outline-offset: -2px; }\noutput {\n  display: block;\n  padding-top: 11px;\n  font-size: 15px;\n  line-height: 1.42857;\n  color: #333333; }\n.form-control {\n  display: block;\n  width: 100%;\n  height: 43px;\n  padding: 10px 18px;\n  font-size: 15px;\n  line-height: 1.42857;\n  color: #333333;\n  background-color: #fff;\n  background-image: none;\n  border: 1px solid #ccc;\n  border-radius: 0;\n  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);\n  transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s; }\n.form-control:focus {\n    border-color: #66afe9;\n    outline: 0;\n    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(102, 175, 233, 0.6); }\n.form-control::-moz-placeholder {\n    color: #999999;\n    opacity: 1; }\n.form-control:-ms-input-placeholder {\n    color: #999999; }\n.form-control::-webkit-input-placeholder {\n    color: #999999; }\n.form-control::-ms-expand {\n    border: 0;\n    background-color: transparent; }\n.form-control[disabled], .form-control[readonly], fieldset[disabled] .form-control {\n    background-color: #e6e6e6;\n    opacity: 1; }\n.form-control[disabled], fieldset[disabled] .form-control {\n    cursor: not-allowed; }\ntextarea.form-control {\n  height: auto; }\ninput[type=\"search\"] {\n  -webkit-appearance: none; }\n@media screen and (-webkit-min-device-pixel-ratio: 0) {\n  input[type=\"date\"].form-control, input[type=\"time\"].form-control, input[type=\"datetime-local\"].form-control, input[type=\"month\"].form-control {\n    line-height: 43px; }\n  input[type=\"date\"].input-sm, .input-group-sm > input[type=\"date\"].form-control, .input-group-sm > input[type=\"date\"].input-group-addon, .input-group-sm > .input-group-btn > input[type=\"date\"].btn, .input-group-sm input[type=\"date\"], input[type=\"time\"].input-sm, .input-group-sm > input[type=\"time\"].form-control, .input-group-sm > input[type=\"time\"].input-group-addon, .input-group-sm > .input-group-btn > input[type=\"time\"].btn, .input-group-sm\n  input[type=\"time\"], input[type=\"datetime-local\"].input-sm, .input-group-sm > input[type=\"datetime-local\"].form-control, .input-group-sm > input[type=\"datetime-local\"].input-group-addon, .input-group-sm > .input-group-btn > input[type=\"datetime-local\"].btn, .input-group-sm\n  input[type=\"datetime-local\"], input[type=\"month\"].input-sm, .input-group-sm > input[type=\"month\"].form-control, .input-group-sm > input[type=\"month\"].input-group-addon, .input-group-sm > .input-group-btn > input[type=\"month\"].btn, .input-group-sm\n  input[type=\"month\"] {\n    line-height: 31px; }\n  input[type=\"date\"].input-lg, .input-group-lg > input[type=\"date\"].form-control, .input-group-lg > input[type=\"date\"].input-group-addon, .input-group-lg > .input-group-btn > input[type=\"date\"].btn, .input-group-lg input[type=\"date\"], input[type=\"time\"].input-lg, .input-group-lg > input[type=\"time\"].form-control, .input-group-lg > input[type=\"time\"].input-group-addon, .input-group-lg > .input-group-btn > input[type=\"time\"].btn, .input-group-lg\n  input[type=\"time\"], input[type=\"datetime-local\"].input-lg, .input-group-lg > input[type=\"datetime-local\"].form-control, .input-group-lg > input[type=\"datetime-local\"].input-group-addon, .input-group-lg > .input-group-btn > input[type=\"datetime-local\"].btn, .input-group-lg\n  input[type=\"datetime-local\"], input[type=\"month\"].input-lg, .input-group-lg > input[type=\"month\"].form-control, .input-group-lg > input[type=\"month\"].input-group-addon, .input-group-lg > .input-group-btn > input[type=\"month\"].btn, .input-group-lg\n  input[type=\"month\"] {\n    line-height: 64px; } }\n.form-group {\n  margin-bottom: 15px; }\n.radio, .checkbox {\n  position: relative;\n  display: block;\n  margin-top: 10px;\n  margin-bottom: 10px; }\n.radio label, .checkbox label {\n    min-height: 21px;\n    padding-left: 20px;\n    margin-bottom: 0;\n    font-weight: normal;\n    cursor: pointer; }\n.radio input[type=\"radio\"], .radio-inline input[type=\"radio\"], .checkbox input[type=\"checkbox\"], .checkbox-inline input[type=\"checkbox\"] {\n  position: absolute;\n  margin-left: -20px;\n  margin-top: 4px \\9; }\n.radio + .radio, .checkbox + .checkbox {\n  margin-top: -5px; }\n.radio-inline, .checkbox-inline {\n  position: relative;\n  display: inline-block;\n  padding-left: 20px;\n  margin-bottom: 0;\n  vertical-align: middle;\n  font-weight: normal;\n  cursor: pointer; }\n.radio-inline + .radio-inline, .checkbox-inline + .checkbox-inline {\n  margin-top: 0;\n  margin-left: 10px; }\ninput[type=\"radio\"][disabled], input[type=\"radio\"].disabled, fieldset[disabled] input[type=\"radio\"], input[type=\"checkbox\"][disabled], input[type=\"checkbox\"].disabled, fieldset[disabled]\ninput[type=\"checkbox\"] {\n  cursor: not-allowed; }\n.radio-inline.disabled, fieldset[disabled] .radio-inline, .checkbox-inline.disabled, fieldset[disabled]\n.checkbox-inline {\n  cursor: not-allowed; }\n.radio.disabled label, fieldset[disabled] .radio label, .checkbox.disabled label, fieldset[disabled]\n.checkbox label {\n  cursor: not-allowed; }\n.form-control-static {\n  padding-top: 11px;\n  padding-bottom: 11px;\n  margin-bottom: 0;\n  min-height: 36px; }\n.form-control-static.input-lg, .input-group-lg > .form-control-static.form-control, .input-group-lg > .form-control-static.input-group-addon, .input-group-lg > .input-group-btn > .form-control-static.btn, .form-control-static.input-sm, .input-group-sm > .form-control-static.form-control, .input-group-sm > .form-control-static.input-group-addon, .input-group-sm > .input-group-btn > .form-control-static.btn {\n    padding-left: 0;\n    padding-right: 0; }\n.input-sm, .input-group-sm > .form-control, .input-group-sm > .input-group-addon, .input-group-sm > .input-group-btn > .btn {\n  height: 31px;\n  padding: 5px 10px;\n  font-size: 13px;\n  line-height: 1.5;\n  border-radius: 0; }\nselect.input-sm, .input-group-sm > select.form-control, .input-group-sm > select.input-group-addon, .input-group-sm > .input-group-btn > select.btn {\n  height: 31px;\n  line-height: 31px; }\ntextarea.input-sm, .input-group-sm > textarea.form-control, .input-group-sm > textarea.input-group-addon, .input-group-sm > .input-group-btn > textarea.btn, select[multiple].input-sm, .input-group-sm > select[multiple].form-control, .input-group-sm > select[multiple].input-group-addon, .input-group-sm > .input-group-btn > select[multiple].btn {\n  height: auto; }\n.form-group-sm .form-control {\n  height: 31px;\n  padding: 5px 10px;\n  font-size: 13px;\n  line-height: 1.5;\n  border-radius: 0; }\n.form-group-sm select.form-control {\n  height: 31px;\n  line-height: 31px; }\n.form-group-sm textarea.form-control, .form-group-sm select[multiple].form-control {\n  height: auto; }\n.form-group-sm .form-control-static {\n  height: 31px;\n  min-height: 34px;\n  padding: 6px 10px;\n  font-size: 13px;\n  line-height: 1.5; }\n.input-lg, .input-group-lg > .form-control, .input-group-lg > .input-group-addon, .input-group-lg > .input-group-btn > .btn {\n  height: 64px;\n  padding: 18px 30px;\n  font-size: 19px;\n  line-height: 1.33333;\n  border-radius: 0; }\nselect.input-lg, .input-group-lg > select.form-control, .input-group-lg > select.input-group-addon, .input-group-lg > .input-group-btn > select.btn {\n  height: 64px;\n  line-height: 64px; }\ntextarea.input-lg, .input-group-lg > textarea.form-control, .input-group-lg > textarea.input-group-addon, .input-group-lg > .input-group-btn > textarea.btn, select[multiple].input-lg, .input-group-lg > select[multiple].form-control, .input-group-lg > select[multiple].input-group-addon, .input-group-lg > .input-group-btn > select[multiple].btn {\n  height: auto; }\n.form-group-lg .form-control {\n  height: 64px;\n  padding: 18px 30px;\n  font-size: 19px;\n  line-height: 1.33333;\n  border-radius: 0; }\n.form-group-lg select.form-control {\n  height: 64px;\n  line-height: 64px; }\n.form-group-lg textarea.form-control, .form-group-lg select[multiple].form-control {\n  height: auto; }\n.form-group-lg .form-control-static {\n  height: 64px;\n  min-height: 40px;\n  padding: 19px 30px;\n  font-size: 19px;\n  line-height: 1.33333; }\n.has-feedback {\n  position: relative; }\n.has-feedback .form-control {\n    padding-right: 53.75px; }\n.form-control-feedback {\n  position: absolute;\n  top: 0;\n  right: 0;\n  z-index: 2;\n  display: block;\n  width: 43px;\n  height: 43px;\n  line-height: 43px;\n  text-align: center;\n  pointer-events: none; }\n.input-lg + .form-control-feedback, .input-group-lg > .form-control + .form-control-feedback, .input-group-lg > .input-group-addon + .form-control-feedback, .input-group-lg > .input-group-btn > .btn + .form-control-feedback, .input-group-lg + .form-control-feedback, .form-group-lg .form-control + .form-control-feedback {\n  width: 64px;\n  height: 64px;\n  line-height: 64px; }\n.input-sm + .form-control-feedback, .input-group-sm > .form-control + .form-control-feedback, .input-group-sm > .input-group-addon + .form-control-feedback, .input-group-sm > .input-group-btn > .btn + .form-control-feedback, .input-group-sm + .form-control-feedback, .form-group-sm .form-control + .form-control-feedback {\n  width: 31px;\n  height: 31px;\n  line-height: 31px; }\n.has-success .help-block, .has-success .control-label, .has-success .radio, .has-success .checkbox, .has-success .radio-inline, .has-success .checkbox-inline, .has-success.radio label, .has-success.checkbox label, .has-success.radio-inline label, .has-success.checkbox-inline label {\n  color: #fff; }\n.has-success .form-control {\n  border-color: #fff;\n  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075); }\n.has-success .form-control:focus {\n    border-color: #e6e6e6;\n    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px white; }\n.has-success .input-group-addon {\n  color: #fff;\n  border-color: #fff;\n  background-color: #3FB618; }\n.has-success .form-control-feedback {\n  color: #fff; }\n.has-warning .help-block, .has-warning .control-label, .has-warning .radio, .has-warning .checkbox, .has-warning .radio-inline, .has-warning .checkbox-inline, .has-warning.radio label, .has-warning.checkbox label, .has-warning.radio-inline label, .has-warning.checkbox-inline label {\n  color: #fff; }\n.has-warning .form-control {\n  border-color: #fff;\n  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075); }\n.has-warning .form-control:focus {\n    border-color: #e6e6e6;\n    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px white; }\n.has-warning .input-group-addon {\n  color: #fff;\n  border-color: #fff;\n  background-color: #FF7518; }\n.has-warning .form-control-feedback {\n  color: #fff; }\n.has-error .help-block, .has-error .control-label, .has-error .radio, .has-error .checkbox, .has-error .radio-inline, .has-error .checkbox-inline, .has-error.radio label, .has-error.checkbox label, .has-error.radio-inline label, .has-error.checkbox-inline label {\n  color: #fff; }\n.has-error .form-control {\n  border-color: #fff;\n  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075); }\n.has-error .form-control:focus {\n    border-color: #e6e6e6;\n    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px white; }\n.has-error .input-group-addon {\n  color: #fff;\n  border-color: #fff;\n  background-color: #FF0039; }\n.has-error .form-control-feedback {\n  color: #fff; }\n.has-feedback label ~ .form-control-feedback {\n  top: 26px; }\n.has-feedback label.sr-only ~ .form-control-feedback {\n  top: 0; }\n.help-block {\n  display: block;\n  margin-top: 5px;\n  margin-bottom: 10px;\n  color: #737373; }\n@media (min-width: 768px) {\n  .form-inline .form-group {\n    display: inline-block;\n    margin-bottom: 0;\n    vertical-align: middle; }\n  .form-inline .form-control {\n    display: inline-block;\n    width: auto;\n    vertical-align: middle; }\n  .form-inline .form-control-static {\n    display: inline-block; }\n  .form-inline .input-group {\n    display: inline-table;\n    vertical-align: middle; }\n    .form-inline .input-group .input-group-addon, .form-inline .input-group .input-group-btn, .form-inline .input-group .form-control {\n      width: auto; }\n  .form-inline .input-group > .form-control {\n    width: 100%; }\n  .form-inline .control-label {\n    margin-bottom: 0;\n    vertical-align: middle; }\n  .form-inline .radio, .form-inline .checkbox {\n    display: inline-block;\n    margin-top: 0;\n    margin-bottom: 0;\n    vertical-align: middle; }\n    .form-inline .radio label, .form-inline .checkbox label {\n      padding-left: 0; }\n  .form-inline .radio input[type=\"radio\"], .form-inline .checkbox input[type=\"checkbox\"] {\n    position: relative;\n    margin-left: 0; }\n  .form-inline .has-feedback .form-control-feedback {\n    top: 0; } }\n.form-horizontal .radio, .form-horizontal .checkbox, .form-horizontal .radio-inline, .form-horizontal .checkbox-inline {\n  margin-top: 0;\n  margin-bottom: 0;\n  padding-top: 11px; }\n.form-horizontal .radio, .form-horizontal .checkbox {\n  min-height: 32px; }\n.form-horizontal .form-group {\n  margin-left: -15px;\n  margin-right: -15px; }\n.form-horizontal .form-group:before, .form-horizontal .form-group:after {\n    content: \" \";\n    display: table; }\n.form-horizontal .form-group:after {\n    clear: both; }\n@media (min-width: 768px) {\n  .form-horizontal .control-label {\n    text-align: right;\n    margin-bottom: 0;\n    padding-top: 11px; } }\n.form-horizontal .has-feedback .form-control-feedback {\n  right: 15px; }\n@media (min-width: 768px) {\n  .form-horizontal .form-group-lg .control-label {\n    padding-top: 19px;\n    font-size: 19px; } }\n@media (min-width: 768px) {\n  .form-horizontal .form-group-sm .control-label {\n    padding-top: 6px;\n    font-size: 13px; } }\n.btn {\n  display: inline-block;\n  margin-bottom: 0;\n  font-weight: normal;\n  text-align: center;\n  vertical-align: middle;\n  -ms-touch-action: manipulation;\n      touch-action: manipulation;\n  cursor: pointer;\n  background-image: none;\n  border: 1px solid transparent;\n  white-space: nowrap;\n  padding: 10px 18px;\n  font-size: 15px;\n  line-height: 1.42857;\n  border-radius: 0;\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none; }\n.btn:focus, .btn.focus, .btn:active:focus, .btn:active.focus, .btn.active:focus, .btn.active.focus {\n    outline: 5px auto -webkit-focus-ring-color;\n    outline-offset: -2px; }\n.btn:hover, .btn:focus, .btn.focus {\n    color: #fff;\n    text-decoration: none; }\n.btn:active, .btn.active {\n    outline: 0;\n    background-image: none;\n    box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125); }\n.btn.disabled, .btn[disabled], fieldset[disabled] .btn {\n    cursor: not-allowed;\n    opacity: 0.65;\n    filter: alpha(opacity=65);\n    box-shadow: none; }\na.btn.disabled, fieldset[disabled] a.btn {\n  pointer-events: none; }\n.btn-default {\n  color: #fff;\n  background-color: #222222;\n  border-color: #222222; }\n.btn-default:focus, .btn-default.focus {\n    color: #fff;\n    background-color: #090909;\n    border-color: black; }\n.btn-default:hover {\n    color: #fff;\n    background-color: #090909;\n    border-color: #040404; }\n.btn-default:active, .btn-default.active, .open > .btn-default.dropdown-toggle {\n    color: #fff;\n    background-color: #090909;\n    border-color: #040404; }\n.btn-default:active:hover, .btn-default:active:focus, .btn-default:active.focus, .btn-default.active:hover, .btn-default.active:focus, .btn-default.active.focus, .open > .btn-default.dropdown-toggle:hover, .open > .btn-default.dropdown-toggle:focus, .open > .btn-default.dropdown-toggle.focus {\n      color: #fff;\n      background-color: black;\n      border-color: black; }\n.btn-default:active, .btn-default.active, .open > .btn-default.dropdown-toggle {\n    background-image: none; }\n.btn-default.disabled:hover, .btn-default.disabled:focus, .btn-default.disabled.focus, .btn-default[disabled]:hover, .btn-default[disabled]:focus, .btn-default[disabled].focus, fieldset[disabled] .btn-default:hover, fieldset[disabled] .btn-default:focus, fieldset[disabled] .btn-default.focus {\n    background-color: #222222;\n    border-color: #222222; }\n.btn-default .badge {\n    color: #222222;\n    background-color: #fff; }\n.btn-primary {\n  color: #fff;\n  background-color: #2780E3;\n  border-color: #2780E3; }\n.btn-primary:focus, .btn-primary.focus {\n    color: #fff;\n    background-color: #1967be;\n    border-color: #10427b; }\n.btn-primary:hover {\n    color: #fff;\n    background-color: #1967be;\n    border-color: #1862b5; }\n.btn-primary:active, .btn-primary.active, .open > .btn-primary.dropdown-toggle {\n    color: #fff;\n    background-color: #1967be;\n    border-color: #1862b5; }\n.btn-primary:active:hover, .btn-primary:active:focus, .btn-primary:active.focus, .btn-primary.active:hover, .btn-primary.active:focus, .btn-primary.active.focus, .open > .btn-primary.dropdown-toggle:hover, .open > .btn-primary.dropdown-toggle:focus, .open > .btn-primary.dropdown-toggle.focus {\n      color: #fff;\n      background-color: #15569f;\n      border-color: #10427b; }\n.btn-primary:active, .btn-primary.active, .open > .btn-primary.dropdown-toggle {\n    background-image: none; }\n.btn-primary.disabled:hover, .btn-primary.disabled:focus, .btn-primary.disabled.focus, .btn-primary[disabled]:hover, .btn-primary[disabled]:focus, .btn-primary[disabled].focus, fieldset[disabled] .btn-primary:hover, fieldset[disabled] .btn-primary:focus, fieldset[disabled] .btn-primary.focus {\n    background-color: #2780E3;\n    border-color: #2780E3; }\n.btn-primary .badge {\n    color: #2780E3;\n    background-color: #fff; }\n.btn-success {\n  color: #fff;\n  background-color: #3FB618;\n  border-color: #3FB618; }\n.btn-success:focus, .btn-success.focus {\n    color: #fff;\n    background-color: #2f8912;\n    border-color: #184509; }\n.btn-success:hover {\n    color: #fff;\n    background-color: #2f8912;\n    border-color: #2c8011; }\n.btn-success:active, .btn-success.active, .open > .btn-success.dropdown-toggle {\n    color: #fff;\n    background-color: #2f8912;\n    border-color: #2c8011; }\n.btn-success:active:hover, .btn-success:active:focus, .btn-success:active.focus, .btn-success.active:hover, .btn-success.active:focus, .btn-success.active.focus, .open > .btn-success.dropdown-toggle:hover, .open > .btn-success.dropdown-toggle:focus, .open > .btn-success.dropdown-toggle.focus {\n      color: #fff;\n      background-color: #24690e;\n      border-color: #184509; }\n.btn-success:active, .btn-success.active, .open > .btn-success.dropdown-toggle {\n    background-image: none; }\n.btn-success.disabled:hover, .btn-success.disabled:focus, .btn-success.disabled.focus, .btn-success[disabled]:hover, .btn-success[disabled]:focus, .btn-success[disabled].focus, fieldset[disabled] .btn-success:hover, fieldset[disabled] .btn-success:focus, fieldset[disabled] .btn-success.focus {\n    background-color: #3FB618;\n    border-color: #3FB618; }\n.btn-success .badge {\n    color: #3FB618;\n    background-color: #fff; }\n.btn-info {\n  color: #fff;\n  background-color: #9954BB;\n  border-color: #9954BB; }\n.btn-info:focus, .btn-info.focus {\n    color: #fff;\n    background-color: #7e3f9d;\n    border-color: #522967; }\n.btn-info:hover {\n    color: #fff;\n    background-color: #7e3f9d;\n    border-color: #783c96; }\n.btn-info:active, .btn-info.active, .open > .btn-info.dropdown-toggle {\n    color: #fff;\n    background-color: #7e3f9d;\n    border-color: #783c96; }\n.btn-info:active:hover, .btn-info:active:focus, .btn-info:active.focus, .btn-info.active:hover, .btn-info.active:focus, .btn-info.active.focus, .open > .btn-info.dropdown-toggle:hover, .open > .btn-info.dropdown-toggle:focus, .open > .btn-info.dropdown-toggle.focus {\n      color: #fff;\n      background-color: #6a3484;\n      border-color: #522967; }\n.btn-info:active, .btn-info.active, .open > .btn-info.dropdown-toggle {\n    background-image: none; }\n.btn-info.disabled:hover, .btn-info.disabled:focus, .btn-info.disabled.focus, .btn-info[disabled]:hover, .btn-info[disabled]:focus, .btn-info[disabled].focus, fieldset[disabled] .btn-info:hover, fieldset[disabled] .btn-info:focus, fieldset[disabled] .btn-info.focus {\n    background-color: #9954BB;\n    border-color: #9954BB; }\n.btn-info .badge {\n    color: #9954BB;\n    background-color: #fff; }\n.btn-warning {\n  color: #fff;\n  background-color: #FF7518;\n  border-color: #FF7518; }\n.btn-warning:focus, .btn-warning.focus {\n    color: #fff;\n    background-color: #e45c00;\n    border-color: #983d00; }\n.btn-warning:hover {\n    color: #fff;\n    background-color: #e45c00;\n    border-color: #da5800; }\n.btn-warning:active, .btn-warning.active, .open > .btn-warning.dropdown-toggle {\n    color: #fff;\n    background-color: #e45c00;\n    border-color: #da5800; }\n.btn-warning:active:hover, .btn-warning:active:focus, .btn-warning:active.focus, .btn-warning.active:hover, .btn-warning.active:focus, .btn-warning.active.focus, .open > .btn-warning.dropdown-toggle:hover, .open > .btn-warning.dropdown-toggle:focus, .open > .btn-warning.dropdown-toggle.focus {\n      color: #fff;\n      background-color: #c04d00;\n      border-color: #983d00; }\n.btn-warning:active, .btn-warning.active, .open > .btn-warning.dropdown-toggle {\n    background-image: none; }\n.btn-warning.disabled:hover, .btn-warning.disabled:focus, .btn-warning.disabled.focus, .btn-warning[disabled]:hover, .btn-warning[disabled]:focus, .btn-warning[disabled].focus, fieldset[disabled] .btn-warning:hover, fieldset[disabled] .btn-warning:focus, fieldset[disabled] .btn-warning.focus {\n    background-color: #FF7518;\n    border-color: #FF7518; }\n.btn-warning .badge {\n    color: #FF7518;\n    background-color: #fff; }\n.btn-danger {\n  color: #fff;\n  background-color: #FF0039;\n  border-color: #FF0039; }\n.btn-danger:focus, .btn-danger.focus {\n    color: #fff;\n    background-color: #cc002e;\n    border-color: #80001d; }\n.btn-danger:hover {\n    color: #fff;\n    background-color: #cc002e;\n    border-color: #c2002b; }\n.btn-danger:active, .btn-danger.active, .open > .btn-danger.dropdown-toggle {\n    color: #fff;\n    background-color: #cc002e;\n    border-color: #c2002b; }\n.btn-danger:active:hover, .btn-danger:active:focus, .btn-danger:active.focus, .btn-danger.active:hover, .btn-danger.active:focus, .btn-danger.active.focus, .open > .btn-danger.dropdown-toggle:hover, .open > .btn-danger.dropdown-toggle:focus, .open > .btn-danger.dropdown-toggle.focus {\n      color: #fff;\n      background-color: #a80026;\n      border-color: #80001d; }\n.btn-danger:active, .btn-danger.active, .open > .btn-danger.dropdown-toggle {\n    background-image: none; }\n.btn-danger.disabled:hover, .btn-danger.disabled:focus, .btn-danger.disabled.focus, .btn-danger[disabled]:hover, .btn-danger[disabled]:focus, .btn-danger[disabled].focus, fieldset[disabled] .btn-danger:hover, fieldset[disabled] .btn-danger:focus, fieldset[disabled] .btn-danger.focus {\n    background-color: #FF0039;\n    border-color: #FF0039; }\n.btn-danger .badge {\n    color: #FF0039;\n    background-color: #fff; }\n.btn-link {\n  color: #2780E3;\n  font-weight: normal;\n  border-radius: 0; }\n.btn-link, .btn-link:active, .btn-link.active, .btn-link[disabled], fieldset[disabled] .btn-link {\n    background-color: transparent;\n    box-shadow: none; }\n.btn-link, .btn-link:hover, .btn-link:focus, .btn-link:active {\n    border-color: transparent; }\n.btn-link:hover, .btn-link:focus {\n    color: #165ba8;\n    text-decoration: underline;\n    background-color: transparent; }\n.btn-link[disabled]:hover, .btn-link[disabled]:focus, fieldset[disabled] .btn-link:hover, fieldset[disabled] .btn-link:focus {\n    color: #999999;\n    text-decoration: none; }\n.btn-lg, .btn-group-lg > .btn {\n  padding: 18px 30px;\n  font-size: 19px;\n  line-height: 1.33333;\n  border-radius: 0; }\n.btn-sm, .btn-group-sm > .btn {\n  padding: 5px 10px;\n  font-size: 13px;\n  line-height: 1.5;\n  border-radius: 0; }\n.btn-xs, .btn-group-xs > .btn {\n  padding: 1px 5px;\n  font-size: 13px;\n  line-height: 1.5;\n  border-radius: 0; }\n.btn-block {\n  display: block;\n  width: 100%; }\n.btn-block + .btn-block {\n  margin-top: 5px; }\ninput[type=\"submit\"].btn-block, input[type=\"reset\"].btn-block, input[type=\"button\"].btn-block {\n  width: 100%; }\n.fade {\n  opacity: 0;\n  transition: opacity 0.15s linear; }\n.fade.in {\n    opacity: 1; }\n.collapse {\n  display: none; }\n.collapse.in {\n    display: block; }\ntr.collapse.in {\n  display: table-row; }\ntbody.collapse.in {\n  display: table-row-group; }\n.collapsing {\n  position: relative;\n  height: 0;\n  overflow: hidden;\n  transition-property: height, visibility;\n  transition-duration: 0.35s;\n  transition-timing-function: ease; }\n.caret {\n  display: inline-block;\n  width: 0;\n  height: 0;\n  margin-left: 2px;\n  vertical-align: middle;\n  border-top: 4px dashed;\n  border-top: 4px solid \\9;\n  border-right: 4px solid transparent;\n  border-left: 4px solid transparent; }\n.dropup, .dropdown {\n  position: relative; }\n.dropdown-toggle:focus {\n  outline: 0; }\n.dropdown-menu {\n  position: absolute;\n  top: 100%;\n  left: 0;\n  z-index: 1000;\n  display: none;\n  float: left;\n  min-width: 160px;\n  padding: 5px 0;\n  margin: 2px 0 0;\n  list-style: none;\n  font-size: 15px;\n  text-align: left;\n  background-color: #fff;\n  border: 1px solid #ccc;\n  border: 1px solid rgba(0, 0, 0, 0.15);\n  border-radius: 0;\n  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);\n  background-clip: padding-box; }\n.dropdown-menu.pull-right {\n    right: 0;\n    left: auto; }\n.dropdown-menu .divider {\n    height: 1px;\n    margin: 9.5px 0;\n    overflow: hidden;\n    background-color: #e5e5e5; }\n.dropdown-menu > li > a {\n    display: block;\n    padding: 3px 20px;\n    clear: both;\n    font-weight: normal;\n    line-height: 1.42857;\n    color: #333333;\n    white-space: nowrap; }\n.dropdown-menu > li > a:hover, .dropdown-menu > li > a:focus {\n  text-decoration: none;\n  color: #fff;\n  background-color: #2780E3; }\n.dropdown-menu > .active > a, .dropdown-menu > .active > a:hover, .dropdown-menu > .active > a:focus {\n  color: #fff;\n  text-decoration: none;\n  outline: 0;\n  background-color: #2780E3; }\n.dropdown-menu > .disabled > a, .dropdown-menu > .disabled > a:hover, .dropdown-menu > .disabled > a:focus {\n  color: #999999; }\n.dropdown-menu > .disabled > a:hover, .dropdown-menu > .disabled > a:focus {\n  text-decoration: none;\n  background-color: transparent;\n  background-image: none;\n  filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);\n  cursor: not-allowed; }\n.open > .dropdown-menu {\n  display: block; }\n.open > a {\n  outline: 0; }\n.dropdown-menu-right {\n  left: auto;\n  right: 0; }\n.dropdown-menu-left {\n  left: 0;\n  right: auto; }\n.dropdown-header {\n  display: block;\n  padding: 3px 20px;\n  font-size: 13px;\n  line-height: 1.42857;\n  color: #999999;\n  white-space: nowrap; }\n.dropdown-backdrop {\n  position: fixed;\n  left: 0;\n  right: 0;\n  bottom: 0;\n  top: 0;\n  z-index: 990; }\n.pull-right > .dropdown-menu {\n  right: 0;\n  left: auto; }\n.dropup .caret, .navbar-fixed-bottom .dropdown .caret {\n  border-top: 0;\n  border-bottom: 4px dashed;\n  border-bottom: 4px solid \\9;\n  content: \"\"; }\n.dropup .dropdown-menu, .navbar-fixed-bottom .dropdown .dropdown-menu {\n  top: auto;\n  bottom: 100%;\n  margin-bottom: 2px; }\n@media (min-width: 768px) {\n  .navbar-right .dropdown-menu {\n    right: 0;\n    left: auto; }\n  .navbar-right .dropdown-menu-left {\n    left: 0;\n    right: auto; } }\n.btn-group, .btn-group-vertical {\n  position: relative;\n  display: inline-block;\n  vertical-align: middle; }\n.btn-group > .btn, .btn-group-vertical > .btn {\n    position: relative;\n    float: left; }\n.btn-group > .btn:hover, .btn-group > .btn:focus, .btn-group > .btn:active, .btn-group > .btn.active, .btn-group-vertical > .btn:hover, .btn-group-vertical > .btn:focus, .btn-group-vertical > .btn:active, .btn-group-vertical > .btn.active {\n      z-index: 2; }\n.btn-group .btn + .btn, .btn-group .btn + .btn-group, .btn-group .btn-group + .btn, .btn-group .btn-group + .btn-group {\n  margin-left: -1px; }\n.btn-toolbar {\n  margin-left: -5px; }\n.btn-toolbar:before, .btn-toolbar:after {\n    content: \" \";\n    display: table; }\n.btn-toolbar:after {\n    clear: both; }\n.btn-toolbar .btn, .btn-toolbar .btn-group, .btn-toolbar .input-group {\n    float: left; }\n.btn-toolbar > .btn, .btn-toolbar > .btn-group, .btn-toolbar > .input-group {\n    margin-left: 5px; }\n.btn-group > .btn:not(:first-child):not(:last-child):not(.dropdown-toggle) {\n  border-radius: 0; }\n.btn-group > .btn:first-child {\n  margin-left: 0; }\n.btn-group > .btn:first-child:not(:last-child):not(.dropdown-toggle) {\n    border-bottom-right-radius: 0;\n    border-top-right-radius: 0; }\n.btn-group > .btn:last-child:not(:first-child), .btn-group > .dropdown-toggle:not(:first-child) {\n  border-bottom-left-radius: 0;\n  border-top-left-radius: 0; }\n.btn-group > .btn-group {\n  float: left; }\n.btn-group > .btn-group:not(:first-child):not(:last-child) > .btn {\n  border-radius: 0; }\n.btn-group > .btn-group:first-child:not(:last-child) > .btn:last-child, .btn-group > .btn-group:first-child:not(:last-child) > .dropdown-toggle {\n  border-bottom-right-radius: 0;\n  border-top-right-radius: 0; }\n.btn-group > .btn-group:last-child:not(:first-child) > .btn:first-child {\n  border-bottom-left-radius: 0;\n  border-top-left-radius: 0; }\n.btn-group .dropdown-toggle:active, .btn-group.open .dropdown-toggle {\n  outline: 0; }\n.btn-group > .btn + .dropdown-toggle {\n  padding-left: 8px;\n  padding-right: 8px; }\n.btn-group > .btn-lg + .dropdown-toggle, .btn-group-lg.btn-group > .btn + .dropdown-toggle {\n  padding-left: 12px;\n  padding-right: 12px; }\n.btn-group.open .dropdown-toggle {\n  box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125); }\n.btn-group.open .dropdown-toggle.btn-link {\n    box-shadow: none; }\n.btn .caret {\n  margin-left: 0; }\n.btn-lg .caret, .btn-group-lg > .btn .caret {\n  border-width: 5px 5px 0;\n  border-bottom-width: 0; }\n.dropup .btn-lg .caret, .dropup .btn-group-lg > .btn .caret {\n  border-width: 0 5px 5px; }\n.btn-group-vertical > .btn, .btn-group-vertical > .btn-group, .btn-group-vertical > .btn-group > .btn {\n  display: block;\n  float: none;\n  width: 100%;\n  max-width: 100%; }\n.btn-group-vertical > .btn-group:before, .btn-group-vertical > .btn-group:after {\n  content: \" \";\n  display: table; }\n.btn-group-vertical > .btn-group:after {\n  clear: both; }\n.btn-group-vertical > .btn-group > .btn {\n  float: none; }\n.btn-group-vertical > .btn + .btn, .btn-group-vertical > .btn + .btn-group, .btn-group-vertical > .btn-group + .btn, .btn-group-vertical > .btn-group + .btn-group {\n  margin-top: -1px;\n  margin-left: 0; }\n.btn-group-vertical > .btn:not(:first-child):not(:last-child) {\n  border-radius: 0; }\n.btn-group-vertical > .btn:first-child:not(:last-child) {\n  border-top-right-radius: 0;\n  border-top-left-radius: 0;\n  border-bottom-right-radius: 0;\n  border-bottom-left-radius: 0; }\n.btn-group-vertical > .btn:last-child:not(:first-child) {\n  border-top-right-radius: 0;\n  border-top-left-radius: 0;\n  border-bottom-right-radius: 0;\n  border-bottom-left-radius: 0; }\n.btn-group-vertical > .btn-group:not(:first-child):not(:last-child) > .btn {\n  border-radius: 0; }\n.btn-group-vertical > .btn-group:first-child:not(:last-child) > .btn:last-child, .btn-group-vertical > .btn-group:first-child:not(:last-child) > .dropdown-toggle {\n  border-bottom-right-radius: 0;\n  border-bottom-left-radius: 0; }\n.btn-group-vertical > .btn-group:last-child:not(:first-child) > .btn:first-child {\n  border-top-right-radius: 0;\n  border-top-left-radius: 0; }\n.btn-group-justified {\n  display: table;\n  width: 100%;\n  table-layout: fixed;\n  border-collapse: separate; }\n.btn-group-justified > .btn, .btn-group-justified > .btn-group {\n    float: none;\n    display: table-cell;\n    width: 1%; }\n.btn-group-justified > .btn-group .btn {\n    width: 100%; }\n.btn-group-justified > .btn-group .dropdown-menu {\n    left: auto; }\n[data-toggle=\"buttons\"] > .btn input[type=\"radio\"], [data-toggle=\"buttons\"] > .btn input[type=\"checkbox\"], [data-toggle=\"buttons\"] > .btn-group > .btn input[type=\"radio\"], [data-toggle=\"buttons\"] > .btn-group > .btn input[type=\"checkbox\"] {\n  position: absolute;\n  clip: rect(0, 0, 0, 0);\n  pointer-events: none; }\n.input-group {\n  position: relative;\n  display: table;\n  border-collapse: separate; }\n.input-group[class*=\"col-\"] {\n    float: none;\n    padding-left: 0;\n    padding-right: 0; }\n.input-group .form-control {\n    position: relative;\n    z-index: 2;\n    float: left;\n    width: 100%;\n    margin-bottom: 0; }\n.input-group .form-control:focus {\n      z-index: 3; }\n.input-group-addon, .input-group-btn, .input-group .form-control {\n  display: table-cell; }\n.input-group-addon:not(:first-child):not(:last-child), .input-group-btn:not(:first-child):not(:last-child), .input-group .form-control:not(:first-child):not(:last-child) {\n    border-radius: 0; }\n.input-group-addon, .input-group-btn {\n  width: 1%;\n  white-space: nowrap;\n  vertical-align: middle; }\n.input-group-addon {\n  padding: 10px 18px;\n  font-size: 15px;\n  font-weight: normal;\n  line-height: 1;\n  color: #333333;\n  text-align: center;\n  background-color: #e6e6e6;\n  border: 1px solid #ccc;\n  border-radius: 0; }\n.input-group-addon.input-sm, .input-group-sm > .input-group-addon, .input-group-sm > .input-group-btn > .input-group-addon.btn {\n    padding: 5px 10px;\n    font-size: 13px;\n    border-radius: 0; }\n.input-group-addon.input-lg, .input-group-lg > .input-group-addon, .input-group-lg > .input-group-btn > .input-group-addon.btn {\n    padding: 18px 30px;\n    font-size: 19px;\n    border-radius: 0; }\n.input-group-addon input[type=\"radio\"], .input-group-addon input[type=\"checkbox\"] {\n    margin-top: 0; }\n.input-group .form-control:first-child, .input-group-addon:first-child, .input-group-btn:first-child > .btn, .input-group-btn:first-child > .btn-group > .btn, .input-group-btn:first-child > .dropdown-toggle, .input-group-btn:last-child > .btn:not(:last-child):not(.dropdown-toggle), .input-group-btn:last-child > .btn-group:not(:last-child) > .btn {\n  border-bottom-right-radius: 0;\n  border-top-right-radius: 0; }\n.input-group-addon:first-child {\n  border-right: 0; }\n.input-group .form-control:last-child, .input-group-addon:last-child, .input-group-btn:last-child > .btn, .input-group-btn:last-child > .btn-group > .btn, .input-group-btn:last-child > .dropdown-toggle, .input-group-btn:first-child > .btn:not(:first-child), .input-group-btn:first-child > .btn-group:not(:first-child) > .btn {\n  border-bottom-left-radius: 0;\n  border-top-left-radius: 0; }\n.input-group-addon:last-child {\n  border-left: 0; }\n.input-group-btn {\n  position: relative;\n  font-size: 0;\n  white-space: nowrap; }\n.input-group-btn > .btn {\n    position: relative; }\n.input-group-btn > .btn + .btn {\n      margin-left: -1px; }\n.input-group-btn > .btn:hover, .input-group-btn > .btn:focus, .input-group-btn > .btn:active {\n      z-index: 2; }\n.input-group-btn:first-child > .btn, .input-group-btn:first-child > .btn-group {\n    margin-right: -1px; }\n.input-group-btn:last-child > .btn, .input-group-btn:last-child > .btn-group {\n    z-index: 2;\n    margin-left: -1px; }\n.nav {\n  margin-bottom: 0;\n  padding-left: 0;\n  list-style: none; }\n.nav:before, .nav:after {\n    content: \" \";\n    display: table; }\n.nav:after {\n    clear: both; }\n.nav > li {\n    position: relative;\n    display: block; }\n.nav > li > a {\n      position: relative;\n      display: block;\n      padding: 10px 15px; }\n.nav > li > a:hover, .nav > li > a:focus {\n        text-decoration: none;\n        background-color: #e6e6e6; }\n.nav > li.disabled > a {\n      color: #999999; }\n.nav > li.disabled > a:hover, .nav > li.disabled > a:focus {\n        color: #999999;\n        text-decoration: none;\n        background-color: transparent;\n        cursor: not-allowed; }\n.nav .open > a, .nav .open > a:hover, .nav .open > a:focus {\n    background-color: #e6e6e6;\n    border-color: #2780E3; }\n.nav .nav-divider {\n    height: 1px;\n    margin: 9.5px 0;\n    overflow: hidden;\n    background-color: #e5e5e5; }\n.nav > li > a > img {\n    max-width: none; }\n.nav-tabs {\n  border-bottom: 1px solid #ddd; }\n.nav-tabs > li {\n    float: left;\n    margin-bottom: -1px; }\n.nav-tabs > li > a {\n      margin-right: 2px;\n      line-height: 1.42857;\n      border: 1px solid transparent;\n      border-radius: 0 0 0 0; }\n.nav-tabs > li > a:hover {\n        border-color: #e6e6e6 #e6e6e6 #ddd; }\n.nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs > li.active > a:focus {\n      color: #555555;\n      background-color: #fff;\n      border: 1px solid #ddd;\n      border-bottom-color: transparent;\n      cursor: default; }\n.nav-pills > li {\n  float: left; }\n.nav-pills > li > a {\n    border-radius: 0; }\n.nav-pills > li + li {\n    margin-left: 2px; }\n.nav-pills > li.active > a, .nav-pills > li.active > a:hover, .nav-pills > li.active > a:focus {\n    color: #fff;\n    background-color: #2780E3; }\n.nav-stacked > li {\n  float: none; }\n.nav-stacked > li + li {\n    margin-top: 2px;\n    margin-left: 0; }\n.nav-justified, .nav-tabs.nav-justified {\n  width: 100%; }\n.nav-justified > li, .nav-tabs.nav-justified > li {\n    float: none; }\n.nav-justified > li > a, .nav-tabs.nav-justified > li > a {\n      text-align: center;\n      margin-bottom: 5px; }\n.nav-justified > .dropdown .dropdown-menu {\n    top: auto;\n    left: auto; }\n@media (min-width: 768px) {\n    .nav-justified > li, .nav-tabs.nav-justified > li {\n      display: table-cell;\n      width: 1%; }\n      .nav-justified > li > a, .nav-tabs.nav-justified > li > a {\n        margin-bottom: 0; } }\n.nav-tabs-justified, .nav-tabs.nav-justified {\n  border-bottom: 0; }\n.nav-tabs-justified > li > a, .nav-tabs.nav-justified > li > a {\n    margin-right: 0;\n    border-radius: 0; }\n.nav-tabs-justified > .active > a, .nav-tabs.nav-justified > .active > a, .nav-tabs-justified > .active > a:hover, .nav-tabs.nav-justified > .active > a:hover, .nav-tabs-justified > .active > a:focus, .nav-tabs.nav-justified > .active > a:focus {\n    border: 1px solid #ddd; }\n@media (min-width: 768px) {\n    .nav-tabs-justified > li > a, .nav-tabs.nav-justified > li > a {\n      border-bottom: 1px solid #ddd;\n      border-radius: 0 0 0 0; }\n    .nav-tabs-justified > .active > a, .nav-tabs.nav-justified > .active > a, .nav-tabs-justified > .active > a:hover, .nav-tabs.nav-justified > .active > a:hover, .nav-tabs-justified > .active > a:focus, .nav-tabs.nav-justified > .active > a:focus {\n      border-bottom-color: #fff; } }\n.tab-content > .tab-pane {\n  display: none; }\n.tab-content > .active {\n  display: block; }\n.nav-tabs .dropdown-menu {\n  margin-top: -1px;\n  border-top-right-radius: 0;\n  border-top-left-radius: 0; }\n.navbar {\n  position: relative;\n  min-height: 50px;\n  margin-bottom: 21px;\n  border: 1px solid transparent; }\n.navbar:before, .navbar:after {\n    content: \" \";\n    display: table; }\n.navbar:after {\n    clear: both; }\n@media (min-width: 768px) {\n    .navbar {\n      border-radius: 0; } }\n.navbar-header:before, .navbar-header:after {\n  content: \" \";\n  display: table; }\n.navbar-header:after {\n  clear: both; }\n@media (min-width: 768px) {\n  .navbar-header {\n    float: left; } }\n.navbar-collapse {\n  overflow-x: visible;\n  padding-right: 15px;\n  padding-left: 15px;\n  border-top: 1px solid transparent;\n  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);\n  -webkit-overflow-scrolling: touch; }\n.navbar-collapse:before, .navbar-collapse:after {\n    content: \" \";\n    display: table; }\n.navbar-collapse:after {\n    clear: both; }\n.navbar-collapse.in {\n    overflow-y: auto; }\n@media (min-width: 768px) {\n    .navbar-collapse {\n      width: auto;\n      border-top: 0;\n      box-shadow: none; }\n      .navbar-collapse.collapse {\n        display: block !important;\n        height: auto !important;\n        padding-bottom: 0;\n        overflow: visible !important; }\n      .navbar-collapse.in {\n        overflow-y: visible; }\n      .navbar-fixed-top .navbar-collapse, .navbar-static-top .navbar-collapse, .navbar-fixed-bottom .navbar-collapse {\n        padding-left: 0;\n        padding-right: 0; } }\n.navbar-fixed-top .navbar-collapse, .navbar-fixed-bottom .navbar-collapse {\n  max-height: 340px; }\n@media (max-device-width: 480px) and (orientation: landscape) {\n    .navbar-fixed-top .navbar-collapse, .navbar-fixed-bottom .navbar-collapse {\n      max-height: 200px; } }\n.container > .navbar-header, .container > .navbar-collapse, .container-fluid > .navbar-header, .container-fluid > .navbar-collapse {\n  margin-right: -15px;\n  margin-left: -15px; }\n@media (min-width: 768px) {\n    .container > .navbar-header, .container > .navbar-collapse, .container-fluid > .navbar-header, .container-fluid > .navbar-collapse {\n      margin-right: 0;\n      margin-left: 0; } }\n.navbar-static-top {\n  z-index: 1000;\n  border-width: 0 0 1px; }\n@media (min-width: 768px) {\n    .navbar-static-top {\n      border-radius: 0; } }\n.navbar-fixed-top, .navbar-fixed-bottom {\n  position: fixed;\n  right: 0;\n  left: 0;\n  z-index: 1030; }\n@media (min-width: 768px) {\n    .navbar-fixed-top, .navbar-fixed-bottom {\n      border-radius: 0; } }\n.navbar-fixed-top {\n  top: 0;\n  border-width: 0 0 1px; }\n.navbar-fixed-bottom {\n  bottom: 0;\n  margin-bottom: 0;\n  border-width: 1px 0 0; }\n.navbar-brand {\n  float: left;\n  padding: 14.5px 15px;\n  font-size: 19px;\n  line-height: 21px;\n  height: 50px; }\n.navbar-brand:hover, .navbar-brand:focus {\n    text-decoration: none; }\n.navbar-brand > img {\n    display: block; }\n@media (min-width: 768px) {\n    .navbar > .container .navbar-brand, .navbar > .container-fluid .navbar-brand {\n      margin-left: -15px; } }\n.navbar-toggle {\n  position: relative;\n  float: right;\n  margin-right: 15px;\n  padding: 9px 10px;\n  margin-top: 8px;\n  margin-bottom: 8px;\n  background-color: transparent;\n  background-image: none;\n  border: 1px solid transparent;\n  border-radius: 0; }\n.navbar-toggle:focus {\n    outline: 0; }\n.navbar-toggle .icon-bar {\n    display: block;\n    width: 22px;\n    height: 2px;\n    border-radius: 1px; }\n.navbar-toggle .icon-bar + .icon-bar {\n    margin-top: 4px; }\n@media (min-width: 768px) {\n    .navbar-toggle {\n      display: none; } }\n.navbar-nav {\n  margin: 7.25px -15px; }\n.navbar-nav > li > a {\n    padding-top: 10px;\n    padding-bottom: 10px;\n    line-height: 21px; }\n@media (max-width: 767px) {\n    .navbar-nav .open .dropdown-menu {\n      position: static;\n      float: none;\n      width: auto;\n      margin-top: 0;\n      background-color: transparent;\n      border: 0;\n      box-shadow: none; }\n      .navbar-nav .open .dropdown-menu > li > a, .navbar-nav .open .dropdown-menu .dropdown-header {\n        padding: 5px 15px 5px 25px; }\n      .navbar-nav .open .dropdown-menu > li > a {\n        line-height: 21px; }\n        .navbar-nav .open .dropdown-menu > li > a:hover, .navbar-nav .open .dropdown-menu > li > a:focus {\n          background-image: none; } }\n@media (min-width: 768px) {\n    .navbar-nav {\n      float: left;\n      margin: 0; }\n      .navbar-nav > li {\n        float: left; }\n        .navbar-nav > li > a {\n          padding-top: 14.5px;\n          padding-bottom: 14.5px; } }\n.navbar-form {\n  margin-left: -15px;\n  margin-right: -15px;\n  padding: 10px 15px;\n  border-top: 1px solid transparent;\n  border-bottom: 1px solid transparent;\n  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 0 rgba(255, 255, 255, 0.1);\n  margin-top: 3.5px;\n  margin-bottom: 3.5px; }\n@media (min-width: 768px) {\n    .navbar-form .form-group {\n      display: inline-block;\n      margin-bottom: 0;\n      vertical-align: middle; }\n    .navbar-form .form-control {\n      display: inline-block;\n      width: auto;\n      vertical-align: middle; }\n    .navbar-form .form-control-static {\n      display: inline-block; }\n    .navbar-form .input-group {\n      display: inline-table;\n      vertical-align: middle; }\n      .navbar-form .input-group .input-group-addon, .navbar-form .input-group .input-group-btn, .navbar-form .input-group .form-control {\n        width: auto; }\n    .navbar-form .input-group > .form-control {\n      width: 100%; }\n    .navbar-form .control-label {\n      margin-bottom: 0;\n      vertical-align: middle; }\n    .navbar-form .radio, .navbar-form .checkbox {\n      display: inline-block;\n      margin-top: 0;\n      margin-bottom: 0;\n      vertical-align: middle; }\n      .navbar-form .radio label, .navbar-form .checkbox label {\n        padding-left: 0; }\n    .navbar-form .radio input[type=\"radio\"], .navbar-form .checkbox input[type=\"checkbox\"] {\n      position: relative;\n      margin-left: 0; }\n    .navbar-form .has-feedback .form-control-feedback {\n      top: 0; } }\n@media (max-width: 767px) {\n    .navbar-form .form-group {\n      margin-bottom: 5px; }\n      .navbar-form .form-group:last-child {\n        margin-bottom: 0; } }\n@media (min-width: 768px) {\n    .navbar-form {\n      width: auto;\n      border: 0;\n      margin-left: 0;\n      margin-right: 0;\n      padding-top: 0;\n      padding-bottom: 0;\n      box-shadow: none; } }\n.navbar-nav > li > .dropdown-menu {\n  margin-top: 0;\n  border-top-right-radius: 0;\n  border-top-left-radius: 0; }\n.navbar-fixed-bottom .navbar-nav > li > .dropdown-menu {\n  margin-bottom: 0;\n  border-top-right-radius: 0;\n  border-top-left-radius: 0;\n  border-bottom-right-radius: 0;\n  border-bottom-left-radius: 0; }\n.navbar-btn {\n  margin-top: 3.5px;\n  margin-bottom: 3.5px; }\n.navbar-btn.btn-sm, .btn-group-sm > .navbar-btn.btn {\n    margin-top: 9.5px;\n    margin-bottom: 9.5px; }\n.navbar-btn.btn-xs, .btn-group-xs > .navbar-btn.btn {\n    margin-top: 14px;\n    margin-bottom: 14px; }\n.navbar-text {\n  margin-top: 14.5px;\n  margin-bottom: 14.5px; }\n@media (min-width: 768px) {\n    .navbar-text {\n      float: left;\n      margin-left: 15px;\n      margin-right: 15px; } }\n@media (min-width: 768px) {\n  .navbar-left {\n    float: left !important; }\n  .navbar-right {\n    float: right !important;\n    margin-right: -15px; }\n    .navbar-right ~ .navbar-right {\n      margin-right: 0; } }\n.navbar-default {\n  background-color: #222222;\n  border-color: #121212; }\n.navbar-default .navbar-brand {\n    color: #fff; }\n.navbar-default .navbar-brand:hover, .navbar-default .navbar-brand:focus {\n      color: #fff;\n      background-color: none; }\n.navbar-default .navbar-text {\n    color: #fff; }\n.navbar-default .navbar-nav > li > a {\n    color: #fff; }\n.navbar-default .navbar-nav > li > a:hover, .navbar-default .navbar-nav > li > a:focus {\n      color: #fff;\n      background-color: #090909; }\n.navbar-default .navbar-nav > .active > a, .navbar-default .navbar-nav > .active > a:hover, .navbar-default .navbar-nav > .active > a:focus {\n    color: #fff;\n    background-color: #090909; }\n.navbar-default .navbar-nav > .disabled > a, .navbar-default .navbar-nav > .disabled > a:hover, .navbar-default .navbar-nav > .disabled > a:focus {\n    color: #ccc;\n    background-color: transparent; }\n.navbar-default .navbar-toggle {\n    border-color: transparent; }\n.navbar-default .navbar-toggle:hover, .navbar-default .navbar-toggle:focus {\n      background-color: #090909; }\n.navbar-default .navbar-toggle .icon-bar {\n      background-color: #fff; }\n.navbar-default .navbar-collapse, .navbar-default .navbar-form {\n    border-color: #121212; }\n.navbar-default .navbar-nav > .open > a, .navbar-default .navbar-nav > .open > a:hover, .navbar-default .navbar-nav > .open > a:focus {\n    background-color: #090909;\n    color: #fff; }\n@media (max-width: 767px) {\n    .navbar-default .navbar-nav .open .dropdown-menu > li > a {\n      color: #fff; }\n      .navbar-default .navbar-nav .open .dropdown-menu > li > a:hover, .navbar-default .navbar-nav .open .dropdown-menu > li > a:focus {\n        color: #fff;\n        background-color: #090909; }\n    .navbar-default .navbar-nav .open .dropdown-menu > .active > a, .navbar-default .navbar-nav .open .dropdown-menu > .active > a:hover, .navbar-default .navbar-nav .open .dropdown-menu > .active > a:focus {\n      color: #fff;\n      background-color: #090909; }\n    .navbar-default .navbar-nav .open .dropdown-menu > .disabled > a, .navbar-default .navbar-nav .open .dropdown-menu > .disabled > a:hover, .navbar-default .navbar-nav .open .dropdown-menu > .disabled > a:focus {\n      color: #ccc;\n      background-color: transparent; } }\n.navbar-default .navbar-link {\n    color: #fff; }\n.navbar-default .navbar-link:hover {\n      color: #fff; }\n.navbar-default .btn-link {\n    color: #fff; }\n.navbar-default .btn-link:hover, .navbar-default .btn-link:focus {\n      color: #fff; }\n.navbar-default .btn-link[disabled]:hover, .navbar-default .btn-link[disabled]:focus, fieldset[disabled] .navbar-default .btn-link:hover, fieldset[disabled] .navbar-default .btn-link:focus {\n      color: #ccc; }\n.navbar-inverse {\n  background-color: #2780E3;\n  border-color: #1967be; }\n.navbar-inverse .navbar-brand {\n    color: #fff; }\n.navbar-inverse .navbar-brand:hover, .navbar-inverse .navbar-brand:focus {\n      color: #fff;\n      background-color: none; }\n.navbar-inverse .navbar-text {\n    color: #fff; }\n.navbar-inverse .navbar-nav > li > a {\n    color: #fff; }\n.navbar-inverse .navbar-nav > li > a:hover, .navbar-inverse .navbar-nav > li > a:focus {\n      color: #fff;\n      background-color: #1967be; }\n.navbar-inverse .navbar-nav > .active > a, .navbar-inverse .navbar-nav > .active > a:hover, .navbar-inverse .navbar-nav > .active > a:focus {\n    color: #fff;\n    background-color: #1967be; }\n.navbar-inverse .navbar-nav > .disabled > a, .navbar-inverse .navbar-nav > .disabled > a:hover, .navbar-inverse .navbar-nav > .disabled > a:focus {\n    color: #fff;\n    background-color: transparent; }\n.navbar-inverse .navbar-toggle {\n    border-color: transparent; }\n.navbar-inverse .navbar-toggle:hover, .navbar-inverse .navbar-toggle:focus {\n      background-color: #1967be; }\n.navbar-inverse .navbar-toggle .icon-bar {\n      background-color: #fff; }\n.navbar-inverse .navbar-collapse, .navbar-inverse .navbar-form {\n    border-color: #1a6ecc; }\n.navbar-inverse .navbar-nav > .open > a, .navbar-inverse .navbar-nav > .open > a:hover, .navbar-inverse .navbar-nav > .open > a:focus {\n    background-color: #1967be;\n    color: #fff; }\n@media (max-width: 767px) {\n    .navbar-inverse .navbar-nav .open .dropdown-menu > .dropdown-header {\n      border-color: #1967be; }\n    .navbar-inverse .navbar-nav .open .dropdown-menu .divider {\n      background-color: #1967be; }\n    .navbar-inverse .navbar-nav .open .dropdown-menu > li > a {\n      color: #fff; }\n      .navbar-inverse .navbar-nav .open .dropdown-menu > li > a:hover, .navbar-inverse .navbar-nav .open .dropdown-menu > li > a:focus {\n        color: #fff;\n        background-color: #1967be; }\n    .navbar-inverse .navbar-nav .open .dropdown-menu > .active > a, .navbar-inverse .navbar-nav .open .dropdown-menu > .active > a:hover, .navbar-inverse .navbar-nav .open .dropdown-menu > .active > a:focus {\n      color: #fff;\n      background-color: #1967be; }\n    .navbar-inverse .navbar-nav .open .dropdown-menu > .disabled > a, .navbar-inverse .navbar-nav .open .dropdown-menu > .disabled > a:hover, .navbar-inverse .navbar-nav .open .dropdown-menu > .disabled > a:focus {\n      color: #fff;\n      background-color: transparent; } }\n.navbar-inverse .navbar-link {\n    color: #fff; }\n.navbar-inverse .navbar-link:hover {\n      color: #fff; }\n.navbar-inverse .btn-link {\n    color: #fff; }\n.navbar-inverse .btn-link:hover, .navbar-inverse .btn-link:focus {\n      color: #fff; }\n.navbar-inverse .btn-link[disabled]:hover, .navbar-inverse .btn-link[disabled]:focus, fieldset[disabled] .navbar-inverse .btn-link:hover, fieldset[disabled] .navbar-inverse .btn-link:focus {\n      color: #fff; }\n.breadcrumb {\n  padding: 8px 15px;\n  margin-bottom: 21px;\n  list-style: none;\n  background-color: #f5f5f5;\n  border-radius: 0; }\n.breadcrumb > li {\n    display: inline-block; }\n.breadcrumb > li + li:before {\n      content: \"/\\A0\";\n      padding: 0 5px;\n      color: #ccc; }\n.breadcrumb > .active {\n    color: #999999; }\n.pagination {\n  display: inline-block;\n  padding-left: 0;\n  margin: 21px 0;\n  border-radius: 0; }\n.pagination > li {\n    display: inline; }\n.pagination > li > a, .pagination > li > span {\n      position: relative;\n      float: left;\n      padding: 10px 18px;\n      line-height: 1.42857;\n      text-decoration: none;\n      color: #2780E3;\n      background-color: #fff;\n      border: 1px solid #ddd;\n      margin-left: -1px; }\n.pagination > li:first-child > a, .pagination > li:first-child > span {\n      margin-left: 0;\n      border-bottom-left-radius: 0;\n      border-top-left-radius: 0; }\n.pagination > li:last-child > a, .pagination > li:last-child > span {\n      border-bottom-right-radius: 0;\n      border-top-right-radius: 0; }\n.pagination > li > a:hover, .pagination > li > a:focus, .pagination > li > span:hover, .pagination > li > span:focus {\n    z-index: 2;\n    color: #165ba8;\n    background-color: #e6e6e6;\n    border-color: #ddd; }\n.pagination > .active > a, .pagination > .active > a:hover, .pagination > .active > a:focus, .pagination > .active > span, .pagination > .active > span:hover, .pagination > .active > span:focus {\n    z-index: 3;\n    color: #999999;\n    background-color: #f5f5f5;\n    border-color: #ddd;\n    cursor: default; }\n.pagination > .disabled > span, .pagination > .disabled > span:hover, .pagination > .disabled > span:focus, .pagination > .disabled > a, .pagination > .disabled > a:hover, .pagination > .disabled > a:focus {\n    color: #999999;\n    background-color: #fff;\n    border-color: #ddd;\n    cursor: not-allowed; }\n.pagination-lg > li > a, .pagination-lg > li > span {\n  padding: 18px 30px;\n  font-size: 19px;\n  line-height: 1.33333; }\n.pagination-lg > li:first-child > a, .pagination-lg > li:first-child > span {\n  border-bottom-left-radius: 0;\n  border-top-left-radius: 0; }\n.pagination-lg > li:last-child > a, .pagination-lg > li:last-child > span {\n  border-bottom-right-radius: 0;\n  border-top-right-radius: 0; }\n.pagination-sm > li > a, .pagination-sm > li > span {\n  padding: 5px 10px;\n  font-size: 13px;\n  line-height: 1.5; }\n.pagination-sm > li:first-child > a, .pagination-sm > li:first-child > span {\n  border-bottom-left-radius: 0;\n  border-top-left-radius: 0; }\n.pagination-sm > li:last-child > a, .pagination-sm > li:last-child > span {\n  border-bottom-right-radius: 0;\n  border-top-right-radius: 0; }\n.pager {\n  padding-left: 0;\n  margin: 21px 0;\n  list-style: none;\n  text-align: center; }\n.pager:before, .pager:after {\n    content: \" \";\n    display: table; }\n.pager:after {\n    clear: both; }\n.pager li {\n    display: inline; }\n.pager li > a, .pager li > span {\n      display: inline-block;\n      padding: 5px 14px;\n      background-color: #fff;\n      border: 1px solid #ddd;\n      border-radius: 0; }\n.pager li > a:hover, .pager li > a:focus {\n      text-decoration: none;\n      background-color: #e6e6e6; }\n.pager .next > a, .pager .next > span {\n    float: right; }\n.pager .previous > a, .pager .previous > span {\n    float: left; }\n.pager .disabled > a, .pager .disabled > a:hover, .pager .disabled > a:focus, .pager .disabled > span {\n    color: #999999;\n    background-color: #fff;\n    cursor: not-allowed; }\n.label {\n  display: inline;\n  padding: .2em .6em .3em;\n  font-size: 75%;\n  font-weight: bold;\n  line-height: 1;\n  color: #fff;\n  text-align: center;\n  white-space: nowrap;\n  vertical-align: baseline;\n  border-radius: .25em; }\n.label:empty {\n    display: none; }\n.btn .label {\n    position: relative;\n    top: -1px; }\na.label:hover, a.label:focus {\n  color: #fff;\n  text-decoration: none;\n  cursor: pointer; }\n.label-default {\n  background-color: #222222; }\n.label-default[href]:hover, .label-default[href]:focus {\n    background-color: #090909; }\n.label-primary {\n  background-color: #2780E3; }\n.label-primary[href]:hover, .label-primary[href]:focus {\n    background-color: #1967be; }\n.label-success {\n  background-color: #3FB618; }\n.label-success[href]:hover, .label-success[href]:focus {\n    background-color: #2f8912; }\n.label-info {\n  background-color: #9954BB; }\n.label-info[href]:hover, .label-info[href]:focus {\n    background-color: #7e3f9d; }\n.label-warning {\n  background-color: #FF7518; }\n.label-warning[href]:hover, .label-warning[href]:focus {\n    background-color: #e45c00; }\n.label-danger {\n  background-color: #FF0039; }\n.label-danger[href]:hover, .label-danger[href]:focus {\n    background-color: #cc002e; }\n.badge {\n  display: inline-block;\n  min-width: 10px;\n  padding: 3px 7px;\n  font-size: 13px;\n  font-weight: bold;\n  color: #fff;\n  line-height: 1;\n  vertical-align: middle;\n  white-space: nowrap;\n  text-align: center;\n  background-color: #2780E3;\n  border-radius: 10px; }\n.badge:empty {\n    display: none; }\n.btn .badge {\n    position: relative;\n    top: -1px; }\n.btn-xs .badge, .btn-group-xs > .btn .badge, .btn-group-xs > .btn .badge {\n    top: 0;\n    padding: 1px 5px; }\n.list-group-item.active > .badge, .nav-pills > .active > a > .badge {\n    color: #2780E3;\n    background-color: #fff; }\n.list-group-item > .badge {\n    float: right; }\n.list-group-item > .badge + .badge {\n    margin-right: 5px; }\n.nav-pills > li > a > .badge {\n    margin-left: 3px; }\na.badge:hover, a.badge:focus {\n  color: #fff;\n  text-decoration: none;\n  cursor: pointer; }\n.jumbotron {\n  padding-top: 30px;\n  padding-bottom: 30px;\n  margin-bottom: 30px;\n  color: inherit;\n  background-color: #e6e6e6; }\n.jumbotron h1, .jumbotron .h1 {\n    color: inherit; }\n.jumbotron p {\n    margin-bottom: 15px;\n    font-size: 23px;\n    font-weight: 200; }\n.jumbotron > hr {\n    border-top-color: #cccccc; }\n.container .jumbotron, .container-fluid .jumbotron {\n    border-radius: 0;\n    padding-left: 15px;\n    padding-right: 15px; }\n.jumbotron .container {\n    max-width: 100%; }\n@media screen and (min-width: 768px) {\n    .jumbotron {\n      padding-top: 48px;\n      padding-bottom: 48px; }\n      .container .jumbotron, .container-fluid .jumbotron {\n        padding-left: 60px;\n        padding-right: 60px; }\n      .jumbotron h1, .jumbotron .h1 {\n        font-size: 68px; } }\n.thumbnail {\n  display: block;\n  padding: 4px;\n  margin-bottom: 21px;\n  line-height: 1.42857;\n  background-color: #fff;\n  border: 1px solid #ddd;\n  border-radius: 0;\n  transition: border 0.2s ease-in-out; }\n.thumbnail > img, .thumbnail a > img {\n    display: block;\n    max-width: 100%;\n    height: auto;\n    margin-left: auto;\n    margin-right: auto; }\n.thumbnail .caption {\n    padding: 9px;\n    color: #333333; }\na.thumbnail:hover, a.thumbnail:focus, a.thumbnail.active {\n  border-color: #2780E3; }\n.alert {\n  padding: 15px;\n  margin-bottom: 21px;\n  border: 1px solid transparent;\n  border-radius: 0; }\n.alert h4 {\n    margin-top: 0;\n    color: inherit; }\n.alert .alert-link {\n    font-weight: bold; }\n.alert > p, .alert > ul {\n    margin-bottom: 0; }\n.alert > p + p {\n    margin-top: 5px; }\n.alert-dismissable, .alert-dismissible {\n  padding-right: 35px; }\n.alert-dismissable .close, .alert-dismissible .close {\n    position: relative;\n    top: -2px;\n    right: -21px;\n    color: inherit; }\n.alert-success {\n  background-color: #3FB618;\n  border-color: #4e9f15;\n  color: #fff; }\n.alert-success hr {\n    border-top-color: #438912; }\n.alert-success .alert-link {\n    color: #e6e6e6; }\n.alert-info {\n  background-color: #9954BB;\n  border-color: #7643a8;\n  color: #fff; }\n.alert-info hr {\n    border-top-color: #693c96; }\n.alert-info .alert-link {\n    color: #e6e6e6; }\n.alert-warning {\n  background-color: #FF7518;\n  border-color: #ff4309;\n  color: #fff; }\n.alert-warning hr {\n    border-top-color: #ee3800; }\n.alert-warning .alert-link {\n    color: #e6e6e6; }\n.alert-danger {\n  background-color: #FF0039;\n  border-color: #f0005e;\n  color: #fff; }\n.alert-danger hr {\n    border-top-color: #d60054; }\n.alert-danger .alert-link {\n    color: #e6e6e6; }\n@-webkit-keyframes progress-bar-stripes {\n  from {\n    background-position: 40px 0; }\n  to {\n    background-position: 0 0; } }\n@keyframes progress-bar-stripes {\n  from {\n    background-position: 40px 0; }\n  to {\n    background-position: 0 0; } }\n.progress {\n  overflow: hidden;\n  height: 21px;\n  margin-bottom: 21px;\n  background-color: #ccc;\n  border-radius: 0;\n  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1); }\n.progress-bar {\n  float: left;\n  width: 0%;\n  height: 100%;\n  font-size: 13px;\n  line-height: 21px;\n  color: #fff;\n  text-align: center;\n  background-color: #2780E3;\n  box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.15);\n  transition: width 0.6s ease; }\n.progress-striped .progress-bar, .progress-bar-striped {\n  background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);\n  background-size: 40px 40px; }\n.progress.active .progress-bar, .progress-bar.active {\n  -webkit-animation: progress-bar-stripes 2s linear infinite;\n  animation: progress-bar-stripes 2s linear infinite; }\n.progress-bar-success {\n  background-color: #3FB618; }\n.progress-striped .progress-bar-success {\n    background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent); }\n.progress-bar-info {\n  background-color: #9954BB; }\n.progress-striped .progress-bar-info {\n    background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent); }\n.progress-bar-warning {\n  background-color: #FF7518; }\n.progress-striped .progress-bar-warning {\n    background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent); }\n.progress-bar-danger {\n  background-color: #FF0039; }\n.progress-striped .progress-bar-danger {\n    background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent); }\n.media {\n  margin-top: 15px; }\n.media:first-child {\n    margin-top: 0; }\n.media, .media-body {\n  zoom: 1;\n  overflow: hidden; }\n.media-body {\n  width: 10000px; }\n.media-object {\n  display: block; }\n.media-object.img-thumbnail {\n    max-width: none; }\n.media-right, .media > .pull-right {\n  padding-left: 10px; }\n.media-left, .media > .pull-left {\n  padding-right: 10px; }\n.media-left, .media-right, .media-body {\n  display: table-cell;\n  vertical-align: top; }\n.media-middle {\n  vertical-align: middle; }\n.media-bottom {\n  vertical-align: bottom; }\n.media-heading {\n  margin-top: 0;\n  margin-bottom: 5px; }\n.media-list {\n  padding-left: 0;\n  list-style: none; }\n.list-group {\n  margin-bottom: 20px;\n  padding-left: 0; }\n.list-group-item {\n  position: relative;\n  display: block;\n  padding: 10px 15px;\n  margin-bottom: -1px;\n  background-color: #fff;\n  border: 1px solid #ddd; }\n.list-group-item:first-child {\n    border-top-right-radius: 0;\n    border-top-left-radius: 0; }\n.list-group-item:last-child {\n    margin-bottom: 0;\n    border-bottom-right-radius: 0;\n    border-bottom-left-radius: 0; }\na.list-group-item, button.list-group-item {\n  color: #555; }\na.list-group-item .list-group-item-heading, button.list-group-item .list-group-item-heading {\n    color: #333; }\na.list-group-item:hover, a.list-group-item:focus, button.list-group-item:hover, button.list-group-item:focus {\n    text-decoration: none;\n    color: #555;\n    background-color: #f5f5f5; }\nbutton.list-group-item {\n  width: 100%;\n  text-align: left; }\n.list-group-item.disabled, .list-group-item.disabled:hover, .list-group-item.disabled:focus {\n  background-color: #e6e6e6;\n  color: #999999;\n  cursor: not-allowed; }\n.list-group-item.disabled .list-group-item-heading, .list-group-item.disabled:hover .list-group-item-heading, .list-group-item.disabled:focus .list-group-item-heading {\n    color: inherit; }\n.list-group-item.disabled .list-group-item-text, .list-group-item.disabled:hover .list-group-item-text, .list-group-item.disabled:focus .list-group-item-text {\n    color: #999999; }\n.list-group-item.active, .list-group-item.active:hover, .list-group-item.active:focus {\n  z-index: 2;\n  color: #fff;\n  background-color: #2780E3;\n  border-color: #ddd; }\n.list-group-item.active .list-group-item-heading, .list-group-item.active .list-group-item-heading > small, .list-group-item.active .list-group-item-heading > .small, .list-group-item.active:hover .list-group-item-heading, .list-group-item.active:hover .list-group-item-heading > small, .list-group-item.active:hover .list-group-item-heading > .small, .list-group-item.active:focus .list-group-item-heading, .list-group-item.active:focus .list-group-item-heading > small, .list-group-item.active:focus .list-group-item-heading > .small {\n    color: inherit; }\n.list-group-item.active .list-group-item-text, .list-group-item.active:hover .list-group-item-text, .list-group-item.active:focus .list-group-item-text {\n    color: #dceafa; }\n.list-group-item-success {\n  color: #fff;\n  background-color: #3FB618; }\na.list-group-item-success, button.list-group-item-success {\n  color: #fff; }\na.list-group-item-success .list-group-item-heading, button.list-group-item-success .list-group-item-heading {\n    color: inherit; }\na.list-group-item-success:hover, a.list-group-item-success:focus, button.list-group-item-success:hover, button.list-group-item-success:focus {\n    color: #fff;\n    background-color: #379f15; }\na.list-group-item-success.active, a.list-group-item-success.active:hover, a.list-group-item-success.active:focus, button.list-group-item-success.active, button.list-group-item-success.active:hover, button.list-group-item-success.active:focus {\n    color: #fff;\n    background-color: #fff;\n    border-color: #fff; }\n.list-group-item-info {\n  color: #fff;\n  background-color: #9954BB; }\na.list-group-item-info, button.list-group-item-info {\n  color: #fff; }\na.list-group-item-info .list-group-item-heading, button.list-group-item-info .list-group-item-heading {\n    color: inherit; }\na.list-group-item-info:hover, a.list-group-item-info:focus, button.list-group-item-info:hover, button.list-group-item-info:focus {\n    color: #fff;\n    background-color: #8d46b0; }\na.list-group-item-info.active, a.list-group-item-info.active:hover, a.list-group-item-info.active:focus, button.list-group-item-info.active, button.list-group-item-info.active:hover, button.list-group-item-info.active:focus {\n    color: #fff;\n    background-color: #fff;\n    border-color: #fff; }\n.list-group-item-warning {\n  color: #fff;\n  background-color: #FF7518; }\na.list-group-item-warning, button.list-group-item-warning {\n  color: #fff; }\na.list-group-item-warning .list-group-item-heading, button.list-group-item-warning .list-group-item-heading {\n    color: inherit; }\na.list-group-item-warning:hover, a.list-group-item-warning:focus, button.list-group-item-warning:hover, button.list-group-item-warning:focus {\n    color: #fff;\n    background-color: #fe6600; }\na.list-group-item-warning.active, a.list-group-item-warning.active:hover, a.list-group-item-warning.active:focus, button.list-group-item-warning.active, button.list-group-item-warning.active:hover, button.list-group-item-warning.active:focus {\n    color: #fff;\n    background-color: #fff;\n    border-color: #fff; }\n.list-group-item-danger {\n  color: #fff;\n  background-color: #FF0039; }\na.list-group-item-danger, button.list-group-item-danger {\n  color: #fff; }\na.list-group-item-danger .list-group-item-heading, button.list-group-item-danger .list-group-item-heading {\n    color: inherit; }\na.list-group-item-danger:hover, a.list-group-item-danger:focus, button.list-group-item-danger:hover, button.list-group-item-danger:focus {\n    color: #fff;\n    background-color: #e60033; }\na.list-group-item-danger.active, a.list-group-item-danger.active:hover, a.list-group-item-danger.active:focus, button.list-group-item-danger.active, button.list-group-item-danger.active:hover, button.list-group-item-danger.active:focus {\n    color: #fff;\n    background-color: #fff;\n    border-color: #fff; }\n.list-group-item-heading {\n  margin-top: 0;\n  margin-bottom: 5px; }\n.list-group-item-text {\n  margin-bottom: 0;\n  line-height: 1.3; }\n.panel {\n  margin-bottom: 21px;\n  background-color: #fff;\n  border: 1px solid transparent;\n  border-radius: 0;\n  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05); }\n.panel-body {\n  padding: 15px; }\n.panel-body:before, .panel-body:after {\n    content: \" \";\n    display: table; }\n.panel-body:after {\n    clear: both; }\n.panel-heading {\n  padding: 10px 15px;\n  border-bottom: 1px solid transparent;\n  border-top-right-radius: -1;\n  border-top-left-radius: -1; }\n.panel-heading > .dropdown .dropdown-toggle {\n    color: inherit; }\n.panel-title {\n  margin-top: 0;\n  margin-bottom: 0;\n  font-size: 17px;\n  color: inherit; }\n.panel-title > a, .panel-title > small, .panel-title > .small, .panel-title > small > a, .panel-title > .small > a {\n    color: inherit; }\n.panel-footer {\n  padding: 10px 15px;\n  background-color: #f5f5f5;\n  border-top: 1px solid #ddd;\n  border-bottom-right-radius: -1;\n  border-bottom-left-radius: -1; }\n.panel > .list-group, .panel > .panel-collapse > .list-group {\n  margin-bottom: 0; }\n.panel > .list-group .list-group-item, .panel > .panel-collapse > .list-group .list-group-item {\n    border-width: 1px 0;\n    border-radius: 0; }\n.panel > .list-group:first-child .list-group-item:first-child, .panel > .panel-collapse > .list-group:first-child .list-group-item:first-child {\n    border-top: 0;\n    border-top-right-radius: -1;\n    border-top-left-radius: -1; }\n.panel > .list-group:last-child .list-group-item:last-child, .panel > .panel-collapse > .list-group:last-child .list-group-item:last-child {\n    border-bottom: 0;\n    border-bottom-right-radius: -1;\n    border-bottom-left-radius: -1; }\n.panel > .panel-heading + .panel-collapse > .list-group .list-group-item:first-child {\n  border-top-right-radius: 0;\n  border-top-left-radius: 0; }\n.panel-heading + .list-group .list-group-item:first-child {\n  border-top-width: 0; }\n.list-group + .panel-footer {\n  border-top-width: 0; }\n.panel > .table, .panel > .table-responsive > .table, .panel > .panel-collapse > .table {\n  margin-bottom: 0; }\n.panel > .table caption, .panel > .table-responsive > .table caption, .panel > .panel-collapse > .table caption {\n    padding-left: 15px;\n    padding-right: 15px; }\n.panel > .table:first-child, .panel > .table-responsive:first-child > .table:first-child {\n  border-top-right-radius: -1;\n  border-top-left-radius: -1; }\n.panel > .table:first-child > thead:first-child > tr:first-child, .panel > .table:first-child > tbody:first-child > tr:first-child, .panel > .table-responsive:first-child > .table:first-child > thead:first-child > tr:first-child, .panel > .table-responsive:first-child > .table:first-child > tbody:first-child > tr:first-child {\n    border-top-left-radius: -1;\n    border-top-right-radius: -1; }\n.panel > .table:first-child > thead:first-child > tr:first-child td:first-child, .panel > .table:first-child > thead:first-child > tr:first-child th:first-child, .panel > .table:first-child > tbody:first-child > tr:first-child td:first-child, .panel > .table:first-child > tbody:first-child > tr:first-child th:first-child, .panel > .table-responsive:first-child > .table:first-child > thead:first-child > tr:first-child td:first-child, .panel > .table-responsive:first-child > .table:first-child > thead:first-child > tr:first-child th:first-child, .panel > .table-responsive:first-child > .table:first-child > tbody:first-child > tr:first-child td:first-child, .panel > .table-responsive:first-child > .table:first-child > tbody:first-child > tr:first-child th:first-child {\n      border-top-left-radius: -1; }\n.panel > .table:first-child > thead:first-child > tr:first-child td:last-child, .panel > .table:first-child > thead:first-child > tr:first-child th:last-child, .panel > .table:first-child > tbody:first-child > tr:first-child td:last-child, .panel > .table:first-child > tbody:first-child > tr:first-child th:last-child, .panel > .table-responsive:first-child > .table:first-child > thead:first-child > tr:first-child td:last-child, .panel > .table-responsive:first-child > .table:first-child > thead:first-child > tr:first-child th:last-child, .panel > .table-responsive:first-child > .table:first-child > tbody:first-child > tr:first-child td:last-child, .panel > .table-responsive:first-child > .table:first-child > tbody:first-child > tr:first-child th:last-child {\n      border-top-right-radius: -1; }\n.panel > .table:last-child, .panel > .table-responsive:last-child > .table:last-child {\n  border-bottom-right-radius: -1;\n  border-bottom-left-radius: -1; }\n.panel > .table:last-child > tbody:last-child > tr:last-child, .panel > .table:last-child > tfoot:last-child > tr:last-child, .panel > .table-responsive:last-child > .table:last-child > tbody:last-child > tr:last-child, .panel > .table-responsive:last-child > .table:last-child > tfoot:last-child > tr:last-child {\n    border-bottom-left-radius: -1;\n    border-bottom-right-radius: -1; }\n.panel > .table:last-child > tbody:last-child > tr:last-child td:first-child, .panel > .table:last-child > tbody:last-child > tr:last-child th:first-child, .panel > .table:last-child > tfoot:last-child > tr:last-child td:first-child, .panel > .table:last-child > tfoot:last-child > tr:last-child th:first-child, .panel > .table-responsive:last-child > .table:last-child > tbody:last-child > tr:last-child td:first-child, .panel > .table-responsive:last-child > .table:last-child > tbody:last-child > tr:last-child th:first-child, .panel > .table-responsive:last-child > .table:last-child > tfoot:last-child > tr:last-child td:first-child, .panel > .table-responsive:last-child > .table:last-child > tfoot:last-child > tr:last-child th:first-child {\n      border-bottom-left-radius: -1; }\n.panel > .table:last-child > tbody:last-child > tr:last-child td:last-child, .panel > .table:last-child > tbody:last-child > tr:last-child th:last-child, .panel > .table:last-child > tfoot:last-child > tr:last-child td:last-child, .panel > .table:last-child > tfoot:last-child > tr:last-child th:last-child, .panel > .table-responsive:last-child > .table:last-child > tbody:last-child > tr:last-child td:last-child, .panel > .table-responsive:last-child > .table:last-child > tbody:last-child > tr:last-child th:last-child, .panel > .table-responsive:last-child > .table:last-child > tfoot:last-child > tr:last-child td:last-child, .panel > .table-responsive:last-child > .table:last-child > tfoot:last-child > tr:last-child th:last-child {\n      border-bottom-right-radius: -1; }\n.panel > .panel-body + .table, .panel > .panel-body + .table-responsive, .panel > .table + .panel-body, .panel > .table-responsive + .panel-body {\n  border-top: 1px solid #ddd; }\n.panel > .table > tbody:first-child > tr:first-child th, .panel > .table > tbody:first-child > tr:first-child td {\n  border-top: 0; }\n.panel > .table-bordered, .panel > .table-responsive > .table-bordered {\n  border: 0; }\n.panel > .table-bordered > thead > tr > th:first-child, .panel > .table-bordered > thead > tr > td:first-child, .panel > .table-bordered > tbody > tr > th:first-child, .panel > .table-bordered > tbody > tr > td:first-child, .panel > .table-bordered > tfoot > tr > th:first-child, .panel > .table-bordered > tfoot > tr > td:first-child, .panel > .table-responsive > .table-bordered > thead > tr > th:first-child, .panel > .table-responsive > .table-bordered > thead > tr > td:first-child, .panel > .table-responsive > .table-bordered > tbody > tr > th:first-child, .panel > .table-responsive > .table-bordered > tbody > tr > td:first-child, .panel > .table-responsive > .table-bordered > tfoot > tr > th:first-child, .panel > .table-responsive > .table-bordered > tfoot > tr > td:first-child {\n    border-left: 0; }\n.panel > .table-bordered > thead > tr > th:last-child, .panel > .table-bordered > thead > tr > td:last-child, .panel > .table-bordered > tbody > tr > th:last-child, .panel > .table-bordered > tbody > tr > td:last-child, .panel > .table-bordered > tfoot > tr > th:last-child, .panel > .table-bordered > tfoot > tr > td:last-child, .panel > .table-responsive > .table-bordered > thead > tr > th:last-child, .panel > .table-responsive > .table-bordered > thead > tr > td:last-child, .panel > .table-responsive > .table-bordered > tbody > tr > th:last-child, .panel > .table-responsive > .table-bordered > tbody > tr > td:last-child, .panel > .table-responsive > .table-bordered > tfoot > tr > th:last-child, .panel > .table-responsive > .table-bordered > tfoot > tr > td:last-child {\n    border-right: 0; }\n.panel > .table-bordered > thead > tr:first-child > td, .panel > .table-bordered > thead > tr:first-child > th, .panel > .table-bordered > tbody > tr:first-child > td, .panel > .table-bordered > tbody > tr:first-child > th, .panel > .table-responsive > .table-bordered > thead > tr:first-child > td, .panel > .table-responsive > .table-bordered > thead > tr:first-child > th, .panel > .table-responsive > .table-bordered > tbody > tr:first-child > td, .panel > .table-responsive > .table-bordered > tbody > tr:first-child > th {\n    border-bottom: 0; }\n.panel > .table-bordered > tbody > tr:last-child > td, .panel > .table-bordered > tbody > tr:last-child > th, .panel > .table-bordered > tfoot > tr:last-child > td, .panel > .table-bordered > tfoot > tr:last-child > th, .panel > .table-responsive > .table-bordered > tbody > tr:last-child > td, .panel > .table-responsive > .table-bordered > tbody > tr:last-child > th, .panel > .table-responsive > .table-bordered > tfoot > tr:last-child > td, .panel > .table-responsive > .table-bordered > tfoot > tr:last-child > th {\n    border-bottom: 0; }\n.panel > .table-responsive {\n  border: 0;\n  margin-bottom: 0; }\n.panel-group {\n  margin-bottom: 21px; }\n.panel-group .panel {\n    margin-bottom: 0;\n    border-radius: 0; }\n.panel-group .panel + .panel {\n      margin-top: 5px; }\n.panel-group .panel-heading {\n    border-bottom: 0; }\n.panel-group .panel-heading + .panel-collapse > .panel-body, .panel-group .panel-heading + .panel-collapse > .list-group {\n      border-top: 1px solid #ddd; }\n.panel-group .panel-footer {\n    border-top: 0; }\n.panel-group .panel-footer + .panel-collapse .panel-body {\n      border-bottom: 1px solid #ddd; }\n.panel-default {\n  border-color: #ddd; }\n.panel-default > .panel-heading {\n    color: #333333;\n    background-color: #f5f5f5;\n    border-color: #ddd; }\n.panel-default > .panel-heading + .panel-collapse > .panel-body {\n      border-top-color: #ddd; }\n.panel-default > .panel-heading .badge {\n      color: #f5f5f5;\n      background-color: #333333; }\n.panel-default > .panel-footer + .panel-collapse > .panel-body {\n    border-bottom-color: #ddd; }\n.panel-primary {\n  border-color: #2780E3; }\n.panel-primary > .panel-heading {\n    color: #fff;\n    background-color: #2780E3;\n    border-color: #2780E3; }\n.panel-primary > .panel-heading + .panel-collapse > .panel-body {\n      border-top-color: #2780E3; }\n.panel-primary > .panel-heading .badge {\n      color: #2780E3;\n      background-color: #fff; }\n.panel-primary > .panel-footer + .panel-collapse > .panel-body {\n    border-bottom-color: #2780E3; }\n.panel-success {\n  border-color: #4e9f15; }\n.panel-success > .panel-heading {\n    color: #fff;\n    background-color: #3FB618;\n    border-color: #4e9f15; }\n.panel-success > .panel-heading + .panel-collapse > .panel-body {\n      border-top-color: #4e9f15; }\n.panel-success > .panel-heading .badge {\n      color: #3FB618;\n      background-color: #fff; }\n.panel-success > .panel-footer + .panel-collapse > .panel-body {\n    border-bottom-color: #4e9f15; }\n.panel-info {\n  border-color: #7643a8; }\n.panel-info > .panel-heading {\n    color: #fff;\n    background-color: #9954BB;\n    border-color: #7643a8; }\n.panel-info > .panel-heading + .panel-collapse > .panel-body {\n      border-top-color: #7643a8; }\n.panel-info > .panel-heading .badge {\n      color: #9954BB;\n      background-color: #fff; }\n.panel-info > .panel-footer + .panel-collapse > .panel-body {\n    border-bottom-color: #7643a8; }\n.panel-warning {\n  border-color: #ff4309; }\n.panel-warning > .panel-heading {\n    color: #fff;\n    background-color: #FF7518;\n    border-color: #ff4309; }\n.panel-warning > .panel-heading + .panel-collapse > .panel-body {\n      border-top-color: #ff4309; }\n.panel-warning > .panel-heading .badge {\n      color: #FF7518;\n      background-color: #fff; }\n.panel-warning > .panel-footer + .panel-collapse > .panel-body {\n    border-bottom-color: #ff4309; }\n.panel-danger {\n  border-color: #f0005e; }\n.panel-danger > .panel-heading {\n    color: #fff;\n    background-color: #FF0039;\n    border-color: #f0005e; }\n.panel-danger > .panel-heading + .panel-collapse > .panel-body {\n      border-top-color: #f0005e; }\n.panel-danger > .panel-heading .badge {\n      color: #FF0039;\n      background-color: #fff; }\n.panel-danger > .panel-footer + .panel-collapse > .panel-body {\n    border-bottom-color: #f0005e; }\n.embed-responsive {\n  position: relative;\n  display: block;\n  height: 0;\n  padding: 0;\n  overflow: hidden; }\n.embed-responsive .embed-responsive-item, .embed-responsive iframe, .embed-responsive embed, .embed-responsive object, .embed-responsive video {\n    position: absolute;\n    top: 0;\n    left: 0;\n    bottom: 0;\n    height: 100%;\n    width: 100%;\n    border: 0; }\n.embed-responsive-16by9 {\n  padding-bottom: 56.25%; }\n.embed-responsive-4by3 {\n  padding-bottom: 75%; }\n.well {\n  min-height: 20px;\n  padding: 19px;\n  margin-bottom: 20px;\n  background-color: #f5f5f5;\n  border: 1px solid #e3e3e3;\n  border-radius: 0;\n  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05); }\n.well blockquote {\n    border-color: #ddd;\n    border-color: rgba(0, 0, 0, 0.15); }\n.well-lg {\n  padding: 24px;\n  border-radius: 0; }\n.well-sm {\n  padding: 9px;\n  border-radius: 0; }\n.close {\n  float: right;\n  font-size: 22.5px;\n  font-weight: bold;\n  line-height: 1;\n  color: #fff;\n  text-shadow: 0 1px 0 #fff;\n  opacity: 0.2;\n  filter: alpha(opacity=20); }\n.close:hover, .close:focus {\n    color: #fff;\n    text-decoration: none;\n    cursor: pointer;\n    opacity: 0.5;\n    filter: alpha(opacity=50); }\nbutton.close {\n  padding: 0;\n  cursor: pointer;\n  background: transparent;\n  border: 0;\n  -webkit-appearance: none; }\n.modal-open {\n  overflow: hidden; }\n.modal {\n  display: none;\n  overflow: hidden;\n  position: fixed;\n  top: 0;\n  right: 0;\n  bottom: 0;\n  left: 0;\n  z-index: 1050;\n  -webkit-overflow-scrolling: touch;\n  outline: 0; }\n.modal.fade .modal-dialog {\n    -webkit-transform: translate(0, -25%);\n    transform: translate(0, -25%);\n    transition: -webkit-transform 0.3s ease-out;\n    transition: transform 0.3s ease-out;\n    transition: transform 0.3s ease-out, -webkit-transform 0.3s ease-out; }\n.modal.in .modal-dialog {\n    -webkit-transform: translate(0, 0);\n    transform: translate(0, 0); }\n.modal-open .modal {\n  overflow-x: hidden;\n  overflow-y: auto; }\n.modal-dialog {\n  position: relative;\n  width: auto;\n  margin: 10px; }\n.modal-content {\n  position: relative;\n  background-color: #fff;\n  border: 1px solid #999;\n  border: 1px solid transparent;\n  border-radius: 0;\n  box-shadow: 0 3px 9px rgba(0, 0, 0, 0.5);\n  background-clip: padding-box;\n  outline: 0; }\n.modal-backdrop {\n  position: fixed;\n  top: 0;\n  right: 0;\n  bottom: 0;\n  left: 0;\n  z-index: 1040;\n  background-color: #000; }\n.modal-backdrop.fade {\n    opacity: 0;\n    filter: alpha(opacity=0); }\n.modal-backdrop.in {\n    opacity: 0.5;\n    filter: alpha(opacity=50); }\n.modal-header {\n  padding: 15px;\n  border-bottom: 1px solid #e5e5e5; }\n.modal-header:before, .modal-header:after {\n    content: \" \";\n    display: table; }\n.modal-header:after {\n    clear: both; }\n.modal-header .close {\n  margin-top: -2px; }\n.modal-title {\n  margin: 0;\n  line-height: 1.42857; }\n.modal-body {\n  position: relative;\n  padding: 20px; }\n.modal-footer {\n  padding: 20px;\n  text-align: right;\n  border-top: 1px solid #e5e5e5; }\n.modal-footer:before, .modal-footer:after {\n    content: \" \";\n    display: table; }\n.modal-footer:after {\n    clear: both; }\n.modal-footer .btn + .btn {\n    margin-left: 5px;\n    margin-bottom: 0; }\n.modal-footer .btn-group .btn + .btn {\n    margin-left: -1px; }\n.modal-footer .btn-block + .btn-block {\n    margin-left: 0; }\n.modal-scrollbar-measure {\n  position: absolute;\n  top: -9999px;\n  width: 50px;\n  height: 50px;\n  overflow: scroll; }\n@media (min-width: 768px) {\n  .modal-dialog {\n    width: 600px;\n    margin: 30px auto; }\n  .modal-content {\n    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5); }\n  .modal-sm {\n    width: 300px; } }\n@media (min-width: 992px) {\n  .modal-lg {\n    width: 900px; } }\n.tooltip {\n  position: absolute;\n  z-index: 1070;\n  display: block;\n  font-family: \"Source Sans Pro\", Calibri, Candara, Arial, sans-serif;\n  font-style: normal;\n  font-weight: normal;\n  letter-spacing: normal;\n  line-break: auto;\n  line-height: 1.42857;\n  text-align: left;\n  text-align: start;\n  text-decoration: none;\n  text-shadow: none;\n  text-transform: none;\n  white-space: normal;\n  word-break: normal;\n  word-spacing: normal;\n  word-wrap: normal;\n  font-size: 13px;\n  opacity: 0;\n  filter: alpha(opacity=0); }\n.tooltip.in {\n    opacity: 0.9;\n    filter: alpha(opacity=90); }\n.tooltip.top {\n    margin-top: -3px;\n    padding: 5px 0; }\n.tooltip.right {\n    margin-left: 3px;\n    padding: 0 5px; }\n.tooltip.bottom {\n    margin-top: 3px;\n    padding: 5px 0; }\n.tooltip.left {\n    margin-left: -3px;\n    padding: 0 5px; }\n.tooltip-inner {\n  max-width: 200px;\n  padding: 3px 8px;\n  color: #fff;\n  text-align: center;\n  background-color: #000;\n  border-radius: 0; }\n.tooltip-arrow {\n  position: absolute;\n  width: 0;\n  height: 0;\n  border-color: transparent;\n  border-style: solid; }\n.tooltip.top .tooltip-arrow {\n  bottom: 0;\n  left: 50%;\n  margin-left: -5px;\n  border-width: 5px 5px 0;\n  border-top-color: #000; }\n.tooltip.top-left .tooltip-arrow {\n  bottom: 0;\n  right: 5px;\n  margin-bottom: -5px;\n  border-width: 5px 5px 0;\n  border-top-color: #000; }\n.tooltip.top-right .tooltip-arrow {\n  bottom: 0;\n  left: 5px;\n  margin-bottom: -5px;\n  border-width: 5px 5px 0;\n  border-top-color: #000; }\n.tooltip.right .tooltip-arrow {\n  top: 50%;\n  left: 0;\n  margin-top: -5px;\n  border-width: 5px 5px 5px 0;\n  border-right-color: #000; }\n.tooltip.left .tooltip-arrow {\n  top: 50%;\n  right: 0;\n  margin-top: -5px;\n  border-width: 5px 0 5px 5px;\n  border-left-color: #000; }\n.tooltip.bottom .tooltip-arrow {\n  top: 0;\n  left: 50%;\n  margin-left: -5px;\n  border-width: 0 5px 5px;\n  border-bottom-color: #000; }\n.tooltip.bottom-left .tooltip-arrow {\n  top: 0;\n  right: 5px;\n  margin-top: -5px;\n  border-width: 0 5px 5px;\n  border-bottom-color: #000; }\n.tooltip.bottom-right .tooltip-arrow {\n  top: 0;\n  left: 5px;\n  margin-top: -5px;\n  border-width: 0 5px 5px;\n  border-bottom-color: #000; }\n.popover {\n  position: absolute;\n  top: 0;\n  left: 0;\n  z-index: 1060;\n  display: none;\n  max-width: 276px;\n  padding: 1px;\n  font-family: \"Source Sans Pro\", Calibri, Candara, Arial, sans-serif;\n  font-style: normal;\n  font-weight: normal;\n  letter-spacing: normal;\n  line-break: auto;\n  line-height: 1.42857;\n  text-align: left;\n  text-align: start;\n  text-decoration: none;\n  text-shadow: none;\n  text-transform: none;\n  white-space: normal;\n  word-break: normal;\n  word-spacing: normal;\n  word-wrap: normal;\n  font-size: 15px;\n  background-color: #fff;\n  background-clip: padding-box;\n  border: 1px solid #ccc;\n  border: 1px solid rgba(0, 0, 0, 0.2);\n  border-radius: 0;\n  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2); }\n.popover.top {\n    margin-top: -10px; }\n.popover.right {\n    margin-left: 10px; }\n.popover.bottom {\n    margin-top: 10px; }\n.popover.left {\n    margin-left: -10px; }\n.popover-title {\n  margin: 0;\n  padding: 8px 14px;\n  font-size: 15px;\n  background-color: #f7f7f7;\n  border-bottom: 1px solid #ebebeb;\n  border-radius: -1 -1 0 0; }\n.popover-content {\n  padding: 9px 14px; }\n.popover > .arrow, .popover > .arrow:after {\n  position: absolute;\n  display: block;\n  width: 0;\n  height: 0;\n  border-color: transparent;\n  border-style: solid; }\n.popover > .arrow {\n  border-width: 11px; }\n.popover > .arrow:after {\n  border-width: 10px;\n  content: \"\"; }\n.popover.top > .arrow {\n  left: 50%;\n  margin-left: -11px;\n  border-bottom-width: 0;\n  border-top-color: #999999;\n  border-top-color: fadein(rgba(0, 0, 0, 0.2), 5%);\n  bottom: -11px; }\n.popover.top > .arrow:after {\n    content: \" \";\n    bottom: 1px;\n    margin-left: -10px;\n    border-bottom-width: 0;\n    border-top-color: #fff; }\n.popover.right > .arrow {\n  top: 50%;\n  left: -11px;\n  margin-top: -11px;\n  border-left-width: 0;\n  border-right-color: #999999;\n  border-right-color: fadein(rgba(0, 0, 0, 0.2), 5%); }\n.popover.right > .arrow:after {\n    content: \" \";\n    left: 1px;\n    bottom: -10px;\n    border-left-width: 0;\n    border-right-color: #fff; }\n.popover.bottom > .arrow {\n  left: 50%;\n  margin-left: -11px;\n  border-top-width: 0;\n  border-bottom-color: #999999;\n  border-bottom-color: fadein(rgba(0, 0, 0, 0.2), 5%);\n  top: -11px; }\n.popover.bottom > .arrow:after {\n    content: \" \";\n    top: 1px;\n    margin-left: -10px;\n    border-top-width: 0;\n    border-bottom-color: #fff; }\n.popover.left > .arrow {\n  top: 50%;\n  right: -11px;\n  margin-top: -11px;\n  border-right-width: 0;\n  border-left-color: #999999;\n  border-left-color: fadein(rgba(0, 0, 0, 0.2), 5%); }\n.popover.left > .arrow:after {\n    content: \" \";\n    right: 1px;\n    border-right-width: 0;\n    border-left-color: #fff;\n    bottom: -10px; }\n.carousel {\n  position: relative; }\n.carousel-inner {\n  position: relative;\n  overflow: hidden;\n  width: 100%; }\n.carousel-inner > .item {\n    display: none;\n    position: relative;\n    transition: 0.6s ease-in-out left; }\n.carousel-inner > .item > img, .carousel-inner > .item > a > img {\n      display: block;\n      max-width: 100%;\n      height: auto;\n      line-height: 1; }\n@media all and (transform-3d), (-webkit-transform-3d) {\n      .carousel-inner > .item {\n        transition: -webkit-transform 0.6s ease-in-out;\n        transition: transform 0.6s ease-in-out;\n        transition: transform 0.6s ease-in-out, -webkit-transform 0.6s ease-in-out;\n        -webkit-backface-visibility: hidden;\n        backface-visibility: hidden;\n        -webkit-perspective: 1000px;\n        perspective: 1000px; }\n        .carousel-inner > .item.next, .carousel-inner > .item.active.right {\n          -webkit-transform: translate3d(100%, 0, 0);\n          transform: translate3d(100%, 0, 0);\n          left: 0; }\n        .carousel-inner > .item.prev, .carousel-inner > .item.active.left {\n          -webkit-transform: translate3d(-100%, 0, 0);\n          transform: translate3d(-100%, 0, 0);\n          left: 0; }\n        .carousel-inner > .item.next.left, .carousel-inner > .item.prev.right, .carousel-inner > .item.active {\n          -webkit-transform: translate3d(0, 0, 0);\n          transform: translate3d(0, 0, 0);\n          left: 0; } }\n.carousel-inner > .active, .carousel-inner > .next, .carousel-inner > .prev {\n    display: block; }\n.carousel-inner > .active {\n    left: 0; }\n.carousel-inner > .next, .carousel-inner > .prev {\n    position: absolute;\n    top: 0;\n    width: 100%; }\n.carousel-inner > .next {\n    left: 100%; }\n.carousel-inner > .prev {\n    left: -100%; }\n.carousel-inner > .next.left, .carousel-inner > .prev.right {\n    left: 0; }\n.carousel-inner > .active.left {\n    left: -100%; }\n.carousel-inner > .active.right {\n    left: 100%; }\n.carousel-control {\n  position: absolute;\n  top: 0;\n  left: 0;\n  bottom: 0;\n  width: 15%;\n  opacity: 0.5;\n  filter: alpha(opacity=50);\n  font-size: 20px;\n  color: #fff;\n  text-align: center;\n  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);\n  background-color: transparent; }\n.carousel-control.left {\n    background-image: linear-gradient(to right, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.0001) 100%);\n    background-repeat: repeat-x;\n    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#80000000', endColorstr='#00000000', GradientType=1); }\n.carousel-control.right {\n    left: auto;\n    right: 0;\n    background-image: linear-gradient(to right, rgba(0, 0, 0, 0.0001) 0%, rgba(0, 0, 0, 0.5) 100%);\n    background-repeat: repeat-x;\n    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#00000000', endColorstr='#80000000', GradientType=1); }\n.carousel-control:hover, .carousel-control:focus {\n    outline: 0;\n    color: #fff;\n    text-decoration: none;\n    opacity: 0.9;\n    filter: alpha(opacity=90); }\n.carousel-control .icon-prev, .carousel-control .icon-next, .carousel-control .glyphicon-chevron-left, .carousel-control .glyphicon-chevron-right {\n    position: absolute;\n    top: 50%;\n    margin-top: -10px;\n    z-index: 5;\n    display: inline-block; }\n.carousel-control .icon-prev, .carousel-control .glyphicon-chevron-left {\n    left: 50%;\n    margin-left: -10px; }\n.carousel-control .icon-next, .carousel-control .glyphicon-chevron-right {\n    right: 50%;\n    margin-right: -10px; }\n.carousel-control .icon-prev, .carousel-control .icon-next {\n    width: 20px;\n    height: 20px;\n    line-height: 1;\n    font-family: serif; }\n.carousel-control .icon-prev:before {\n    content: '\\2039'; }\n.carousel-control .icon-next:before {\n    content: '\\203A'; }\n.carousel-indicators {\n  position: absolute;\n  bottom: 10px;\n  left: 50%;\n  z-index: 15;\n  width: 60%;\n  margin-left: -30%;\n  padding-left: 0;\n  list-style: none;\n  text-align: center; }\n.carousel-indicators li {\n    display: inline-block;\n    width: 10px;\n    height: 10px;\n    margin: 1px;\n    text-indent: -999px;\n    border: 1px solid #fff;\n    border-radius: 10px;\n    cursor: pointer;\n    background-color: #000 \\9;\n    background-color: transparent; }\n.carousel-indicators .active {\n    margin: 0;\n    width: 12px;\n    height: 12px;\n    background-color: #fff; }\n.carousel-caption {\n  position: absolute;\n  left: 15%;\n  right: 15%;\n  bottom: 20px;\n  z-index: 10;\n  padding-top: 20px;\n  padding-bottom: 20px;\n  color: #fff;\n  text-align: center;\n  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6); }\n.carousel-caption .btn {\n    text-shadow: none; }\n@media screen and (min-width: 768px) {\n  .carousel-control .glyphicon-chevron-left, .carousel-control .glyphicon-chevron-right, .carousel-control .icon-prev, .carousel-control .icon-next {\n    width: 30px;\n    height: 30px;\n    margin-top: -10px;\n    font-size: 30px; }\n  .carousel-control .glyphicon-chevron-left, .carousel-control .icon-prev {\n    margin-left: -10px; }\n  .carousel-control .glyphicon-chevron-right, .carousel-control .icon-next {\n    margin-right: -10px; }\n  .carousel-caption {\n    left: 20%;\n    right: 20%;\n    padding-bottom: 30px; }\n  .carousel-indicators {\n    bottom: 20px; } }\n.clearfix:before, .clearfix:after {\n  content: \" \";\n  display: table; }\n.clearfix:after {\n  clear: both; }\n.center-block {\n  display: block;\n  margin-left: auto;\n  margin-right: auto; }\n.pull-right {\n  float: right !important; }\n.pull-left {\n  float: left !important; }\n.hide {\n  display: none !important; }\n.show {\n  display: block !important; }\n.invisible {\n  visibility: hidden; }\n.text-hide {\n  font: 0/0 a;\n  color: transparent;\n  text-shadow: none;\n  background-color: transparent;\n  border: 0; }\n.hidden {\n  display: none !important; }\n.affix {\n  position: fixed; }\n@-ms-viewport {\n  width: device-width; }\n.visible-xs {\n  display: none !important; }\n.visible-sm {\n  display: none !important; }\n.visible-md {\n  display: none !important; }\n.visible-lg {\n  display: none !important; }\n.visible-xs-block, .visible-xs-inline, .visible-xs-inline-block, .visible-sm-block, .visible-sm-inline, .visible-sm-inline-block, .visible-md-block, .visible-md-inline, .visible-md-inline-block, .visible-lg-block, .visible-lg-inline, .visible-lg-inline-block {\n  display: none !important; }\n@media (max-width: 767px) {\n  .visible-xs {\n    display: block !important; }\n  table.visible-xs {\n    display: table !important; }\n  tr.visible-xs {\n    display: table-row !important; }\n  th.visible-xs, td.visible-xs {\n    display: table-cell !important; } }\n@media (max-width: 767px) {\n  .visible-xs-block {\n    display: block !important; } }\n@media (max-width: 767px) {\n  .visible-xs-inline {\n    display: inline !important; } }\n@media (max-width: 767px) {\n  .visible-xs-inline-block {\n    display: inline-block !important; } }\n@media (min-width: 768px) and (max-width: 991px) {\n  .visible-sm {\n    display: block !important; }\n  table.visible-sm {\n    display: table !important; }\n  tr.visible-sm {\n    display: table-row !important; }\n  th.visible-sm, td.visible-sm {\n    display: table-cell !important; } }\n@media (min-width: 768px) and (max-width: 991px) {\n  .visible-sm-block {\n    display: block !important; } }\n@media (min-width: 768px) and (max-width: 991px) {\n  .visible-sm-inline {\n    display: inline !important; } }\n@media (min-width: 768px) and (max-width: 991px) {\n  .visible-sm-inline-block {\n    display: inline-block !important; } }\n@media (min-width: 992px) and (max-width: 1199px) {\n  .visible-md {\n    display: block !important; }\n  table.visible-md {\n    display: table !important; }\n  tr.visible-md {\n    display: table-row !important; }\n  th.visible-md, td.visible-md {\n    display: table-cell !important; } }\n@media (min-width: 992px) and (max-width: 1199px) {\n  .visible-md-block {\n    display: block !important; } }\n@media (min-width: 992px) and (max-width: 1199px) {\n  .visible-md-inline {\n    display: inline !important; } }\n@media (min-width: 992px) and (max-width: 1199px) {\n  .visible-md-inline-block {\n    display: inline-block !important; } }\n@media (min-width: 1200px) {\n  .visible-lg {\n    display: block !important; }\n  table.visible-lg {\n    display: table !important; }\n  tr.visible-lg {\n    display: table-row !important; }\n  th.visible-lg, td.visible-lg {\n    display: table-cell !important; } }\n@media (min-width: 1200px) {\n  .visible-lg-block {\n    display: block !important; } }\n@media (min-width: 1200px) {\n  .visible-lg-inline {\n    display: inline !important; } }\n@media (min-width: 1200px) {\n  .visible-lg-inline-block {\n    display: inline-block !important; } }\n@media (max-width: 767px) {\n  .hidden-xs {\n    display: none !important; } }\n@media (min-width: 768px) and (max-width: 991px) {\n  .hidden-sm {\n    display: none !important; } }\n@media (min-width: 992px) and (max-width: 1199px) {\n  .hidden-md {\n    display: none !important; } }\n@media (min-width: 1200px) {\n  .hidden-lg {\n    display: none !important; } }\n.visible-print {\n  display: none !important; }\n@media print {\n  .visible-print {\n    display: block !important; }\n  table.visible-print {\n    display: table !important; }\n  tr.visible-print {\n    display: table-row !important; }\n  th.visible-print, td.visible-print {\n    display: table-cell !important; } }\n.visible-print-block {\n  display: none !important; }\n@media print {\n    .visible-print-block {\n      display: block !important; } }\n.visible-print-inline {\n  display: none !important; }\n@media print {\n    .visible-print-inline {\n      display: inline !important; } }\n.visible-print-inline-block {\n  display: none !important; }\n@media print {\n    .visible-print-inline-block {\n      display: inline-block !important; } }\n@media print {\n  .hidden-print {\n    display: none !important; } }\n.navbar-inverse .badge {\n  background-color: #fff;\n  color: #2780E3; }\nbody {\n  -webkit-font-smoothing: antialiased; }\n.text-primary, .text-primary:hover {\n  color: #2780E3; }\n.text-success, .text-success:hover {\n  color: #3FB618; }\n.text-danger, .text-danger:hover {\n  color: #FF0039; }\n.text-warning, .text-warning:hover {\n  color: #FF7518; }\n.text-info, .text-info:hover {\n  color: #9954BB; }\ntable a:not(.btn), .table a:not(.btn) {\n  text-decoration: underline; }\ntable .dropdown-menu a, .table .dropdown-menu a {\n  text-decoration: none; }\ntable .success, table .warning, table .danger, table .info, .table .success, .table .warning, .table .danger, .table .info {\n  color: #fff; }\ntable .success a, table .warning a, table .danger a, table .info a, .table .success a, .table .warning a, .table .danger a, .table .info a {\n    color: #fff; }\n.has-warning .help-block, .has-warning .control-label, .has-warning .radio, .has-warning .checkbox, .has-warning .radio-inline, .has-warning .checkbox-inline, .has-warning.radio label, .has-warning.checkbox label, .has-warning.radio-inline label, .has-warning.checkbox-inline label, .has-warning .form-control-feedback {\n  color: #FF7518; }\n.has-warning .form-control, .has-warning .form-control:focus, .has-warning .input-group-addon {\n  border: 1px solid #FF7518; }\n.has-error .help-block, .has-error .control-label, .has-error .radio, .has-error .checkbox, .has-error .radio-inline, .has-error .checkbox-inline, .has-error.radio label, .has-error.checkbox label, .has-error.radio-inline label, .has-error.checkbox-inline label, .has-error .form-control-feedback {\n  color: #FF0039; }\n.has-error .form-control, .has-error .form-control:focus, .has-error .input-group-addon {\n  border: 1px solid #FF0039; }\n.has-success .help-block, .has-success .control-label, .has-success .radio, .has-success .checkbox, .has-success .radio-inline, .has-success .checkbox-inline, .has-success.radio label, .has-success.checkbox label, .has-success.radio-inline label, .has-success.checkbox-inline label, .has-success .form-control-feedback {\n  color: #3FB618; }\n.has-success .form-control, .has-success .form-control:focus, .has-success .input-group-addon {\n  border: 1px solid #3FB618; }\n.nav-pills > li > a {\n  border-radius: 0; }\n.dropdown-menu > li > a:hover, .dropdown-menu > li > a:focus {\n  background-image: none; }\n.close {\n  text-decoration: none;\n  text-shadow: none;\n  opacity: 0.4; }\n.close:hover, .close:focus {\n    opacity: 1; }\n.alert {\n  border: none; }\n.alert .alert-link {\n    text-decoration: underline;\n    color: #fff; }\n.label {\n  border-radius: 0; }\n.progress {\n  height: 8px;\n  box-shadow: none; }\n.progress .progress-bar {\n    font-size: 8px;\n    line-height: 8px; }\n.panel-heading, .panel-footer {\n  border-top-right-radius: 0;\n  border-top-left-radius: 0; }\n.panel-default .close {\n  color: #333333; }\na.list-group-item-success.active {\n  background-color: #3FB618; }\na.list-group-item-success.active:hover, a.list-group-item-success.active:focus {\n  background-color: #379f15; }\na.list-group-item-warning.active {\n  background-color: #FF7518; }\na.list-group-item-warning.active:hover, a.list-group-item-warning.active:focus {\n  background-color: #fe6600; }\na.list-group-item-danger.active {\n  background-color: #FF0039; }\na.list-group-item-danger.active:hover, a.list-group-item-danger.active:focus {\n  background-color: #e60033; }\n.modal .close {\n  color: #333333; }\n.popover {\n  color: #333333; }\n.gu-mirror {\n  position: fixed !important;\n  margin: 0 !important;\n  z-index: 9999 !important;\n  opacity: 0.8;\n  -ms-filter: \"progid:DXImageTransform.Microsoft.Alpha(Opacity=80)\";\n  filter: alpha(opacity=80); }\n.gu-hide {\n  display: none !important; }\n.gu-unselectable {\n  -webkit-user-select: none !important;\n  -moz-user-select: none !important;\n  -ms-user-select: none !important;\n  user-select: none !important; }\n.gu-transit {\n  opacity: 0.2;\n  -ms-filter: \"progid:DXImageTransform.Microsoft.Alpha(Opacity=20)\";\n  filter: alpha(opacity=20); }\nsialia {\n  background-color: #f2f2f2; }\nsialia .sialia-body {\n    padding-top: 65px; }\nsialia h1 {\n    margin-bottom: 20px;\n    color: #666; }\nsialia .panel-heading h2 {\n    margin: 10px 0 15px; }\nsialia .panel .toggle-body {\n    z-index: 1;\n    color: #000; }\nsialia .alert-info {\n    font-size: .94em;\n    background-color: #eee;\n    padding: 15px;\n    color: #666; }\nsialia .document-info {\n    font-size: .8em;\n    margin-top: -15px; }\nsialia .header-name {\n    display: block; }\nsialia .header-date {\n    display: inline-block; }\nsialia .header-small {\n    font-size: .8em;\n    font-color: #ccc; }\nsialia .header-row {\n    border-bottom: 1px solid #eee;\n    margin: 0 10px 10px 10px;\n    padding-bottom: 5px; }\nsialia .table-borderless tbody tr td, sialia .table-borderless tbody tr th, sialia .table-borderless thead tr th {\n    border: none; }\nsialia .alert-mild {\n    background-color: #ffdc67;\n    border-color: #ffdc67;\n    color: #000; }\nsialia .alert-mild hr {\n      border-top-color: #ffd64e; }\nsialia .alert-mild .alert-link {\n      color: black; }\nsialia .reasons {\n    padding: 3px;\n    background-color: #fafafa;\n    border: 1px solid #eee; }\n@media (min-width: 768px) {\n    sialia #left {\n      position: fixed;\n      padding-right: 8px; }\n    sialia #right {\n      padding-left: 7px; }\n    sialia #jump-nav {\n      margin-right: 15px; } }\nsialia #demographics .fa-ul {\n    margin-left: 24px; }\nsialia #demographics address {\n    margin-bottom: 10px; }\nsialia .panel-heading {\n    position: relative; }\nsialia .panel-heading .toggle-body {\n      position: absolute;\n      bottom: 11px;\n      right: 15px; }\nsialia .panel-body > *:last-child, sialia .panel-heading > *:last-child {\n    margin-bottom: 0; }\n#demographics-summary sialia .panel-body > ul:last-child > li:last-child > *:last-child, sialia .panel-body > ul:last-child > li:last-child > *:last-child {\n    margin-bottom: 0; }\nsialia panel.collapsed .panel-body {\n    display: none; }\nsialia panel.expanded.fade {\n    opacity: 1; }\nsialia .section-icon {\n    margin-right: 8px; }\nsialia .section-item-count {\n    margin-left: 5px;\n    vertical-align: bottom; }\nsialia .badge-muted, sialia .panel-default > .panel-heading .badge-muted {\n    background-color: #bbb; }\nsialia preferences {\n    display: block; }\nsialia preferences h2 {\n      line-height: 44px; }\nsialia preference-section {\n    display: block; }\nsialia preference-section.gu-mirror {\n      cursor: -webkit-grabbing;\n      cursor: grabbing; }\nsialia .preferences-section {\n    cursor: move;\n    cursor: -webkit-grab;\n    cursor: grab; }\nsialia .section-toggle {\n    cursor: pointer; }\nsialia .section-toggle .fa {\n      transition: all 0.05s ease; }\nsialia .fade {\n    opacity: .45; }\nsialia list {\n    display: block; }\nsialia list item {\n      display: list-item;\n      list-style-type: none;\n      margin-bottom: 10px; }\nsialia list item content[id^=problem] {\n        display: block;\n        font-weight: bold; }\nsialia paragraph {\n    display: block; }\nsialia paragraph[stylecode=Bold] {\n      font-weight: bold; }\n", ""]);
 
 // exports
 
 
 /***/ }),
-/* 49 */
+/* 12 */
 /***/ (function(module, exports) {
 
 /*
@@ -3604,69 +349,69 @@ function toComment(sourceMap) {
 
 
 /***/ }),
-/* 50 */
+/* 13 */
 /***/ (function(module, exports) {
 
 module.exports = require("bootstrap-sass/assets/fonts/bootstrap/glyphicons-halflings-regular.woff2");
 
 /***/ }),
-/* 51 */
+/* 14 */
 /***/ (function(module, exports) {
 
 module.exports = require("bootstrap-sass/assets/fonts/bootstrap/glyphicons-halflings-regular.woff");
 
 /***/ }),
-/* 52 */
+/* 15 */
 /***/ (function(module, exports) {
 
 module.exports = require("bootstrap-sass/assets/fonts/bootstrap/glyphicons-halflings-regular.ttf");
 
 /***/ }),
-/* 53 */
+/* 16 */
 /***/ (function(module, exports) {
 
 module.exports = require("bootstrap-sass/assets/fonts/bootstrap/glyphicons-halflings-regular.svg");
 
 /***/ }),
-/* 54 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-__webpack_require__(55);
-__webpack_require__(56);
-__webpack_require__(83);
-__webpack_require__(84);
-__webpack_require__(85);
-__webpack_require__(86);
-__webpack_require__(87);
-__webpack_require__(88);
-__webpack_require__(89);
-__webpack_require__(90);
-__webpack_require__(91);
-__webpack_require__(93);
-__webpack_require__(94);
-__webpack_require__(95);
-__webpack_require__(96);
-__webpack_require__(97);
-__webpack_require__(98);
-__webpack_require__(99);
-__webpack_require__(100);
-__webpack_require__(101);
-__webpack_require__(102);
-__webpack_require__(103);
-__webpack_require__(104);
-__webpack_require__(105);
-__webpack_require__(106);
+__webpack_require__(18);
+__webpack_require__(19);
+__webpack_require__(31);
+__webpack_require__(32);
+__webpack_require__(33);
+__webpack_require__(34);
+__webpack_require__(35);
+__webpack_require__(36);
+__webpack_require__(37);
+__webpack_require__(38);
+__webpack_require__(39);
+__webpack_require__(41);
+__webpack_require__(42);
+__webpack_require__(43);
+__webpack_require__(44);
+__webpack_require__(45);
+__webpack_require__(46);
+__webpack_require__(47);
+__webpack_require__(48);
+__webpack_require__(49);
+__webpack_require__(50);
+__webpack_require__(51);
+__webpack_require__(52);
+__webpack_require__(53);
+__webpack_require__(54);
 
 
 /***/ }),
-/* 55 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
-    var riot = __webpack_require__(2)
+    var riot = __webpack_require__(0)
     riot.tag2('sialia', '<header data="{data}" sections="{sections}" documents="{documents}"></header> <div class="container-fluid sialia-body"> <div class="row"> <div class="col-lg-3 col-sm-4 hidden-xs" id="placeholder"></div> <div class="col-lg-3 col-sm-4" id="left"> <demographics demographics="{data.demographics}"></demographics> </div> <div class="col-lg-9 col-sm-8" id="right" if="{showPreferences && !showNonXml}"> <preferences sections="{sections}" pref="{pref}"></preferences> </div> <div class="col-lg-9 col-sm-8" id="right" if="{!showPreferences && !showNonXml}"> <ccda-section each="{section in sections}" current="{section}" parent="{parent}"></ccda-section> </div> <div class="col-lg-9 col-sm-8" id="right" if="{showNonXml}"> <nonxml nonxml="{data.document.type.nonXmlBody}"></nonxml> </div> </div> </div>', '', '', function(opts) {
 
     var self = this;
@@ -3687,25 +432,25 @@ __webpack_require__(106);
   
 
 /***/ }),
-/* 56 */
+/* 19 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_dragula__ = __webpack_require__(57);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_dragula__ = __webpack_require__(20);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_dragula___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_dragula__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_lodash__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_lodash__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_lodash___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_lodash__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__utilities_lodashmixins__ = __webpack_require__(34);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__utilities_lodashmixins__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__utilities_lodashmixins___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2__utilities_lodashmixins__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__models_section__ = __webpack_require__(35);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__models_section__ = __webpack_require__(5);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__models_section___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3__models_section__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__utilities_htmlhelpers__ = __webpack_require__(36);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__utilities_htmlhelpers__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__utilities_htmlhelpers___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4__utilities_htmlhelpers__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__services__ = __webpack_require__(10);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__services__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__services___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_5__services__);
 
-    var riot = __webpack_require__(2)
+    var riot = __webpack_require__(0)
     
 
 
@@ -3765,13 +510,13 @@ riot.tag2('preference-section', '<li class="list-group-item preferences-section 
   
 
 /***/ }),
-/* 57 */
+/* 20 */
 /***/ (function(module, exports) {
 
 module.exports = require("dragula");
 
 /***/ }),
-/* 58 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3780,14 +525,14 @@ function __export(m) {
     for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-__export(__webpack_require__(59));
-__export(__webpack_require__(35));
-__export(__webpack_require__(60));
-__export(__webpack_require__(61));
+__export(__webpack_require__(22));
+__export(__webpack_require__(5));
+__export(__webpack_require__(23));
+__export(__webpack_require__(24));
 
 
 /***/ }),
-/* 59 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3799,7 +544,7 @@ exports.Document = Document;
 
 
 /***/ }),
-/* 60 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3811,13 +556,13 @@ exports.ViewerOptions = ViewerOptions;
 
 
 /***/ }),
-/* 61 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const lodash_1 = __webpack_require__(3);
+const lodash_1 = __webpack_require__(1);
 class Preferences {
     constructor(pref) {
         this.id = pref.id;
@@ -3838,18 +583,18 @@ exports.Preferences = Preferences;
 
 
 /***/ }),
-/* 62 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const jquery_1 = __webpack_require__(37);
-const lodash_1 = __webpack_require__(3);
-const blue_button_1 = __webpack_require__(63);
-const Observable_1 = __webpack_require__(81);
-const config_1 = __webpack_require__(82);
-const preferences_service_1 = __webpack_require__(38);
+const jquery_1 = __webpack_require__(7);
+const lodash_1 = __webpack_require__(1);
+const bluebutton_1 = __webpack_require__(26);
+const Observable_1 = __webpack_require__(29);
+const config_1 = __webpack_require__(30);
+const preferences_service_1 = __webpack_require__(8);
 let viewer;
 class DocumentsService {
     getSections(bb, sections, ignoreSections, pref) {
@@ -3907,7 +652,7 @@ class DocumentsService {
         });
     }
     load(data) {
-        let bb = blue_button_1.default.parse(data);
+        let bb = bluebutton_1.default(data);
         console.log(bb);
         if (!bb.data)
             throw 'BlueButton could not parse the file.';
@@ -3924,1033 +669,4891 @@ exports.DocumentsService = DocumentsService;
 
 
 /***/ }),
-/* 63 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
-"use strict";
-//main module that exports all other sub modules
-
-
-
-// sense file type
-var sense = __webpack_require__(39);
-exports.senseXml = sense.senseXml;
-exports.senseString = sense.senseString;
-
-// xml utilities
-exports.xml = __webpack_require__(0).xmlUtil;
-
-// CCDA, C32, and CMS parser
-var parser = __webpack_require__(64);
-exports.parseXml = parser.parseXml;
-exports.parseString = parser.parseString;
-exports.parseText = parser.parseText;
-exports.parse = parser.parse;
-
-// Data model schema validation
-exports.validator = __webpack_require__(80).validator;
-
-
-/***/ }),
-/* 64 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var parseCMS = __webpack_require__(65);
-var _ = __webpack_require__(3);
-
-var componentRouter = __webpack_require__(66).componentRouter;
-var xmlParser = __webpack_require__(0).xmlUtil;
-var util = __webpack_require__(78);
-var sense = __webpack_require__(39);
-
-//add model/package version to metadata
-var version = __webpack_require__(79).version;
-
-//insert sections list into metadata
-function sections(data) {
-    if (!data.meta) {
-        data.meta = {};
+(function(root, factory) {
+    if(true) {
+        module.exports = factory();
     }
+    else if(typeof define === 'function' && define.amd) {
+        define([], factory);
+    }
+    else {
+        root['BlueButton'] = factory();
+    }
+}(this, function() {
 
-    if(data.data)
-    {
-        if (data.data && data.data.meta) {
-            _.extend(data.meta, data.data.meta);
-            delete data.data.meta;
+/* BlueButton.js -- 0.4.3 */
+
+/*
+ * ...
+ */
+
+/* exported Core */
+var Core = (function () {
+  
+  /*
+   * ...
+   */
+  var parseData = function (source) {
+    source = stripWhitespace(source);
+    
+    if (source.charAt(0) === '<') {
+      try {
+        return Core.XML.parse(source);
+      } catch (e) {
+        if (console.log) {
+          console.log("File looked like it might be XML but couldn't be parsed.");
         }
-        data.meta.sections = Object.keys(data.data);
-    } else {
-        data.meta.sections = {};
-    }
-    return data;
-}
-
-function parseText(txt) {
-    //txt must be a string
-    if (!txt || typeof (txt) !== "string") {
-        //TODO: throw a proper error here
-        return null;
+      }
     }
 
-    return sections(parseCMS.parseText(txt));
-}
-
-function parseXml(doc, options, sensed) {
-    //data must be an object
-    if (!doc || typeof (doc) !== "object") {
-        //TODO: throw a proper error here
-        return null;
+    try {
+      return JSON.parse(source);
+    } catch (e) {
+      if (console.error) {
+        console.error("Error: Cannot parse this file. BB.js only accepts valid XML " +
+          "(for parsing) or JSON (for generation). If you are attempting to provide " +
+          "XML or JSON, please run your data through a validator to see if it is malformed.\n");
+      }
+      throw e;
     }
+  };
+  
+  
+  /*
+   * Removes leading and trailing whitespace from a string
+   */
+  var stripWhitespace = function (str) {
+    if (!str) { return str; }
+    return str.replace(/^\s+|\s+$/g,'');
+  };
+  
+  
+  /*
+   * A wrapper around JSON.stringify which allows us to produce customized JSON.
+   *
+   * See https://developer.mozilla.org/en-US/docs/Web/
+   *        JavaScript/Guide/Using_native_JSON#The_replacer_parameter
+   * for documentation on the replacerFn.
+   */
+  var json = function () {
 
-    if (arguments.length === 1) {
-        options = {};
-    }
+    var datePad = function(number) {
+      if (number < 10) {
+        return '0' + number;
+      }
+      return number;
+    };
+    
+    var replacerFn = function(key, value) {
+      /* By default, Dates are output as ISO Strings like "2014-01-03T08:00:00.000Z." This is
+       * tricky when all we have is a date (not a datetime); JS sadly ignores that distinction.
+       *
+       * To paper over this JS wart, we use two different JSON formats for dates and datetimes.
+       * This is a little ugly but makes sure that the dates/datetimes mostly just parse
+       * correclty for clients:
+       *
+       * 1. Datetimes are rendered as standard ISO strings, without the misleading millisecond
+       *    precision (misleading because we don't have it): YYYY-MM-DDTHH:mm:ssZ
+       * 2. Dates are rendered as MM/DD/YYYY. This ensures they are parsed as midnight local-time,
+       *    no matter what local time is, and therefore ensures the date is always correct.
+       *    Outputting "YYYY-MM-DD" would lead most browsers/node to assume midnight UTC, which
+       *    means "2014-04-27" suddenly turns into "04/26/2014 at 5PM" or just "04/26/2014"
+       *    if you format it as a date...
+       *
+       * See http://stackoverflow.com/questions/2587345/javascript-date-parse and
+       *     http://blog.dygraphs.com/2012/03/javascript-and-dates-what-mess.html
+       * for more on this issue.
+       */
+      var originalValue = this[key]; // a Date
 
-    if (!sensed) {
-        sensed = sense.senseXml(doc);
-    }
+      if ( value && (originalValue instanceof Date) && !isNaN(originalValue.getTime()) ) {
 
-    var componentParser = componentRouter(options.component, sensed);
+        // If while parsing we indicated that there was time-data specified, or if we see
+        // non-zero values in the hour/minutes/seconds/millis fields, output a datetime.
+        if (originalValue._parsedWithTimeData ||
+            originalValue.getHours() || originalValue.getMinutes() ||
+            originalValue.getSeconds() || originalValue.getMilliseconds()) {
 
-    if (!componentParser) {
-        var msg = util.format("Component %s is not supported.", options.component);
-        //callback(new Error(msg)); //TODO:revise this use of callbacks
-        return {
-            "errors": new Error(msg)
-        };
-    }
-    var ret = componentParser.instance();
-
-    ret.run(doc, options.sourceKey);
-    ret.cleanupTree(options.sourceKey); // first build the data objects up
-    return sections({
-        "data": ret.toJSON(),
-        "meta": {
-            "version": version
-        },
-        "errors": ret.errors
-    });
-}
-
-function parseString(data, options) {
-    //data must be a string
-    if (!data || typeof (data) !== "string") {
-        //TODO: throw a proper error here
-        return null;
-    }
-
-    if (arguments.length === 1) {
-        options = {};
-    }
-
-    var doc = xmlParser.parse(data);
-    return parseXml(doc, options);
-}
-
-var parse = function (data, options) {
-    //data must be a string
-    if (!data || typeof (data) !== "string") {
-        //TODO: throw a proper error here
-        return null;
-    }
-
-    if (arguments.length === 1) {
-        options = {};
-    }
-
-    var sensed = sense.senseString(data);
-
-    if (sensed) {
-        if (sensed.xml) {
-            return parseXml(sensed.xml, options, sensed);
-        } else if (sensed.json) {
-            return sensed.json;
-        } else {
-            return parseText(data);
+          // Based on https://developer.mozilla.org/en-US/docs/Web/JavaScript/
+          //    Reference/Global_Objects/Date/toISOString
+          return originalValue.getUTCFullYear() +
+            '-' + datePad( originalValue.getUTCMonth() + 1 ) +
+            '-' + datePad( originalValue.getUTCDate() ) +
+            'T' + datePad( originalValue.getUTCHours() ) +
+            ':' + datePad( originalValue.getUTCMinutes() ) +
+            ':' + datePad( originalValue.getUTCSeconds() ) +
+            'Z';
         }
-    } else {
-        return null;
+        
+        // We just have a pure date
+        return datePad( originalValue.getMonth() + 1 ) +
+          '/' + datePad( originalValue.getDate() ) +
+          '/' + originalValue.getFullYear();
+
+      }
+
+      return value;
+    };
+    
+    return JSON.stringify(this, replacerFn, 2);
+  };
+  
+  
+  /*
+   * Removes all `null` properties from an object.
+   */
+  var trim = function (o) {
+    var y;
+    for (var x in o) {
+      if (o.hasOwnProperty(x)) {
+        y = o[x];
+        // if (y === null || (y instanceof Object && Object.keys(y).length == 0)) {
+        if (y === null) {
+          delete o[x];
+        }
+        if (y instanceof Object) y = trim(y);
+      }
     }
-};
+    return o;
+  };
+  
+  
+  return {
+    parseData: parseData,
+    stripWhitespace: stripWhitespace,
+    json: json,
+    trim: trim
+  };
+  
+})();
+;
 
-module.exports = {
-    parse: parse,
-    parseXml: parseXml,
-    parseString: parseString,
-    parseText: parseText
-};
+/*
+ * ...
+ */
+
+Core.Codes = (function () {
+  
+  /*
+   * Administrative Gender (HL7 V3)
+   * http://phinvads.cdc.gov/vads/ViewValueSet.action?id=8DE75E17-176B-DE11-9B52-0015173D1785
+   * OID: 2.16.840.1.113883.1.11.1
+   */
+  var GENDER_MAP = {
+    'F': 'female',
+    'M': 'male',
+    'UN': 'undifferentiated'
+  };
+  
+  /*
+   * Marital Status (HL7)
+   * http://phinvads.cdc.gov/vads/ViewValueSet.action?id=46D34BBC-617F-DD11-B38D-00188B398520
+   * OID: 2.16.840.1.114222.4.11.809
+   */
+  var MARITAL_STATUS_MAP = {
+    'N': 'annulled',
+    'C': 'common law',
+    'D': 'divorced',
+    'P': 'domestic partner',
+    'I': 'interlocutory',
+    'E': 'legally separated',
+    'G': 'living together',
+    'M': 'married',
+    'O': 'other',
+    'R': 'registered domestic partner',
+    'A': 'separated',
+    'S': 'single',
+    'U': 'unknown',
+    'B': 'unmarried',
+    'T': 'unreported',
+    'W': 'widowed'
+  };
+
+  /*
+   * Religious Affiliation (HL7 V3)
+   * https://phinvads.cdc.gov/vads/ViewValueSet.action?id=6BFDBFB5-A277-DE11-9B52-0015173D1785
+   * OID: 2.16.840.1.113883.5.1076
+   */
+  var RELIGION_MAP = {
+    "1001": "adventist",
+    "1002": "african religions",
+    "1003": "afro-caribbean religions",
+    "1004": "agnosticism",
+    "1005": "anglican",
+    "1006": "animism",
+    "1061": "assembly of god",
+    "1007": "atheism",
+    "1008": "babi & baha'i faiths",
+    "1009": "baptist",
+    "1010": "bon",
+    "1062": "brethren",
+    "1011": "cao dai",
+    "1012": "celticism",
+    "1013": "christian (non-catholic, non-specific)",
+    "1063": "christian scientist",
+    "1064": "church of christ",
+    "1065": "church of god",
+    "1014": "confucianism",
+    "1066": "congregational",
+    "1015": "cyberculture religions",
+    "1067": "disciples of christ",
+    "1016": "divination",
+    "1068": "eastern orthodox",
+    "1069": "episcopalian",
+    "1070": "evangelical covenant",
+    "1017": "fourth way",
+    "1018": "free daism",
+    "1071": "friends",
+    "1072": "full gospel",
+    "1019": "gnosis",
+    "1020": "hinduism",
+    "1021": "humanism",
+    "1022": "independent",
+    "1023": "islam",
+    "1024": "jainism",
+    "1025": "jehovah's witnesses",
+    "1026": "judaism",
+    "1027": "latter day saints",
+    "1028": "lutheran",
+    "1029": "mahayana",
+    "1030": "meditation",
+    "1031": "messianic judaism",
+    "1073": "methodist",
+    "1032": "mitraism",
+    "1074": "native american",
+    "1075": "nazarene",
+    "1033": "new age",
+    "1034": "non-roman catholic",
+    "1035": "occult",
+    "1036": "orthodox",
+    "1037": "paganism",
+    "1038": "pentecostal",
+    "1076": "presbyterian",
+    "1039": "process, the",
+    "1077": "protestant",
+    "1078": "protestant, no denomination",
+    "1079": "reformed",
+    "1040": "reformed/presbyterian",
+    "1041": "roman catholic church",
+    "1080": "salvation army",
+    "1042": "satanism",
+    "1043": "scientology",
+    "1044": "shamanism",
+    "1045": "shiite (islam)",
+    "1046": "shinto",
+    "1047": "sikism",
+    "1048": "spiritualism",
+    "1049": "sunni (islam)",
+    "1050": "taoism",
+    "1051": "theravada",
+    "1081": "unitarian universalist",
+    "1052": "unitarian-universalism",
+    "1082": "united church of christ",
+    "1053": "universal life church",
+    "1054": "vajrayana (tibetan)",
+    "1055": "veda",
+    "1056": "voodoo",
+    "1057": "wicca",
+    "1058": "yaohushua",
+    "1059": "zen buddhism",
+    "1060": "zoroastrianism"
+  };
+
+  /*
+   * Race & Ethnicity (HL7 V3)
+   * Full list at http://phinvads.cdc.gov/vads/ViewCodeSystem.action?id=2.16.840.1.113883.6.238
+   * OID: 2.16.840.1.113883.6.238
+   *
+   * Abbreviated list closer to real usage at: (Race / Ethnicity)
+   * https://phinvads.cdc.gov/vads/ViewValueSet.action?id=67D34BBC-617F-DD11-B38D-00188B398520
+   * https://phinvads.cdc.gov/vads/ViewValueSet.action?id=35D34BBC-617F-DD11-B38D-00188B398520
+   */
+  var RACE_ETHNICITY_MAP = {
+    '2028-9': 'asian',
+    '2054-5': 'black or african american',
+    '2135-2': 'hispanic or latino',
+    '2076-8': 'native',
+    '2186-5': 'not hispanic or latino',
+    '2131-1': 'other',
+    '2106-3': 'white'
+  };
+
+  /*
+   * Role (HL7 V3)
+   * https://phinvads.cdc.gov/vads/ViewCodeSystem.action?id=2.16.840.1.113883.5.111
+   * OID: 2.16.840.1.113883.5.111
+   */
+  var ROLE_MAP = {
+    "ACC": "accident site",
+    "ACHFID":  "accreditation location identifier",
+    "ACTMIL":  "active duty military",
+    "ALL": "allergy clinic",
+    "AMB": "ambulance",
+    "AMPUT":   "amputee clinic",
+    "ANTIBIOT":    "antibiotic",
+    "ASSIST":  "assistive non-person living subject",
+    "AUNT":    "aunt",
+    "B":   "blind",
+    "BF":  "beef",
+    "BILL":    "billing contact",
+    "BIOTH":   "biotherapeutic non-person living subject",
+    "BL":  "broiler",
+    "BMTC":    "bone marrow transplant clinic",
+    "BMTU":    "bone marrow transplant unit",
+    "BR":  "breeder",
+    "BREAST":  "breast clinic",
+    "BRO": "brother",
+    "BROINLAW":    "brother-in-law",
+    "C":   "calibrator",
+    "CANC": "child and adolescent neurology clinic",
+    "CAPC": "child and adolescent psychiatry clinic",
+    "CARD": "ambulatory health care facilities; clinic/center; rehabilitation: cardiac facilities",
+    "CAS": "asylum seeker",
+    "CASM":    "single minor asylum seeker",
+    "CATH":    "cardiac catheterization lab",
+    "CCO": "clinical companion",
+    "CCU": "coronary care unit",
+    "CHEST":   "chest unit",
+    "CHILD":   "child",
+    "CHLDADOPT":   "adopted child",
+    "CHLDFOST":    "foster child",
+    "CHLDINLAW":   "child in-law",
+    "CHR": "chronic care facility",
+    "CLAIM":   "claimant",
+    "CN":  "national",
+    "CNRP":    "non-country member without residence permit",
+    "CNRPM":   "non-country member minor without residence permit",
+    "CO":  "companion",
+    "COAG":    "coagulation clinic",
+    "COCBEN":  "continuity of coverage beneficiary",
+    "COMM":    "community location",
+    "COMMUNITYLABORATORY": "community laboratory",
+    "COUSN":   "cousin",
+    "CPCA":    "permit card applicant",
+    "CRIMEVIC":    "crime victim",
+    "CRP": "non-country member with residence permit",
+    "CRPM":    "non-country member minor with residence permit",
+    "CRS": "colon and rectal surgery clinic",
+    "CSC": "community service center",
+    "CVDX":    "cardiovascular diagnostics or therapeutics unit",
+    "DA":  "dairy",
+    "DADDR":   "delivery address",
+    "DAU": "natural daughter",
+    "DAUADOPT":    "adopted daughter",
+    "DAUC":    "daughter",
+    "DAUFOST": "foster daughter",
+    "DAUINLAW":    "daughter in-law",
+    "DC":  "therapeutic class",
+    "DEBR":    "debridement",
+    "DERM":    "dermatology clinic",
+    "DIFFABL": "differently abled",
+    "DOMPART": "domestic partner",
+    "DPOWATT": "durable power of attorney",
+    "DR":  "draft",
+    "DU":  "dual",
+    "DX":  "diagnostics or therapeutics unit",
+    "E":   "electronic qc",
+    "ECHO":    "echocardiography lab",
+    "ECON":    "emergency contact",
+    "ENDO":    "endocrinology clinic",
+    "ENDOS":   "endoscopy lab",
+    "ENROLBKR":    "enrollment broker",
+    "ENT": "otorhinolaryngology clinic",
+    "EPIL":    "epilepsy unit",
+    "ER":  "emergency room",
+    "ERL": "enrollment",
+    "ETU": "emergency trauma unit",
+    "EXCEST":  "executor of estate",
+    "EXT": "extended family member",
+    "F":   "filler proficiency",
+    "FAMDEP":  "family dependent",
+    "FAMMEMB": "family member",
+    "FI":  "fiber",
+    "FMC": "family medicine clinic",
+    "FRND":    "unrelated friend",
+    "FSTUD":   "full-time student",
+    "FTH": "father",
+    "FTHINLAW":    "father-in-law",
+    "FULLINS": "fully insured coverage sponsor",
+    "G":   "group",
+    "GACH":    "hospitals; general acute care hospital",
+    "GD":  "generic drug",
+    "GDF": "generic drug form",
+    "GDS": "generic drug strength",
+    "GDSF":    "generic drug strength form",
+    "GGRFTH":  "great grandfather",
+    "GGRMTH":  "great grandmother",
+    "GGRPRN":  "great grandparent",
+    "GI":  "gastroenterology clinic",
+    "GIDX":    "gastroenterology diagnostics or therapeutics lab",
+    "GIM": "general internal medicine clinic",
+    "GRFTH":   "grandfather",
+    "GRMTH":   "grandmother",
+    "GRNDCHILD":   "grandchild",
+    "GRNDDAU": "granddaughter",
+    "GRNDSON": "grandson",
+    "GRPRN":   "grandparent",
+    "GT":  "guarantor",
+    "GUADLTM": "guardian ad lidem",
+    "GUARD":   "guardian",
+    "GYN": "gynecology clinic",
+    "HAND":    "hand clinic",
+    "HANDIC":  "handicapped dependent",
+    "HBRO":    "half-brother",
+    "HD":  "hemodialysis unit",
+    "HEM": "hematology clinic",
+    "HLAB":    "hospital laboratory",
+    "HOMEHEALTH":  "home health",
+    "HOSP":    "hospital",
+    "HPOWATT": "healthcare power of attorney",
+    "HRAD":    "radiology unit",
+    "HSIB":    "half-sibling",
+    "HSIS":    "half-sister",
+    "HTN": "hypertension clinic",
+    "HU":  "hospital unit",
+    "HUSB":    "husband",
+    "HUSCS":   "specimen collection site",
+    "ICU": "intensive care unit",
+    "IEC": "impairment evaluation center",
+    "INDIG":   "member of an indigenous people",
+    "INFD":    "infectious disease clinic",
+    "INJ": "injured plaintiff",
+    "INJWKR":  "injured worker",
+    "INLAB":   "inpatient laboratory",
+    "INPHARM": "inpatient pharmacy",
+    "INV": "infertility clinic",
+    "JURID":   "jurisdiction location identifier",
+    "L":   "pool",
+    "LABORATORY":  "laboratory",
+    "LOCHFID": "local location identifier",
+    "LY":  "layer",
+    "LYMPH":   "lympedema clinic",
+    "MAUNT":   "maternalaunt",
+    "MBL": "medical laboratory",
+    "MCOUSN":  "maternalcousin",
+    "MGDSF":   "manufactured drug strength form",
+    "MGEN":    "medical genetics clinic",
+    "MGGRFTH": "maternalgreatgrandfather",
+    "MGGRMTH": "maternalgreatgrandmother",
+    "MGGRPRN": "maternalgreatgrandparent",
+    "MGRFTH":  "maternalgrandfather",
+    "MGRMTH":  "maternalgrandmother",
+    "MGRPRN":  "maternalgrandparent",
+    "MHSP":    "military hospital",
+    "MIL": "military",
+    "MOBL":    "mobile unit",
+    "MT":  "meat",
+    "MTH": "mother",
+    "MTHINLAW":    "mother-in-law",
+    "MU":  "multiplier",
+    "MUNCLE":  "maternaluncle",
+    "NBOR":    "neighbor",
+    "NBRO":    "natural brother",
+    "NCCF":    "nursing or custodial care facility",
+    "NCCS":    "neurology critical care and stroke unit",
+    "NCHILD":  "natural child",
+    "NEPH":    "nephrology clinic",
+    "NEPHEW":  "nephew",
+    "NEUR":    "neurology clinic",
+    "NFTH":    "natural father",
+    "NFTHF":   "natural father of fetus",
+    "NIECE":   "niece",
+    "NIENEPH": "niece/nephew",
+    "NMTH":    "natural mother",
+    "NOK": "next of kin",
+    "NPRN":    "natural parent",
+    "NS":  "neurosurgery unit",
+    "NSIB":    "natural sibling",
+    "NSIS":    "natural sister",
+    "O":   "operator proficiency",
+    "OB":  "obstetrics clinic",
+    "OF":  "outpatient facility",
+    "OMS": "oral and maxillofacial surgery clinic",
+    "ONCL":    "medical oncology clinic",
+    "OPH": "opthalmology clinic",
+    "OPTC":    "optometry clinic",
+    "ORG": "organizational contact",
+    "ORTHO":   "orthopedics clinic",
+    "OUTLAB":  "outpatient laboratory",
+    "OUTPHARM":    "outpatient pharmacy",
+    "P":   "patient",
+    "PAINCL":  "pain clinic",
+    "PATHOLOGIST": "pathologist",
+    "PAUNT":   "paternalaunt",
+    "PAYOR":   "payor contact",
+    "PC":  "primary care clinic",
+    "PCOUSN":  "paternalcousin",
+    "PEDC":    "pediatrics clinic",
+    "PEDCARD": "pediatric cardiology clinic",
+    "PEDE":    "pediatric endocrinology clinic",
+    "PEDGI":   "pediatric gastroenterology clinic",
+    "PEDHEM":  "pediatric hematology clinic",
+    "PEDHO":   "pediatric oncology clinic",
+    "PEDICU":  "pediatric intensive care unit",
+    "PEDID":   "pediatric infectious disease clinic",
+    "PEDNEPH": "pediatric nephrology clinic",
+    "PEDNICU": "pediatric neonatal intensive care unit",
+    "PEDRHEUM":    "pediatric rheumatology clinic",
+    "PEDU":    "pediatric unit",
+    "PGGRFTH": "paternalgreatgrandfather",
+    "PGGRMTH": "paternalgreatgrandmother",
+    "PGGRPRN": "paternalgreatgrandparent",
+    "PGRFTH":  "paternalgrandfather",
+    "PGRMTH":  "paternalgrandmother",
+    "PGRPRN":  "paternalgrandparent",
+    "PH":  "policy holder",
+    "PHARM":   "pharmacy",
+    "PHLEBOTOMIST":    "phlebotomist",
+    "PHU": "psychiatric hospital unit",
+    "PL":  "pleasure",
+    "PLS": "plastic surgery clinic",
+    "POD": "podiatry clinic",
+    "POWATT":  "power of attorney",
+    "PRC": "pain rehabilitation center",
+    "PREV":    "preventive medicine clinic",
+    "PRN": "parent",
+    "PRNINLAW":    "parent in-law",
+    "PROCTO":  "proctology clinic",
+    "PROFF":   "provider's office",
+    "PROG":    "program eligible",
+    "PROS":    "prosthodontics clinic",
+    "PSI": "psychology clinic",
+    "PSTUD":   "part-time student",
+    "PSY": "psychiatry clinic",
+    "PSYCHF":  "psychiatric care facility",
+    "PT":  "patient",
+    "PTRES":   "patient's residence",
+    "PUNCLE":  "paternaluncle",
+    "Q":   "quality control",
+    "R":   "replicate",
+    "RADDX":   "radiology diagnostics or therapeutics unit",
+    "RADO":    "radiation oncology unit",
+    "RC":  "racing",
+    "RESPRSN": "responsible party",
+    "RETIREE": "retiree",
+    "RETMIL":  "retired military",
+    "RH":  "rehabilitation hospital",
+    "RHAT":    "addiction treatment center",
+    "RHEUM":   "rheumatology clinic",
+    "RHII":    "intellectual impairment center",
+    "RHMAD":   "parents with adjustment difficulties center",
+    "RHPI":    "physical impairment center",
+    "RHPIH":   "physical impairment - hearing center",
+    "RHPIMS":  "physical impairment - motor skills center",
+    "RHPIVS":  "physical impairment - visual skills center",
+    "RHU": "rehabilitation hospital unit",
+    "RHYAD":   "youths with adjustment difficulties center",
+    "RNEU":    "neuroradiology unit",
+    "ROOM":    "roommate",
+    "RTF": "residential treatment facility",
+    "SCHOOL":  "school",
+    "SCN": "screening",
+    "SEE": "seeing",
+    "SELF":    "self",
+    "SELFINS": "self insured coverage sponsor",
+    "SH":  "show",
+    "SIB": "sibling",
+    "SIBINLAW":    "sibling in-law",
+    "SIGOTHR": "significant other",
+    "SIS": "sister",
+    "SISINLAW":    "sister-in-law",
+    "SLEEP":   "sleep disorders unit",
+    "SNF": "skilled nursing facility",
+    "SNIFF":   "sniffing",
+    "SON": "natural son",
+    "SONADOPT":    "adopted son",
+    "SONC":    "son",
+    "SONFOST": "foster son",
+    "SONINLAW":    "son in-law",
+    "SPMED":   "sports medicine clinic",
+    "SPON":    "sponsored dependent",
+    "SPOWATT": "special power of attorney",
+    "SPS": "spouse",
+    "STPBRO":  "stepbrother",
+    "STPCHLD": "step child",
+    "STPDAU":  "stepdaughter",
+    "STPFTH":  "stepfather",
+    "STPMTH":  "stepmother",
+    "STPPRN":  "step parent",
+    "STPSIB":  "step sibling",
+    "STPSIS":  "stepsister",
+    "STPSON":  "stepson",
+    "STUD":    "student",
+    "SU":  "surgery clinic",
+    "SUBJECT": "self",
+    "SURF":    "substance use rehabilitation facility",
+    "THIRDPARTY":  "third party",
+    "TPA": "third party administrator",
+    "TR":  "transplant clinic",
+    "TRAVEL":  "travel and geographic medicine clinic",
+    "TRB": "tribal member",
+    "UMO": "utilization management organization",
+    "UNCLE":   "uncle",
+    "UPC": "underage protection center",
+    "URO": "urology clinic",
+    "V":   "verifying",
+    "VET": "veteran",
+    "VL":  "veal",
+    "WARD":    "ward",
+    "WIFE":    "wife",
+    "WL":  "wool",
+    "WND": "wound clinic",
+    "WO":  "working",
+    "WORK":    "work site",
+  };
+
+  var PROBLEM_STATUS_MAP = {
+    "55561003": "active",
+    "73425007": "inactive",
+    "413322009": "resolved"
+  };
 
 
-/***/ }),
-/* 65 */
-/***/ (function(module, exports) {
+  // copied from _.invert to avoid making browser users include all of underscore
+  var invertKeys = function(obj) {
+    var result = {};
+    var keys = Object.keys(obj);
+    for (var i = 0, length = keys.length; i < length; i++) {
+      result[obj[keys[i]]] = keys[i];
+    }
+    return result;
+  };
 
-module.exports = require("blue-button-cms");
+  var lookupFnGenerator = function(map) {
+    return function(key) {
+      return map[key] || null;
+    };
+  };
+  var reverseLookupFnGenerator = function(map) {
+    return function(key) {
+      if (!key) { return null; }
+      var invertedMap = invertKeys(map);
+      key = key.toLowerCase();
+      return invertedMap[key] || null;
+    };
+  };
+  
+  
+  return {
+    gender: lookupFnGenerator(GENDER_MAP),
+    reverseGender: reverseLookupFnGenerator(GENDER_MAP),
+    maritalStatus: lookupFnGenerator(MARITAL_STATUS_MAP),
+    reverseMaritalStatus: reverseLookupFnGenerator(MARITAL_STATUS_MAP),
+    religion: lookupFnGenerator(RELIGION_MAP),
+    reverseReligion: reverseLookupFnGenerator(RELIGION_MAP),
+    raceEthnicity: lookupFnGenerator(RACE_ETHNICITY_MAP),
+    reverseRaceEthnicity: reverseLookupFnGenerator(RACE_ETHNICITY_MAP),
+    role: lookupFnGenerator(ROLE_MAP),
+    reverseRole: reverseLookupFnGenerator(ROLE_MAP),
+    problemStatus: lookupFnGenerator(PROBLEM_STATUS_MAP),
+    reverseProblemStatus: reverseLookupFnGenerator(PROBLEM_STATUS_MAP)
+  };
+  
+})();
+;
 
-/***/ }),
-/* 66 */
-/***/ (function(module, exports, __webpack_require__) {
+/*
+ * ...
+ */
 
-"use strict";
-//CCDA to JSON parser.
+Core.XML = (function () {
+  
+  /*
+   * A function used to wrap DOM elements in an object so methods can be added
+   * to the element object. IE8 does not allow methods to be added directly to
+   * DOM objects.
+   */
+  var wrapElement = function (el) {
+    function wrapElementHelper(currentEl) {
+      return {
+        el: currentEl,
+        template: template,
+        content: content,
+        tag: tag,
+        immediateChildTag: immediateChildTag,
+        elsByTag: elsByTag,
+        attr: attr,
+        boolAttr: boolAttr,
+        val: val,
+        isEmpty: isEmpty
+      };
+    }
+    
+    // el is an array of elements
+    if (el.length) {
+      var els = [];
+      for (var i = 0; i < el.length; i++) {
+        els.push(wrapElementHelper(el[i]));
+      }
+      return els;
+    
+    // el is a single element
+    } else {
+      return wrapElementHelper(el);
+    }
+  };
+  
+  
+  /*
+   * Find element by tag name, then attribute value.
+   */
+  var tagAttrVal = function (el, tag, attr, value) {
+    el = el.getElementsByTagName(tag);
+    for (var i = 0; i < el.length; i++) {
+      if (el[i].getAttribute(attr) === value) {
+        return el[i];
+      }
+    }
+  };
+  
+  
+  /*
+   * Search for a template ID, and return its parent element.
+   * Example:
+   *   <templateId root="2.16.840.1.113883.10.20.22.2.17"/>
+   * Can be found using:
+   *   el = dom.template('2.16.840.1.113883.10.20.22.2.17');
+   */
+  var template = function (templateId) {
+    var el = tagAttrVal(this.el, 'templateId', 'root', templateId);
+    if (!el) {
+      return emptyEl();
+    } else {
+      return wrapElement(el.parentNode);
+    }
+  };
+
+  /*
+   * Search for a content tag by "ID", and return it as an element.
+   * These are used in the unstructured versions of each section but
+   * referenced from the structured version sometimes.
+   * Example:
+   *   <content ID="UniqueNameReferencedElsewhere"/>
+   * Can be found using:
+   *   el = dom.content('UniqueNameReferencedElsewhere');
+   *
+   * We can't use `getElementById` because `ID` (the standard attribute name
+   * in this context) is not the same attribute as `id` in XML, so there are no matches
+   */
+  var content = function (contentId) {
+      var el = tagAttrVal(this.el, 'content', 'ID', contentId);
+      if (!el) {
+        // check the <td> tag too, which isn't really correct but
+        // will inevitably be used sometimes because it looks like very
+        // normal HTML to put the data directly in a <td>
+        el = tagAttrVal(this.el, 'td', 'ID', contentId);
+      }
+      if (!el) {
+        // Ugh, Epic uses really non-standard locations.
+        el = tagAttrVal(this.el, 'caption', 'ID', contentId) ||
+             tagAttrVal(this.el, 'paragraph', 'ID', contentId) ||
+             tagAttrVal(this.el, 'tr', 'ID', contentId) ||
+             tagAttrVal(this.el, 'item', 'ID', contentId);
+      }
+
+      if (!el) {
+        return emptyEl();
+      } else {
+        return wrapElement(el);
+      }
+    };
+  
+  
+  /*
+   * Search for the first occurrence of an element by tag name.
+   */
+  var tag = function (tag) {
+    var el = this.el.getElementsByTagName(tag)[0];
+    if (!el) {
+      return emptyEl();
+    } else {
+      return wrapElement(el);
+    }
+  };
+
+  /*
+   * Like `tag`, except it will only count a tag that is an immediate child of `this`.
+   * This is useful for tags like "text" which A. may not be present for a given location
+   * in every document and B. have a very different meaning depending on their positioning
+   *
+   *   <parent>
+   *     <target></target>
+   *   </parent>
+   * vs.
+   *   <parent>
+   *     <intermediate>
+   *       <target></target>
+   *     </intermediate>
+   *   </parent>
+   * parent.immediateChildTag('target') will have a result in the first case but not in the second.
+   */
+  var immediateChildTag = function (tag) {
+    var els = this.el.getElementsByTagName(tag);
+    if (!els) { return null; }
+    for (var i = 0; i < els.length; i++) {
+      if (els[i].parentNode === this.el) {
+        return wrapElement(els[i]);
+      }
+    }
+    return emptyEl();
+  };
+  
+  
+  /*
+   * Search for all elements by tag name.
+   */
+  var elsByTag = function (tag) {
+    return wrapElement(this.el.getElementsByTagName(tag));
+  };
 
 
+  var unescapeSpecialChars = function(s) {
+    if (!s) { return s; }
+    return s.replace(/&lt;/g, '<')
+            .replace(/&gt;/g, '>')
+            .replace(/&amp;/g, '&')
+            .replace(/&quot;/g, '"')
+            .replace(/&apos;/g, "'");
+  };
+  
+  
+  /*
+   * Retrieve the element's attribute value. Example:
+   *   value = el.attr('displayName');
+   *
+   * The browser and jsdom return "null" for empty attributes;
+   * xmldom (which we now use because it's faster / can be explicitly
+   * told to parse malformed XML as XML anyways), return the empty
+   * string instead, so we fix that here.
+   */
+  var attr = function (attrName) {
+    if (!this.el) { return null; }
+    var attrVal = this.el.getAttribute(attrName);
+    if (attrVal) {
+      return unescapeSpecialChars(attrVal);
+    }
+    return null;
+  };
 
-var generateComponents = function (version) {
+  /*
+   * Wrapper for attr() for retrieving boolean attributes;
+   * a raw call attr() will return Strings, which can be unexpected,
+   * since the string 'false' will by truthy
+   */
+  var boolAttr = function (attrName) {
+    var rawAttr = this.attr(attrName);
+    if (rawAttr === 'true' || rawAttr === '1') {
+      return true;
+    }
+    return false;
+  };
 
-    version = version.indexOf("-") > -1 ? "_" + version.split("-")[1] : "";
+  
+  /*
+   * Retrieve the element's value. For example, if the element is:
+   *   <city>Madison</city>
+   * Use:
+   *   value = el.tag('city').val();
+   *
+   * This function also knows how to retrieve the value of <reference> tags,
+   * which can store their content in a <content> tag in a totally different
+   * part of the document.
+   */
+  var val = function (html) {
+    if (!this.el) { return null; }
+    if (!this.el.childNodes || !this.el.childNodes.length) { return null; }
+    var textContent = html ? this.el.innerHTML : this.el.textContent;
+
+    // if there's no text value here and the only thing inside is a
+    // <reference> tag, see if there's a linked <content> tag we can
+    // get something out of
+    if (!Core.stripWhitespace(textContent)) {
+
+      var contentId;
+      // "no text value" might mean there's just a reference tag
+      if (this.el.childNodes.length === 1 &&
+          this.el.childNodes[0].tagName === 'reference') {
+        contentId = this.el.childNodes[0].getAttribute('value');
+
+      // or maybe a newlines on top/above the reference tag
+      } else if (this.el.childNodes.length === 3 &&
+          this.el.childNodes[1].tagName === 'reference') {
+        contentId = this.el.childNodes[1].getAttribute('value');
+
+      } else {
+        return unescapeSpecialChars(textContent);
+      }
+
+      if (contentId && contentId[0] === '#') {
+        contentId = contentId.slice(1); // get rid of the '#'
+        var docRoot = wrapElement(this.el.ownerDocument);
+        var contentTag = docRoot.content(contentId);
+        return contentTag.val();
+      }
+    }
+
+    return unescapeSpecialChars(textContent);
+  };
+  
+  
+  /*
+   * Creates and returns an empty DOM element with tag name "empty":
+   *   <empty></empty>
+   */
+  var emptyEl = function () {
+    var el = doc.createElement('empty');
+    return wrapElement(el);
+  };
+  
+  
+  /*
+   * Determines if the element is empty, i.e.:
+   *   <empty></empty>
+   * This element is created by function `emptyEL`.
+   */
+  var isEmpty = function () {
+    if (this.el.tagName.toLowerCase() === 'empty') {
+      return true;
+    } else {
+      return false;
+    }
+  };
+  
+  
+  /*
+   * Cross-browser XML parsing supporting IE8+ and Node.js.
+   */
+  var parse = function (data) {
+    // XML data must be a string
+    if (!data || typeof data !== "string") {
+      console.log("BB Error: XML data is not a string");
+      return null;
+    }
+    
+    var xml, parser;
+    
+    // Node
+    if (isNode) {
+      parser = new (xmldom.DOMParser)();
+      xml = parser.parseFromString(data, "text/xml");
+      
+    // Browser
+    } else {
+      
+      // Standard parser
+      if (window.DOMParser) {
+        parser = new DOMParser();
+        xml = parser.parseFromString(data, "text/xml");
+        
+      // IE
+      } else {
+        try {
+          xml = new ActiveXObject("Microsoft.XMLDOM");
+          xml.async = "false";
+          xml.loadXML(data);
+        } catch (e) {
+          console.log("BB ActiveX Exception: Could not parse XML");
+        }
+      }
+    }
+    
+    if (!xml || !xml.documentElement || xml.getElementsByTagName("parsererror").length) {
+      console.log("BB Error: Could not parse XML");
+      return null;
+    }
+    
+    return wrapElement(xml);
+  };
+  
+  
+  // Establish the root object, `window` in the browser, or `global` in Node.
+  var root = this,
+      xmldom,
+      isNode = false,
+      doc = root.document; // Will be `undefined` if we're in Node
+
+  // Check if we're in Node. If so, pull in `xmldom` so we can simulate the DOM.
+  if (true) {
+    if (typeof module !== 'undefined' && module.exports) {
+      isNode = true;
+      xmldom = __webpack_require__(27);
+      doc = new xmldom.DOMImplementation().createDocument();
+    }
+  }
+  
+  
+  return {
+    parse: parse
+  };
+  
+})();
+;
+
+/*
+ * ...
+ */
+
+/* exported Documents */
+var Documents = (function () {
+  
+  /*
+   * ...
+   */
+  var detect = function (data) {
+    if (!data.template) {
+      return 'json';
+    }
+    
+    if (!data.template('2.16.840.1.113883.3.88.11.32.1').isEmpty()) {
+      return 'c32';
+    } else if(!data.template('2.16.840.1.113883.10.20.22.1.1').isEmpty()) {
+      return 'ccda';
+    } else if(!data.template('2.16.840.1.113883.10.20.22.1.15').isEmpty()) {
+      return 'ccdar2';
+    }else if(!data.template('2.16.840.1.113883.10.20.22.1.2').isEmpty()) {
+      return 'ccd';
+    }
+  };
+  
+  
+  /*
+   * Get entries within an element (with tag name 'entry'), adds an `each` function
+   */
+  var entries = function () {
+    var each = function (callback) {
+      for (var i = 0; i < this.length; i++) {
+        callback(this[i]);
+      }
+    };
+    
+    var els = this.elsByTag('entry');
+    els.each = each;
+    return els;
+  };
+  
+  
+  /*
+   * Parses an HL7 date in String form and creates a new Date object.
+   * 
+   * TODO: CCDA dates can be in form:
+   *   <effectiveTime value="20130703094812"/>
+   * ...or:
+   *   <effectiveTime>
+   *     <low value="19630617120000"/>
+   *     <high value="20110207100000"/>
+   *   </effectiveTime>
+   * For the latter, parseDate will not be given type `String`
+   * and will return `null`.
+   */
+  var parseDate = function (str) {
+    if (!str || typeof str !== 'string') {
+      return null;
+    }
+
+    // Note: months start at 0 (so January is month 0)
+
+    // e.g., value="1999" translates to Jan 1, 1999
+    if (str.length === 4) {
+      return new Date(str, 0, 1);
+    }
+
+    var year = str.substr(0, 4);
+    // subtract 1 from the month since they're zero-indexed
+    var month = parseInt(str.substr(4, 2), 10) - 1;
+    // days are not zero-indexed. If we end up with the day 0 or '',
+    // that will be equivalent to the last day of the previous month
+    var day = str.substr(6, 2) || 1;
+
+    // check for time info (the presence of at least hours and mins after the date)
+    if (str.length >= 12) {
+      var hour = str.substr(8, 2);
+      var min = str.substr(10, 2);
+      var secs = str.substr(12, 2);
+
+      // check for timezone info (the presence of chars after the seconds place)
+      if (str.length > 14) {
+        // _utcOffsetFromString will return 0 if there's no utc offset found.
+        var utcOffset = _utcOffsetFromString(str.substr(14));
+        // We subtract that offset from the local time to get back to UTC
+        // (e.g., if we're -480 mins behind UTC, we add 480 mins to get back to UTC)
+        min = _toInt(min) - utcOffset;
+      }
+
+      var date = new Date(Date.UTC(year, month, day, hour, min, secs));
+      // This flag lets us output datetime-precision in our JSON even if the time happens
+      // to translate to midnight local time. If we clone the date object, it is not
+      // guaranteed to survive.
+      date._parsedWithTimeData = true;
+      return date;
+    }
+
+    return new Date(year, month, day);
+  };
+
+  // These regexes and the two functions below are copied from moment.js
+  // http://momentjs.com/
+  // https://github.com/moment/moment/blob/develop/LICENSE
+  var parseTimezoneChunker = /([\+\-]|\d\d)/gi;
+  var parseTokenTimezone = /Z|[\+\-]\d\d:?\d\d/gi; // +00:00 -00:00 +0000 -0000 or Z
+  function _utcOffsetFromString(string) {
+      string = string || '';
+      var possibleTzMatches = (string.match(parseTokenTimezone) || []),
+          tzChunk = possibleTzMatches[possibleTzMatches.length - 1] || [],
+          parts = (tzChunk + '').match(parseTimezoneChunker) || ['-', 0, 0],
+          minutes = +(parts[1] * 60) + _toInt(parts[2]);
+
+      return parts[0] === '+' ? minutes : -minutes;
+  }
+  function _toInt(argumentForCoercion) {
+      var coercedNumber = +argumentForCoercion,
+          value = 0;
+
+      if (coercedNumber !== 0 && isFinite(coercedNumber)) {
+          if (coercedNumber >= 0) {
+              value = Math.floor(coercedNumber);
+          } else {
+              value = Math.ceil(coercedNumber);
+          }
+      }
+
+      return value;
+  }
+  
+  
+  /*
+   * Parses an HL7 name (prefix / given [] / family)
+   */
+  var parseName = function (nameEl) {
+    var prefix = nameEl.tag('prefix').val();
+    
+    var els = nameEl.elsByTag('given');
+    var given = [];
+    for (var i = 0; i < els.length; i++) {
+      var val = els[i].val();
+      if (val) { given.push(val); }
+    }
+    
+    var family = nameEl.tag('family').val();
+    
+    return {
+      prefix: prefix,
+      given: given,
+      family: family
+    };
+  };
+  
+  
+  /*
+   * Parses an HL7 address (streetAddressLine [], city, state, postalCode, country)
+   */
+  var parseAddress = function (addrEl) {
+    var els = addrEl.elsByTag('streetAddressLine');
+    var street = [];
+    
+    for (var i = 0; i < els.length; i++) {
+      var val = els[i].val();
+      if (val) { street.push(val); }
+    }
+    
+    var city = addrEl.tag('city').val(),
+        state = addrEl.tag('state').val(),
+        zip = addrEl.tag('postalCode').val(),
+        country = addrEl.tag('country').val();
+    
+    return {
+      street: street,
+      city: city,
+      state: state,
+      zip: zip,
+      country: country
+    };
+  };
+
+  // Node-specific code for unit tests
+  if (true) {
+    if (typeof module !== 'undefined' && module.exports) {
+      module.exports = {
+        parseDate: parseDate
+      };
+    }
+  }
+  
+  
+  return {
+    detect: detect,
+    entries: entries,
+    parseDate: parseDate,
+    parseName: parseName,
+    parseAddress: parseAddress
+  };
+  
+})();
+;
+
+/*
+ * ...
+ */
+
+Documents.C32 = (function () {
+  
+  /*
+   * Preprocesses the C32 document
+   */
+  var process = function (c32) {
+    c32.section = section;
+    return c32;
+  };
+  
+  
+  /*
+   * Finds the section of a C32 document
+   *
+   * Usually we check first for the HITSP section ID and then for the HL7-CCD ID.
+   */
+  var section = function (name) {
+    var el, entries = Documents.entries;
+    
+    switch (name) {
+      case 'document':
+        return this.template('2.16.840.1.113883.3.88.11.32.1');
+      case 'allergies':
+        el = this.template('2.16.840.1.113883.3.88.11.83.102');
+        if (el.isEmpty()) {
+          el = this.template('2.16.840.1.113883.10.20.1.2');
+        }
+        el.entries = entries;
+        return el;
+      case 'demographics':
+        return this.template('2.16.840.1.113883.3.88.11.32.1');
+      case 'encounters':
+        el = this.template('2.16.840.1.113883.3.88.11.83.127');
+        if (el.isEmpty()) {
+          el = this.template('2.16.840.1.113883.10.20.1.3');
+        }
+        el.entries = entries;
+        return el;
+      case 'immunizations':
+        el = this.template('2.16.840.1.113883.3.88.11.83.117');
+        if (el.isEmpty()) {
+          el = this.template('2.16.840.1.113883.10.20.1.6');
+        }
+        el.entries = entries;
+        return el;
+      case 'results':
+        el = this.template('2.16.840.1.113883.3.88.11.83.122');
+        if (el.isEmpty()) {
+          el = this.template('2.16.840.1.113883.10.20.1.14');
+        }
+        el.entries = entries;
+        return el;
+      case 'medications':
+        el = this.template('2.16.840.1.113883.3.88.11.83.112');
+        if (el.isEmpty()) {
+          el = this.template('2.16.840.1.113883.10.20.1.8');
+        }
+        el.entries = entries;
+        return el;
+      case 'problems':
+        el = this.template('2.16.840.1.113883.3.88.11.83.103');
+        if (el.isEmpty()) {
+          el = this.template('2.16.840.1.113883.10.20.1.11');
+        }
+        el.entries = entries;
+        return el;
+      case 'procedures':
+        el = this.template('2.16.840.1.113883.3.88.11.83.108');
+        if (el.isEmpty()) {
+          el = this.template('2.16.840.1.113883.10.20.1.12');
+        }
+        el.entries = entries;
+        return el;
+      case 'vitals':
+        el = this.template('2.16.840.1.113883.3.88.11.83.119');
+        if (el.isEmpty()) {
+          el = this.template('2.16.840.1.113883.10.20.1.16');
+        }
+        el.entries = entries;
+        return el;
+    }
+    
+    return null;
+  };
+  
+  
+  return {
+    process: process,
+    section: section
+  };
+  
+})();
+;
+
+/*
+ * ...
+ */
+
+Documents.CCDA = (function () {
+  
+  /*
+   * Preprocesses the CCDA document
+   */
+  var process = function (ccda) {
+    ccda.section = section;
+    return ccda;
+  };
+  
+  
+  /*
+   * Finds the section of a CCDA document
+   */
+  var section = function (name) {
+    var el, entries = Documents.entries;
+    
+    switch (name) {
+      case 'document':
+        return this.template('2.16.840.1.113883.10.20.22.1.1');
+      case 'allergies':
+        el = this.template('2.16.840.1.113883.10.20.22.2.6.1');
+        el.entries = entries;
+        return el;
+      case 'care_plan':
+        el = this.template('2.16.840.1.113883.10.20.22.2.10');
+        el.entries = entries;
+        return el;
+      case 'chief_complaint':
+        el = this.template('2.16.840.1.113883.10.20.22.2.13');
+        if (el.isEmpty()) {
+          el = this.template('1.3.6.1.4.1.19376.1.5.3.1.1.13.2.1');
+        }
+        // no entries in Chief Complaint
+        return el;
+      case 'demographics':
+        return this.template('2.16.840.1.113883.10.20.22.1.1');
+      case 'encounters':
+        el = this.template('2.16.840.1.113883.10.20.22.2.22');
+        if (el.isEmpty()) {
+          el = this.template('2.16.840.1.113883.10.20.22.2.22.1');
+        }
+        el.entries = entries;
+        return el;
+      case 'functional_statuses':
+        el = this.template('2.16.840.1.113883.10.20.22.2.14');
+        el.entries = entries;
+        return el;
+      case 'immunizations':
+        el = this.template('2.16.840.1.113883.10.20.22.2.2.1');
+        if (el.isEmpty()) {
+          el = this.template('2.16.840.1.113883.10.20.22.2.2');
+        }
+        el.entries = entries;
+        return el;
+      case 'instructions':
+        el = this.template('2.16.840.1.113883.10.20.22.2.45');
+        el.entries = entries;
+        return el;
+      case 'results':
+        el = this.template('2.16.840.1.113883.10.20.22.2.3.1');
+        if (el.isEmpty()) {
+          el = this.template('2.16.840.1.113883.10.20.22.2.3');
+        }
+        el.entries = entries;
+        return el;
+      case 'medications':
+        el = this.template('2.16.840.1.113883.10.20.22.2.1.1');
+        if (el.isEmpty()) {
+          el = this.template('2.16.840.1.113883.10.20.22.2.1');
+        }
+        el.entries = entries;
+        return el;
+      case 'problems':
+        el = this.template('2.16.840.1.113883.10.20.22.2.5.1');
+        if (el.isEmpty()) {
+          el = this.template('2.16.840.1.113883.10.20.22.2.5');
+        }
+        el.entries = entries;
+        return el;
+      case 'procedures':
+        el = this.template('2.16.840.1.113883.10.20.22.2.7.1');
+        if (el.isEmpty()) {
+          el = this.template('2.16.840.1.113883.10.20.22.2.7');
+        }
+        el.entries = entries;
+        return el;
+      case 'social_history':
+        el = this.template('2.16.840.1.113883.10.20.22.2.17');
+        el.entries = entries;
+        return el;
+      case 'vitals':
+        el = this.template('2.16.840.1.113883.10.20.22.2.4.1');
+        if (el.isEmpty()) {
+          el = this.template('2.16.840.1.113883.10.20.22.2.4');
+        }
+        el.entries = entries;
+        return el;
+    }
+    
+    return null;
+  };
+  
+  
+  return {
+    process: process,
+    section: section
+  };
+  
+})();
+;
+
+/*
+ * ...
+ */
+
+Documents.CCDAR2 = (function () {
+
+    /*
+     * Preprocesses the CCDAR2 document
+     */
+    var process = function (ccda) {
+        ccda.section = section;
+        return ccda;
+    };
+
+
+    /*
+     * Finds the section of a CCDA document
+     */
+    var section = function (name) {
+        var el, entries = Documents.entries;
+
+        switch (name) {
+            case 'document':
+                return this.template('2.16.840.1.113883.10.20.22.1.15');
+            case 'demographics':
+                return this.template('2.16.840.1.113883.10.20.22.1.15');
+            case 'health_concerns_document':
+                el = this.template('2.16.840.1.113883.10.20.22.2.58');
+                el.entries = entries;
+                return el;
+            case 'goals':
+                el = this.template('2.16.840.1.113883.10.20.22.2.60');
+                el.entries = entries;
+                return el;
+            case 'interventions':
+                el = this.template('2.16.840.1.113883.10.20.21.2.3');
+                el.entries = entries;
+                return el;
+            case 'health_status_outcomes':
+                el = this.template('2.16.840.1.113883.10.20.22.2.61');
+                el.entries = entries;
+                return el;
+        }
+
+        return null;
+    };
+
 
     return {
-
-        //Base CCD Object.
-        cda_ccd: __webpack_require__(67).CCD(version),
-
-        //Base C32 Object.
-        c32_ccd: __webpack_require__(76).C32(version),
-        c32_demographics: __webpack_require__(40).patient,
-        c32_vitals: __webpack_require__(15).vitalSignsSection,
-        c32_medications: __webpack_require__(20).medicationsSection,
-        c32_problems: __webpack_require__(17).problemsSection,
-        c32_immunizations: __webpack_require__(19).immunizationsSection,
-        c32_results: __webpack_require__(16).resultsSection,
-        c32_allergies: __webpack_require__(14).allergiesSection,
-        c32_encounters: __webpack_require__(21).encountersSection,
-        c32_procedures: __webpack_require__(18).proceduresSection,
-
-        //exposing individual entries just in case
-        c32_vitals_entry: __webpack_require__(15).vitalSignsEntry,
-        c32_medications_entry: __webpack_require__(20).medicationsEntry,
-        c32_problems_entry: __webpack_require__(17).problemsEntry,
-        c32_immunizations_entry: __webpack_require__(19).immunizationsEntry,
-        c32_results_entry: __webpack_require__(16).resultsEntry,
-        c32_allergies_entry: __webpack_require__(14).allergiesEntry,
-        c32_encounters_entry: __webpack_require__(21).encountersEntry,
-        c32_procedures_entry: __webpack_require__(18).proceduresEntry,
-
-        //CCDA domains.
-        ccda_ccd: __webpack_require__(77).CCD(version),
-        ccda_demographics: __webpack_require__(42).patient,
-        ccda_header: __webpack_require__(41).header,
-        ccda_vitals: __webpack_require__(23).vitalSignsSection(version)[0],
-        ccda_medications: __webpack_require__(12).medicationsSection(version)[0],
-        ccda_problems: __webpack_require__(24).problemsSection(version)[0],
-        ccda_immunizations: __webpack_require__(25).immunizationsSection(version)[0],
-        ccda_results: __webpack_require__(22).resultsSection(version)[0],
-        ccda_allergies: __webpack_require__(26).allergiesSection(version)[0],
-        ccda_encounters: __webpack_require__(27).encountersSection(version)[0],
-        ccda_procedures: __webpack_require__(28).proceduresSection(version)[0],
-        ccda_social_history: __webpack_require__(43).socialHistorySection(version)[0],
-        ccda_plan_of_care: __webpack_require__(29).plan_of_care_section(version)[0],
-        ccda_payers: __webpack_require__(30).payers_section(version)[0],
-        ccda_functional_statuses: __webpack_require__(32).functionalStatusSection(version)[0],
-        ccda_hospital_discharge_instructions: __webpack_require__(45).hospital_discharge_instructions_section(version)[0],
-        ccda_hospital_discharge_medications: __webpack_require__(31).hospital_discharge_medications_section(version)[0],
-        ccda_reason_for_referral: __webpack_require__(44).reason_for_referral_section(version)[0],
-
-        //exposing individual entries just in case
-        ccda_vitals_entry: __webpack_require__(23).vitalSignsEntry(version)[1],
-        ccda_medications_entry: __webpack_require__(12).medicationsEntry(version)[1],
-        ccda_problems_entry: __webpack_require__(24).problemsEntry(version)[1],
-        ccda_immunizations_entry: __webpack_require__(25).immunizationsEntry(version)[1],
-        ccda_results_entry: __webpack_require__(22).resultsEntry(version)[1],
-        ccda_allergies_entry: __webpack_require__(26).allergiesEntry(version)[1],
-        ccda_encounters_entry: __webpack_require__(27).encountersEntry(version)[1],
-        ccda_procedures_entry: __webpack_require__(28).proceduresEntry(version)[1],
-        ccda_plan_of_care_entry: __webpack_require__(29).plan_of_care_entry(version)[1],
-        ccda_payers_entry: __webpack_require__(30).payers_entry(version)[1],
-        ccda_functional_statuses_entry: __webpack_require__(32).functionalStatusSection(version)[1],
-        ccda_hospital_discharge_medications_entry: __webpack_require__(31).hospital_discharge_medications_section(version)[1],
+        process: process,
+        section: section
     };
-};
 
-var componentRouter = function (componentName, type) {
+})();
+;
 
-    if (componentName) {
-        return generateComponents(type["type"])[componentName];
-    } else {
+/*
+ * ...
+ */
 
-        if (type["type"] === 'c32') {
-            return generateComponents(type["type"]).c32_ccd;
-        } else if (type["type"] === 'cda') {
-            return generateComponents(type["type"]).cda_ccd;
-        } else {
-            return generateComponents(type["type"]).ccda_ccd;
-        }
-    }
-};
+Documents.CCD = (function () {
 
-module.exports.componentRouter = componentRouter;
-
-
-/***/ }),
-/* 67 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var component = __webpack_require__(0).component;
-var shared = __webpack_require__(7);
-
-var exportCCD = function (version) {
-    var patient = __webpack_require__(68).patient;
-    var resultsSection = __webpack_require__(69).resultsSection(version)[0];
-    var problemsSection = __webpack_require__(70).problemsSection(version)[0];
-    var encountersSection = __webpack_require__(71).encountersSection(version)[0];
-    var proceduresSection = __webpack_require__(72).proceduresSection(version)[0];
-    var medicationsSection = __webpack_require__(73).medicationsSection(version)[0];
-    var providersSection = __webpack_require__(74).providersSection(version)[0];
-    var payers_section = __webpack_require__(75).payers_section(version)[0];
-
-    return component.define("CCD")
-        .fields([
-            ["meta", "0..1", ".", shared.metaData],
-            ["demographics", "1..1", "(/ | //h:recordTarget/h:patientRole)[last()]", patient],
-            ["providers", "0..*", "//h:documentationOf/h:serviceEvent/h:performer", providersSection],
-            ["problems", "0..1", problemsSection.xpath(), problemsSection],
-            ["encounters", "0..1", encountersSection.xpath(), encountersSection],
-            ["medications", "0..1", medicationsSection.xpath(), medicationsSection],
-            ["procedures", "0..1", proceduresSection.xpath(), proceduresSection],
-            ["results", "0..1", resultsSection.xpath(), resultsSection],
-            ["payers", "0..1", payers_section.xpath(), payers_section],
-        ]);
-
-};
-
-exports.CCD = exportCCD;
-
-
-/***/ }),
-/* 68 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var shared = __webpack_require__(7);
-var processor = __webpack_require__(0).processor;
-var component = __webpack_require__(0).component;
-
-var Guardian = component.define("Guardian")
-    .fields([
-        ["relation", "0..1", "h:code", shared.ConceptDescriptor],
-        ["addresses", "0..*", "h:addr", shared.Address],
-        ["names", "1..*", "h:guardianPerson/h:name", shared.IndividualName],
-        ["phone", "0..*", shared.phone.xpath(), shared.phone],
-        ["email", "0..*", shared.email.xpath(), shared.email],
-    ]);
-
-var LanguageCommunication = component.define("LanguageCommunication")
-    .fields([
-        ["language", "1..1", "h:languageCode", shared.ConceptDescriptor],
-        ["preferred", "1..1", "h:preferenceInd/@value", processor.asBoolean],
-        ["mode", "0..1", "h:modeCode", shared.ConceptDescriptor],
-        ["proficiency", "0..1", "h:proficiencyLevelCode", shared.ConceptDescriptor]
-    ]);
-
-exports.patient = component.define("Patient")
-    .fields([
-        ["name", "1..1", "h:patient/h:name", shared.IndividualName],
-        ["dob", "1..1", "h:patient/h:birthTime", shared.EffectiveTime],
-        ["gender", "1..1", "h:patient/h:administrativeGenderCode", shared.ConceptDescriptor],
-        ["identifiers", "1..*", "h:id", shared.Identifier],
-        ["marital_status", "0..1", "h:patient/h:maritalStatusCode", shared.ConceptDescriptor],
-        ["addresses", "0..*", "h:addr", shared.Address],
-        ["phone", "0..*", shared.phone.xpath(), shared.phone],
-        ["email", "0..*", shared.email.xpath(), shared.email],
-        ["race", "0..1", "h:patient/h:raceCode", shared.ConceptDescriptor],
-        ["ethnicity", "0..1", "h:patient/h:ethnicGroupCode", shared.ConceptDescriptor],
-        ["languages", "0..*", "h:patient/h:languageCommunication", LanguageCommunication],
-        ["religion", "0..1", "h:patient/h:religiousAffiliationCode/@code", shared.ConceptDescriptor],
-        ["birthplace", "0..1", "h:patient/h:birthplace/h:place/h:addr", shared.Address],
-        ["guardians", "0..*", "h:patient/h:guardian", Guardian]
-    ]);
-
-
-/***/ }),
-/* 69 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var shared = __webpack_require__(7);
-var component = __webpack_require__(0).component;
-var cleanup = __webpack_require__(9);
-var bbm = __webpack_require__(1);
-
-var exportResultsSection = function (version) {
-    var clinicalStatementsIDs = bbm.CCDA["statements" + version];
-    var sectionIDs = bbm.CCDA["sections" + version];
-
-    var referenceRange = component.define('referenceRange')
-        .fields([
-            ["low", "0..1", "h:value/h:low/@value"],
-            ["high", "0..1", "h:value/h:high/@value"],
-            ["unit", "0..1", "h:value/h:low/@unit"],
-            ["range", "0..1", "h:text/text()"]
-        ]);
-
-    var ResultObservation = component.define("ResultObservation")
-        .templateRoot("2.16.840.1.113883.10.20.1.31")
-        .fields([
-            ["identifiers", "0..*", "h:id", shared.Identifier],
-            ["result", "1..1", "h:code", shared.ConceptDescriptor],
-            ["date_time", "1..1", "h:effectiveTime", shared.EffectiveTime],
-            ["physicalQuantity", "1..1", "h:value[@xsi:type='PQ']", shared.PhysicalQuantity],
-            ["status", "1..1", "h:statusCode/@code"],
-            ["text", "0..1", "h:value[@xsi:type='ST']"],
-            ["reference_range", "0..1", "h:referenceRange/h:observationRange", referenceRange],
-            //["codedValue", "0..1", "h:value[@xsi:type='CD']", shared.ConceptDescriptor],
-            //["freeTextValue", "0..1", "h:text", shared.TextWithReference],
-            ["interpretations", "0..*", "h:interpretationCode[@codeSystem='2.16.840.1.113883.5.83']", shared.ConceptDescriptor]
-        ]);
-    //ResultObservation.cleanupStep(cleanup.extractAllFields(['resultName']));
-
-    // TODO: Accomodating both PQ and CD values needed
-    ResultObservation.cleanupStep(cleanup.extractAllFields(['physicalQuantity']));
-    //ResultObservation.cleanupStep(cleanup.extractAllFields(['codedValue']));
-
-    var ResultsOrganizer = component.define("ResultsOrganizer")
-        .templateRoot("2.16.840.1.113883.10.20.1.32")
-        .fields([
-            ["identifiers", "0..*", "h:id", shared.Identifier],
-            ["result_set", "0..1", "h:code", shared.ConceptDescriptor],
-            ["results", "1..*", ResultObservation.xpath(), ResultObservation]
-        ]);
-    //ResultsOrganizer.cleanupStep(cleanup.extractAllFields(['panelName']));
-
-    var resultsSection = component.define("resultsSection");
-    resultsSection.templateRoot(['2.16.840.1.113883.10.20.1.14']); // .1 for "entries required"
-    resultsSection.fields([
-        ["panels", "0..*", ResultsOrganizer.xpath(), ResultsOrganizer]
-    ]);
-    resultsSection.cleanupStep(cleanup.replaceWithField('panels'));
-
-    return [resultsSection, ResultsOrganizer];
-};
-
-exports.resultsSection = exportResultsSection;
-exports.resultsEntry = exportResultsSection;
-
-
-/***/ }),
-/* 70 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var shared = __webpack_require__(7);
-var component = __webpack_require__(0).component;
-var cleanup = __webpack_require__(9);
-var bbm = __webpack_require__(1);
-
-var exportProblemsSection = function (version) {
-    var sectionIDs = bbm.CCDA["sections" + version];
-    var clinicalStatementsIDs = bbm.CCDA["statements" + version];
-
-    //These three elements aren't used right now, but can be refactored to use in standardized way.
-    var AgeObservation = component.define("AgeObservation")
-        .templateRoot("2.16.840.1.113883.10.20.1.38");
-
-    var ProblemStatus = component.define("ProblemStatus")
-        .templateRoot("2.16.840.1.113883.10.20.1.50")
-        .fields([
-            ["name", "0..1", "h:value/@displayName"],
-            ["date_time", "0..1", "h:effectiveTime", shared.EffectiveTime],
-        ]);
-
-    var ProblemObservation = component.define("ProblemObservation")
-        .fields([
-            ["code", "0..1", "../h:value", shared.ConceptDescriptor],
-            ["problem_text", "0..1", "../h:text", shared.TextWithReference],
-            ["date_time", "0..1", "../h:effectiveTime", shared.EffectiveTime],
-        ]).cleanupStep(cleanup.augmentObservation).cleanupStep(cleanup.removeField("problem_text"));
-
-    //TODO:  Cleanup/investigate negation status.
-    var ProblemConcernAct = component.define("ProblemConcernAct")
-        .fields([
-            ["date_time", "0..1", "h:effectiveTime", shared.EffectiveTime],
-            ["identifiers", "0..*", "h:entryRelationship/h:observation/h:id", shared.Identifier],
-            ["negation_indicator", "0..1", "h:entryRelationship/h:observation", shared.NegationIndicator],
-            ["problem", "1:1", "h:entryRelationship/h:observation/h:value", ProblemObservation],
-            ["onset_age", "0..1", "h:entryRelationship/h:observation/h:entryRelationship/h:observation/h:templateId[@root='2.16.840.1.1 13883.10.20.1.38']/../h:value/@value"],
-            ["onset_age_unit", "0..1", "h:entryRelationship/h:observation/h:entryRelationship/h:observation/h:templateId[@root='2.16.840.1.1 13883.10.20.1.38']/../h:value", shared.AgeDescriptor],
-            ["status", "0..1", ProblemStatus.xpath(), ProblemStatus],
-            //Patient Status not supported.
-            //["patient_status", "0..1", "h:entryRelationship/h:observation/h:entryRelationship/h:observation/h:templateId[@root='2.16.840.1.113883.10.20.22.4.5']/../h:value/@displayName"],
-            ["source_list_identifiers", "0..*", "h:id", shared.Identifier],
-        ]);
-
-    var NonProblemObservation = ProblemConcernAct
-        .define("ProblemObservation");
-
-    var ProblemOrganizer = component.define("ProblemOrganizer")
-        .templateRoot(["2.16.840.1.113883.10.20.1.27"]);
-
-    var problemsSection = component.define("problemsSection");
-    problemsSection.templateRoot(["2.16.840.1.113883.10.20.1.11"]); // coded entries required
-    problemsSection.fields([
-        ["problems", "0..*", ProblemOrganizer.xpath(), ProblemConcernAct],
-    ]);
-
-    problemsSection.cleanupStep(cleanup.replaceWithField("problems"));
-    return [problemsSection, ProblemConcernAct];
-};
-
-exports.problemsSection = exportProblemsSection;
-exports.problemsEntry = exportProblemsSection;
-
-
-/***/ }),
-/* 71 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var shared = __webpack_require__(7);
-var component = __webpack_require__(0).component;
-var cleanup = __webpack_require__(9);
-var bbm = __webpack_require__(1);
-
-var exportEncountersSection = function (version) {
-    var sectionIDs = bbm.CCDA["sections" + version];
-    var clinicalStatementsIDs = bbm.CCDA["statements" + version];
-
-    var finding = component.define("finding");
-    finding.templateRoot("2.16.840.1.113883.10.20.1.28");
-    finding.fields([
-        ["identifiers", "1..*", "h:id", shared.Identifier],
-        ["value", "1..1", "h:value", shared.ConceptDescriptor],
-        ["date_time", "1..1", "h:effectiveTime", shared.EffectiveTime]
-    ]);
-
-    // Iff needed add this later by refactoring Problem Observation from Problems.  They should share.
-    //var diagnosis = component.define("diagnosis");
-    //finding.templateRoot(['2.16.840.1.113883.10.20.22.4.80']);
-    //finding.fields([
-    //  ["code", "1..1", "h:code", shared.ConceptDescriptor]
-    //]);
-    //finding.cleanupStep(cleanup.extractAllFields(['code']));
-
-    var activity = component.define('activity');
-    activity.templateRoot(["2.16.840.1.113883.10.20.1.21"]);
-    activity.fields([
-        ["encounter", "1..1", "h:code", shared.ConceptDescriptor],
-        ["identifiers", "0..*", "h:id", shared.Identifier],
-        ["date_time", "1..1", "h:effectiveTime", shared.EffectiveTime],
-        ["performers", "0..*", "h:performer/h:assignedEntity", shared.assignedEntity],
-        ["locations", "0..*", "h:participant/h:participantRole", shared.serviceDeliveryLocation],
-        ["findings", "0..*", finding.xpath(), finding]
-        //["diagnoses", "0..*", diagnosis.xpath(), diagnosis]
-    ]);
-
-    var encountersSection = component.define('encountersSection');
-    encountersSection.templateRoot(["2.16.840.1.113883.10.20.1.3"]);
-    encountersSection.fields([
-        ["activity", "0..*", activity.xpath(), activity]
-    ]);
-    encountersSection.cleanupStep(cleanup.replaceWithField(["activity"]));
-    return [encountersSection, activity];
-};
-exports.encountersSection = exportEncountersSection;
-exports.encountersEntry = exportEncountersSection;
-
-
-/***/ }),
-/* 72 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var shared = __webpack_require__(7);
-var component = __webpack_require__(0).component;
-var cleanup = __webpack_require__(9);
-var bbm = __webpack_require__(1);
-
-var exportProceduresSection = function (version) {
-    var sectionIDs = bbm.CCDA["sections" + version];
-    var clinicalStatementsIDs = bbm.CCDA["statements" + version];
-
-    var entry = component.define('entry');
-    entry.templateRoot(["2.16.840.1.113883.10.20.1.29"]);
-    entry.fields([
-        ["procedure", "1..1", "h:code", shared.ConceptDescriptor],
-        ["identifiers", "0..*", "h:id", shared.Identifier],
-        ["status", "1..1", "h:statusCode", shared.simplifiedCodeOID('2.16.840.1.113883.11.20.9.22')],
-        ["date_time", "0..1", "h:effectiveTime", shared.EffectiveTime],
-        ["body_sites", "0..*", "h:targetSiteCode", shared.ConceptDescriptor],
-
-        //Doesn't appear in sample data.
-        //["specimen", "0..1", "h:specimen", ProcedureSpecimen],
-        //Doesn't appear in sample data.
-        //["priority", "0..1", "h:priorityCode", shared.ConceptDescriptor],
-        ["performers", "0..*", "h:performer/h:assignedEntity", shared.assignedEntity],
-        //Doesn't appear in sample data.
-        //["locations", "0..*", "h:participant/h:participantRole", shared.serviceDeliveryLocation],
-        ['procedure_type', "1..1", "h:templateId/@root"]
-    ]);
-
-    entry.cleanupStep(function () {
-        var typeMap = {
-            "2.16.840.1.113883.10.20.1.29": "procedure" // ccda-r1
-        };
-        var t = this.js['procedure_type'];
-        this.js['procedure_type'] = typeMap[t];
-    });
-
-    var proceduresSection = component.define('proceduresSection');
-    proceduresSection.templateRoot(["2.16.840.1.113883.10.20.1.12"]);
-    proceduresSection.fields([
-        ["entry", "0..*", entry.xpath(), entry]
-    ]);
-    proceduresSection.cleanupStep(cleanup.replaceWithField('entry'));
-    return [proceduresSection, entry];
-};
-
-exports.proceduresSection = exportProceduresSection;
-exports.proceduresEntry = exportProceduresSection;
-
-
-/***/ }),
-/* 73 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var shared = __webpack_require__(7);
-var component = __webpack_require__(0).component;
-var cleanup = __webpack_require__(9);
-var processor = __webpack_require__(0).processor;
-var bbm = __webpack_require__(1);
-var _ = __webpack_require__(3);
-
-var exportMedicationsSection = function (version) {
-    var sectionIDs = bbm.CCDA["sections" + version];
-    var clinicalStatementsIDs = bbm.CCDA["statements" + version];
-
-    var MedicationInterval = component.define("MedicationInterval")
-        .fields([
-            ["phase", "0..1", "./h:phase", shared.EffectiveTime],
-            ["period", "0..1", "./h:period", shared.PhysicalQuantity],
-            ["alignment", "0..1", "./@alignment"],
-            ["frequency", "0..1", "./@institutionSpecified", processor.asBoolean],
-            ["event", "0..1", "./h:event/@code", shared.SimpleCode("2.16.840.1.113883.5.139")],
-            ["event_offset", "0..1", "./h:offset", shared.EventOffset]
-        ]);
-
-    var MedicationAdministration = component.define("MedicationAdministration")
-        .fields([
-            ["route", "0..1", "h:routeCode", shared.ConceptDescriptor],
-            ["site", "0..1", "h:approachSiteCode", shared.ConceptDescriptor],
-            ["form", "0..1", "h:administrationUnitCode", shared.ConceptDescriptor],
-            ["dose", "0..1", "h:doseQuantity", shared.PhysicalQuantity],
-            ["rate", "0..1", "h:rateQuantity", shared.PhysicalQuantity],
-            ["dose_restriction", "0..1", "h:maxDoseQuantity", shared.PhysicalQuantity],
-            ["interval", "0..1", "h:effectiveTime[@operator='A']", MedicationInterval],
-        ]);
-
-    var MedicationIndication = component.define("MedicationIndication")
-        .fields([
-            ["identifiers", "0..*", "h:id", shared.Identifier],
-            ["code", "0..1", "h:code", shared.ConceptDescriptor],
-            ["date_time", "0..1", "h:effectiveTime", shared.EffectiveTime],
-            ["value", "0..1", "h:value", shared.ConceptDescriptor]
-        ]);
-
-    var MedicationPrecondition = component.define("MedicationPrecondition")
-        .fields([
-            ["code", "0..1", "h:code", shared.ConceptDescriptor],
-            ["text", "0..1", "h:text"],
-            ["value", "0..1", "h:value", shared.ConceptDescriptor]
-        ]);
-
-    var author = component.define("author")
-        .fields([
-            ["date_time", "0..1", "h:time", shared.EffectiveTime],
-            ["identifiers", "0..*", "h:assignedAuthor/h:id", shared.Identifier],
-            ["organization", "0..1", "h:assignedAuthor/h:representedOrganization", shared.Organization]
-        ]);
-
-    var MedicationInformation = component.define("MedicationInformation")
-        .templateRoot("2.16.840.1.113883.10.20.22.4.23")
-        .fields([
-            ["identifiers", "0..*", "h:id", shared.Identifier],
-            ["unencoded_name", "0..1", "h:manufacturedMaterial/h:code/h:originalText", shared.TextWithReference],
-            ["product", "1..1", "h:manufacturedMaterial/h:code", shared.ConceptDescriptor],
-            ["manufacturer", "0..1", "h:manufacturerOrganization/h:name"]
-        ]);
-
-    var MedicationSupplyOrder = component.define("MedicationSupplyOrder")
-        .fields([
-            ["identifiers", "0..*", "h:assignedEntity/h:id", shared.Identifier],
-            ["date_time", "0..1", "h:effectiveTime", shared.EffectiveTime],
-            ["repeatNumber", "0..1", "h:repeatNumber/@value"],
-            ["quantity", "0..1", "h:quantity/@value"],
-            ["status", "0..1", "h:status/@code"],
-            ["author", "0..1", "h:author", author] //, instructions use references, which are not supported (also samples don't have good data for it)
-            //["instructions", "0..1", "h:entryRelationship[@typeCode='SUBJ']/h:act", MedicationInstructions]
-        ]);
-
-    var MedicationPerformer = component.define("MedicationPerformer")
-        .fields([
-            ["identifiers", "0..*", "h:assignedEntity/h:id", shared.Identifier],
-            ["address", "0..*", "h:assignedEntity/h:addr", shared.Address],
-            ["phone", "0..1", "h:assignedEntity/" + shared.phone.xpath(), shared.phone],
-            ["organization", "0..*", "h:assignedEntity/h:representedOrganization", shared.Organization]
-        ]);
     /*
-        var MedicationDrugVehicle = component.define("MedicationDrugVehicle")
-            .templateRoot("2.16.840.1.113883.10.20.22.4.24")
-            .fields([
-                ["playingEntity", "0..1", "h:playingEntity/h:code", shared.ConceptDescriptor]
-            ]).cleanupStep(cleanup.extractAllFields(["drug_vehicle"]));
-*/
-    var MedicationInstructions = component.define("MedicationInstructions")
-        .fields([
-            ["code", "0..1", "../h:code", shared.ConceptDescriptor],
-            ["freeText", "0..1", "../h:text", shared.TextWithReference]
-        ]);
+     * Preprocesses the CCDAR2 document
+     */
+    var process = function (ccda) {
+        ccda.section = section;
+        return ccda;
+    };
 
-    var MedicationDispense = component.define("MedicationDispense")
-        .templateRoot("2.16.840.1.113883.10.20.22.4.18")
-        .fields([
-            ["identifiers", "0..*", "h:id", shared.Identifier],
-            ["performer", "0..1", "h:performer", MedicationPerformer],
-            ["supply", "0..1", "h:entryRelationship[@typeCode='REFR']/h:supply", MedicationSupplyOrder]
-        ]);
 
-    var MedicationActivity = component.define("MedicationActivity")
-        .templateRoot("2.16.840.1.113883.10.20.1.34")
-        .fields([
-            ["date_time", "0..1", "h:effectiveTime[not (@operator='A')]", shared.EffectiveTime],
-            ["identifiers", "0..*", "h:id", shared.Identifier],
-            ["status", "1..1", "./../h:supply/@moodCode"],
-            //["sig", "0..1", "h:text", shared.TextWithReference],
-            ["product", "1..1", "h:product/h:manufacturedProduct", MedicationInformation],
-            ["supply", "0..1", "./../h:supply", MedicationSupplyOrder],
-            //["administration", "0..1", "../h:substanceAdministration", MedicationAdministration],
-            //["performer", "0..1", "h:performer", MedicationPerformer],
-            //["drug_vehicle", "0..1", "h:participant[@typeCode='CSM']/h:participantRole/h:playingEntity[@classCode='MMAT']/h:code", shared.ConceptDescriptor],
-            //["precondition", "1..1", "h:precondition/h:criterion", MedicationPrecondition],
-            //["indication", "0..1", "h:entryRelationship[@typeCode='RSON']/h:observation", MedicationIndication],
-            //["instructions", "0..1", "h:entryRelationship[@typeCode='REFR']/h:supply/*/*/h:templateId[@root='2.16.840.1.113883.10.20.22.4.20']", MedicationInstructions],
-            //["dispense", "0..1", MedicationDispense.xpath(), MedicationDispense]
-        ])
-        //.cleanupStep(Cleanup.extractAllFields(["medicationName"]))
-        .cleanupStep(function () {
+    /*
+     * Finds the section of a CCDA document
+     */
+    var section = function (name) {
+        var el, entries = Documents.entries;
 
-            //Cleanup Status.
+        switch (name) {
+            case 'document':
+                return this.template('2.16.840.1.113883.10.20.22.1.2');
+            case 'demographics':
+                return this.template('2.16.840.1.113883.10.20.22.1.2');
+            case 'health_concerns_document':
+                el = this.template('2.16.840.1.113883.10.20.22.2.58');
+                el.entries = entries;
+                return el;
+            case 'goals':
+                el = this.template('2.16.840.1.113883.10.20.22.2.60');
+                el.entries = entries;
+                return el;
+            case 'interventions':
+                el = this.template('2.16.840.1.113883.10.20.21.2.3');
+                el.entries = entries;
+                return el;
+            case 'health_status_outcomes':
+                el = this.template('2.16.840.1.113883.10.20.22.2.61');
+                el.entries = entries;
+                return el;
+        }
 
-            if (_.get(this, "js.status") === "EVN") {
-                this.js.status = "Completed";
-            }
-            if (_.get(this, "js.status") === "INT") {
-                this.js.status = "Prescribed";
-            }
+        return null;
+    };
 
-            // separate out two effectiveTimes
 
-            /*
-          // 1.  startDate --- endDate
-          var range = this.js.times.filter(function(t){
-            return -1 === ['PIVL_TS', 'EIVL_TS'].indexOf(t.js.xsitype);
-          });
+    return {
+        process: process,
+        section: section
+    };
 
-          // 2.  dosing interval
-          var period= this.js.times.filter(function(t){
-            return -1 !== ['PIVL_TS', 'EIVL_TS'].indexOf(t.js.xsitype);
-          });
+})();
+;
 
-          delete this.js.times;
+/*
+ * ...
+ */
 
-          if (range.length > 0) {
-            this.js.dateRange = range[0];
+/* exported Generators */
+var Generators = (function () {
+  
+  var method = function () {};
+
+  /* Import ejs if we're in Node. Then setup custom formatting filters
+   */
+  if (true) {
+    if (typeof module !== 'undefined' && module.exports) {
+      ejs = __webpack_require__(28);
+    }
+  }
+
+  if (typeof ejs !== 'undefined') {
+    /* Filters are automatically available to ejs to be used like "... | hl7Date"
+     * Helpers are functions that we'll manually pass in to ejs.
+     * The intended distinction is that a helper gets called with regular function-call syntax
+     */
+    var pad = function(number) {
+      if (number < 10) {
+        return '0' + number;
+      }
+      return String(number);
+    };
+
+    ejs.filters.hl7Date = function(obj) {
+      try {
+          if (obj === null || obj === undefined) { return 'nullFlavor="UNK"'; }
+          var date = new Date(obj);
+          if (isNaN(date.getTime())) { return obj; }
+
+          var dateStr = null;
+          if (date.getHours() || date.getMinutes() || date.getSeconds()) {
+            // If there's a meaningful time, output a UTC datetime
+            dateStr = date.getUTCFullYear() +
+              pad( date.getUTCMonth() + 1 ) +
+              pad( date.getUTCDate() );
+            var timeStr = pad( date.getUTCHours() ) +
+              pad( date.getUTCMinutes() ) +
+              pad ( date.getUTCSeconds() ) +
+              "+0000";
+            return 'value="' + dateStr + timeStr + '"';
+           
+          } else {
+            // If there's no time, don't apply timezone tranformations: just output a date
+            dateStr = String(date.getFullYear()) +
+              pad( date.getMonth() + 1 ) +
+              pad( date.getDate() );
+            return 'value="' + dateStr + '"';
           }
 
-          if (period.length > 0) {
-            this.js.dosePeriod = period[0].js.period;
-          }*/
+      } catch (e) {
+          return obj;
+      }
+    };
+
+    var escapeSpecialChars = function(s) {
+      return s.replace(/</g, '&lt;')
+              .replace(/>/g, '&gt;')
+              .replace(/&/g, '&amp;')
+              .replace(/"/g, '&quot;')
+              .replace(/'/g, '&apos;');
+    };
+
+    ejs.filters.hl7Code = function(obj) {
+      if (!obj) { return ''; }
+
+      var tag = '';
+      var name = obj.name || '';
+      if (obj.name) { tag += 'displayName="'+escapeSpecialChars(name)+'"'; }
+
+      if (obj.code) {
+        tag += ' code="'+obj.code+'"';
+        if (obj.code_system) { tag += ' codeSystem="'+escapeSpecialChars(obj.code_system)+'"'; }
+        if (obj.code_system_name) { tag += ' codeSystemName="' +
+                                        escapeSpecialChars(obj.code_system_name)+'"'; }
+      } else {
+        tag += ' nullFlavor="UNK"';
+      }
+
+      if (!obj.name && ! obj.code) {
+        return 'nullFlavor="UNK"';
+      }
+      
+      return tag;
+    };
+
+    ejs.filters.emptyStringIfFalsy = function(obj) {
+      if (!obj) { return ''; }
+      return obj;
+    };
+
+    if (!ejs.helpers) ejs.helpers = {};
+    ejs.helpers.simpleTag = function(tagName, value) {
+      if (value) {
+        return "<"+tagName+">"+value+"</"+tagName+">";
+      } else {
+        return "<"+tagName+" nullFlavor=\"UNK\" />";
+      }
+    };
+
+    ejs.helpers.addressTags = function(addressDict) {
+      if (!addressDict) {
+        return '<streetAddressLine nullFlavor="NI" />\n' +
+                '<city nullFlavor="NI" />\n' +
+                '<state nullFlavor="NI" />\n' +
+                '<postalCode nullFlavor="NI" />\n' +
+                '<country nullFlavor="NI" />\n';
+      }
+      
+      var tags = '';
+      if (!addressDict.street.length) {
+        tags += ejs.helpers.simpleTag('streetAddressLine', null) + '\n';
+      } else {
+        for (var i=0; i<addressDict.street.length; i++) {
+          tags += ejs.helpers.simpleTag('streetAddressLine', addressDict.street[i]) + '\n';
+        }
+      }
+      tags += ejs.helpers.simpleTag('city', addressDict.city) + '\n';
+      tags += ejs.helpers.simpleTag('state', addressDict.state) + '\n';
+      tags += ejs.helpers.simpleTag('postalCode', addressDict.zip) + '\n';
+      tags += ejs.helpers.simpleTag('country', addressDict.country) + '\n';
+      return tags;
+    };
+
+    ejs.helpers.nameTags = function(nameDict) {
+      if (!nameDict) {
+        return '<given nullFlavor="NI" />\n' +
+                '<family nullFlavor="NI" />\n';
+      }
+
+      var tags = '';
+      if (nameDict.prefix) {
+        tags += ejs.helpers.simpleTag('prefix', nameDict.prefix) + '\n';
+      }
+      if (!nameDict.given.length) {
+        tags += ejs.helpers.simpleTag('given', null) + '\n';
+      } else {
+        for (var i=0; i<nameDict.given.length; i++) {
+          tags += ejs.helpers.simpleTag('given', nameDict.given[i]) + '\n';
+        }
+      }
+      tags += ejs.helpers.simpleTag('family', nameDict.family) + '\n';
+      if (nameDict.suffix) {
+        tags += ejs.helpers.simpleTag('suffix', nameDict.suffix) + '\n';
+      }
+      return tags;
+    };
+
+  }
+  
+  return {
+    method: method
+  };
+  
+})();
+;
+
+/*
+ * ...
+ */
+
+Generators.C32 = (function () {
+  
+  /*
+   * Generates a C32 document
+   */
+  var run = function (json, template, testingMode) {
+    /* jshint unused: false */ // only until this stub is actually implemented
+    console.log("C32 generation is not implemented yet");
+    return null;
+  };
+  
+  return {
+    run: run
+  };
+  
+})();
+;
+
+/*
+ * ...
+ */
+
+Generators.CCDA = (function () {
+  
+  /*
+   * Generates a CCDA document
+   * A lot of the EJS setup happens in generators.js
+   *
+   * If `testingMode` is true, we'll set the "now" variable to a specific,
+   * fixed time, so that the expected XML doesn't change across runs
+   */
+  var run = function (json, template, testingMode) {
+    if (!ejs) {
+      console.log("The BB.js Generator (JSON->XML) requires the EJS template package. " +
+                  "Install it in Node or include it before this package in the browser.");
+      return null;
+    }
+    if (!template) {
+      console.log("Please provide a template EJS file for the Generator to use. " +
+                  "Load it via fs.readFileSync in Node or XHR in the browser.");
+      return null;
+    }
+
+    // `now` is actually now, unless we're running this for a test,
+    // in which case it's always Jan 1, 2000 at 12PM UTC
+    var now = (testingMode) ?
+      new Date('2000-01-01T12:00:00Z') : new Date();
+
+    var ccda = ejs.render(template, {
+      filename: 'ccda.xml',
+      bb: json,
+      now: now,
+      tagHelpers: ejs.helpers,
+      codes: Core.Codes
+    });
+    return ccda;
+  };
+  
+  return {
+    run: run
+  };
+  
+})();
+;
+
+/*
+ * ...
+ */
+
+/* exported Parsers */
+var Parsers = (function () {
+  
+  var method = function () {};
+  
+  return {
+    method: method
+  };
+  
+})();
+;
+
+/*
+ * Parser for the C32 document
+ */
+
+Parsers.C32 = (function () {
+  
+  var run = function (c32) {
+    var data = {};
+    
+    data.document              = Parsers.C32.document(c32);
+    data.allergies             = Parsers.C32.allergies(c32);
+    data.demographics          = Parsers.C32.demographics(c32);
+    data.encounters            = Parsers.C32.encounters(c32);
+    data.immunizations         = Parsers.C32.immunizations(c32).administered;
+    data.immunization_declines = Parsers.C32.immunizations(c32).declined;
+    data.results               = Parsers.C32.results(c32);
+    data.medications           = Parsers.C32.medications(c32);
+    data.problems              = Parsers.C32.problems(c32);
+    data.procedures            = Parsers.C32.procedures(c32);
+    data.vitals                = Parsers.C32.vitals(c32);
+    
+    data.json                       = Core.json;
+    data.document.json              = Core.json;
+    data.allergies.json             = Core.json;
+    data.demographics.json          = Core.json;
+    data.encounters.json            = Core.json;
+    data.immunizations.json         = Core.json;
+    data.immunization_declines.json = Core.json;
+    data.results.json               = Core.json;
+    data.medications.json           = Core.json;
+    data.problems.json              = Core.json;
+    data.procedures.json            = Core.json;
+    data.vitals.json                = Core.json;
+
+    // Sections that are in CCDA but not C32... we want to keep the API
+    // consistent, even if the entries are always null
+    data.smoking_status = {
+      date: null,
+      name: null,
+      code: null,
+      code_system: null,
+      code_system_name: null
+    };
+    data.smoking_status.json = Core.json;
+    
+    data.chief_complaint = {
+      text: null
+    };
+    data.chief_complaint.json = Core.json;
+
+    data.care_plan = [];
+    data.care_plan.json = Core.json;
+
+    data.instructions = [];
+    data.instructions.json = Core.json;
+
+    data.functional_statuses = [];
+    data.functional_statuses.json = Core.json;
+
+    // Decorate each section with Title, templateId and text and adds missing sections
+    Parsers.GenericInfo(c32, data);
+
+    return data;
+  };
+
+  return {
+    run: run
+  };
+  
+})();
+;
+
+/*
+ * Parser for the C32 document section
+ */
+
+Parsers.C32.document = function (c32) {
+  
+  var parseDate = Documents.parseDate;
+  var parseName = Documents.parseName;
+  var parseAddress = Documents.parseAddress;
+  var data = {}, el;
+  
+  var doc = c32.section('document');
+
+  // Parse Doc Type Info
+  var templates =  doc.elsByTag('templateId');
+  var rootTemplate = templates[0].attr('root');
+  var secondTemplate;
+  if(templates.length >1)
+    secondTemplate = templates[1].attr('root');
+  else
+    secondTemplate = rootTemplate;
+
+  var loinc = doc.tag('code').attr('code');
+  var templateId = doc.tag('templateId').attr('root');
+  var displayName = doc.tag('code').attr('displayName');
+
+  var nonXml = doc.tag('nonXMLBody');
+  var nonXmlNodes = nonXml.el.childNodes;
+
+  var bodyType = "structured";
+  var nonXmlBody = {
+    type: "",
+    mediaType: "",
+    representation: "",
+    rawText: "",
+    reference: ""
+  };
+
+  if(nonXmlNodes && nonXmlNodes.length > 0) {
+    bodyType = "unstructured";
+    var text = nonXml.tag('text');
+    var mediaType = "";
+    var representation = "";
+    var rawText = "";
+    var reference = "";
+    var type = "";
+
+    // We have an embedded doc
+    if(text && text.attr('mediaType')) {
+      mediaType = text.attr('mediaType');
+      representation = text.attr('representation');
+      rawText = text.val();
+      type = "embedded";
+    }
+
+    if(text && !mediaType) {
+      reference = text.tag('reference').attr('value');
+      type = "reference";
+    }
+    nonXmlBody = {
+      type: type,
+      mediaType: mediaType,
+      representation: representation,
+      rawText: rawText,
+      reference: reference
+    }
+  }
+
+  var docType = {
+    type: "CCDAR2",
+    rootTemplateId: rootTemplate,
+    templateId: secondTemplate,
+    displayName: displayName,
+    loinc: loinc,
+    bodyType: bodyType,
+    nonXmlBody: nonXmlBody
+  };
+  
+  var date = parseDate(doc.tag('effectiveTime').attr('value'));
+  var title = Core.stripWhitespace(doc.tag('title').val());
+  
+  var author = doc.tag('author');
+  el = author.tag('assignedPerson').tag('name');
+  var name_dict = parseName(el);
+  // Sometimes C32s include names that are just like <name>String</name>
+  // and we still want to get something out in that case
+  if (!name_dict.prefix && !name_dict.given.length && !name_dict.family) {
+   name_dict.family = el.val();
+  }
+  
+  el = author.tag('addr');
+  var address_dict = parseAddress(el);
+  
+  el = author.tag('telecom');
+  var work_phone = el.attr('value');
+
+  var documentation_of_list = [];
+  var performers = doc.tag('documentationOf').elsByTag('performer');
+  for (var i = 0; i < performers.length; i++) {
+    el = performers[i].tag('assignedPerson').tag('name');
+    var performer_name_dict = parseName(el);
+    var performer_phone = performers[i].tag('telecom').attr('value');
+    var performer_addr = parseAddress(el.tag('addr'));
+    documentation_of_list.push({
+      name: performer_name_dict,
+      phone: {
+        work: performer_phone
+      },
+      address: performer_addr
+    });
+  }
+
+  el = doc.tag('encompassingEncounter');
+  var location_name = Core.stripWhitespace(el.tag('name').val());
+  var location_addr_dict = parseAddress(el.tag('addr'));
+  
+  var encounter_date = null;
+  el = el.tag('effectiveTime');
+  if (!el.isEmpty()) {
+    encounter_date = parseDate(el.attr('value'));
+  }
+  
+  data = {
+    type: docType,
+    date: date,
+    title: title,
+    author: {
+      name: name_dict,
+      address: address_dict,
+      phone: {
+        work: work_phone
+      }
+    },
+    documentation_of: documentation_of_list,
+    location: {
+      name: location_name,
+      address: location_addr_dict,
+      encounter_date: encounter_date
+    }
+  };
+  
+  return data;
+};
+;
+
+/*
+ * Parser for the C32 allergies section
+ */
+
+Parsers.C32.allergies = function (c32) {
+  
+  var parseDate = Documents.parseDate;
+  var parseName = Documents.parseName;
+  var parseAddress = Documents.parseAddress;
+  var allergies = c32.section('allergies');
+
+  var data = {}, el;
+  data.entries = [];
+  data.displayName = "Allergies";
+  data.templateId = allergies.tag('templateId').attr('root');
+  data.text = allergies.tag('text').val(true);
+
+  allergies.entries().each(function(entry) {
+    
+    el = entry.tag('effectiveTime');
+    var start_date = parseDate(el.tag('low').attr('value')),
+        end_date = parseDate(el.tag('high').attr('value'));
+    
+    el = entry.template('2.16.840.1.113883.3.88.11.83.6').tag('code');
+    var name = el.attr('displayName'),
+        code = el.attr('code'),
+        code_system = el.attr('codeSystem'),
+        code_system_name = el.attr('codeSystemName');
+    
+    // value => reaction_type
+    el = entry.template('2.16.840.1.113883.3.88.11.83.6').tag('value');
+    var reaction_type_name = el.attr('displayName'),
+        reaction_type_code = el.attr('code'),
+        reaction_type_code_system = el.attr('codeSystem'),
+        reaction_type_code_system_name = el.attr('codeSystemName');
+    
+    // reaction
+    el = entry.template('2.16.840.1.113883.10.20.1.54').tag('value');
+    var reaction_name = el.attr('displayName'),
+        reaction_code = el.attr('code'),
+        reaction_code_system = el.attr('codeSystem');
+    
+    // an irregularity seen in some c32s
+    if (!reaction_name) {
+      el = entry.template('2.16.840.1.113883.10.20.1.54').tag('text');
+      if (!el.isEmpty()) {
+        reaction_name = Core.stripWhitespace(el.val());
+      }
+    }
+
+    // severity
+    el = entry.template('2.16.840.1.113883.10.20.1.55').tag('value');
+    var severity = el.attr('displayName');
+    
+    // participant => allergen
+    el = entry.tag('participant').tag('code');
+    var allergen_name = el.attr('displayName'),
+        allergen_code = el.attr('code'),
+        allergen_code_system = el.attr('codeSystem'),
+        allergen_code_system_name = el.attr('codeSystemName');
+
+    // another irregularity seen in some c32s
+    if (!allergen_name) {
+      el = entry.tag('participant').tag('name');
+      if (!el.isEmpty()) {
+        allergen_name = el.val();
+      }
+    }
+    if (!allergen_name) {
+      el = entry.template('2.16.840.1.113883.3.88.11.83.6').tag('originalText');
+      if (!el.isEmpty()) {
+        allergen_name = Core.stripWhitespace(el.val());
+      }
+    }
+    
+    // status
+    el = entry.template('2.16.840.1.113883.10.20.1.39').tag('value');
+    var status = el.attr('displayName');
+    
+    data.entries.push({
+      date_range: {
+        start: start_date,
+        end: end_date
+      },
+      name: name,
+      code: code,
+      code_system: code_system,
+      code_system_name: code_system_name,
+      status: status,
+      severity: severity,
+      reaction: {
+        name: reaction_name,
+        code: reaction_code,
+        code_system: reaction_code_system
+      },
+      reaction_type: {
+        name: reaction_type_name,
+        code: reaction_type_code,
+        code_system: reaction_type_code_system,
+        code_system_name: reaction_type_code_system_name
+      },
+      allergen: {
+        name: allergen_name,
+        code: allergen_code,
+        code_system: allergen_code_system,
+        code_system_name: allergen_code_system_name
+      }
+    });
+  });
+  
+  return data;
+};
+;
+
+/*
+ * Parser for the C32 demographics section
+ */
+
+Parsers.C32.demographics = function (c32) {
+  
+  var parseDate = Documents.parseDate;
+  var parseName = Documents.parseName;
+  var parseAddress = Documents.parseAddress;
+  var data = {}, el;
+  
+  var demographics = c32.section('demographics');
+  
+  var patient = demographics.tag('patientRole');
+  el = patient.tag('patient').tag('name');
+  var patient_name_dict = parseName(el);
+  
+  el = patient.tag('patient');
+  var dob = parseDate(el.tag('birthTime').attr('value')),
+      gender = Core.Codes.gender(el.tag('administrativeGenderCode').attr('code')),
+      marital_status = Core.Codes.maritalStatus(el.tag('maritalStatusCode').attr('code'));
+  
+  el = patient.tag('addr');
+  var patient_address_dict = parseAddress(el);
+  
+  el = patient.tag('telecom');
+  var home = el.attr('value'),
+      work = null,
+      mobile = null;
+  
+  var email = null;
+  
+  var language = patient.tag('languageCommunication').tag('languageCode').attr('code'),
+      race = patient.tag('raceCode').attr('displayName'),
+      ethnicity = patient.tag('ethnicGroupCode').attr('displayName'),
+      religion = patient.tag('religiousAffiliationCode').attr('displayName');
+  
+  el = patient.tag('birthplace');
+  var birthplace_dict = parseAddress(el);
+  
+  el = patient.tag('guardian');
+  var guardian_relationship = el.tag('code').attr('displayName'),
+    guardian_relationship_code = el.tag('code').attr('code'),
+      guardian_home = el.tag('telecom').attr('value');
+  
+  el = el.tag('guardianPerson').tag('name');
+  var guardian_name_dict = parseName(el);
+  
+  el = patient.tag('guardian').tag('addr');
+  var guardian_address_dict = parseAddress(el);
+  
+  el = patient.tag('providerOrganization');
+  var provider_organization = el.tag('name').val(),
+      provider_phone = el.tag('telecom').attr('value'),
+      provider_address_dict = parseAddress(el.tag('addr'));
+  
+  data = {
+    name: patient_name_dict,
+    dob: dob,
+    gender: gender,
+    marital_status: marital_status,
+    address: patient_address_dict,
+    phone: {
+      home: home,
+      work: work,
+      mobile: mobile
+    },
+    email: email,
+    language: language,
+    race: race,
+    ethnicity: ethnicity,
+    religion: religion,
+    birthplace: {
+      state: birthplace_dict.state,
+      zip: birthplace_dict.zip,
+      country: birthplace_dict.country
+    },
+    guardian: {
+      name: {
+        given: guardian_name_dict.given,
+        family: guardian_name_dict.family
+      },
+      relationship: guardian_relationship,
+      relationship_code: guardian_relationship_code,
+      address: guardian_address_dict,
+      phone: {
+        home: guardian_home
+      }
+    },
+    provider: {
+      organization: provider_organization,
+      phone: provider_phone,
+      address: provider_address_dict
+    }
+  };
+  
+  return data;
+};
+;
+
+/*
+ * Parser for the C32 encounters section
+ */
+
+Parsers.C32.encounters = function (c32) {
+  
+  var parseDate = Documents.parseDate;
+  var parseName = Documents.parseName;
+  var parseAddress = Documents.parseAddress;
+  var encounters = c32.section('encounters');
+
+  var data = {}, el;
+  data.entries = [];
+  data.displayName = "Encounters";
+  data.templateId = encounters.tag('templateId').attr('root');
+  data.text = encounters.tag('text').val(true);
+
+  encounters.entries().each(function(entry) {
+    
+    var date = parseDate(entry.tag('effectiveTime').attr('value'));
+    if (!date) {
+      date = parseDate(entry.tag('effectiveTime').tag('low').attr('value'));
+    }
+    
+    el = entry.tag('code');
+    var name = el.attr('displayName'),
+        code = el.attr('code'),
+        code_system = el.attr('codeSystem'),
+        code_system_name = el.attr('codeSystemName'),
+        code_system_version = el.attr('codeSystemVersion');
+    
+    // translation
+    el = entry.tag('translation');
+    var translation_name = el.attr('displayName'),
+        translation_code = el.attr('code'),
+        translation_code_system = el.attr('codeSystem'),
+        translation_code_system_name = el.attr('codeSystemName');
+    
+    // performer
+    el = entry.tag('performer');
+    var performer_name = el.tag('name').val(),
+        performer_code = el.attr('code'),
+        performer_code_system = el.attr('codeSystem'),
+        performer_code_system_name = el.attr('codeSystemName');
+    
+    // participant => location
+    el = entry.tag('participant');
+    var organization = el.tag('name').val(),
+        location_dict = parseAddress(el);
+    location_dict.organization = organization;
+
+    // findings
+    var findings = [];
+    var findingEls = entry.elsByTag('entryRelationship');
+    for (var i = 0; i < findingEls.length; i++) {
+      el = findingEls[i].tag('value');
+      findings.push({
+        name: el.attr('displayName'),
+        code: el.attr('code'),
+        code_system: el.attr('codeSystem')
+      });
+    }
+    
+    data.entries.push({
+      date: date,
+      name: name,
+      code: code,
+      code_system: code_system,
+      code_system_name: code_system_name,
+      code_system_version: code_system_version,
+      findings: findings,
+      translation: {
+        name: translation_name,
+        code: translation_code,
+        code_system: translation_code_system,
+        code_system_name: translation_code_system_name
+      },
+      performer: {
+        name: performer_name,
+        code: performer_code,
+        code_system: performer_code_system,
+        code_system_name: performer_code_system_name
+      },
+      location: location_dict
+    });
+  });
+  
+  return data;
+};
+;
+
+/*
+ * Parser for the C32 immunizations section
+ */
+
+Parsers.C32.immunizations = function (c32) {
+  
+  var parseDate = Documents.parseDate;
+  var parseName = Documents.parseName;
+  var parseAddress = Documents.parseAddress;
+  var administeredData = {}, declinedData = {}, product, el;
+
+  var immunizations = c32.section('immunizations');
+
+  administeredData.entries = [];
+  administeredData.displayName = "Immunizations";
+  administeredData.templateId = immunizations.tag('templateId').attr('root');
+  administeredData.text = immunizations.tag('text').val(true);
+
+  declinedData.entries = [];
+  declinedData.displayName = "Immunizations Declined";
+  declinedData.templateId = immunizations.tag('templateId').attr('root');
+  declinedData.text = immunizations.tag('text').val(true);
+
+
+  
+  immunizations.entries().each(function(entry) {
+    
+    // date
+    el = entry.tag('effectiveTime');
+    var date = parseDate(el.attr('value'));
+    if (!date) {
+      date = parseDate(el.tag('low').attr('value'));
+    }
+
+    // if 'declined' is true, this is a record that this vaccine WASN'T administered
+    el = entry.tag('substanceAdministration');
+    var declined = el.boolAttr('negationInd');
+
+    // product
+    product = entry.template('2.16.840.1.113883.10.20.1.53');
+    el = product.tag('code');
+    var product_name = el.attr('displayName'),
+        product_code = el.attr('code'),
+        product_code_system = el.attr('codeSystem'),
+        product_code_system_name = el.attr('codeSystemName');
+
+    // translation
+    el = product.tag('translation');
+    var translation_name = el.attr('displayName'),
+        translation_code = el.attr('code'),
+        translation_code_system = el.attr('codeSystem'),
+        translation_code_system_name = el.attr('codeSystemName');
+
+    // misc product details
+    el = product.tag('lotNumberText');
+    var lot_number = el.val();
+
+    el = product.tag('manufacturerOrganization');
+    var manufacturer_name = el.tag('name').val();
+    
+    // route
+    el = entry.tag('routeCode');
+    var route_name = el.attr('displayName'),
+        route_code = el.attr('code'),
+        route_code_system = el.attr('codeSystem'),
+        route_code_system_name = el.attr('codeSystemName');
+    
+    // instructions
+    el = entry.template('2.16.840.1.113883.10.20.1.49');
+    var instructions_text = Core.stripWhitespace(el.tag('text').val());
+    el = el.tag('code');
+    var education_name = el.attr('displayName'),
+        education_code = el.attr('code'),
+        education_code_system = el.attr('codeSystem');
+
+    // dose
+    el = entry.tag('doseQuantity');
+    var dose_value = el.attr('value'),
+        dose_unit = el.attr('unit');
+    
+    var data = (declined) ? declinedData : administeredData;
+    data.entries.push({
+      date: date,
+      product: {
+        name: product_name,
+        code: product_code,
+        code_system: product_code_system,
+        code_system_name: product_code_system_name,
+        translation: {
+          name: translation_name,
+          code: translation_code,
+          code_system: translation_code_system,
+          code_system_name: translation_code_system_name
+        },
+        lot_number: lot_number,
+        manufacturer_name: manufacturer_name
+      },
+      dose_quantity: {
+        value: dose_value,
+        unit: dose_unit
+      },
+      route: {
+        name: route_name,
+        code: route_code,
+        code_system: route_code_system,
+        code_system_name: route_code_system_name
+      },
+      instructions: instructions_text,
+      education_type: {
+        name: education_name,
+        code: education_code,
+        code_system: education_code_system
+      }
+    });
+  });
+  
+  return {
+    administered: administeredData,
+    declined: declinedData
+  };
+};
+;
+
+/*
+ * Parser for the C32 results (labs) section
+ */
+
+Parsers.C32.results = function (c32) {
+  
+  var parseDate = Documents.parseDate;
+  var parseName = Documents.parseName;
+  var parseAddress = Documents.parseAddress;
+  var results = c32.section('results');
+
+  var data = {}, el;
+  data.entries = [];
+  data.displayName = "Results";
+  data.templateId = results.tag('templateId').attr('root');
+  data.text = results.tag('text').val(true);
+
+
+  results.entries().each(function(entry) {
+    
+    el = entry.tag('effectiveTime');
+    var panel_date = parseDate(entry.tag('effectiveTime').attr('value'));
+    if (!panel_date) {
+      panel_date = parseDate(entry.tag('effectiveTime').tag('low').attr('value'));
+    }
+    
+    // panel
+    el = entry.tag('code');
+    var panel_name = el.attr('displayName'),
+        panel_code = el.attr('code'),
+        panel_code_system = el.attr('codeSystem'),
+        panel_code_system_name = el.attr('codeSystemName');
+    
+    var observation;
+    var tests = entry.elsByTag('observation');
+    var tests_data = [];
+    
+    for (var i = 0; i < tests.length; i++) {
+      observation = tests[i];
+      
+      // sometimes results organizers contain non-results. we only want tests
+      if (observation.template('2.16.840.1.113883.10.20.1.31').val()) {
+        var date = parseDate(observation.tag('effectiveTime').attr('value'));
+        
+        el = observation.tag('code');
+        var name = el.attr('displayName'),
+            code = el.attr('code'),
+            code_system = el.attr('codeSystem'),
+            code_system_name = el.attr('codeSystemName');
+
+        if (!name) {
+          name = Core.stripWhitespace(observation.tag('text').val());
+        }
+    
+        el = observation.tag('translation');
+        var translation_name = el.attr('displayName'),
+        translation_code = el.attr('code'),
+        translation_code_system = el.attr('codeSystem'),
+        translation_code_system_name = el.attr('codeSystemName');
+    
+        el = observation.tag('value');
+        var value = el.attr('value'),
+            unit = el.attr('unit');
+        // We could look for xsi:type="PQ" (physical quantity) but it seems better
+        // not to trust that that field has been used correctly...
+        if (value && !isNaN(parseFloat(value))) {
+          value = parseFloat(value);
+        }
+        if (!value) {
+          value = el.val(); // look for free-text values
+        }
+    
+        el = observation.tag('referenceRange');
+        var reference_range_text = Core.stripWhitespace(el.tag('observationRange').tag('text').val()),
+            reference_range_low_unit = el.tag('observationRange').tag('low').attr('unit'),
+            reference_range_low_value = el.tag('observationRange').tag('low').attr('value'),
+            reference_range_high_unit = el.tag('observationRange').tag('high').attr('unit'),
+            reference_range_high_value = el.tag('observationRange').tag('high').attr('value');
+        
+        tests_data.push({
+          date: date,
+          name: name,
+          value: value,
+          unit: unit,
+          code: code,
+          code_system: code_system,
+          code_system_name: code_system_name,
+          translation: {
+            name: translation_name,
+            code: translation_code,
+            code_system: translation_code_system,
+            code_system_name: translation_code_system_name
+          },
+          reference_range: {
+            text: reference_range_text,
+            low_unit: reference_range_low_unit,
+            low_value: reference_range_low_value,
+            high_unit: reference_range_high_unit,
+            high_value: reference_range_high_value,
+          }
+        });
+      }
+    }
+    
+    data.entries.push({
+      name: panel_name,
+      code: panel_code,
+      code_system: panel_code_system,
+      code_system_name: panel_code_system_name,
+      date: panel_date,
+      tests: tests_data
+    });
+  });
+  
+  return data;
+};
+;
+
+/*
+ * Parser for the C32 medications section
+ */
+
+Parsers.C32.medications = function (c32) {
+  
+  var parseDate = Documents.parseDate;
+  var medications = c32.section('medications');
+
+  var data = {}, el;
+  data.entries = [];
+  data.displayName = "Medications";
+  data.templateId = medications.tag('templateId').attr('root');
+  data.text = medications.tag('text').val(true);
+  
+  medications.entries().each(function(entry) {
+
+    var text = null;
+    el = entry.tag('substanceAdministration').immediateChildTag('text');
+    if (!el.isEmpty()) {
+      // technically C32s don't use this, but C83s (another CCD) do,
+      // and CCDAs do, so we may see it anyways
+      text = Core.stripWhitespace(el.val());
+    }
+
+    var effectiveTimes = entry.elsByTag('effectiveTime');
+
+    el = effectiveTimes[0]; // the first effectiveTime is the med start date
+    var start_date = null, end_date = null;
+    if (el) {
+      start_date = parseDate(el.tag('low').attr('value'));
+      end_date = parseDate(el.tag('high').attr('value'));
+    }
+
+    // the second effectiveTime might the schedule period or it might just
+    // be a random effectiveTime from further in the entry... xsi:type should tell us
+    el = effectiveTimes[1];
+    var schedule_type = null, schedule_period_value = null, schedule_period_unit = null;
+    if (el && el.attr('xsi:type') === 'PIVL_TS') {
+      var institutionSpecified = el.attr('institutionSpecified');
+      if (institutionSpecified === 'true') {
+        schedule_type= 'frequency';
+      } else if (institutionSpecified === 'false') {
+        schedule_type = 'interval';
+      }
+
+      el = el.tag('period');
+      schedule_period_value = el.attr('value');
+      schedule_period_unit = el.attr('unit');
+    }
+    
+    el = entry.tag('manufacturedProduct').tag('code');
+    var product_name = el.attr('displayName'),
+        product_code = el.attr('code'),
+        product_code_system = el.attr('codeSystem');
+
+    var product_original_text = null;
+    el = entry.tag('manufacturedProduct').tag('originalText');
+    if (!el.isEmpty()) {
+      product_original_text = Core.stripWhitespace(el.val());
+    }
+    // if we don't have a product name yet, try the originalText version
+    if (!product_name && product_original_text) {
+      product_name = product_original_text;
+    }
+
+    // irregularity in some c32s
+    if (!product_name) {
+      el = entry.tag('manufacturedProduct').tag('name');
+      if (!el.isEmpty()) {
+        product_name = Core.stripWhitespace(el.val());
+      }
+    }
+    
+    el = entry.tag('manufacturedProduct').tag('translation');
+    var translation_name = el.attr('displayName'),
+        translation_code = el.attr('code'),
+        translation_code_system = el.attr('codeSystem'),
+        translation_code_system_name = el.attr('codeSystemName');
+    
+    el = entry.tag('doseQuantity');
+    var dose_value = el.attr('value'),
+        dose_unit = el.attr('unit');
+    
+    el = entry.tag('rateQuantity');
+    var rate_quantity_value = el.attr('value'),
+        rate_quantity_unit = el.attr('unit');
+    
+    el = entry.tag('precondition').tag('value');
+    var precondition_name = el.attr('displayName'),
+        precondition_code = el.attr('code'),
+        precondition_code_system = el.attr('codeSystem');
+    
+    el = entry.template('2.16.840.1.113883.10.20.1.28').tag('value');
+    var reason_name = el.attr('displayName'),
+        reason_code = el.attr('code'),
+        reason_code_system = el.attr('codeSystem');
+    
+    el = entry.tag('routeCode');
+    var route_name = el.attr('displayName'),
+        route_code = el.attr('code'),
+        route_code_system = el.attr('codeSystem'),
+        route_code_system_name = el.attr('codeSystemName');
+    
+    // participant/playingEntity => vehicle
+    el = entry.tag('participant').tag('playingEntity');
+    var vehicle_name = el.tag('name').val();
+
+    el = el.tag('code');
+    // prefer the code vehicle_name but fall back to the non-coded one
+    // (which for C32s is in fact the primary field for this info)
+    vehicle_name = el.attr('displayName') || vehicle_name;
+    var vehicle_code = el.attr('code'),
+        vehicle_code_system = el.attr('codeSystem'),
+        vehicle_code_system_name = el.attr('codeSystemName');
+    
+    el = entry.tag('administrationUnitCode');
+    var administration_name = el.attr('displayName'),
+        administration_code = el.attr('code'),
+        administration_code_system = el.attr('codeSystem'),
+        administration_code_system_name = el.attr('codeSystemName');
+    
+    // performer => prescriber
+    el = entry.tag('performer');
+    var prescriber_organization = el.tag('name').val(),
+        prescriber_person = null;
+    
+    data.entries.push({
+      date_range: {
+        start: start_date,
+        end: end_date
+      },
+      text: text,
+      product: {
+        name: product_name,
+        text: product_original_text,
+        code: product_code,
+        code_system: product_code_system,
+        translation: {
+          name: translation_name,
+          code: translation_code,
+          code_system: translation_code_system,
+          code_system_name: translation_code_system_name
+        }
+      },
+      dose_quantity: {
+        value: dose_value,
+        unit: dose_unit
+      },
+      rate_quantity: {
+        value: rate_quantity_value,
+        unit: rate_quantity_unit
+      },
+      precondition: {
+        name: precondition_name,
+        code: precondition_code,
+        code_system: precondition_code_system
+      },
+      reason: {
+        name: reason_name,
+        code: reason_code,
+        code_system: reason_code_system
+      },
+      route: {
+        name: route_name,
+        code: route_code,
+        code_system: route_code_system,
+        code_system_name: route_code_system_name
+      },
+      schedule: {
+        type: schedule_type,
+        period_value: schedule_period_value,
+        period_unit: schedule_period_unit
+      },
+      vehicle: {
+        name: vehicle_name,
+        code: vehicle_code,
+        code_system: vehicle_code_system,
+        code_system_name: vehicle_code_system_name
+      },
+      administration: {
+        name: administration_name,
+        code: administration_code,
+        code_system: administration_code_system,
+        code_system_name: administration_code_system_name
+      },
+      prescriber: {
+        organization: prescriber_organization,
+        person: prescriber_person
+      }
+    });
+  });
+  
+  return data;
+};
+;
+
+/*
+ * Parser for the C32 problems section
+ */
+
+Parsers.C32.problems = function (c32) {
+  
+  var parseDate = Documents.parseDate;
+  var parseName = Documents.parseName;
+  var parseAddress = Documents.parseAddress;
+  var problems = c32.section('problems');
+
+  var data = {}, el;
+  data.entries = [];
+  data.displayName = "Problems";
+  data.templateId = problems.tag('templateId').attr('root');
+  data.text = problems.tag('text').val(true);
+
+  problems.entries().each(function(entry) {
+    
+    el = entry.tag('effectiveTime');
+    var start_date = parseDate(el.tag('low').attr('value')),
+        end_date = parseDate(el.tag('high').attr('value'));
+    
+    el = entry.template('2.16.840.1.113883.10.20.1.28').tag('value');
+    var name = el.attr('displayName'),
+        code = el.attr('code'),
+        code_system = el.attr('codeSystem'),
+        code_system_name = el.attr('codeSystemName');
+
+    // Pre-C32 CCDs put the problem name in this "originalText" field, and some vendors
+    // continue doing this with their C32, even though it's not technically correct
+    if (!name) {
+      el = entry.template('2.16.840.1.113883.10.20.1.28').tag('originalText');
+      if (!el.isEmpty()) {
+        name = Core.stripWhitespace(el.val());
+      }
+    }
+
+    el = entry.template('2.16.840.1.113883.10.20.1.28').tag('translation');
+    var translation_name = el.attr('displayName'),
+        translation_code = el.attr('code'),
+        translation_code_system = el.attr('codeSystem'),
+        translation_code_system_name = el.attr('codeSystemName');
+    
+    el = entry.template('2.16.840.1.113883.10.20.1.50');
+    var status = el.tag('value').attr('displayName');
+    
+    var age = null;
+    el = entry.template('2.16.840.1.113883.10.20.1.38');
+    if (!el.isEmpty()) {
+      age = parseFloat(el.tag('value').attr('value'));
+    }
+    
+    data.entries.push({
+      date_range: {
+        start: start_date,
+        end: end_date
+      },
+      name: name,
+      status: status,
+      age: age,
+      code: code,
+      code_system: code_system,
+      code_system_name: code_system_name,
+      translation: {
+        name: translation_name,
+        code: translation_code,
+        code_system: translation_code_system,
+        code_system_name: translation_code_system_name
+      },
+      comment: null // not part of C32
+    });
+  });
+  
+  return data;
+};
+;
+
+/*
+ * Parser for the C32 procedures section
+ */
+
+Parsers.C32.procedures = function (c32) {
+  
+  var parseDate = Documents.parseDate;
+  var parseName = Documents.parseName;
+  var parseAddress = Documents.parseAddress;
+  var procedures = c32.section('procedures');
+
+  var data = {}, el;
+  data.entries = [];
+  data.displayName = "Procedures";
+  data.templateId = procedures.tag('templateId').attr('root');
+  data.text = procedures.tag('text').val(true);
+  
+  procedures.entries().each(function(entry) {
+    
+    el = entry.tag('effectiveTime');
+    var date = parseDate(el.attr('value'));
+    
+    el = entry.tag('code');
+    var name = el.attr('displayName'),
+        code = el.attr('code'),
+        code_system = el.attr('codeSystem');
+
+    if (!name) {
+      name = Core.stripWhitespace(entry.tag('originalText').val());
+    }
+    
+    // 'specimen' tag not always present
+    el = entry.tag('specimen').tag('code');
+    var specimen_name = el.attr('displayName'),
+        specimen_code = el.attr('code'),
+        specimen_code_system = el.attr('codeSystem');
+    
+    el = entry.tag('performer').tag('addr');
+    var organization = el.tag('name').val(),
+        phone = el.tag('telecom').attr('value');
+    
+    var performer_dict = parseAddress(el);
+    performer_dict.organization = organization;
+    performer_dict.phone = phone;
+    
+    // participant => device
+    el = entry.tag('participant').tag('code');
+    var device_name = el.attr('displayName'),
+        device_code = el.attr('code'),
+        device_code_system = el.attr('codeSystem');
+    
+    data.entries.push({
+      date: date,
+      name: name,
+      code: code,
+      code_system: code_system,
+      specimen: {
+        name: specimen_name,
+        code: specimen_code,
+        code_system: specimen_code_system
+      },
+      performer: performer_dict,
+      device: {
+        name: device_name,
+        code: device_code,
+        code_system: device_code_system
+      }
+    });
+  });
+  
+  return data;
+};
+;
+
+/*
+ * Parser for the C32 vitals section
+ */
+
+Parsers.C32.vitals = function (c32) {
+  
+  var parseDate = Documents.parseDate;
+  var parseName = Documents.parseName;
+  var parseAddress = Documents.parseAddress;
+  var vitals = c32.section('vitals');
+
+  var data = {}, el;
+  data.entries = [];
+  data.displayName = "Vitals";
+  data.templateId = vitals.tag('templateId').attr('root');
+  data.text = vitals.tag('text').val(true);
+  
+  vitals.entries().each(function(entry) {
+    
+    el = entry.tag('effectiveTime');
+    var entry_date = parseDate(el.attr('value'));
+    
+    var result;
+    var results = entry.elsByTag('component');
+    var results_data = [];
+    
+    for (var j = 0; j < results.length; j++) {
+      result = results[j];
+      
+      // Results
+      
+      el = result.tag('code');
+      var name = el.attr('displayName'),
+          code = el.attr('code'),
+          code_system = el.attr('codeSystem'),
+          code_system_name = el.attr('codeSystemName');
+      
+      el = result.tag('value');
+      var value = parseFloat(el.attr('value')),
+          unit = el.attr('unit');
+      
+      results_data.push({
+        name: name,
+        code: code,
+        code_system: code_system,
+        code_system_name: code_system_name,
+        value: value,
+        unit: unit
+      });
+    }
+    
+    data.entries.push({
+      date: entry_date,
+      results: results_data
+    });
+  });
+  
+  return data;
+};
+;
+
+/*
+ * Parser for the CCDA document
+ */
+
+Parsers.CCDA = (function () {
+  
+  var run = function (ccda) {
+    var data = {};
+    
+    data.document              = Parsers.CCDA.document(ccda);
+    data.allergies             = Parsers.CCDA.allergies(ccda);
+    data.care_plan             = Parsers.CCDA.care_plan(ccda);
+    data.chief_complaint       = Parsers.CCDA.free_text(ccda, 'chief_complaint');
+    data.demographics          = Parsers.CCDA.demographics(ccda);
+    data.encounters            = Parsers.CCDA.encounters(ccda);
+    data.functional_statuses   = Parsers.CCDA.functional_statuses(ccda);
+    data.immunizations         = Parsers.CCDA.immunizations(ccda).administered;
+    data.immunization_declines = Parsers.CCDA.immunizations(ccda).declined;
+    data.instructions          = Parsers.CCDA.instructions(ccda);
+    data.results               = Parsers.CCDA.results(ccda);
+    data.medications           = Parsers.CCDA.medications(ccda);
+    data.problems              = Parsers.CCDA.problems(ccda);
+    data.procedures            = Parsers.CCDA.procedures(ccda);
+    data.smoking_status        = Parsers.CCDA.smoking_status(ccda);
+    data.vitals                = Parsers.CCDA.vitals(ccda);
+    
+    data.json                        = Core.json;
+    data.document.json               = Core.json;
+    data.allergies.json              = Core.json;
+    data.care_plan.json              = Core.json;
+    data.chief_complaint.json        = Core.json;
+    data.demographics.json           = Core.json;
+    data.encounters.json             = Core.json;
+    data.functional_statuses.json    = Core.json;
+    data.immunizations.json          = Core.json;
+    data.immunization_declines.json  = Core.json;
+    data.instructions.json           = Core.json;
+    data.results.json                = Core.json;
+    data.medications.json            = Core.json;
+    data.problems.json               = Core.json;
+    data.procedures.json             = Core.json;
+    data.smoking_status.json         = Core.json;
+    data.vitals.json                 = Core.json;
+
+    // Decorate each section with Title, templateId and text and adds missing sections
+    Parsers.GenericInfo(ccda, data);
+
+    return data;
+  };
+
+  return {
+    run: run
+  };
+  
+})();
+;
+
+/*
+ * Parser for the CCDA document section
+ */
+
+Parsers.CCDA.document = function (ccda) {
+  
+  var parseDate = Documents.parseDate;
+  var parseName = Documents.parseName;
+  var parseAddress = Documents.parseAddress;
+  var data = {}, el;
+  
+  var doc = ccda.section('document');
+
+
+  // Parse Doc Type Info
+  var templates =  doc.elsByTag('templateId');
+  var rootTemplate = templates[0].attr('root');
+  var secondTemplate;
+  if(templates.length >1)
+    secondTemplate = templates[1].attr('root');
+  else
+    secondTemplate = rootTemplate;
+
+  var loinc = doc.tag('code').attr('code');
+  var templateId = doc.tag('templateId').attr('root');
+  var displayName = doc.tag('code').attr('displayName');
+
+  var nonXml = doc.tag('nonXMLBody');
+  var nonXmlNodes = nonXml.el.childNodes;
+
+  var bodyType = "structured";
+  var nonXmlBody = {
+    type: "",
+    mediaType: "",
+    representation: "",
+    rawText: "",
+    reference: ""
+  };
+  if(nonXmlNodes && nonXmlNodes.length > 0) {
+    bodyType = "unstructured";
+    var text = nonXml.tag('text');
+    var mediaType = "";
+    var representation = "";
+    var rawText = "";
+    var reference = "";
+    var type = "";
+
+    // We have an embedded doc
+    if(text && text.attr('mediaType')) {
+      mediaType = text.attr('mediaType');
+      representation = text.attr('representation');
+      rawText = text.val();
+      type = "embedded";
+    }
+
+    if(text && !mediaType) {
+       reference = text.tag('reference').attr('value');
+      type = "reference";
+    }
+    nonXmlBody = {
+      type: type,
+      mediaType: mediaType,
+      representation: representation,
+      rawText: rawText,
+      reference: reference
+    }
+  }
+
+  var docType = {
+    type: "CCDAR2",
+    rootTemplateId: rootTemplate,
+    templateId: secondTemplate,
+    displayName: displayName,
+    loinc: loinc,
+    bodyType: bodyType,
+    nonXmlBody: nonXmlBody
+  };
+
+  var date = parseDate(doc.tag('effectiveTime').attr('value'));
+  var title = Core.stripWhitespace(doc.tag('title').val());
+  
+  var author = doc.tag('author');
+  el = author.tag('assignedPerson').tag('name');
+  var name_dict = parseName(el);
+  
+  el = author.tag('addr');
+  var address_dict = parseAddress(el);
+  
+  el = author.tag('telecom');
+  var work_phone = el.attr('value');
+
+  var documentation_of_list = [];
+  var performers = doc.tag('documentationOf').elsByTag('performer');
+  for (var i = 0; i < performers.length; i++) {
+    el = performers[i];
+    var performer_name_dict = parseName(el);
+    var performer_phone = el.tag('telecom').attr('value');
+    var performer_addr = parseAddress(el.tag('addr'));
+    documentation_of_list.push({
+      name: performer_name_dict,
+      phone: {
+        work: performer_phone
+      },
+      address: performer_addr
+    });
+  }
+
+  el = doc.tag('encompassingEncounter').tag('location');
+  var location_name = Core.stripWhitespace(el.tag('name').val());
+  var location_addr_dict = parseAddress(el.tag('addr'));
+  
+  var encounter_date = null;
+  el = el.tag('effectiveTime');
+  if (!el.isEmpty()) {
+    encounter_date = parseDate(el.attr('value'));
+  }
+  
+  data = {
+    type: docType,
+    date: date,
+    title: title,
+    author: {
+      name: name_dict,
+      address: address_dict,
+      phone: {
+        work: work_phone
+      }
+    },
+    documentation_of: documentation_of_list,
+    location: {
+      name: location_name,
+      address: location_addr_dict,
+      encounter_date: encounter_date
+    }
+  };
+  
+  return data;
+};
+;
+
+/*
+ * Parser for the CCDA allergies section
+ */
+
+Parsers.CCDA.allergies = function (ccda) {
+  
+  var parseDate = Documents.parseDate;
+  var parseName = Documents.parseName;
+  var parseAddress = Documents.parseAddress;
+    var allergies = ccda.section('allergies');
+
+    var data = {}, el;
+    data.entries = [];
+    data.displayName = "Allergies";
+    data.templateId = allergies.tag('templateId').attr('root');
+    data.text = allergies.tag('text').val(true);
+  
+  allergies.entries().each(function(entry) {
+    
+    el = entry.tag('effectiveTime');
+    var start_date = parseDate(el.tag('low').attr('value')),
+        end_date = parseDate(el.tag('high').attr('value'));
+    
+    el = entry.template('2.16.840.1.113883.10.20.22.4.7').tag('code');
+    var name = el.attr('displayName'),
+        code = el.attr('code'),
+        code_system = el.attr('codeSystem'),
+        code_system_name = el.attr('codeSystemName');
+    
+    // value => reaction_type
+    el = entry.template('2.16.840.1.113883.10.20.22.4.7').tag('value');
+    var reaction_type_name = el.attr('displayName'),
+        reaction_type_code = el.attr('code'),
+        reaction_type_code_system = el.attr('codeSystem'),
+        reaction_type_code_system_name = el.attr('codeSystemName');
+    
+    // reaction
+    el = entry.template('2.16.840.1.113883.10.20.22.4.9').tag('value');
+    var reaction_name = el.attr('displayName'),
+        reaction_code = el.attr('code'),
+        reaction_code_system = el.attr('codeSystem');
+    
+    // severity
+    el = entry.template('2.16.840.1.113883.10.20.22.4.8').tag('value');
+    var severity = el.attr('displayName');
+    
+    // participant => allergen
+    el = entry.tag('participant').tag('code');
+    var allergen_name = el.attr('displayName'),
+        allergen_code = el.attr('code'),
+        allergen_code_system = el.attr('codeSystem'),
+        allergen_code_system_name = el.attr('codeSystemName');
+
+    // this is not a valid place to store the allergen name but some vendors use it
+    if (!allergen_name) {
+      el = entry.tag('participant').tag('name');
+      if (!el.isEmpty()) {
+        allergen_name = el.val();
+      }
+    }
+    if (!allergen_name) {
+      el = entry.template('2.16.840.1.113883.10.20.22.4.7').tag('originalText');
+      if (!el.isEmpty()) {
+        allergen_name = Core.stripWhitespace(el.val());
+      }
+    }
+    
+    // status
+    el = entry.template('2.16.840.1.113883.10.20.22.4.28').tag('value');
+    var status = el.attr('displayName');
+    
+    data.entries.push({
+      date_range: {
+        start: start_date,
+        end: end_date
+      },
+      name: name,
+      code: code,
+      code_system: code_system,
+      code_system_name: code_system_name,
+      status: status,
+      severity: severity,
+      reaction: {
+        name: reaction_name,
+        code: reaction_code,
+        code_system: reaction_code_system
+      },
+      reaction_type: {
+        name: reaction_type_name,
+        code: reaction_type_code,
+        code_system: reaction_type_code_system,
+        code_system_name: reaction_type_code_system_name
+      },
+      allergen: {
+        name: allergen_name,
+        code: allergen_code,
+        code_system: allergen_code_system,
+        code_system_name: allergen_code_system_name
+      }
+    });
+  });
+  
+  return data;
+};
+;
+
+/*
+ * Parser for the CCDA "plan of care" section
+ */
+
+Parsers.CCDA.care_plan = function (ccda) {
+
+    var data = [], el;
+
+    var data = {}, el;
+    care_plan = ccda.section('care_plan');
+    data.entries = [];
+    data.displayName = "Care Plan";
+    data.templateId = care_plan.tag('templateId').attr('root');
+    data.text = care_plan.tag('text').val(true);
+
+    care_plan.entries().each(function (entry) {
+
+        var name = null,
+            code = null,
+            code_system = null,
+            code_system_name = null;
+
+        // Plan of care encounters, which have no other details
+        el = entry.template('2.16.840.1.113883.10.20.22.4.40');
+        if (!el.isEmpty()) {
+            name = 'encounter';
+        } else {
+            el = entry.tag('code');
+
+            name = el.attr('displayName');
+            code = el.attr('code');
+            code_system = el.attr('codeSystem');
+            code_system_name = el.attr('codeSystemName');
+        }
+
+        var text = Core.stripWhitespace(entry.tag('text').val(true));
+        var time = entry.tag('effectiveTime').immediateChildTag('center').attr('value');
+
+        data.entries.push({
+            text: text,
+            name: name,
+            code: code,
+            code_system: code_system,
+            code_system_name: code_system_name,
+            effective_time: parse(time)
+        });
+    });
+
+    return data;
+
+    function parse(str) {
+        if (!str) return null;
+        var y = str.substr(0, 4),
+            m = str.substr(4, 2) - 1,
+            d = str.substr(6, 2);
+        var D = new Date(y, m, d);
+        return (D.getFullYear() == y && D.getMonth() == m && D.getDate() == d) ? D : null;
+    }
+};
+;
+
+/*
+ * Parser for the CCDA demographics section
+ */
+
+Parsers.CCDA.demographics = function (ccda) {
+  
+  var parseDate = Documents.parseDate;
+  var parseName = Documents.parseName;
+  var parseAddress = Documents.parseAddress;
+  var data = {}, el;
+  
+  var demographics = ccda.section('demographics');
+  
+  var patient = demographics.tag('patientRole');
+  el = patient.tag('patient').tag('name');
+  var patient_name_dict = parseName(el);
+  
+  el = patient.tag('patient');
+  var dob = parseDate(el.tag('birthTime').attr('value')),
+      gender = Core.Codes.gender(el.tag('administrativeGenderCode').attr('code')),
+      marital_status = Core.Codes.maritalStatus(el.tag('maritalStatusCode').attr('code'));
+  
+  el = patient.tag('addr');
+  var patient_address_dict = parseAddress(el);
+  
+  el = patient.tag('telecom');
+  var home = el.attr('value'),
+      work = null,
+      mobile = null;
+  
+  var email = null;
+  
+  var language = patient.tag('languageCommunication').tag('languageCode').attr('code'),
+      race = patient.tag('raceCode').attr('displayName'),
+      ethnicity = patient.tag('ethnicGroupCode').attr('displayName'),
+      religion = patient.tag('religiousAffiliationCode').attr('displayName');
+  
+  el = patient.tag('birthplace');
+  var birthplace_dict = parseAddress(el);
+  
+  el = patient.tag('guardian');
+  var guardian_relationship = el.tag('code').attr('displayName'),
+      guardian_relationship_code = el.tag('code').attr('code'),
+      guardian_home = el.tag('telecom').attr('value');
+  
+  el = el.tag('guardianPerson').tag('name');
+  var guardian_name_dict = parseName(el);
+  
+  el = patient.tag('guardian').tag('addr');
+  var guardian_address_dict = parseAddress(el);
+  
+  el = patient.tag('providerOrganization');
+  var provider_organization = el.tag('name').val(),
+      provider_phone = el.tag('telecom').attr('value');
+  
+  var provider_address_dict = parseAddress(el.tag('addr'));
+  
+  data = {
+    name: patient_name_dict,
+    dob: dob,
+    gender: gender,
+    marital_status: marital_status,
+    address: patient_address_dict,
+    phone: {
+      home: home,
+      work: work,
+      mobile: mobile
+    },
+    email: email,
+    language: language,
+    race: race,
+    ethnicity: ethnicity,
+    religion: religion,
+    birthplace: {
+      state: birthplace_dict.state,
+      zip: birthplace_dict.zip,
+      country: birthplace_dict.country
+    },
+    guardian: {
+      name: {
+        given: guardian_name_dict.given,
+        family: guardian_name_dict.family
+      },
+      relationship: guardian_relationship,
+      relationship_code: guardian_relationship_code,
+      address: guardian_address_dict,
+      phone: {
+        home: guardian_home
+      }
+    },
+    provider: {
+      organization: provider_organization,
+      phone: provider_phone,
+      address: provider_address_dict
+    }
+  };
+  
+  return data;
+};
+;
+
+/*
+ * Parser for the CCDA encounters section
+ */
+
+Parsers.CCDA.encounters = function (ccda) {
+  
+  var parseDate = Documents.parseDate;
+  var parseName = Documents.parseName;
+  var parseAddress = Documents.parseAddress;
+  var encounters = ccda.section('encounters');
+
+  var data = {}, el;
+  data.entries = [];
+  data.displayName = "Encounters";
+  data.templateId = encounters.tag('templateId').attr('root');
+  data.text = encounters.tag('text').val(true);
+  
+  encounters.entries().each(function(entry) {
+    
+    var date = parseDate(entry.tag('effectiveTime').attr('value'));
+    
+    el = entry.tag('code');
+    var name = el.attr('displayName'),
+        code = el.attr('code'),
+        code_system = el.attr('codeSystem'),
+        code_system_name = el.attr('codeSystemName'),
+        code_system_version = el.attr('codeSystemVersion');
+    
+    // translation
+    el = entry.tag('translation');
+    var translation_name = el.attr('displayName'),
+        translation_code = el.attr('code'),
+        translation_code_system = el.attr('codeSystem'),
+        translation_code_system_name = el.attr('codeSystemName');
+    
+    // performer
+    el = entry.tag('performer').tag('code');
+    var performer_name = el.attr('displayName'),
+        performer_code = el.attr('code'),
+        performer_code_system = el.attr('codeSystem'),
+        performer_code_system_name = el.attr('codeSystemName');
+  
+    // participant => location
+    el = entry.tag('participant');
+    var organization = el.tag('code').attr('displayName');
+    
+    var location_dict = parseAddress(el);
+    location_dict.organization = organization;
+
+    // findings
+    var findings = [];
+    var findingEls = entry.elsByTag('entryRelationship');
+    for (var i = 0; i < findingEls.length; i++) {
+      el = findingEls[i].tag('value');
+      findings.push({
+        name: el.attr('displayName'),
+        code: el.attr('code'),
+        code_system: el.attr('codeSystem')
+      });
+    }
+    
+    data.entries.push({
+      date: date,
+      name: name,
+      code: code,
+      code_system: code_system,
+      code_system_name: code_system_name,
+      code_system_version: code_system_version,
+      findings: findings,
+      translation: {
+        name: translation_name,
+        code: translation_code,
+        code_system: translation_code_system,
+        code_system_name: translation_code_system_name
+      },
+      performer: {
+        name: performer_name,
+        code: performer_code,
+        code_system: performer_code_system,
+        code_system_name: performer_code_system_name
+      },
+      location: location_dict
+    });
+  });
+  
+  return data;
+};
+;
+
+/*
+ * Parser for any freetext section (i.e., contains just a single <text> element)
+ */
+
+Parsers.CCDA.free_text = function (ccda, sectionName) {
+
+  var data = {};
+  
+  var doc = ccda.section(sectionName);
+  var text = Core.stripWhitespace(doc.tag('text').val(true));
+  
+  data = {
+    text: text
+  };
+
+  return data;
+};
+;
+
+/*
+ * Parser for the CCDA functional & cognitive status
+ */
+
+Parsers.CCDA.functional_statuses = function (ccda) {
+  
+  var parseDate = Documents.parseDate;
+  var data = [], el;
+
+  var statuses = ccda.section('functional_statuses');
+
+  statuses.entries().each(function(entry) {
+
+    var date = parseDate(entry.tag('effectiveTime').attr('value'));
+    if (!date) {
+      date = parseDate(entry.tag('effectiveTime').tag('low').attr('value'));
+    }
+
+    el = entry.tag('value');
+
+    var name = el.attr('displayName'),
+        code = el.attr('code'),
+        code_system = el.attr('codeSystem'),
+        code_system_name = el.attr('codeSystemName');
+
+    data.push({
+      date: date,
+      name: name,
+      code: code,
+      code_system: code_system,
+      code_system_name: code_system_name
+    });
+  
+  });
+  
+  return data;
+};
+;
+
+/*
+ * Parser for the CCDA immunizations section
+ */
+
+Parsers.CCDA.immunizations = function (ccda) {
+  
+  var parseDate = Documents.parseDate;
+  var parseName = Documents.parseName;
+  var parseAddress = Documents.parseAddress;
+  var administeredData = {}, declinedData = {}, product, el;
+
+  var immunizations = ccda.section('immunizations');
+
+  administeredData.entries = [];
+  administeredData.displayName = "Immunizations";
+  administeredData.templateId = immunizations.tag('templateId').attr('root');
+  administeredData.text = immunizations.tag('text').val(true);
+
+  declinedData.entries = [];
+  declinedData.displayName = "Immunizations Declined";
+  declinedData.templateId = immunizations.tag('templateId').attr('root');
+  declinedData.text = immunizations.tag('text').val(true);
+  
+  immunizations.entries().each(function(entry) {
+    
+    // date
+    el = entry.tag('effectiveTime');
+    var date = parseDate(el.attr('value'));
+    if (!date) {
+      date = parseDate(el.tag('low').attr('value'));
+    }
+
+    // if 'declined' is true, this is a record that this vaccine WASN'T administered
+    el = entry.tag('substanceAdministration');
+    var declined = el.boolAttr('negationInd');
+
+    // product
+    product = entry.template('2.16.840.1.113883.10.20.22.4.54');
+    el = product.tag('code');
+    var product_name = el.attr('displayName'),
+        product_code = el.attr('code'),
+        product_code_system = el.attr('codeSystem'),
+        product_code_system_name = el.attr('codeSystemName');
+
+    // translation
+    el = product.tag('translation');
+    var translation_name = el.attr('displayName'),
+        translation_code = el.attr('code'),
+        translation_code_system = el.attr('codeSystem'),
+        translation_code_system_name = el.attr('codeSystemName');
+
+    // misc product details
+    el = product.tag('lotNumberText');
+    var lot_number = el.val();
+
+    el = product.tag('manufacturerOrganization');
+    var manufacturer_name = el.tag('name').val();
+    
+    // route
+    el = entry.tag('routeCode');
+    var route_name = el.attr('displayName'),
+        route_code = el.attr('code'),
+        route_code_system = el.attr('codeSystem'),
+        route_code_system_name = el.attr('codeSystemName');
+    
+    // instructions
+    el = entry.template('2.16.840.1.113883.10.20.22.4.20');
+    var instructions_text = Core.stripWhitespace(el.tag('text').val());
+    el = el.tag('code');
+    var education_name = el.attr('displayName'),
+        education_code = el.attr('code'),
+        education_code_system = el.attr('codeSystem');
+
+    // dose
+    el = entry.tag('doseQuantity');
+    var dose_value = el.attr('value'),
+        dose_unit = el.attr('unit');
+    
+    var data = (declined) ? declinedData : administeredData;
+    data.entries.push({
+      date: date,
+      product: {
+        name: product_name,
+        code: product_code,
+        code_system: product_code_system,
+        code_system_name: product_code_system_name,
+        translation: {
+          name: translation_name,
+          code: translation_code,
+          code_system: translation_code_system,
+          code_system_name: translation_code_system_name
+        },
+        lot_number: lot_number,
+        manufacturer_name: manufacturer_name
+      },
+      dose_quantity: {
+        value: dose_value,
+        unit: dose_unit
+      },
+      route: {
+        name: route_name,
+        code: route_code,
+        code_system: route_code_system,
+        code_system_name: route_code_system_name
+      },
+      instructions: instructions_text,
+      education_type: {
+        name: education_name,
+        code: education_code,
+        code_system: education_code_system
+      }
+    });
+  });
+  
+  return {
+    administered: administeredData,
+    declined: declinedData
+  };
+};
+;
+
+/*
+ * Parser for the CCDA "plan of care" section
+ */
+
+Parsers.CCDA.instructions = function (ccda) {
+  
+  var data = [], el;
+  
+  var instructions = ccda.section('instructions');
+  data.templateId = instructions.tag('templateId').attr('root');
+  
+  instructions.entries().each(function(entry) {
+
+    el = entry.tag('code');
+    var name = el.attr('displayName'),
+        code = el.attr('code'),
+        code_system = el.attr('codeSystem'),
+        code_system_name = el.attr('codeSystemName');
+
+    var text = Core.stripWhitespace(entry.tag('text').val(true));
+    
+    data.push({
+      text: text,
+      name: name,
+      code: code,
+      code_system: code_system,
+      code_system_name: code_system_name
+    });
+  });
+  
+  return data;
+};
+;
+
+/*
+ * Parser for the CCDA results (labs) section
+ */
+
+Parsers.CCDA.results = function (ccda) {
+  
+  var parseDate = Documents.parseDate;
+  var parseName = Documents.parseName;
+  var parseAddress = Documents.parseAddress;
+  var results = ccda.section('results');
+
+  var data = {}, el;
+  data.entries = [];
+  data.displayName = "Results";
+  data.templateId = results.tag('templateId').attr('root');
+  data.text = results.tag('text').val(true);
+  
+  results.entries().each(function(entry) {
+    
+    // panel
+    el = entry.tag('code');
+    var panel_name = el.attr('displayName'),
+        panel_code = el.attr('code'),
+        panel_code_system = el.attr('codeSystem'),
+        panel_code_system_name = el.attr('codeSystemName');
+    
+    var observation;
+    var tests = entry.elsByTag('observation');
+    var tests_data = [];
+    
+    for (var i = 0; i < tests.length; i++) {
+      observation = tests[i];
+      
+      var date = parseDate(observation.tag('effectiveTime').attr('value'));
+      
+      el = observation.tag('code');
+      var name = el.attr('displayName'),
+          code = el.attr('code'),
+          code_system = el.attr('codeSystem'),
+          code_system_name = el.attr('codeSystemName');
+
+      if (!name) {
+        name = Core.stripWhitespace(observation.tag('text').val());
+      }
+      
+      el = observation.tag('translation');
+      var translation_name = el.attr('displayName'),
+        translation_code = el.attr('code'),
+        translation_code_system = el.attr('codeSystem'),
+        translation_code_system_name = el.attr('codeSystemName');
+    
+      el = observation.tag('value');
+      var value = el.attr('value'),
+          unit = el.attr('unit');
+      // We could look for xsi:type="PQ" (physical quantity) but it seems better
+      // not to trust that that field has been used correctly...
+      if (value && !isNaN(parseFloat(value))) {
+        value = parseFloat(value);
+      }
+      if (!value) {
+        value = el.val(); // look for free-text values
+      }
+      
+      el = observation.tag('referenceRange');
+      var reference_range_text = Core.stripWhitespace(el.tag('observationRange').tag('text').val()),
+          reference_range_low_unit = el.tag('observationRange').tag('low').attr('unit'),
+          reference_range_low_value = el.tag('observationRange').tag('low').attr('value'),
+          reference_range_high_unit = el.tag('observationRange').tag('high').attr('unit'),
+          reference_range_high_value = el.tag('observationRange').tag('high').attr('value');
+      
+      tests_data.push({
+        date: date,
+        name: name,
+        value: value,
+        unit: unit,
+        code: code,
+        code_system: code_system,
+        code_system_name: code_system_name,
+        translation: {
+          name: translation_name,
+          code: translation_code,
+          code_system: translation_code_system,
+          code_system_name: translation_code_system_name
+        },
+        reference_range: {
+          text: reference_range_text,
+          low_unit: reference_range_low_unit,
+          low_value: reference_range_low_value,
+          high_unit: reference_range_high_unit,
+          high_value: reference_range_high_value,
+        }
+      });
+    }
+    
+    data.entries.push({
+      name: panel_name,
+      code: panel_code,
+      code_system: panel_code_system,
+      code_system_name: panel_code_system_name,
+      tests: tests_data
+    });
+  });
+  
+  return data;
+};
+;
+
+/*
+ * Parser for the CCDA medications section
+ */
+
+Parsers.CCDA.medications = function (ccda) {
+  
+  var parseDate = Documents.parseDate;
+  var medications = ccda.section('medications');
+
+  var data = {}, el;
+  data.entries = [];
+  data.displayName = "Medications";
+  data.templateId = medications.tag('templateId').attr('root');
+  data.text = medications.tag('text').val(true);
+
+  medications.entries().each(function(entry) {
+    
+    el = entry.tag('text');
+    var sig = Core.stripWhitespace(el.val());
+
+    var effectiveTimes = entry.elsByTag('effectiveTime');
+
+    el = effectiveTimes[0]; // the first effectiveTime is the med start date
+    var start_date = null, end_date = null;
+    if (el) {
+      start_date = parseDate(el.tag('low').attr('value'));
+      end_date = parseDate(el.tag('high').attr('value'));
+    }
+
+    // the second effectiveTime might the schedule period or it might just
+    // be a random effectiveTime from further in the entry... xsi:type should tell us
+    el = effectiveTimes[1];
+    var schedule_type = null, schedule_period_value = null, schedule_period_unit = null;
+    if (el && el.attr('xsi:type') === 'PIVL_TS') {
+      var institutionSpecified = el.attr('institutionSpecified');
+      if (institutionSpecified === 'true') {
+        schedule_type= 'frequency';
+      } else if (institutionSpecified === 'false') {
+        schedule_type = 'interval';
+      }
+
+      el = el.tag('period');
+      schedule_period_value = el.attr('value');
+      schedule_period_unit = el.attr('unit');
+    }
+    
+    el = entry.tag('manufacturedProduct').tag('code');
+    var product_name = el.attr('displayName'),
+        product_code = el.attr('code'),
+        product_code_system = el.attr('codeSystem');
+
+    var product_original_text = null;
+    el = entry.tag('manufacturedProduct').tag('originalText');
+    if (!el.isEmpty()) {
+      product_original_text = Core.stripWhitespace(el.val());
+    }
+    // if we don't have a product name yet, try the originalText version
+    if (!product_name && product_original_text) {
+      product_name = product_original_text;
+    }
+    
+    el = entry.tag('manufacturedProduct').tag('translation');
+    var translation_name = el.attr('displayName'),
+        translation_code = el.attr('code'),
+        translation_code_system = el.attr('codeSystem'),
+        translation_code_system_name = el.attr('codeSystemName');
+    
+    el = entry.tag('doseQuantity');
+    var dose_value = el.attr('value'),
+        dose_unit = el.attr('unit');
+    
+    el = entry.tag('rateQuantity');
+    var rate_quantity_value = el.attr('value'),
+        rate_quantity_unit = el.attr('unit');
+    
+    el = entry.tag('precondition').tag('value');
+    var precondition_name = el.attr('displayName'),
+        precondition_code = el.attr('code'),
+        precondition_code_system = el.attr('codeSystem');
+    
+    el = entry.template('2.16.840.1.113883.10.20.22.4.19').tag('value');
+    var reason_name = el.attr('displayName'),
+        reason_code = el.attr('code'),
+        reason_code_system = el.attr('codeSystem');
+    
+    el = entry.tag('routeCode');
+    var route_name = el.attr('displayName'),
+        route_code = el.attr('code'),
+        route_code_system = el.attr('codeSystem'),
+        route_code_system_name = el.attr('codeSystemName');
+    
+    // participant/playingEntity => vehicle
+    el = entry.tag('participant').tag('playingEntity');
+    var vehicle_name = el.tag('name').val();
+
+    el = el.tag('code');
+    // prefer the code vehicle_name but fall back to the non-coded one
+    vehicle_name = el.attr('displayName') || vehicle_name;
+    var vehicle_code = el.attr('code'),
+        vehicle_code_system = el.attr('codeSystem'),
+        vehicle_code_system_name = el.attr('codeSystemName');
+    
+    el = entry.tag('administrationUnitCode');
+    var administration_name = el.attr('displayName'),
+        administration_code = el.attr('code'),
+        administration_code_system = el.attr('codeSystem'),
+        administration_code_system_name = el.attr('codeSystemName');
+    
+    // performer => prescriber
+    el = entry.tag('performer');
+    var prescriber_organization = el.tag('name').val(),
+        prescriber_person = null;
+    
+    data.entries.push({
+      date_range: {
+        start: start_date,
+        end: end_date
+      },
+      text: sig,
+      product: {
+        name: product_name,
+        code: product_code,
+        code_system: product_code_system,
+        text: product_original_text,
+        translation: {
+          name: translation_name,
+          code: translation_code,
+          code_system: translation_code_system,
+          code_system_name: translation_code_system_name
+        }
+      },
+      dose_quantity: {
+        value: dose_value,
+        unit: dose_unit
+      },
+      rate_quantity: {
+        value: rate_quantity_value,
+        unit: rate_quantity_unit
+      },
+      precondition: {
+        name: precondition_name,
+        code: precondition_code,
+        code_system: precondition_code_system
+      },
+      reason: {
+        name: reason_name,
+        code: reason_code,
+        code_system: reason_code_system
+      },
+      route: {
+        name: route_name,
+        code: route_code,
+        code_system: route_code_system,
+        code_system_name: route_code_system_name
+      },
+      schedule: {
+        type: schedule_type,
+        period_value: schedule_period_value,
+        period_unit: schedule_period_unit
+      },
+      vehicle: {
+        name: vehicle_name,
+        code: vehicle_code,
+        code_system: vehicle_code_system,
+        code_system_name: vehicle_code_system_name
+      },
+      administration: {
+        name: administration_name,
+        code: administration_code,
+        code_system: administration_code_system,
+        code_system_name: administration_code_system_name
+      },
+      prescriber: {
+        organization: prescriber_organization,
+        person: prescriber_person
+      }
+    });
+  });
+  
+  return data;
+};
+;
+
+/*
+ * Parser for the CCDA problems section
+ */
+
+Parsers.CCDA.problems = function (ccda) {
+  
+  var parseDate = Documents.parseDate;
+  var parseName = Documents.parseName;
+  var parseAddress = Documents.parseAddress;
+
+  var problems = ccda.section('problems');
+
+  var data = {}, el;
+  data.entries = [];
+  data.displayName = "Problems";
+  data.templateId = problems.tag('templateId').attr('root');
+  data.text = problems.tag('text').val(true);
+  
+  problems.entries().each(function(entry) {
+    
+    el = entry.tag('effectiveTime');
+    var start_date = parseDate(el.tag('low').attr('value')),
+        end_date = parseDate(el.tag('high').attr('value'));
+    
+    el = entry.template('2.16.840.1.113883.10.20.22.4.4').tag('value');
+    var name = el.attr('displayName'),
+        code = el.attr('code'),
+        code_system = el.attr('codeSystem'),
+        code_system_name = el.attr('codeSystemName');
+    
+    el = entry.template('2.16.840.1.113883.10.20.22.4.4').tag('translation');
+    var translation_name = el.attr('displayName'),
+      translation_code = el.attr('code'),
+      translation_code_system = el.attr('codeSystem'),
+      translation_code_system_name = el.attr('codeSystemName');
+    
+    el = entry.template('2.16.840.1.113883.10.20.22.4.6');
+    var status = el.tag('value').attr('displayName');
+    
+    var age = null;
+    el = entry.template('2.16.840.1.113883.10.20.22.4.31');
+    if (!el.isEmpty()) {
+      age = parseFloat(el.tag('value').attr('value'));
+    }
+
+    el = entry.template('2.16.840.1.113883.10.20.22.4.64');
+    var comment = Core.stripWhitespace(el.tag('text').val());
+    
+    data.entries.push({
+      date_range: {
+        start: start_date,
+        end: end_date
+      },
+      name: name,
+      status: status,
+      age: age,
+      code: code,
+      code_system: code_system,
+      code_system_name: code_system_name,
+      translation: {
+        name: translation_name,
+        code: translation_code,
+        code_system: translation_code_system,
+        code_system_name: translation_code_system_name
+      },
+      comment: comment
+    });
+  });
+  
+  return data;
+};
+;
+
+/*
+ * Parser for the CCDA procedures section
+ */
+
+Parsers.CCDA.procedures = function (ccda) {
+  
+  var parseDate = Documents.parseDate;
+  var parseName = Documents.parseName;
+  var parseAddress = Documents.parseAddress;
+  var procedures = ccda.section('procedures');
+
+  var data = {}, el;
+  data.entries = [];
+  data.displayName = "Procedures";
+  data.templateId = procedures.tag('templateId').attr('root');
+  data.text = procedures.tag('text').val(true);
+  
+  procedures.entries().each(function(entry) {
+    
+    el = entry.tag('effectiveTime');
+    var date = parseDate(el.attr('value'));
+    
+    el = entry.tag('code');
+    var name = el.attr('displayName'),
+        code = el.attr('code'),
+        code_system = el.attr('codeSystem');
+
+    if (!name) {
+      name = Core.stripWhitespace(entry.tag('originalText').val());
+    }
+    
+    // 'specimen' tag not always present
+    el = entry.tag('specimen').tag('code');
+    var specimen_name = el.attr('displayName'),
+        specimen_code = el.attr('code'),
+        specimen_code_system = el.attr('codeSystem');
+    
+    el = entry.tag('performer').tag('addr');
+    var organization = el.tag('name').val(),
+        phone = el.tag('telecom').attr('value');
+    
+    var performer_dict = parseAddress(el);
+    performer_dict.organization = organization;
+    performer_dict.phone = phone;
+    
+    // participant => device
+    el = entry.template('2.16.840.1.113883.10.20.22.4.37').tag('code');
+    var device_name = el.attr('displayName'),
+        device_code = el.attr('code'),
+        device_code_system = el.attr('codeSystem');
+    
+    data.entries.push({
+      date: date,
+      name: name,
+      code: code,
+      code_system: code_system,
+      specimen: {
+        name: specimen_name,
+        code: specimen_code,
+        code_system: specimen_code_system
+      },
+      performer: performer_dict,
+      device: {
+        name: device_name,
+        code: device_code,
+        code_system: device_code_system
+      }
+    });
+  });
+  
+  return data;
+};
+;
+
+/*
+ * Parser for the CCDA smoking status in social history section
+ */
+
+Parsers.CCDA.smoking_status = function (ccda) {
+  
+  var parseDate = Documents.parseDate;
+  var parseName = Documents.parseName;
+  var parseAddress = Documents.parseAddress;
+  var data, el;
+
+  var name = null,
+      code = null,
+      code_system = null,
+      code_system_name = null,
+      entry_date = null;
+
+  // We can parse all of the social_history sections,
+  // but in practice, this section seems to be used for
+  // smoking status, so we're just going to break that out.
+  // And we're just looking for the first non-empty one.
+  var social_history = ccda.section('social_history');
+  var entries = social_history.entries();
+  for (var i=0; i < entries.length; i++) {
+    var entry = entries[i];
+
+    var smoking_status = entry.template('2.16.840.1.113883.10.20.22.4.78');
+    if (smoking_status.isEmpty()) {
+      smoking_status = entry.template('2.16.840.1.113883.10.22.4.78');
+    }
+    if (smoking_status.isEmpty()) {
+      continue;
+    }
+
+    el = smoking_status.tag('effectiveTime');
+    entry_date = parseDate(el.attr('value'));
+
+    el = smoking_status.tag('value');
+    name = el.attr('displayName');
+    code = el.attr('code');
+    code_system = el.attr('codeSystem');
+    code_system_name = el.attr('codeSystemName');
+
+    if (name) {
+      break;
+    }
+  }
+
+  data = {
+    date: entry_date,
+    name: name,
+    code: code,
+    code_system: code_system,
+    code_system_name: code_system_name
+  };
+  
+  return data;
+};
+;
+
+/*
+ * Parser for the CCDA vitals section
+ */
+
+Parsers.CCDA.vitals = function (ccda) {
+  
+  var parseDate = Documents.parseDate;
+  var parseName = Documents.parseName;
+  var parseAddress = Documents.parseAddress;
+  var vitals = ccda.section('vitals');
+
+  var data = {}, el;
+  data.entries = [];
+  data.displayName = "Vitals";
+  data.templateId = vitals.tag('templateId').attr('root');
+  data.text = vitals.tag('text').val(true);
+
+  vitals.entries().each(function(entry) {
+    
+    el = entry.tag('effectiveTime');
+    var entry_date = parseDate(el.attr('value'));
+    
+    var result;
+    var results = entry.elsByTag('component');
+    var results_data = [];
+    
+    for (var i = 0; i < results.length; i++) {
+      result = results[i];
+      
+      el = result.tag('code');
+      var name = el.attr('displayName'),
+          code = el.attr('code'),
+          code_system = el.attr('codeSystem'),
+          code_system_name = el.attr('codeSystemName');
+      
+      el = result.tag('value');
+      var value = parseFloat(el.attr('value')),
+          unit = el.attr('unit');
+      
+      results_data.push({
+        name: name,
+        code: code,
+        code_system: code_system,
+        code_system_name: code_system_name,
+        value: value,
+        unit: unit
+      });
+    }
+    
+    data.entries.push({
+      date: entry_date,
+      results: results_data
+    });
+  });
+  
+  return data;
+};
+;
+
+/* Parses out basic data about each section */
+
+Parsers.GenericInfo = function (ccda, data) {
+
+    var each = function (callback) {
+        for (var i = 0; i < this.length; i++) {
+            callback(this[i]);
+        }
+    };
+
+    var containsTemplateId = function(templateId, data) {
+        for (var property in data) {
+            if (data.hasOwnProperty(property)) {
+                var p = data[property].templateId;
+                //var display = this[property].displayName;
+                if(p) {
+                    if(p === templateId) {
+                        //console.log("TemplateId Match " + templateId + " " + display);
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    };
+
+    var allSections = ccda.elsByTag('section');
+    allSections.each = each;
+
+    allSections.each(function(s) {
+
+        var code = s.tag('code').attr('displayName');
+        var templateId =  s.tag('templateId').attr('root');
+
+        var existingTemplateId = containsTemplateId(templateId, data);
+
+        if (code) {
+            var nodeName = code.split(' ').join('_').toLowerCase();
+
+            //console.log("NODE NAME " + nodeName);
+
+            if (!data[nodeName] && !existingTemplateId) {
+                //console.log("CREATE NODE " + code);
+                data[nodeName] = {};
+            }
+
+            if(data[nodeName]) {
+                data[nodeName].displayName = code;
+                data[nodeName].templateId = templateId;
+                data[nodeName].text = s.tag('text').val(true);
+            }
+
+        }
+    });
+};;
+
+/*
+ * Parser for the CCDAR2 document
+ */
+
+Parsers.CCDAR2 = (function () {
+
+  var run = function (ccda) {
+
+    var data = {};
+
+    data.document              = Parsers.CCDAR2.document(ccda);
+    data.demographics          = Parsers.CCDA.demographics(ccda);
+    data.health_concerns_document  = Parsers.CCDAR2.health_concerns_document(ccda);
+    data.json                  = Core.json;
+
+    // Decorate each section with Title, templateId and text and adds missing sections
+    Parsers.GenericInfo(ccda, data);
+
+    return data;
+  };
+
+  return {
+    run: run
+  };
+
+})();
+;
+
+/*
+ * Parser for the CCDAR2 document section
+ */
+
+Parsers.CCDAR2.document = function (ccda) {
+
+  var parseDate = Documents.parseDate;
+  var parseName = Documents.parseName;
+  var parseAddress = Documents.parseAddress;
+  var data = {}, el;
+
+  var doc = ccda.section('document');
+  var date = parseDate(doc.tag('effectiveTime').attr('value'));
+  var title = Core.stripWhitespace(doc.tag('title').val());
+
+  // Parse Doc Type Info
+  var templates =  doc.elsByTag('templateId');
+
+  var rootTemplate = templates[0].attr('root');
+  var secondTemplate;
+  if(templates.length >1)
+    secondTemplate = templates[1].attr('root');
+  else
+    secondTemplate = rootTemplate;
+
+  var loinc = doc.tag('code').attr('code');
+  var templateId = doc.tag('templateId').attr('root');
+  var displayName = doc.tag('code').attr('displayName');
+
+  var nonXml = doc.tag('nonXMLBody');
+  var nonXmlNodes = nonXml.el.childNodes;
+
+  var bodyType = "structured";
+  var nonXmlBody = {
+    type: "",
+    mediaType: "",
+    representation: "",
+    rawText: "",
+    reference: ""
+  };
+  if(nonXmlNodes && nonXmlNodes.length > 0) {
+    bodyType = "unstructured";
+    var text = nonXml.tag('text');
+    var mediaType = "";
+    var representation = "";
+    var rawText = "";
+    var reference = "";
+    var type = "";
+
+    // We have an embedded doc
+    if(text && text.attr('mediaType')) {
+      mediaType = text.attr('mediaType');
+      representation = text.attr('representation');
+      rawText = text.val();
+      type = "embedded";
+    }
+
+    if(text && !mediaType) {
+      reference = text.tag('reference').attr('value');
+      type = "reference";
+    }
+    nonXmlBody = {
+      type: type,
+      mediaType: mediaType,
+      representation: representation,
+      rawText: rawText,
+      reference: reference
+    }
+  }
+
+  var docType = {
+    type: "CCDAR2",
+    rootTemplateId: rootTemplate,
+    templateId: secondTemplate,
+    displayName: displayName,
+    loinc: loinc,
+    bodyType: bodyType,
+    nonXmlBody: nonXmlBody
+  };
+
+  var author = doc.tag('author');
+  el = author.tag('assignedPerson').tag('name');
+  var name_dict = parseName(el);
+
+  el = author.tag('addr');
+  var address_dict = parseAddress(el);
+
+  el = author.tag('telecom');
+  var work_phone = el.attr('value');
+
+  var documentation_of_list = [];
+  var performers = doc.tag('documentationOf').elsByTag('performer');
+  for (var i = 0; i < performers.length; i++) {
+    el = performers[i];
+    var performer_name_dict = parseName(el);
+    var performer_phone = el.tag('telecom').attr('value');
+    var performer_addr = parseAddress(el.tag('addr'));
+    documentation_of_list.push({
+      name: performer_name_dict,
+      phone: {
+        work: performer_phone
+      },
+      address: performer_addr
+    });
+  }
+
+  el = doc.tag('encompassingEncounter').tag('location');
+  var location_name = Core.stripWhitespace(el.tag('name').val());
+  var location_addr_dict = parseAddress(el.tag('addr'));
+
+  var encounter_date = null;
+  el = el.tag('effectiveTime');
+  if (!el.isEmpty()) {
+    encounter_date = parseDate(el.attr('value'));
+  }
+
+  data = {
+    type: docType,
+    date: date,
+    title: title,
+    author: {
+      name: name_dict,
+      address: address_dict,
+      phone: {
+        work: work_phone
+      }
+    },
+    documentation_of: documentation_of_list,
+    location: {
+      name: location_name,
+      address: location_addr_dict,
+      encounter_date: encounter_date
+    }
+  };
+
+  return data;
+};
+;
+
+/*
+ * Parser for the CCDAR2 Health Concerns Section
+ * 2.16.840.1.113883.10.20.22.2.58
+ */
+
+Parsers.CCDAR2.health_concerns_document = function (ccda) {
+    var parseDate = Documents.parseDate;
+    var parseName = Documents.parseName;
+    var parseAddress = Documents.parseAddress;
+
+    // Helper to create each iterator for collection
+    var each = function (callback) {
+        for (var i = 0; i < this.length; i++) {
+            callback(this[i]);
+        }
+    };
+
+    var model = {}, el;
+    model.entries = [];
+
+    model.text = ccda.tag('text').val(true);
+
+    var health_concerns = ccda.section('health_concerns_document');
+    var title = health_concerns.tag('title').val();
+
+    health_concerns.entries().each(function(entry) {
+
+        var entryModel = {};
+        // Parse out the ACT Body
+        //A record of something that is being done, has been done, can be done, or is intended or requested to be done.
+        var act = entry.tag('act');
+        var er = act.elsByTag('entryRelationship');
+        var templateId = act.tag('templateId').attr('root');
+        var id = act.tag('id').attr('root');
+        var statusCode = act.tag('statusCode').attr('code');
+        var code = act.tag('code');
+        var name = code.attr('displayName');
+        var effectiveTime = parseDate(entry.tag('effectiveTime'));
+
+        // The model we want to return in json
+        var actModel = {
+            effective_time: effectiveTime,
+            name: name,
+            entry_relationship:[]
+        };
+
+        // Parse Entity Relationship child nodes
+
+        var ers = entry.elsByTag('entryRelationship');
+        ers.each = each;
+
+        ers.each(function(er){
+
+            var erModel = {
+                type_code : er.attr('typeCode'),
+                observations : []
+            };
+
+            var obs = er.elsByTag('observation');
+            obs.each = each;
+
+            // Parse out Obsevations for Each ER
+            obs.each(function(ob) {
+                erModel.observations.push({
+                    class_code: ob.attr('classCode'),
+                    mood_code: ob.attr('moodCode'),
+                    display_name : ob.tag('value').attr('displayName'),
+                    status: ob.tag('statusCode').attr('code')
+                });
+            });
+
+            actModel.entry_relationship.push(erModel);
 
         });
 
-    var medicationsSection = component.define("medicationsSection");
-    medicationsSection.templateRoot(["2.16.840.1.113883.10.20.1.8"]);
-    medicationsSection.fields([
-        ["medications", "0..*", MedicationActivity.xpath(), MedicationActivity]
-    ]);
-    medicationsSection.cleanupStep(cleanup.replaceWithField('medications'));
-    return [medicationsSection, MedicationActivity];
+        // Add ACT Model to our final return model
+        entryModel['act'] = actModel;
+        model.entries.push(entryModel);
+    });
+
+    return model;
+};
+;
+
+/*
+ * Parser for the CCDAR2 document
+ */
+
+Parsers.CCD = (function () {
+
+  var run = function (ccda) {
+
+    var data = {};
+
+    data.document              = Parsers.CCD.document(ccda);
+    data.demographics          = Parsers.CCDA.demographics(ccda);
+    data.health_concerns_document  = Parsers.CCDAR2.health_concerns_document(ccda);
+    data.json                  = Core.json;
+
+    // Decorate each section with Title, templateId and text and adds missing sections
+    Parsers.GenericInfo(ccda, data);
+
+    return data;
+  };
+
+  return {
+    run: run
+  };
+
+})();
+;
+
+/*
+ * Parser for the CCDAR2 document section
+ */
+
+Parsers.CCD.document = function (ccda) {
+
+  var parseDate = Documents.parseDate;
+  var parseName = Documents.parseName;
+  var parseAddress = Documents.parseAddress;
+  var data = {}, el;
+
+  var doc = ccda.section('document');
+  var date = parseDate(doc.tag('effectiveTime').attr('value'));
+  var title = Core.stripWhitespace(doc.tag('title').val());
+
+  // Parse Doc Type Info
+  var templates =  doc.elsByTag('templateId');
+  
+  var rootTemplate = templates[0].attr('root');
+  var secondTemplate;
+  if(templates.length >1)
+    secondTemplate = templates[1].attr('root');
+  else
+    secondTemplate = rootTemplate;
+
+  var loinc = doc.tag('code').attr('code');
+  var templateId = doc.tag('templateId').attr('root');
+  var displayName = doc.tag('code').attr('displayName');
+
+  var nonXml = doc.tag('nonXMLBody');
+  var nonXmlNodes = nonXml.el.childNodes;
+
+  var bodyType = "structured";
+  var nonXmlBody = {
+    type: "",
+    mediaType: "",
+    representation: "",
+    rawText: "",
+    reference: ""
+  };
+  if(nonXmlNodes && nonXmlNodes.length > 0) {
+    bodyType = "unstructured";
+    var text = nonXml.tag('text');
+    var mediaType = "";
+    var representation = "";
+    var rawText = "";
+    var reference = "";
+    var type = "";
+
+    // We have an embedded doc
+    if(text && text.attr('mediaType')) {
+      mediaType = text.attr('mediaType');
+      representation = text.attr('representation');
+      rawText = text.val();
+      type = "embedded";
+    }
+
+    if(text && !mediaType) {
+      reference = text.tag('reference').attr('value');
+      type = "reference";
+    }
+    nonXmlBody = {
+      type: type,
+      mediaType: mediaType,
+      representation: representation,
+      rawText: rawText,
+      reference: reference
+    }
+  }
+
+  var docType = {
+    type: "CCDAR2",
+    rootTemplateId: rootTemplate,
+    templateId: secondTemplate,
+    displayName: displayName,
+    loinc: loinc,
+    bodyType: bodyType,
+    nonXmlBody: nonXmlBody
+  };
+
+  var author = doc.tag('author');
+  el = author.tag('assignedPerson').tag('name');
+  var name_dict = parseName(el);
+
+  el = author.tag('addr');
+  var address_dict = parseAddress(el);
+
+  el = author.tag('telecom');
+  var work_phone = el.attr('value');
+
+  var documentation_of_list = [];
+  var performers = doc.tag('documentationOf').elsByTag('performer');
+  for (var i = 0; i < performers.length; i++) {
+    el = performers[i];
+    var performer_name_dict = parseName(el);
+    var performer_phone = el.tag('telecom').attr('value');
+    var performer_addr = parseAddress(el.tag('addr'));
+    documentation_of_list.push({
+      name: performer_name_dict,
+      phone: {
+        work: performer_phone
+      },
+      address: performer_addr
+    });
+  }
+
+  el = doc.tag('encompassingEncounter').tag('location');
+  var location_name = Core.stripWhitespace(el.tag('name').val());
+  var location_addr_dict = parseAddress(el.tag('addr'));
+
+  var encounter_date = null;
+  el = el.tag('effectiveTime');
+  if (!el.isEmpty()) {
+    encounter_date = parseDate(el.attr('value'));
+  }
+
+  data = {
+    type: docType,
+    date: date,
+    title: title,
+    author: {
+      name: name_dict,
+      address: address_dict,
+      phone: {
+        work: work_phone
+      }
+    },
+    documentation_of: documentation_of_list,
+    location: {
+      name: location_name,
+      address: location_addr_dict,
+      encounter_date: encounter_date
+    }
+  };
+
+  return data;
+};
+;
+
+/*
+ * ...
+ */
+
+/* exported Renderers */
+var Renderers = (function () {
+  
+  var method = function () {};
+  
+  return {
+    method: method
+  };
+  
+})();
+;
+
+/*
+ * ...
+ */
+
+/* exported BlueButton */
+var BlueButton = function (source, opts) {
+  var type, parsedData, parsedDocument;
+  
+  // Look for options
+  if (!opts) opts = {};
+  
+  // Detect and parse the source data
+  parsedData = Core.parseData(source);
+  
+  // Detect and parse the document
+  if (opts.parser) {
+    
+    // TODO: parse the document with provided custom parser
+    parsedDocument = opts.parser();
+    
+  } else {
+    type = Documents.detect(parsedData);
+    switch (type) {
+      case 'c32':
+        parsedData = Documents.C32.process(parsedData);
+        parsedDocument = Parsers.C32.run(parsedData);
+        break;
+      case 'ccda':
+        parsedData = Documents.CCDA.process(parsedData);
+        parsedDocument = Parsers.CCDA.run(parsedData);
+        break;
+      case 'ccdar2':
+        parsedData = Documents.CCDAR2.process(parsedData);
+        parsedDocument = Parsers.CCDAR2.run(parsedData);
+        break;
+      case 'ccd':
+        parsedData = Documents.CCD.process(parsedData);
+        parsedDocument = Parsers.CCD.run(parsedData);
+        break;
+      case 'json':
+        /* Expects a call like:
+         * BlueButton(json string, {
+         *   generatorType: 'ccda',
+         *   template: < EJS file contents >
+         * })
+         * The returned "type" will be the requested type (not "json")
+         * and the XML will be turned as a string in the 'data' key
+         */
+        switch (opts.generatorType) {
+          // only the unit tests ever need to worry about this testingMode argument
+          case 'c32':
+            type = 'c32';
+            parsedDocument = Generators.C32.run(parsedData, opts.template, opts.testingMode);
+            break;
+          case 'ccda':
+            type = 'ccda';
+            parsedDocument = Generators.CCDA.run(parsedData, opts.template, opts.testingMode);
+            break;
+        }
+    }
+  }
+  
+  return {
+    type: type,
+    data: parsedDocument,
+    source: parsedData
+  };
 
 };
 
-exports.medicationsSection = exportMedicationsSection;
-exports.medicationsEntry = exportMedicationsSection;
+
+return BlueButton;
+
+}));
 
 
 /***/ }),
-/* 74 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var shared = __webpack_require__(7);
-var component = __webpack_require__(0).component;
-var cleanup = __webpack_require__(9);
-var bbm = __webpack_require__(1);
-
-var exportProvidersSection = function (version) {
-
-    var providers = component.define("providers")
-        .templateRoot(["2.16.840.1.113883.5.90"])
-        .fields([
-            ["date_time", "0..1", "h:time", shared.EffectiveTime],
-            ["identifiers", "0..*", "h:assignedEntity/h:id", shared.Identifier],
-            ["type", "0..1", "h:assignedEntity/h:code", shared.ConceptDescriptor],
-            ["role", "0..1", "h:functionCode/h:code", shared.ConceptDescriptor],
-            ["name", "0..1", "h:assignedEntity/h:assignedPerson/h:name", shared.IndividualName],
-            ["addresses", "0..*", "h:assignedEntity/h:addr", shared.Address],
-            ["phone", "0..*", "h:assignedEntity/" + shared.phone.xpath(), shared.phone],
-            ["email", "0..*", "h:assignedEntity/" + shared.email.xpath(), shared.email],
-            ["organization", "0..1", "h:assignedEntity/h:representedOrganization", shared.Organization]
-        ]);
-
-    return [providers];
-};
-
-exports.providersSection = exportProvidersSection;
-
-
-/***/ }),
-/* 75 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var shared = __webpack_require__(7);
-var component = __webpack_require__(0).component;
-var cleanup = __webpack_require__(9);
-var bbm = __webpack_require__(1);
-
-var exportPayersSection = function (version) {
-    var sectionIDs = bbm.CCDA["sections" + version];
-    var clinicalStatementsIDs = bbm.CCDA["statements" + version];
-
-    var procedure = component.define('procedure');
-    procedure.fields([
-        ["code", "1..1", "h:code", shared.ConceptDescriptor]
-    ]);
-
-    var authorization = component.define('authorization');
-    authorization.fields([
-        ["identifiers", "0..*", "h:id", shared.Identifier],
-        ["procedure", "1..1", "h:entryRelationship/h:procedure", procedure]
-    ]);
-
-    var policy_holder = component.define('policy_holder');
-    policy_holder.fields([
-        ["performer", "1..1", "h:participantRole", shared.assignedEntity]
-    ]);
-
-    var participant = component.define('participant');
-    participant.fields([
-        ["date_time", "0..1", "h:time", shared.EffectiveTime],
-        ["code", "1..1", "h:participantRole/h:code", shared.ConceptDescriptor],
-        ["performer", "1..1", "h:participantRole", shared.assignedEntity],
-        ["name", "0..*", "h:participantRole/h:playingEntity/h:name", shared.IndividualName]
-    ]);
-
-    var guarantor = component.define('guarantor');
-    guarantor.fields([
-        ["code", "1..1", "../h:assignedEntity/h:code", shared.ConceptDescriptor],
-        ["identifiers", "0..*", "../h:assignedEntity/h:id", shared.Identifier],
-        ["name", "0..*", "../h:assignedEntity/h:assignedPerson/h:name", shared.IndividualName],
-        ["address", "0..*", "../h:assignedEntity/h:addr", shared.Address],
-        ["email", "0..*", "../h:assignedEntity/" + shared.email.xpath(), shared.email],
-        ["phone", "0..*", "../h:assignedEntity/" + shared.phone.xpath(), shared.phone]
-    ]);
-
-    var organization = component.define('organization');
-    organization.fields([
-        ["address", "0..1", "h:addr", shared.Address],
-        ["identifiers", "0..*", "h:id", shared.Identifier],
-        ["phone", "0..*", shared.phone.xpath(), shared.phone],
-        ["email", "0..*", shared.email.xpath(), shared.email]
-    ]);
-
-    var insurance = component.define('insurance');
-    insurance.fields([
-        ["code", "1..1", "h:assignedEntity/h:code", shared.ConceptDescriptor],
-        ["performer", "0..1", "h:assignedEntity", shared.assignedEntity]
-    ]);
-
-    var policy = component.define('policy');
-    policy.fields([
-        ["identifiers", "0..*", "h:id", shared.Identifier],
-        ["code", "1..1", "h:code", shared.ConceptDescriptor],
-        ["insurance", "1..1", "h:performer", insurance]
-    ]);
-
-    var entry = component.define('entry');
-    entry.templateRoot("2.16.840.1.113883.10.20.1.20");
-    entry.fields([
-        ["identifiers", "0..*", "h:id", shared.Identifier],
-        ["policy", "1..1", "h:entryRelationship/h:act", policy],
-        ["guarantor", "1..1", "h:entryRelationship/h:act/h:performer/h:templateId[not (@root='2.16.840.1.113883.10.20.22.4.87')]", guarantor],
-        ["participant", "1..1", "h:entryRelationship/h:act/h:participant", participant],
-        ["policy_holder", "1..1", "h:entryRelationship/h:act/h:participant[not (@typeCode='COV')]", policy_holder],
-        ["authorization", "1..1", "h:entryRelationship/h:act/h:entryRelationship/h:act", authorization]
-    ]);
-
-    var payers_section = component.define('payers_section');
-    payers_section.templateRoot("2.16.840.1.113883.10.20.1.9");
-    payers_section.fields([
-        ["entry", "0..*", entry.xpath(), entry]
-    ]);
-    payers_section.cleanupStep(cleanup.replaceWithField('entry'));
-
-    return [payers_section, entry];
-};
-
-exports.payers_section = exportPayersSection;
-exports.payers_entry = exportPayersSection;
-
-
-/***/ }),
-/* 76 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var component = __webpack_require__(0).component;
-var shared = __webpack_require__(6);
-
-var exportC32 = function (version) {
-    var patient = __webpack_require__(40).patient;
-    var allergiesSection = __webpack_require__(14).allergiesSection(version)[0];
-    var vitalSignsSection = __webpack_require__(15).vitalSignsSection(version)[0];
-    var resultsSection = __webpack_require__(16).resultsSection(version)[0];
-    var problemsSection = __webpack_require__(17).problemsSection(version)[0];
-    var proceduresSection = __webpack_require__(18).proceduresSection(version)[0];
-    var immunizationsSection = __webpack_require__(19).immunizationsSection(version)[0];
-    var medicationsSection = __webpack_require__(20).medicationsSection(version)[0];
-    var encountersSection = __webpack_require__(21).encountersSection(version)[0];
-    return component.define("C32")
-        .fields([
-            ["meta", "0..1", ".", shared.metaData],
-            ["demographics", "1..1", "(/ | //h:recordTarget/h:patientRole)[last()]", patient],
-            ["allergies", "0..1", allergiesSection.xpath(), allergiesSection],
-            ["encounters", "0..1", encountersSection.xpath(), encountersSection],
-            ["immunizations", "0..1", immunizationsSection.xpath(), immunizationsSection],
-            ["medications", "0..1", medicationsSection.xpath(), medicationsSection],
-            ["problems", "0..1", problemsSection.xpath(), problemsSection],
-            ["procedures", "0..1", proceduresSection.xpath(), proceduresSection],
-            ["vitals", "0..1", vitalSignsSection.xpath(), vitalSignsSection],
-            ["results", "0..1", resultsSection.xpath(), resultsSection]
-        ]);
-
-};
-
-exports.C32 = exportC32;
-
-
-/***/ }),
-/* 77 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var component = __webpack_require__(0).component;
-var shared = __webpack_require__(4);
-
-var exportCCD = function (version) {
-    var header = __webpack_require__(41).header;
-    var patient = __webpack_require__(42).patient;
-    var resultsSection = __webpack_require__(22).resultsSection(version)[0];
-    var vitalSignsSection = __webpack_require__(23).vitalSignsSection(version)[0];
-    var problemsSection = __webpack_require__(24).problemsSection(version)[0];
-    var immunizationsSection = __webpack_require__(25).immunizationsSection(version)[0];
-    var socialHistorySection = __webpack_require__(43).socialHistorySection(version)[0];
-    var medicationsSection = __webpack_require__(12).medicationsSection(version)[0];
-    var allergiesSection = __webpack_require__(26).allergiesSection(version)[0];
-    var encountersSection = __webpack_require__(27).encountersSection(version)[0];
-    var proceduresSection = __webpack_require__(28).proceduresSection(version)[0];
-    var plan_of_care_section = __webpack_require__(29).plan_of_care_section(version)[0];
-    var payers_section = __webpack_require__(30).payers_section(version)[0];
-    var reason_for_referral_section = __webpack_require__(44).reason_for_referral_section(version)[0];
-    var hospital_discharge_instructions_section = __webpack_require__(45).hospital_discharge_instructions_section(version)[0];
-    var hospital_discharge_medications_section = __webpack_require__(31).hospital_discharge_medications_section(version)[0];
-    var functional_status_section = __webpack_require__(32).functionalStatusSection(version)[0];
-
-    return component.define("CCD")
-        .fields([
-            ["meta", "0..1", ".", shared.metaData],
-            ["header", "1..1", "(/ | //h:ClinicalDocument)[last()]", header],
-            ["demographics", "1..1", "(/ | //h:recordTarget/h:patientRole)[last()]", patient],
-            ["vitals", "0..1", vitalSignsSection.xpath(), vitalSignsSection],
-            ["results", "0..1", resultsSection.xpath(), resultsSection],
-            ["medications", "0..1", medicationsSection.xpath(), medicationsSection],
-            ["encounters", "0..1", encountersSection.xpath(), encountersSection],
-            ["allergies", "0..1", allergiesSection.xpath(), allergiesSection],
-            ["immunizations", "0..1", immunizationsSection.xpath(), immunizationsSection],
-            ["social_history", "0..1", socialHistorySection.xpath(), socialHistorySection],
-            ["problems", "0..1", problemsSection.xpath(), problemsSection],
-            ["procedures", "0..1", proceduresSection.xpath(), proceduresSection],
-            ["plan_of_care", "0..1", plan_of_care_section.xpath(), plan_of_care_section],
-            ["payers", "0..1", payers_section.xpath(), payers_section],
-            ["reason_for_referral", "0..1", reason_for_referral_section.xpath(), reason_for_referral_section],
-            ["hospital_discharge_instructions", "0..1", hospital_discharge_instructions_section.xpath(), hospital_discharge_instructions_section],
-            ["hospital_discharge_medications", "0..1", hospital_discharge_medications_section.xpath(), hospital_discharge_medications_section],
-            ["functional_statuses", "0..1", functional_status_section.xpath(), functional_status_section]
-        ]);
-};
-
-exports.CCD = exportCCD;
-
-
-/***/ }),
-/* 78 */
+/* 27 */
 /***/ (function(module, exports) {
 
-module.exports = require("util");
+module.exports = require("xmldom");
 
 /***/ }),
-/* 79 */
+/* 28 */
 /***/ (function(module, exports) {
 
-module.exports = {"name":"blue-button","version":"1.10.2","description":"Blue Button (CCDA, C32, CMS) to JSON Parser.","main":"./index.js","directories":{"doc":"doc","lib":"lib"},"scripts":{"test":"grunt mocha","build":"browserify index.js -o dist/blue-button.js"},"author":"Dmitry Kachaev <dmitry@amida-tech.com>","contributors":[{"name":"Matthew McCall","email":"matt@amida-tech.com"},{"name":"Afsin Ustundag","email":"afsin.ustundag@us.pwc.com"},{"name":"Jacob Sachs","email":"jacob@amida-tech.com"},{"name":"Matt Martz","email":"matt.martz@amida-tech.com"},{"name":"Christopher Best","email":"christopher@amida-tech.com"}],"license":"Apache-2.0","engines":{"node":">= 0.10.0"},"dependencies":{"blue-button-cms":"~1.5.2","blue-button-meta":"1.7.0","blue-button-model":"~1.10.0","blue-button-xml":"~1.8.0","browserify":"^14.4.0","global":"^4.3.2","lodash":"^3.10.0","winston":"~1.0.0"},"devDependencies":{"brfs":"~1.4.0","chai":"~3.0.0","coveralls":"~2.11.2","grunt":"~0.4.5","grunt-browserify":"~3.7.0","grunt-contrib-connect":"~0.10.1","grunt-contrib-jshint":"~0.11.2","grunt-contrib-watch":"~0.6.1","grunt-coveralls":"~1.0.0","grunt-istanbul-coverage":"~0.1.1","grunt-jsbeautifier":"~0.2.10","grunt-mocha-phantomjs":"~2.0.0","grunt-mocha-test":"~0.12.7","grunt-shell":"^1.1.2","mocha":"~2.2.4","mocha-lcov-reporter":"~0.0.2"},"repository":{"type":"git","url":"https://github.com/amida-tech/blue-button.git"},"keywords":["bluebutton","blue-button","XML","JSON","CCDA","CMS","C32"],"bugs":{"url":"https://github.com/amida-tech/blue-button/issues"},"homepage":"https://github.com/amida-tech/blue-button"}
+module.exports = require("ejs");
 
 /***/ }),
-/* 80 */
-/***/ (function(module, exports) {
-
-module.exports = require("blue-button-model");
-
-/***/ }),
-/* 81 */
+/* 29 */
 /***/ (function(module, exports) {
 
 module.exports = require("rxjs/Observable");
 
 /***/ }),
-/* 82 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const lodash_1 = __webpack_require__(3);
+const lodash_1 = __webpack_require__(1);
 exports.SECTIONS = [
     { key: 'allergies', display: 'Allergies', tagName: 'allergies', icon: 'pagelines' },
     { key: 'care_plan', display: 'Care Plan', tagName: 'generic', icon: 'sticky-note-o' },
@@ -4991,11 +5594,11 @@ exports.DOCUMENTS = lodash_1.default.map(fileNames, (name) => ({
 
 
 /***/ }),
-/* 83 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
-    var riot = __webpack_require__(2)
+    var riot = __webpack_require__(0)
     riot.tag2('name', '<span>{opts.name.first} {opts.name.last}{possesive}</span>', '', '', function(opts) {
     if (opts.possesive) {
       this.possesive = opts.name.Last.slice(-1) === 's' ? '\'' : '\'s';
@@ -5006,17 +5609,17 @@ exports.DOCUMENTS = lodash_1.default.map(fileNames, (name) => ({
   
 
 /***/ }),
-/* 84 */
+/* 32 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_lodash__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_lodash__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_lodash___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_lodash__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__services__ = __webpack_require__(10);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__services__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__services___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__services__);
 
-    var riot = __webpack_require__(2)
+    var riot = __webpack_require__(0)
     
 
 
@@ -5058,15 +5661,15 @@ riot.tag2('header', '<nav class="navbar navbar-default navbar-fixed-top"> <div c
   
 
 /***/ }),
-/* 85 */
+/* 33 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_lodash__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_lodash__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_lodash___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_lodash__);
 
-    var riot = __webpack_require__(2)
+    var riot = __webpack_require__(0)
     
 
 riot.tag2('panel', '<div class="panel panel-{opts.state ? opts.state : \'default\'}" id="{opts.section.key}"> <div class="panel-heading section-toggle" onclick="{toggleSection}"> <h3 class="panel-title"> <i class="fa fa-{opts.section.icon} section-icon" aria-hidden="true" if="{!opts.hideicon}"></i> {opts.section.display} <span class="section-item-count badge badge-muted" if="{opts.data.entries.length}">{opts.data.entries.length}</span> <span class="text-muted" if="{isEmpty()}">(empty)</span> <span class="pull-right"> <i class="fa fa-chevron-down {fa-rotate-180: opts.section.enabled}" aria-hidden="true"></i> </span> </h3> </div> <div class="panel-body"> <yield></yield> </div> </div>', '', 'class="{opts.section.tagName}" class="{fade: isEmpty(), expanded: isEnabled(), collapsed: !isEnabled()}"', function(opts) {
@@ -5096,11 +5699,11 @@ riot.tag2('panel', '<div class="panel panel-{opts.state ? opts.state : \'default
   
 
 /***/ }),
-/* 86 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
-    var riot = __webpack_require__(2)
+    var riot = __webpack_require__(0)
     riot.tag2('ccda-section', '', '', '', function(opts) {
   var options = {
     section: opts.current,
@@ -5117,15 +5720,15 @@ riot.tag2('panel', '<div class="panel panel-{opts.state ? opts.state : \'default
   
 
 /***/ }),
-/* 87 */
+/* 35 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utilities_htmlhelpers__ = __webpack_require__(36);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utilities_htmlhelpers__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utilities_htmlhelpers___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__utilities_htmlhelpers__);
 
-    var riot = __webpack_require__(2)
+    var riot = __webpack_require__(0)
     
 riot.tag2('raw', '<span></span>', '', '', function(opts) {
 
@@ -5138,22 +5741,22 @@ riot.tag2('raw', '<span></span>', '', '', function(opts) {
   
 
 /***/ }),
-/* 88 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
-    var riot = __webpack_require__(2)
+    var riot = __webpack_require__(0)
     riot.tag2('nonxml', '<div class="panel panel-default"> <div class="panel-heading"> <h3 class="panel-title"> Document Attachment </h3> </div> <div class="panel-body"> The clinical document you are viewing has an attached document <b>{opts.nonxml.reference}</b>. Please download the document through your EMR. <br> </div>', '', '', function(opts) {
 });
     
   
 
 /***/ }),
-/* 89 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
-    var riot = __webpack_require__(2)
+    var riot = __webpack_require__(0)
     riot.tag2('empty', '<span class="text-muted">This section is empty.</span>', '', '', function(opts) {
 });
 
@@ -5161,11 +5764,11 @@ riot.tag2('raw', '<span></span>', '', '', function(opts) {
   
 
 /***/ }),
-/* 90 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
-    var riot = __webpack_require__(2)
+    var riot = __webpack_require__(0)
     riot.tag2('generic', '<panel section="{opts.section}" data="{opts.data}" data="{opts.data}"> <raw content="{opts.data.text}" if="{opts.data.text}"></raw> <empty if="{!opts.data.text}"></empty> </panel>', '', '', function(opts) {
 });
 
@@ -5173,21 +5776,21 @@ riot.tag2('raw', '<span></span>', '', '', function(opts) {
   
 
 /***/ }),
-/* 91 */
+/* 39 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_moment__ = __webpack_require__(46);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_moment__ = __webpack_require__(9);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_moment___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_moment__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_lodash__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_lodash__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_lodash___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_lodash__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__utilities_lodashmixins__ = __webpack_require__(34);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__utilities_lodashmixins__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__utilities_lodashmixins___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2__utilities_lodashmixins__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__utilities_lang__ = __webpack_require__(92);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__utilities_lang__ = __webpack_require__(40);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__utilities_lang___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3__utilities_lang__);
 
-    var riot = __webpack_require__(2)
+    var riot = __webpack_require__(0)
     
 
 
@@ -5250,7 +5853,7 @@ riot.tag2('demographics', '<div class="panel panel-default" id="demographics"> <
   
 
 /***/ }),
-/* 92 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5443,11 +6046,11 @@ exports.languages = {
 
 
 /***/ }),
-/* 93 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
-    var riot = __webpack_require__(2)
+    var riot = __webpack_require__(0)
     riot.tag2('allergies', '<panel section="{opts.section}" data="{opts.data}"> <div class="row" if="{opts.data.entries.length}"> <div each="{opts.data.entries}" class="col-sm-4"> <div class="alert alert-mild clearfix " role="alert"> <h4>{allergen.name}</h4> <div class="pull-left">{reaction.name}</div> <div class="pull-right">{severity}</div> </div> </div> </div> <empty if="{!opts.dat.entries.length}"></empty> </panel>', '', '', function(opts) {
 });
 
@@ -5455,11 +6058,11 @@ exports.languages = {
   
 
 /***/ }),
-/* 94 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
-    var riot = __webpack_require__(2)
+    var riot = __webpack_require__(0)
     riot.tag2('care-plan', '<panel section="{opts.section}" data="{opts.data}"> <empty if="{!opts.data.entries.length}"></empty> </panel>', '', '', function(opts) {
 });
 
@@ -5467,11 +6070,11 @@ exports.languages = {
   
 
 /***/ }),
-/* 95 */
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
-    var riot = __webpack_require__(2)
+    var riot = __webpack_require__(0)
     riot.tag2('chief-complaint', '<panel section="{opts.section}" data="{opts.data}"> <empty if="{!opts.data.entries.length}"></empty> </panel>', '', '', function(opts) {
 });
 
@@ -5479,11 +6082,11 @@ exports.languages = {
   
 
 /***/ }),
-/* 96 */
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
-    var riot = __webpack_require__(2)
+    var riot = __webpack_require__(0)
     riot.tag2('encounters', '<panel section="{opts.section}" data="{opts.data}"> <empty if="{!opts.data.entries.length}"></empty> </panel>', '', '', function(opts) {
 });
 
@@ -5491,11 +6094,11 @@ exports.languages = {
   
 
 /***/ }),
-/* 97 */
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
-    var riot = __webpack_require__(2)
+    var riot = __webpack_require__(0)
     riot.tag2('functional-status', '<panel section="{opts.section}" data="{opts.data}"> <empty if="{!opts.data.entries.length}"></empty> </panel>', '', '', function(opts) {
 });
 
@@ -5503,11 +6106,11 @@ exports.languages = {
   
 
 /***/ }),
-/* 98 */
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
-    var riot = __webpack_require__(2)
+    var riot = __webpack_require__(0)
     riot.tag2('immunization-declines', '<panel section="{opts.section}" data="{opts.data}"> <empty if="{!opts.data.entries.length}"></empty> </panel>', '', '', function(opts) {
 });
 
@@ -5515,11 +6118,11 @@ exports.languages = {
   
 
 /***/ }),
-/* 99 */
+/* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
-    var riot = __webpack_require__(2)
+    var riot = __webpack_require__(0)
     riot.tag2('immunizations', '<panel section="{opts.section}" data="{opts.data}"> <empty if="{!opts.data.entries.length}"></empty> </panel>', '', '', function(opts) {
 });
 
@@ -5527,11 +6130,11 @@ exports.languages = {
   
 
 /***/ }),
-/* 100 */
+/* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
-    var riot = __webpack_require__(2)
+    var riot = __webpack_require__(0)
     riot.tag2('instructions', '<panel section="{opts.section}" data="{opts.data}"> <empty if="{!opts.data.entries.length}"></empty> </panel>', '', '', function(opts) {
 });
 
@@ -5539,15 +6142,15 @@ exports.languages = {
   
 
 /***/ }),
-/* 101 */
+/* 49 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_moment__ = __webpack_require__(46);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_moment__ = __webpack_require__(9);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_moment___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_moment__);
 
-    var riot = __webpack_require__(2)
+    var riot = __webpack_require__(0)
     
 
 riot.tag2('medications', '<panel section="{opts.section}" data="{opts.data}"> <div each="{opts.data.entries}"> <div class="row"> <div class="col-md-12"> <div class="header-row"> {text} <span class="header-date pull-right"> <span class="header-small">{date_range.start_display} - {date_range.end_display} </span> </div> </div> </div> <div class="row"> <div class="col-md-12"> </div> </div> <div class="row"> <div class="col-md-4"> <table class="table table-borderless"> <tbody> <tr> <th> <span class="header-small">Admin</span> </th> <td> <span>{administration.name} [{administration.code}]</span> </td> </tr> <tr> <th> <span class="header-small">Schedule</span> </th> <td> <span>{schedule.type} {schedule.period_value}{schedule.period_unit}</span> </td> </tr> <tr> <th> <span class="header-small">Dose</span> </th> <td> <span>{dose_quantity.value} {dose_quantity.unit}</span> </td> </tr> <tr> <th scope="row"> <span class="header-small">Rate</span> </th> <td> <span>{rate_quantity.value} {rate_quantity.unit}</span> </td> </tr> </tbody> </table> </div> <div class="col-md-4"> <table class="table table-borderless"> <tbody> <tr> <th> <span class="header-small">Route</span> </th> <td> <span>{route.name}</span> </td> </tr> <tr> <th> <span class="header-small">Vehicle</span> </th> <td> <span>{vehicle.name} [{vehicle.code_system_name} {vehicle.code}]</span> </td> </tr> <tr> <th> <span class="header-small">Prescriber</span> </th> <td> <span>{prescriber.organization}</span> </td> </tr> <tr> </tr> </tbody> </table> </div> <div class="col-md-4"> <span class="header-small"><b>Reason</b></span> <p class="reasons">{reason.name}</p> </div> </div> </div> </panel>', '', '', function(opts) {
@@ -5565,11 +6168,11 @@ riot.tag2('medications', '<panel section="{opts.section}" data="{opts.data}"> <d
   
 
 /***/ }),
-/* 102 */
+/* 50 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
-    var riot = __webpack_require__(2)
+    var riot = __webpack_require__(0)
     riot.tag2('problems', '<panel section="{opts.section}" data="{opts.data}"> <empty if="{!opts.data.entries.length}"></empty> </panel>', '', '', function(opts) {
 });
 
@@ -5577,11 +6180,11 @@ riot.tag2('medications', '<panel section="{opts.section}" data="{opts.data}"> <d
   
 
 /***/ }),
-/* 103 */
+/* 51 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
-    var riot = __webpack_require__(2)
+    var riot = __webpack_require__(0)
     riot.tag2('procedures', '<panel section="{opts.section}" data="{opts.data}"> <empty if="{!opts.data.entries.length}"></empty> </panel>', '', '', function(opts) {
 });
 
@@ -5589,11 +6192,11 @@ riot.tag2('medications', '<panel section="{opts.section}" data="{opts.data}"> <d
   
 
 /***/ }),
-/* 104 */
+/* 52 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
-    var riot = __webpack_require__(2)
+    var riot = __webpack_require__(0)
     riot.tag2('results', '<panel section="{opts.section}" data="{opts.data}"> <empty if="{!opts.data.entries.length}"></empty> </panel>', '', '', function(opts) {
 });
 
@@ -5601,11 +6204,11 @@ riot.tag2('medications', '<panel section="{opts.section}" data="{opts.data}"> <d
   
 
 /***/ }),
-/* 105 */
+/* 53 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
-    var riot = __webpack_require__(2)
+    var riot = __webpack_require__(0)
     riot.tag2('smoking-status', '<panel section="{opts.section}" data="{opts.data}"> <empty if="{!opts.data.entries.length}"></empty> </panel>', '', '', function(opts) {
 });
 
@@ -5613,11 +6216,11 @@ riot.tag2('medications', '<panel section="{opts.section}" data="{opts.data}"> <d
   
 
 /***/ }),
-/* 106 */
+/* 54 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
-    var riot = __webpack_require__(2)
+    var riot = __webpack_require__(0)
     riot.tag2('vitals', '<panel section="{opts.section}" data="{opts.data}"> <empty if="{!opts.data.entries.length}"></empty> </panel>', '', '', function(opts) {
 });
 
@@ -5625,7 +6228,7 @@ riot.tag2('medications', '<panel section="{opts.section}" data="{opts.data}"> <d
   
 
 /***/ }),
-/* 107 */
+/* 55 */
 /***/ (function(module, exports) {
 
 module.exports = require("bootstrap-sass");
