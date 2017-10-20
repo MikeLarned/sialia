@@ -13,7 +13,7 @@ import { PreferencesService } from '../services';
           <span class="icon-bar"></span>
         </button>
         <a class="navbar-brand" href="#">
-          { opts.data.header.title } -
+          { opts.data.document.title } -
           <name name={ opts.data.demographics.name } class="text-muted"/>
         </a>
       </div>

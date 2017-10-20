@@ -1,9 +1,9 @@
 <name>
-  <span>{ opts.name.first } { opts.name.last }{ possesive }</span>
+  <span>{ opts.name.given[0] } { opts.name.family }{ possesive }</span>
 
   <script>
     if (opts.possesive) {
-      this.possesive = opts.name.Last.slice(-1) === 's' ? '\'' : '\'s';
+      this.possesive = opts.name.family.slice(-1) === 's' ? '\'' : '\'s';
     }
   </script>
 </name>
