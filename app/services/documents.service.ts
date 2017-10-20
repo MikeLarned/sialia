@@ -44,33 +44,13 @@ export class DocumentsService {
   fetch(url: string): Observable<ViewerOptions> {
     return Observable.create((observer) => {
       $.get(url, (content) => {
-        try {
-          let loadedData = this.load(content);
-          observer.next(loadedData);
-          observer.complete();
-        }
-        catch (e) {
-          observer.error(e);
-        }
+        observer.next(this.load(content));
+        observer.complete();
       }, 'text');
     });
   }
 
-  loadRaw(data: any): Observable<ViewerOptions> {
-    return Observable.create((observer) => {
-      try {
-        let loadedData = this.load(data);
-        observer.next(loadedData);
-        observer.complete();
-      }
-      catch (e) {
-        observer.error(e);
-      }
-    });
-  }
-
   load(data: any): ViewerOptions {
-    console.log(bluebutton);
     let bb = bluebutton(data);
     if (!bb.data) throw 'BlueButton could not parse the file.';
 

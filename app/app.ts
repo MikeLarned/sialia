@@ -8,19 +8,17 @@ import { PreferencesService } from './services';
 
 export class App {
 
-  service: DocumentsService = new DocumentsService();
+    service: DocumentsService = new DocumentsService();
 
-  constructor(options: any, errorHandler?: (err: any) => void) {
+    constructor(options: any) {
 
-    let docs = options.docs;
+      let documents = options.docs;
 
-    this.service.fetch(docs[0].Url)
-      .subscribe((options) => {
-        options.documents = docs;
+      this.service.fetch(documents[0].Url).subscribe((options) => {
+        options.documents = documents;
         riot.mount('sialia', options);
-      },
-      errorHandler);
+      });
+    }
   }
-}
 
 window['Sialia'] = App;

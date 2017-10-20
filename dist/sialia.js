@@ -136,9 +136,9 @@ lodash_1.default.mixin({
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const lodash = __webpack_require__(1);
+const lodash_1 = __webpack_require__(1);
 function updateSortOrder(sections) {
-    lodash.each(sections, (v, k) => {
+    lodash_1.default.each(sections, (v, k) => {
         v.sort = k;
     });
     return sections;
@@ -239,14 +239,13 @@ __webpack_require__(54);
 const riot_1 = __webpack_require__(0);
 const services_1 = __webpack_require__(2);
 class App {
-    constructor(options, errorHandler) {
+    constructor(options) {
         this.service = new services_1.DocumentsService();
-        let docs = options.docs;
-        this.service.fetch(docs[0].Url)
-            .subscribe((options) => {
-            options.documents = docs;
+        let documents = options.docs;
+        this.service.fetch(documents[0].Url).subscribe((options) => {
+            options.documents = documents;
             riot_1.default.mount('sialia', options);
-        }, errorHandler);
+        });
     }
 }
 exports.App = App;
@@ -630,31 +629,12 @@ class DocumentsService {
     fetch(url) {
         return Observable_1.Observable.create((observer) => {
             jquery_1.default.get(url, (content) => {
-                try {
-                    let loadedData = this.load(content);
-                    observer.next(loadedData);
-                    observer.complete();
-                }
-                catch (e) {
-                    observer.error(e);
-                }
+                observer.next(this.load(content));
+                observer.complete();
             }, 'text');
         });
     }
-    loadRaw(data) {
-        return Observable_1.Observable.create((observer) => {
-            try {
-                let loadedData = this.load(data);
-                observer.next(loadedData);
-                observer.complete();
-            }
-            catch (e) {
-                observer.error(e);
-            }
-        });
-    }
     load(data) {
-        console.log(bluebutton_1.bluebutton);
         let bb = bluebutton_1.bluebutton(data);
         if (!bb.data)
             throw 'BlueButton could not parse the file.';
