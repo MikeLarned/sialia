@@ -957,18 +957,19 @@ module.exports = function (ccda, data) {
 
 /***/ }),
 /* 2 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
 /*
  * Parser for the CCDA demographics section
  */
+var Core = __webpack_require__(0);
 
 module.exports = function(doc) {
   var self = this;
   self.doc = doc;
   self.demographics = demographics;
 
-  var demographics = function (ccda) {
+  function demographics(ccda) {
     
     var parseDate = self.doc.parseDate;
     var parseName = self.doc.parseName;
@@ -1791,7 +1792,7 @@ module.exports =  {
 /*
  * ...
  */
-
+var { stripWhitespace } = __webpack_require__(3);
 /*
   * A function used to wrap DOM elements in an object so methods can be added
   * to the element object. IE8 does not allow methods to be added directly to
@@ -1982,8 +1983,6 @@ var boolAttr = function (attrName) {
   return false;
 };
 
-var { stripWhitespace } = __webpack_require__(3);
-
 /*
   * Retrieve the element's value. For example, if the element is:
   *   <city>Madison</city>
@@ -2152,11 +2151,11 @@ module.exports = function() {
   self.CCDAR2 = new CCDAR2(getEntries);
 };
 
-var getEntries = function() {
+function getEntries() {
   return entries;
 };
 
-var detect = function (data) {
+function detect(data) {
   if (!data.template) {
     return 'json';
   }
@@ -2176,7 +2175,7 @@ var detect = function (data) {
 /*
   * Get entries within an element (with tag name 'entry'), adds an `each` function
   */
-var entries = function () {
+function entries() {
   var each = function (callback) {
     for (var i = 0; i < this.length; i++) {
       callback(this[i]);
@@ -2202,7 +2201,7 @@ var entries = function () {
   * For the latter, parseDate will not be given type `String`
   * and will return `null`.
   */
-var parseDate = function (str) {
+function parseDate(str) {
   if (!str || typeof str !== 'string') {
     return null;
   }
@@ -2280,7 +2279,7 @@ function _toInt(argumentForCoercion) {
 /*
   * Parses an HL7 name (prefix / given [] / family)
   */
-var parseName = function (nameEl) {
+function parseName(nameEl) {
   var prefix = nameEl.tag('prefix').val();
   
   var els = nameEl.elsByTag('given');
@@ -2303,7 +2302,7 @@ var parseName = function (nameEl) {
 /*
   * Parses an HL7 address (streetAddressLine [], city, state, postalCode, country)
   */
-var parseAddress = function (addrEl) {
+function parseAddress(addrEl) {
   var els = addrEl.elsByTag('streetAddressLine');
   var street = [];
   
@@ -2339,22 +2338,23 @@ module.exports = function(getEntries) {
   var self = this;
 
   self.getEntries = getEntries;
+  self.process = process;
+  self.section = section;
 
   /*
   * Preprocesses the C32 document
   */
-  var process = function (c32) {
+  function process(c32) {
     c32.section = section;
     return c32;
   };
-
 
   /*
     * Finds the section of a C32 document
     *
     * Usually we check first for the HITSP section ID and then for the HL7-CCD ID.
     */
-  var section = function (name) {
+  function section(name) {
     var el, entries = self.getEntries();
     
     switch (name) {
@@ -2422,11 +2422,6 @@ module.exports = function(getEntries) {
     
     return null;
   };
-
-  return {
-    process: process,
-    section: section
-  };
 };
 
 
@@ -2441,10 +2436,14 @@ module.exports = function(getEntries) {
 module.exports = function (getEntries) {
     var self = this;
     self.getEntries = getEntries;
+
+    self.process = process;
+    self.section = section;
+
     /*
      * Preprocesses the CCDAR2 document
      */
-    var process = function (ccda) {
+    function process(ccda) {
         ccda.section = section;
         return ccda;
     };
@@ -2452,7 +2451,7 @@ module.exports = function (getEntries) {
     /*
      * Finds the section of a CCDA document
      */
-    var section = function (name) {
+    function section(name) {
         var el, entries = self.getEntries();
 
         switch (name) {
@@ -2480,12 +2479,6 @@ module.exports = function (getEntries) {
 
         return null;
     };
-
-    return {
-        process: process,
-        section: section
-    };
-
 }
 
 
@@ -2499,11 +2492,15 @@ module.exports = function (getEntries) {
 
 module.exports = function (getEntries) {
   var self = this;
+
   self.getEntries = getEntries;
+  self.process = process;
+  self.section = section;
+  
   /*
    * Preprocesses the CCDA document
    */
-  var process = function (ccda) {
+  function process(ccda) {
     ccda.section = section;
     return ccda;
   };  
@@ -2511,7 +2508,7 @@ module.exports = function (getEntries) {
   /*
    * Finds the section of a CCDA document
    */
-  var section = function (name) {
+  function section(name) {
     var el, entries = self.getEntries();
     
     switch (name) {
@@ -2598,14 +2595,7 @@ module.exports = function (getEntries) {
     }
     
     return null;
-  };
-  
-  
-  return {
-    process: process,
-    section: section
-  };
-  
+  };  
 };
 
 
@@ -2620,10 +2610,14 @@ module.exports = function (getEntries) {
 module.exports = function (getEntries) {
     var self = this;
     self.getEntries = getEntries;
+    
+    self.process = process;
+    self.section = section;   
+
     /*
      * Preprocesses the CCDAR2 document
      */
-    var process = function (ccda) {
+    function process(ccda) {
         ccda.section = section;
         return ccda;
     };
@@ -2631,7 +2625,7 @@ module.exports = function (getEntries) {
     /*
      * Finds the section of a CCDA document
      */
-    var section = function (name) {
+    function section(name) {
         var el, entries = self.getEntries();
 
         switch (name) {
@@ -2659,13 +2653,6 @@ module.exports = function (getEntries) {
 
         return null;
     };
-
-
-    return {
-        process: process,
-        section: section
-    };
-
 }
 
 
@@ -2680,6 +2667,8 @@ module.exports = function (getEntries) {
 var C32 = __webpack_require__(15);
 var CCDA = __webpack_require__(16);
 
+var method = function () {};
+
 /* exported Generators */
 module.exports = {
   method: method,
@@ -2687,7 +2676,7 @@ module.exports = {
   CCDA: CCDA
 };
   
-var method = function () {};
+
 
   /* Import ejs if we're in Node. Then setup custom formatting filters
    */
@@ -2851,7 +2840,7 @@ module.exports = {
 /*
   * Generates a C32 document
   */
-var run = function (json, template, testingMode) {
+function run(json, template, testingMode) {
   /* jshint unused: false */ // only until this stub is actually implemented
   console.log("C32 generation is not implemented yet");
   return null;
@@ -2877,7 +2866,7 @@ module.exports = {
   * If `testingMode` is true, we'll set the "now" variable to a specific,
   * fixed time, so that the expected XML doesn't change across runs
   */
-var run = function (json, template, testingMode) {
+function run(json, template, testingMode) {
   if (!template) {
     console.log("Please provide a template EJS file for the Generator to use. " +
                 "Load it via fs.readFileSync in Node or XHR in the browser.");
@@ -2917,6 +2906,8 @@ var CCD = __webpack_require__(30);
 var CCDA = __webpack_require__(32);
 var CCDAR2 = __webpack_require__(47);
 
+var method = function () {};
+
 /* exported Parsers */
 module.exports = function(doc) {
   var self = this;
@@ -2926,10 +2917,7 @@ module.exports = function(doc) {
   self.CCD = new CCD(self.doc);
   self.CCDA = new CCDA(self.doc);
   self.CCDAR2 = new CCDAR2(self.doc);
-};  
-
-var method = function () {};
-
+}; 
 
 /***/ }),
 /* 19 */
@@ -2956,7 +2944,6 @@ module.exports = function(doc) {
   var self = this;
 
   self.doc = doc;
-  self.run = run;
   self.allergiesParser = new AllergiesParser(self.doc);
   self.demographicsParser = new DemographicsParser(self.doc);
   self.demographicsParser = new DocumentParser(self.doc);
@@ -2968,7 +2955,7 @@ module.exports = function(doc) {
   self.resultsParser = new ResultsParser(self.doc);
   self.vitalsParser = new VitalsParser(self.doc);
 
-  var run = function (c32) {
+  self.run = function (c32) {
     var data = {};
     
     data.document              = self.demographicsParser.parse(c32);
@@ -3045,7 +3032,7 @@ module.exports = function(doc) {
   self.doc = doc;
   self.parse = parse;
 
-  var parse = function (c32) {
+  function parse(c32) {
   
     var parseDate = self.doc.parseDate;
     var parseName = self.doc.parseName;
@@ -3168,7 +3155,7 @@ module.exports = function(doc) {
   self.doc = doc;
   self.parse = parse;
 
-  var parse = function (c32) {    
+  function parse(c32) {    
     var parseDate = self.doc.parseDate;
     var parseName = self.doc.parseName;
     var parseAddress = self.doc.parseAddress;
@@ -3277,7 +3264,7 @@ module.exports = function(doc) {
   self.doc = doc;
   self.parse = parse;
 
-  var parse = function(c32) {
+  function parse(c32) {
     
     var parseDate = self.doc.parseDate;
     var parseName = self.doc.parseName;
@@ -3431,7 +3418,7 @@ module.exports = function(doc) {
   self.doc = doc;
   self.parse = parse;
 
-  var parse = function (c32) {
+  function parse(c32) {
     
     var parseDate = self.doc.parseDate;
     var parseName = self.doc.parseName;
@@ -3532,7 +3519,7 @@ module.exports = function(doc) {
   self.doc = doc;
   self.parse = parse;
 
-  var parse = function (c32) {
+  function parse(c32) {
     
     var parseDate = self.doc.parseDate;
     var parseName = self.doc.parseName;
@@ -3654,7 +3641,9 @@ module.exports = function(doc) {
 
 /***/ }),
 /* 25 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
+
+var Core = __webpack_require__(0);
 
 /*
  * Parser for the C32 medications section
@@ -3664,7 +3653,7 @@ module.exports = function(doc) {
   self.doc = doc;
   self.parse = parse;
   
-  var parse = function (c32) {    
+  function parse(c32) {    
     var parseDate = self.doc.parseDate;
     var medications = c32.section('medications');
   
@@ -3859,7 +3848,9 @@ module.exports = function(doc) {
 
 /***/ }),
 /* 26 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
+
+var Core = __webpack_require__(0);
 
 /*
  * Parser for the C32 problems section
@@ -3869,7 +3860,7 @@ module.exports = function(doc) {
   self.doc = doc;
   self.parse = parse;
 
-  var parse = function (c32) {
+  function parse(c32) {
     
     var parseDate = self.doc.parseDate;
     var parseName = self.doc.parseName;
@@ -3946,18 +3937,20 @@ module.exports = function(doc) {
 
 /***/ }),
 /* 27 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
 /*
  * Parser for the C32 procedures section
  */
+
+var Core = __webpack_require__(0);
 
 module.exports = function(doc) {
   var self = this;
   self.doc = doc;
   self.parse = parse;
 
-  var parse = function (c32) {
+  function parse(c32) {
     
     var parseDate = self.doc.parseDate;
     var parseName = self.doc.parseName;
@@ -4029,18 +4022,20 @@ module.exports = function(doc) {
 
 /***/ }),
 /* 28 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
 /*
  * Parser for the C32 results (labs) section
  */
+
+var Core = __webpack_require__(0);
 
 module.exports = function(doc) {
   var self = this;
   self.doc = doc;
   self.parse = parse;
 
-  var parse = function (c32) {
+  function parse(c32) {
     
     var parseDate = self.doc.parseDate;
     var parseName = self.doc.parseName;
@@ -4167,7 +4162,7 @@ module.exports = function(doc) {
   self.doc = doc;
   self.parse = parse;
 
-  var parse = function (c32) {
+  function parse(c32) {
     
     var parseDate = self.doc.parseDate;
     var parseName = self.doc.parseName;
@@ -4241,12 +4236,11 @@ var HealthConcernsParser = __webpack_require__(4);
 module.exports = function(doc) {
   var self = this;
   self.doc = doc;
-  self.run = run;
   self.documentParser = new DocumentParser(self.doc);
   self.demographicsParser = new DemographicsParser(self.doc);
   self.healthConcernsParser = new HealthConcernsParser(self.doc);
   
-  var run = function (ccda) {
+  self.run = function (ccda) {
     var data = {};
 
     data.document              = self.documentParser.document(ccda);
@@ -4264,18 +4258,20 @@ module.exports = function(doc) {
 
 /***/ }),
 /* 31 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
 /*
  * Parser for the CCDAR2 document section
  */
+var Core = __webpack_require__(0);
+
 
 module.exports = function(doc) {
   var self = this;
   self.doc = doc;
   self.document = document;
 
-  var document = function (ccda) {
+  function document(ccda) {
     
       var parseDate = self.doc.parseDate;
       var parseName = self.doc.parseName;
@@ -4520,7 +4516,7 @@ module.exports = function(doc) {
     var parseDate = self.doc.parseDate;
     var parseName = self.doc.parseName;
     var parseAddress = self.doc.parseAddress;
-      var allergies = ccda.section('allergies');
+    var allergies = ccda.section('allergies');
   
       var data = {}, el;
       data.entries = [];
@@ -5819,9 +5815,7 @@ module.exports = function(doc) {
   self.demographicsParser = new DemographicsParser(self.doc);
   self.healthConcernsParser = new HealthConcernsParser(self.doc);
 
-  self.run = run;
-
-  var run = function (ccda) {    
+  self.run = function (ccda) {    
       var data = {};
   
       data.document              = self.documentParser.document(ccda);

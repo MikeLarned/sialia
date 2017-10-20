@@ -665,7 +665,7 @@ block-stream@*:
 
 "bluebutton@github:LucasObendorf/bluebutton.js#Webpack":
   version "0.4.3"
-  resolved "https://codeload.github.com/LucasObendorf/bluebutton.js/tar.gz/4850c1c03422e209af775b9627f259be5eab345d"
+  resolved "https://codeload.github.com/LucasObendorf/bluebutton.js/tar.gz/89a471a3c48ee4dec71daef7cac9131bc0fe76a4"
   dependencies:
     lodash "^4.17.4"
     xmldom "~0.1.19"
