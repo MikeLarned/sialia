@@ -1,4 +1,4 @@
-import { ViewerOptions, Section, Preferences } from '../models';
+import { ViewerOptions, Section, Preferences, DocType } from '../models';
 import _ from 'lodash';
 
 export class PreferencesService  {
@@ -13,29 +13,31 @@ export class PreferencesService  {
             return item.key;
         });
 
-        let pref = this.getPreferences(opts.pref.id);
+        let pref = this.getPreferences(opts.pref.type);
         pref.enabledSectionKeys = _.map(enabled, (item) => {
            return item.key;
         });
         pref.sortedSectionKeys = sortOrder;
         pref.isSet = true;
 
-        let storageId = 'doc_' + opts.pref.id;
+        let storageId = 'doc_' + opts.pref.type.templateId;
         localStorage.setItem(storageId, JSON.stringify(pref));
 
     }
 
-    getPreferences(docId: string): Preferences {
+    getPreferences(docType: DocType): Preferences {
 
-        let storageId = 'doc_' + docId,
+        let id = docType.templateId,
+            storageId = 'doc_' + id,
             prefString = localStorage.getItem(storageId),
             pref = JSON.parse(prefString),
             isSet = pref !== null;
 
         if (!isSet) {
             pref = {
-                id: docId,
+                id: id,
                 isSet: isSet,
+                type: docType,
                 enabledSectionKeys: null,
                 sortedSectionKeys: null
             };

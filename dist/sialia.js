@@ -194,21 +194,22 @@ class PreferencesService {
         let sortOrder = lodash_1.default.map(opts.sections, (item) => {
             return item.key;
         });
-        let pref = this.getPreferences(opts.pref.id);
+        let pref = this.getPreferences(opts.pref.type);
         pref.enabledSectionKeys = lodash_1.default.map(enabled, (item) => {
             return item.key;
         });
         pref.sortedSectionKeys = sortOrder;
         pref.isSet = true;
-        let storageId = 'doc_' + opts.pref.id;
+        let storageId = 'doc_' + opts.pref.type.templateId;
         localStorage.setItem(storageId, JSON.stringify(pref));
     }
-    getPreferences(docId) {
-        let storageId = 'doc_' + docId, prefString = localStorage.getItem(storageId), pref = JSON.parse(prefString), isSet = pref !== null;
+    getPreferences(docType) {
+        let id = docType.templateId, storageId = 'doc_' + id, prefString = localStorage.getItem(storageId), pref = JSON.parse(prefString), isSet = pref !== null;
         if (!isSet) {
             pref = {
-                id: docId,
+                id: id,
                 isSet: isSet,
+                type: docType,
                 enabledSectionKeys: null,
                 sortedSectionKeys: null
             };
@@ -566,6 +567,7 @@ const lodash_1 = __webpack_require__(1);
 class Preferences {
     constructor(pref) {
         this.id = pref.id;
+        this.type = pref.type;
         this.enabledSectionKeys = pref.enabledSectionKeys || [];
         this.sortedSectionKeys = pref.sortedSectionKeys || [];
         this.isSet = pref.isSet;
@@ -654,11 +656,9 @@ class DocumentsService {
     load(data) {
         console.log(bluebutton_1.bluebutton);
         let bb = bluebutton_1.bluebutton(data);
-        console.log(bb);
         if (!bb.data)
             throw 'BlueButton could not parse the file.';
-        console.log(bb);
-        let pref = new preferences_service_1.PreferencesService().getPreferences(bb.meta.identifiers[0]);
+        let pref = new preferences_service_1.PreferencesService().getPreferences(bb.data.document.type);
         return {
             sections: this.getSections(bb, config_1.SECTIONS, config_1.IGNORE_SECTIONS, pref),
             data: bb.data,
