@@ -58,9 +58,9 @@ module.exports = {
                 test: /\.scss$/, 
                 exclude: /dist/,
                 use: [
-                    {
+                    /*{
                         loader: 'style-loader'
-                    },
+                    },*/
                     { 
                         loader: 'css-loader',
                         options: {
