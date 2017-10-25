@@ -53,6 +53,7 @@ export class DocumentsService {
   load(data: any): ViewerOptions {
     let bb = bluebutton(data);
     if (!bb.data) throw 'BlueButton could not parse the file.';
+    console.log(JSON.stringify(bb, null, 4));
 
     let pref = new PreferencesService().getPreferences(bb.data.document.type);
 
