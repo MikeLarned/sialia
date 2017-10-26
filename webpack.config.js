@@ -9,7 +9,7 @@ let excludes = nodeExternals({
 });
 
 const extractCss = new ExtractTextPlugin({
-    filename: '[name].[contenthash].css'
+    filename: '[name].css'
 });
 
 /*excludes.lodash = {
