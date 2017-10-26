@@ -304,6 +304,8 @@ __webpack_require__(47);
     this.dictionary = this.sections.reduce(function(o, x){ o[x.key] = x; return o; }, {});
     this.on('update', function() {
 
+        // ML - Not showing preferences when the body type is nonXmL.  We just want to show
+        // a link to the document.
         self.showNonXml = self.data.document.type.nonXmlBody.type !== "";
     });
 });
@@ -361,19 +363,19 @@ riot.tag2('preferences', '<h2> <button class="btn btn-primary pull-right" type="
       __WEBPACK_IMPORTED_MODULE_1_lodash___default.a.each(opts.sections, function(s) {
         s.enabled = true;
       });
-    }.bind(this)
+    }
 
     this.disableAll = function() {
       __WEBPACK_IMPORTED_MODULE_1_lodash___default.a.each(opts.sections, function(s) {
         s.enabled = false;
       });
-    }.bind(this)
+    }
 
     this.save = function() {
       this.parent.showPreferences = false;
       this.preferencesService.save(opts);
       riot.update();
-    }.bind(this)
+    }
 
 });
 
@@ -383,7 +385,7 @@ riot.tag2('preference-section', '<li class="list-group-item preferences-section 
     this.change = function(e) {
       e.item.enabled = e.target.checked;
       this.update();
-    }.bind(this)
+    }
 });
 
     
@@ -5961,19 +5963,19 @@ riot.tag2('header', '<nav class="navbar navbar-default navbar-fixed-top"> <div c
         this.parent.update(options);
         riot.update();
       }.bind(this));
-    }.bind(this)
+    }
 
     this.showPreferences = function() {
       this.parent.showPreferences = true;
       this.parent.update();
-    }.bind(this)
+    }
 
     this.toggleActive = function(e) {
       __WEBPACK_IMPORTED_MODULE_0_lodash___default.a.each(this.documents, function(d) {
         d.active = false;
       });
       e.item.active = true;
-    }.bind(this)
+    }
 });
 
     
@@ -6003,15 +6005,15 @@ riot.tag2('panel', '<div class="panel panel-{opts.state ? opts.state : \'default
 
     this.isEmpty = function() {
       return !__WEBPACK_IMPORTED_MODULE_0_lodash___default.a.get(opts, 'data.entries.length') && !opts.data.text;
-    }.bind(this)
+    }
 
     this.isEnabled = function() {
       return opts.section.enabled || opts.enabled;
-    }.bind(this)
+    }
 
-    this.toggleSection = function() {
+    this.toggleSection =  function() {
       opts.section.enabled = !opts.section.enabled;
-    }.bind(this)
+    }
 });
 
     
@@ -6120,16 +6122,16 @@ riot.tag2('demographics', '<div class="panel panel-default" id="demographics"> <
 
     this.toggle = function() {
       this.visible = !this.visible;
-    }.bind(this)
+    }
 
     this.formatDate = function(date) {
       return __WEBPACK_IMPORTED_MODULE_0_moment___default()(date).format('MMM D, YYYY');
-    }.bind(this)
+    }
 
     this.formatPhone = function(phone) {
 
       var p = '';
-
+      // which phone?
       if (phone.work) {
         p = phone.work
       }
@@ -6141,7 +6143,9 @@ riot.tag2('demographics', '<div class="panel panel-default" id="demographics"> <
       }
 
       var clean = "";
-
+      //_.(p).forEach(function(value) {
+        //clean = clean + value;
+      //});
       for (var i = 0, len = p.length; i < len; i++) {
         if (!isNaN(p[i])) {
           clean = clean + p[i];
@@ -6160,12 +6164,13 @@ riot.tag2('demographics', '<div class="panel panel-default" id="demographics"> <
         pretty = '(' + c[0] + c[1] + c[2] + ') ' + c[3] + c[4] + c[5] + '-' + c[6] + c[7] + c[8] + c[9];
       }
       return pretty;
-    }.bind(this)
+    }
 
     this.formatLanguage = function(languageCode) {
       return languageCode && __WEBPACK_IMPORTED_MODULE_3__utilities_lang__["languages"][languageCode.toLowerCase()] || 'an uknown language';
-    }.bind(this)
+    }
 
+    // religion: http://www.hl7.org/documentcenter/public_temp_44EED454-1C23-BA17-0CCDE88B4D98F6FD/standards/vocabulary/vocabulary_tables/infrastructure/vocabulary/ReligiousAffiliation.html
 });
 
     

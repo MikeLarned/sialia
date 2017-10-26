@@ -40,19 +40,19 @@ import { PreferencesService } from '../services';
       self.update();
     }
 
-    enableAll() {
+    this.enableAll = function() {
       _.each(opts.sections, function(s) {
         s.enabled = true;
       });
     }
 
-    disableAll() {
+    this.disableAll = function() {
       _.each(opts.sections, function(s) {
         s.enabled = false;
       });
     }
 
-    save() {
+    this.save = function() {
       this.parent.showPreferences = false;
       this.preferencesService.save(opts);
       riot.update();
@@ -73,7 +73,7 @@ import { PreferencesService } from '../services';
   <script>
     this.root.key = this.key;
 
-    change(e) {
+    this.change = function(e) {
       e.item.enabled = e.target.checked;
       this.update();
     }

@@ -28,15 +28,15 @@ import _ from 'lodash';
       }
     }.bind(this));
     
-    isEmpty() {
+    this.isEmpty = function() {
       return !_.get(opts, 'data.entries.length') && !opts.data.text;
     }
     
-    isEnabled() {
+    this.isEnabled = function() {
       return opts.section.enabled || opts.enabled;
     }
   
-    toggleSection() {
+    this.toggleSection =  function() {
       opts.section.enabled = !opts.section.enabled;
     }
   </script>

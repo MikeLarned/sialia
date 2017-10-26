@@ -46,6 +46,7 @@ module.exports = {
                 loader: 'riot-tag-loader',
                 enforce: "pre",
                 query: {
+                    type: 'none',
                     format: 'ems'
                 }
             },

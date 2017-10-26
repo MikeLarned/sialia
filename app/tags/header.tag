@@ -81,7 +81,7 @@ import { PreferencesService } from '../services';
     this.service = new DocumentsService();
     this.documents[0].active = true;
 
-    load(e) {
+    this.load = function(e) {
       this.toggleActive(e);
       this.service.fetch(e.item.Url).subscribe(function(options) {
         if (!options) return;
@@ -94,12 +94,12 @@ import { PreferencesService } from '../services';
       }.bind(this));
     }
 
-    showPreferences() {
+    this.showPreferences = function() {
       this.parent.showPreferences = true;
       this.parent.update();
     }
     
-    toggleActive(e) {
+    this.toggleActive = function(e) {
       _.each(this.documents, function(d) {
         d.active = false;
       });

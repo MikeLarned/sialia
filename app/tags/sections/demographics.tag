@@ -54,15 +54,15 @@ import { languages } from '../../utilities/lang';
   <script>
     this.visible = true;
 
-    toggle() {
+    this.toggle = function() {
       this.visible = !this.visible;
     }
 
-    formatDate(date) {
+    this.formatDate = function(date) {
       return moment(date).format('MMM D, YYYY');
     }
 
-    formatPhone(phone) {
+    this.formatPhone = function(phone) {
 
       var p = '';
       // which phone?
@@ -100,7 +100,7 @@ import { languages } from '../../utilities/lang';
       return pretty;
     }
 
-    formatLanguage(languageCode) {
+    this.formatLanguage = function(languageCode) {
       return languageCode && languages[languageCode.toLowerCase()] || 'an uknown language';
     }
 
