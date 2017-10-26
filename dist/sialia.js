@@ -5879,19 +5879,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const lodash_1 = __webpack_require__(1);
 exports.SECTIONS = [
     { key: 'allergies', display: 'Allergies', tagName: 'allergies', icon: 'pagelines' },
-    { key: 'care_plan', display: 'Care Plan', tagName: 'care-plan', icon: 'sticky-note-o' },
-    { key: 'chief_complaint', display: 'Chief Complaint', tagName: 'chief-complaint', icon: 'bullhorn' },
-    { key: 'encounters', display: 'Encounters', tagName: 'encounters', icon: 'stethoscope' },
-    { key: 'functional_statuses', display: 'Functional Status', tagName: 'functional-status', icon: 'wheelchair' },
-    { key: 'immunization_declines', display: 'Declined Immunizations', tagName: 'immunization_declines', icon: 'ban' },
-    { key: 'immunizations', display: 'Immunization', tagName: 'immunizations', icon: 'eyedropper' },
-    { key: 'instructions', display: 'Patient Instructions', tagName: 'instructions', icon: 'user-md' },
-    { key: 'medications', display: 'Medications', tagName: 'medications', icon: 'medkit' },
-    { key: 'problems', display: 'Problems', tagName: 'problems', icon: 'exclamation-triangle' },
-    { key: 'procedures', display: 'Procedures', tagName: 'procedures', icon: 'hospital-o' },
-    { key: 'results', display: 'Results', tagName: 'results', icon: 'flask' },
-    { key: 'smoking_status', display: 'Smoking Status', tagName: 'smoking-status', icon: 'fire' },
-    { key: 'vitals', display: 'Vitals', tagName: 'vitals', icon: 'heartbeat' },
 ];
 exports.IGNORE_SECTIONS = ['document', 'demographics', 'json'];
 let root = 'https://raw.githubusercontent.com/dougludlow/ccdaview/develop/docs/';

@@ -3,7 +3,7 @@ import { Section, Document } from './models';
 
 export const SECTIONS: Section[] = [
   { key: 'allergies', display: 'Allergies', tagName: 'allergies', icon: 'pagelines' },
-  { key: 'care_plan', display: 'Care Plan', tagName: 'care-plan', icon: 'sticky-note-o' },
+  /*{ key: 'care_plan', display: 'Care Plan', tagName: 'care-plan', icon: 'sticky-note-o' },
   { key: 'chief_complaint', display: 'Chief Complaint', tagName: 'chief-complaint', icon: 'bullhorn' },
   { key: 'encounters', display: 'Encounters', tagName: 'encounters', icon: 'stethoscope' },
   { key: 'functional_statuses', display: 'Functional Status', tagName: 'functional-status', icon: 'wheelchair' },
@@ -15,7 +15,7 @@ export const SECTIONS: Section[] = [
   { key: 'procedures', display: 'Procedures', tagName: 'procedures', icon: 'hospital-o' },
   { key: 'results', display: 'Results', tagName: 'results', icon: 'flask' },
   { key: 'smoking_status', display: 'Smoking Status', tagName: 'smoking-status', icon: 'fire' },
-  { key: 'vitals', display: 'Vitals', tagName: 'vitals', icon: 'heartbeat' },
+  { key: 'vitals', display: 'Vitals', tagName: 'vitals', icon: 'heartbeat' },*/
 ];
 
 export const IGNORE_SECTIONS: string[] = ['document', 'demographics', 'json'];
