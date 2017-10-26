@@ -4,7 +4,9 @@
     data: opts.parent.data[opts.current.key]
   };
 
-  console.log("Mounting: ", this.root)
+  console.log("Mounting: ", this.root);
+  console.log("Tag Name: ", this.current.tagName);
+  console.log("Options: ", options);
 
   riot.mount(this.root, opts.current.tagName, options);
   this.on('update', function() {
