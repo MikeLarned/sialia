@@ -1,10 +1,15 @@
 var webpack                 = require('webpack'),
     path                    = require('path')
     nodeExternals           = require('webpack-node-externals'),
-    FixDefaultImportPlugin  = require('webpack-fix-default-import-plugin');
+    FixDefaultImportPlugin  = require('webpack-fix-default-import-plugin'),
+    ExtractTextPlugin       = require('extract-text-webpack-plugin');
 
 let excludes = nodeExternals({
     whitelist: ["bluebutton"]
+});
+
+const extractCss = new ExtractTextPlugin({
+    filename: '[name].[contenthash].css'
 });
 
 /*excludes.lodash = {
@@ -31,7 +36,8 @@ module.exports = {
         extensions: ['.scss', '.ts', '.tsx', '.js']
     },
     plugins: [
-        new FixDefaultImportPlugin()
+        new FixDefaultImportPlugin(),
+        extractCss
     ],
     module: {
         rules: [
@@ -57,21 +63,21 @@ module.exports = {
             { 
                 test: /\.scss$/, 
                 exclude: /dist/,
-                use: [
-                    {
-                        loader: 'style-loader'
-                    },
-                    { 
-                        loader: 'css-loader',
-                        options: {
-                            importLoaders: 1
-                        }
-                    },
-                    { 
-                        loader: 'postcss-loader'
-                    }, 
-                    { loader: 'sass-loader' }
-                ]
+                use: extractCss.extract({
+                    use: [
+                        { 
+                            loader: 'css-loader',
+                            options: {
+                                importLoaders: 1
+                            }
+                        },
+                        { 
+                            loader: 'postcss-loader'
+                        }, 
+                        { loader: 'sass-loader' }
+                    ],
+                    fallback: 'style-loader'
+                }),
             }            
         ]
     }
