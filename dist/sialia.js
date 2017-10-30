@@ -293,7 +293,6 @@ __webpack_require__(47);
 
     var riot = __webpack_require__(0)
     riot.tag2('sialia', '<header data="{data}" sections="{sections}" documents="{documents}"></header> <div class="container-fluid sialia-body"> <div class="row"> <div class="col-lg-3 col-sm-4 hidden-xs" id="placeholder"></div> <div class="col-lg-3 col-sm-4" id="left"> <demographics demographics="{data.demographics}"></demographics> </div> <div class="col-lg-9 col-sm-8" id="right" if="{showPreferences && !showNonXml}"> <preferences sections="{sections}" pref="{pref}"></preferences> </div> <div class="col-lg-9 col-sm-8" id="right" if="{!showPreferences && !showNonXml}"> <ccda-section each="{section in sections}" current="{section}" parent="{parent}"></ccda-section> </div> <div class="col-lg-9 col-sm-8" id="right" if="{showNonXml}"> <nonxml nonxml="{data.document.type.nonXmlBody}"></nonxml> </div> </div> </div>', '', '', function(opts) {
-          console.log("Sections: ", sections)
 
     var self = this;
     this.data = opts.data;
