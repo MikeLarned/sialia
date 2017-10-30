@@ -10,6 +10,9 @@
         <preferences sections={ sections } pref={ pref } />
       </div>
       <div class="col-lg-9 col-sm-8" id="right" if={ !showPreferences && !showNonXml }>
+        <script>
+          console.log("Sections: ", sections)
+        </script>
         <ccda-section each={ section in sections } current={ section } parent={ parent }/>
       </div>
         <div class="col-lg-9 col-sm-8" id="right" if={ showNonXml }>
