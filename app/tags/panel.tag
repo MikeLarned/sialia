@@ -1,5 +1,10 @@
 import _ from 'lodash';
 
+console.log(opts);
+if (opts.section) {
+  console.log(opts.section.tagName)
+}
+
 <panel class={ opts.section.tagName } class={ fade: isEmpty(), expanded: isEnabled(), collapsed: !isEnabled() }>
   <div class="panel panel-{ opts.state ? opts.state : 'default' }" id={ opts.section.key }>
     <div class="panel-heading section-toggle" onclick={ toggleSection }>
