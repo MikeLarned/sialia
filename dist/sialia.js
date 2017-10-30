@@ -5996,10 +5996,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     
 
 riot.tag2('panel', '<div class="panel panel-{opts.state ? opts.state : \'default\'}" id="{opts.section.key}"> <div class="panel-heading section-toggle" onclick="{toggleSection}"> <h3 class="panel-title"> <i class="fa fa-{opts.section.icon} section-icon" aria-hidden="true" if="{!opts.hideicon}"></i> {opts.section.display} <span class="section-item-count badge badge-muted" if="{opts.data.entries.length}">{opts.data.entries.length}</span> <span class="text-muted" if="{isEmpty()}">(empty)</span> <span class="pull-right"> <i class="fa fa-chevron-down {fa-rotate-180: opts.section.enabled}" aria-hidden="true"></i> </span> </h3> </div> <div class="panel-body"> <yield></yield> </div> </div>', '', 'class="{opts.section.tagName}" class="{fade: isEmpty(), expanded: isEnabled(), collapsed: !isEnabled()}"', function(opts) {
-    console.log("Panel:");
-    console.log(opts);
-    console.trace();
-
     var current;
 
     this.on('update', function() {
@@ -6037,8 +6033,7 @@ riot.tag2('panel', '<div class="panel panel-{opts.state ? opts.state : \'default
     data: opts.parent.data[opts.current.key]
   };
 
-  //console.log("Mounting");
-  //riot.mount(this.root, opts.current.tagName, options);
+  riot.mount(this.content, opts.current.tagName, options);
   this.on('update', function() {
     options.data = opts.parent.data[opts.current.key];
   });
@@ -6383,8 +6378,6 @@ exports.languages = {
 
     var riot = __webpack_require__(0)
     riot.tag2('allergies', '<panel section="{opts.section}" data="{opts.data}"> <div class="row" if="{opts.data.entries.length}"> <div each="{opts.data.entries}" class="col-sm-4"> <div class="alert alert-mild clearfix " role="alert"> <h4>{allergen.name}</h4> <div class="pull-left">{reaction.name}</div> <div class="pull-right">{severity}</div> </div> </div> </div> <empty if="{!opts.data.entries.length}"></empty> </panel>', '', '', function(opts) {
-  console.log("Allergies: ");
-  console.log(opts.data);
 });
 
     
