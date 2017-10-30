@@ -6026,25 +6026,34 @@ riot.tag2('panel', '<div class="panel panel-{opts.state ? opts.state : \'default
 
 /***/ }),
 /* 27 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_lodash__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_lodash___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_lodash__);
 
     var riot = __webpack_require__(0)
-    riot.tag2('ccda-section', '', '', '', function(opts) {
+    
+
+riot.tag2('ccda-section', '', '', '', function(opts) {
   var options = {
     section: opts.current,
     data: opts.parent.data[opts.current.key]
   };
 
-  console.log("CCDA-Section: ", opts.current.tagName);
-  console.log(options.data);
-  console.log("Root: ", this.root);
-  console.log("Parent: ", this.parent);
+  if (options.data && !__WEBPACK_IMPORTED_MODULE_0_lodash___default.a.isEmpty(options.data))
+  {
+    console.log("CCDA-Section: ", opts.current.tagName);
+    console.log(options.data);
+    console.log("Root: ", this.root);
+    console.log("Parent: ", this.parent);
 
-  riot.mount(this.root, opts.current.tagName, options);
-  this.on('update', function() {
-    options.data = opts.parent.data[opts.current.key];
-  });
+    riot.mount(this.root, opts.current.tagName, options);
+    this.on('update', function() {
+      options.data = opts.parent.data[opts.current.key];
+    });
+  }
 });
 
     
