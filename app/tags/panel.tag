@@ -21,12 +21,12 @@ import _ from 'lodash';
   <script>
     var current;
   
-    this.on('update', function() {
+    /*this.on('update', function() {
       if (opts.data !== current) {
         current = opts.data;
         if(this.isEmpty()) opts.section.enabled = false;
       }
-    }.bind(this));
+    }.bind(this));*/
     
     this.isEmpty = function() {
       return !_.get(opts, 'data.entries.length') && !opts.data.text;
@@ -36,7 +36,7 @@ import _ from 'lodash';
       return opts.section.enabled || opts.enabled;
     }
   
-    this.toggleSection =  function() {
+    this.toggleSection = function() {
       opts.section.enabled = !opts.section.enabled;
     }
   </script>
