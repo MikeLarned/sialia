@@ -6061,7 +6061,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 riot.tag2('raw', '<span></span>', '', '', function(opts) {
 
   this.on('update', function() {
-    this.root.innerHTML = Object(__WEBPACK_IMPORTED_MODULE_0__utilities_htmlhelpers__["bootstrapize"])(opts.content);
+    //this.root.innerHTML = bootstrapize(opts.content);
   }.bind(this));
 });
 
