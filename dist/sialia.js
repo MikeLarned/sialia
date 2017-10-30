@@ -6013,7 +6013,7 @@ riot.tag2('panel', '<div class="panel panel-{opts.state ? opts.state : \'default
       return opts.section.enabled || opts.enabled;
     }
 
-    this.toggleSection =  function() {
+    this.toggleSection = function() {
       opts.section.enabled = !opts.section.enabled;
     }
 });
@@ -6033,10 +6033,13 @@ riot.tag2('panel', '<div class="panel panel-{opts.state ? opts.state : \'default
     data: opts.parent.data[opts.current.key]
   };
 
+  console.log("CCDA-Section:");
+  console.log(opts.current.tagName);
+
   riot.mount(this.root, opts.current.tagName, options);
-  this.on('update', function() {
+  /*this.on('update', function() {
     options.data = opts.parent.data[opts.current.key];
-  });
+  });*/
 });
 
     
