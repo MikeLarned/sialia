@@ -4,8 +4,9 @@
     data: opts.parent.data[opts.current.key]
   };
 
-  console.log("CCDA-Section:");
-  console.log(opts.current.tagName);
+  console.log("CCDA-Section: ", opts.current.tagName);
+  console.log(options.data);
+  console.log("Root: ", this.root);
 
   riot.mount(this.root, opts.current.tagName, options);
   /*this.on('update', function() {
