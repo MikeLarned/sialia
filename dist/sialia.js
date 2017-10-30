@@ -6036,6 +6036,7 @@ riot.tag2('panel', '<div class="panel panel-{opts.state ? opts.state : \'default
   console.log("Mounting: ", this.root);
   console.log("Tag Name: ", opts.current.tagName);
   console.log("Options: ", options);
+  console.log("Data: ", opts.parent.data[opts.current.key]);
 
   riot.mount(this.root, opts.current.tagName, options);
   this.on('update', function() {
