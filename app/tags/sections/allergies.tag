@@ -9,6 +9,6 @@
         </div>
       </div>
     </div>
-    <empty if={ !opts.dat.entries.length } />
+    <empty if={ !opts.data.entries.length } />
   </panel>
 </allergies>
