@@ -5998,15 +5998,16 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 riot.tag2('panel', '<div class="panel panel-{opts.state ? opts.state : \'default\'}" id="{opts.section.key}"> <div class="panel-heading section-toggle" onclick="{toggleSection}"> <h3 class="panel-title"> <i class="fa fa-{opts.section.icon} section-icon" aria-hidden="true" if="{!opts.hideicon}"></i> {opts.section.display} <span class="section-item-count badge badge-muted" if="{opts.data.entries.length}">{opts.data.entries.length}</span> <span class="text-muted" if="{isEmpty()}">(empty)</span> <span class="pull-right"> <i class="fa fa-chevron-down {fa-rotate-180: opts.section.enabled}" aria-hidden="true"></i> </span> </h3> </div> <div class="panel-body"> <yield></yield> </div> </div>', '', 'class="{opts.section.tagName}" class="{fade: isEmpty(), expanded: isEnabled(), collapsed: !isEnabled()}"', function(opts) {
     console.log("Panel:");
     console.log(opts);
+    console.trace();
 
     var current;
 
-    /*this.on('update', function() {
+    this.on('update', function() {
       if (opts.data !== current) {
         current = opts.data;
         if(this.isEmpty()) opts.section.enabled = false;
       }
-    }.bind(this));*/
+    }.bind(this));
 
     this.isEmpty = function() {
       return !__WEBPACK_IMPORTED_MODULE_0_lodash___default.a.get(opts, 'data.entries.length') && !opts.data.text;
@@ -6026,34 +6027,21 @@ riot.tag2('panel', '<div class="panel panel-{opts.state ? opts.state : \'default
 
 /***/ }),
 /* 27 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_lodash__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_lodash___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_lodash__);
 
     var riot = __webpack_require__(0)
-    
-
-riot.tag2('ccda-section', '', '', '', function(opts) {
+    riot.tag2('ccda-section', '', '', '', function(opts) {
   var options = {
     section: opts.current,
     data: opts.parent.data[opts.current.key]
   };
 
-  if (options.data && !__WEBPACK_IMPORTED_MODULE_0_lodash___default.a.isEmpty(options.data))
-  {
-    console.log("CCDA-Section: ", opts.current.tagName);
-    console.log(options.data);
-    console.log("Root: ", this.root);
-    console.log("Parent: ", this.parent);
-
-    riot.mount(this.root, opts.current.tagName, options);
-    this.on('update', function() {
-      options.data = opts.parent.data[opts.current.key];
-    });
-  }
+  console.log("Mounting");
+  riot.mount(this.root, opts.current.tagName, options);
+  this.on('update', function() {
+    options.data = opts.parent.data[opts.current.key];
+  });
 });
 
     

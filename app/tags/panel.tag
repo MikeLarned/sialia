@@ -4,6 +4,7 @@ import _ from 'lodash';
   <script>
     console.log("Panel:");
     console.log(opts);
+    console.trace();
   </script>
   <div class="panel panel-{ opts.state ? opts.state : 'default' }" id={ opts.section.key }>
     <div class="panel-heading section-toggle" onclick={ toggleSection }>
@@ -25,12 +26,12 @@ import _ from 'lodash';
   <script>
     var current;
   
-    /*this.on('update', function() {
+    this.on('update', function() {
       if (opts.data !== current) {
         current = opts.data;
         if(this.isEmpty()) opts.section.enabled = false;
       }
-    }.bind(this));*/
+    }.bind(this));
     
     this.isEmpty = function() {
       return !_.get(opts, 'data.entries.length') && !opts.data.text;
