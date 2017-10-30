@@ -5996,11 +5996,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     
 
 riot.tag2('panel', '<div class="panel panel-{opts.state ? opts.state : \'default\'}" id="{opts.section.key}"> <div class="panel-heading section-toggle" onclick="{toggleSection}"> <h3 class="panel-title"> <i class="fa fa-{opts.section.icon} section-icon" aria-hidden="true" if="{!opts.hideicon}"></i> {opts.section.display} <span class="section-item-count badge badge-muted" if="{opts.data.entries.length}">{opts.data.entries.length}</span> <span class="text-muted" if="{isEmpty()}">(empty)</span> <span class="pull-right"> <i class="fa fa-chevron-down {fa-rotate-180: opts.section.enabled}" aria-hidden="true"></i> </span> </h3> </div> <div class="panel-body"> <yield></yield> </div> </div>', '', 'class="{opts.section.tagName}" class="{fade: isEmpty(), expanded: isEnabled(), collapsed: !isEnabled()}"', function(opts) {
-  console.log(opts);
-  if (opts.section) {
-    console.log(opts.section.tagName)
-  }
-
     var current;
 
     this.on('update', function() {
@@ -6098,6 +6093,8 @@ riot.tag2('raw', '<span></span>', '', '', function(opts) {
 
     var riot = __webpack_require__(0)
     riot.tag2('generic', '<panel section="{opts.section}" data="{opts.data}" data="{opts.data}"> <raw content="{opts.data.text}" if="{opts.data.text}"></raw> <empty if="{!opts.data.text}"></empty> </panel>', '', '', function(opts) {
+    console.log("Generic: ");
+    console.log(opts);
 });
 
     
@@ -6382,7 +6379,9 @@ exports.languages = {
 
 
     var riot = __webpack_require__(0)
-    riot.tag2('allergies', 'console.log("Allergies: ", opts.data); <panel section="{opts.section}" data="{opts.data}"> <div class="row" if="{opts.data.entries.length}"> <div each="{opts.data.entries}" class="col-sm-4"> <div class="alert alert-mild clearfix " role="alert"> <h4>{allergen.name}</h4> <div class="pull-left">{reaction.name}</div> <div class="pull-right">{severity}</div> </div> </div> </div> <empty if="{!opts.data.entries.length}"></empty> </panel>', '', '', function(opts) {
+    riot.tag2('allergies', '<panel section="{opts.section}" data="{opts.data}"> <div class="row" if="{opts.data.entries.length}"> <div each="{opts.data.entries}" class="col-sm-4"> <div class="alert alert-mild clearfix " role="alert"> <h4>{allergen.name}</h4> <div class="pull-left">{reaction.name}</div> <div class="pull-right">{severity}</div> </div> </div> </div> <empty if="{!opts.data.entries.length}"></empty> </panel>', '', '', function(opts) {
+  console.log("Allergies: ");
+  console.log(opts.data);
 });
 
     
@@ -6442,7 +6441,9 @@ exports.languages = {
 
 
     var riot = __webpack_require__(0)
-    riot.tag2('immunization-declines', 'console.log("Declined Immunizations: ", opts.data); <panel section="{opts.section}" data="{opts.data}"> <empty if="{!opts.data.entries.length}"></empty> </panel>', '', '', function(opts) {
+    riot.tag2('immunization-declines', '<panel section="{opts.section}" data="{opts.data}"> <empty if="{!opts.data.entries.length}"></empty> </panel>', '', '', function(opts) {
+  console.log("Declined Immunizations: ");
+  console.log(opts.data);
 });
 
     

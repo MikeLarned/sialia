@@ -1,5 +1,8 @@
 <allergies>
-  console.log("Allergies: ", opts.data);
+  <script>
+  console.log("Allergies: ");
+  console.log(opts.data);
+  </script>
   <panel section={ opts.section } data={ opts.data }>
     <div class="row" if={ opts.data.entries.length }>
       <div each={ opts.data.entries } class="col-sm-4">

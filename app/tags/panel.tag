@@ -19,11 +19,6 @@ import _ from 'lodash';
   </div>
 
   <script>
-  console.log(opts);
-  if (opts.section) {
-    console.log(opts.section.tagName)
-  }
-
     var current;
   
     this.on('update', function() {
