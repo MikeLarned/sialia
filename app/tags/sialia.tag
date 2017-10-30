@@ -23,7 +23,7 @@
     var self = this;
     this.data = opts.data;
     this.pref = opts.pref;
-    this.sections = opts.sections;
+    this.sections = [opts.sections[0]];
     console.log("Sections: ", this.sections);
     this.showPreferences = !opts.pref.isSet;
     this.showNonXml = self.data.document.type.nonXmlBody.type;

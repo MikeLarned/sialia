@@ -297,7 +297,7 @@ __webpack_require__(47);
     var self = this;
     this.data = opts.data;
     this.pref = opts.pref;
-    this.sections = opts.sections;
+    this.sections = [opts.sections[0]];
     console.log("Sections: ", this.sections);
     this.showPreferences = !opts.pref.isSet;
     this.showNonXml = self.data.document.type.nonXmlBody.type;
@@ -6098,8 +6098,6 @@ riot.tag2('raw', '<span></span>', '', '', function(opts) {
 
     var riot = __webpack_require__(0)
     riot.tag2('generic', '<panel section="{opts.section}" data="{opts.data}"> <raw content="{opts.data.text}" if="{opts.data.text}"></raw> <empty if="{!opts.data.text}"></empty> </panel>', '', '', function(opts) {
-    console.log("Generic: ");
-    console.log(opts);
 });
 
     
