@@ -1,6 +1,6 @@
 <ccda-section>
-  <allergies if={ opts.current.tagName == 'allergies' } section={ opts.current } data={ opts.parent.data[opts.current.key] } />
-  <generic if={opts.current.tagName == 'generic' } section={ opts.current } data={ opts.parent.data[opts.current.key] } />
+  <allergies if={ opts.current.tagName == 'allergies' } section={ opts.current } data={ data } />
+  <generic if={opts.current.tagName == 'generic' } section={ opts.current } data={ data } />
   
   var options = {
     section: opts.current,
@@ -12,7 +12,8 @@
   //console.log(opts.current.tagName);
 
   //riot.mount(this.root, opts.current.tagName, options);
+  this.data = opts.data;
   this.on('update', function() {
-    //options.data = opts.parent.data[opts.current.key];
+    this.data = opts.parent.data[opts.current.key];
   });
 </ccda-section>
