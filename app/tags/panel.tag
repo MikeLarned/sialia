@@ -14,7 +14,7 @@ import _ from 'lodash';
       </h3>
     </div>
     <div class="panel-body">
-      <yield/>
+      
     </div>
   </div>
 
