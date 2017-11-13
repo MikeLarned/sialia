@@ -5993,7 +5993,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     var riot = __webpack_require__(0)
     
 
-riot.tag2('panel', '<div class="panel panel-{opts.state ? opts.state : \'default\'}" id="{opts.section.key}"> <div class="panel-heading section-toggle" onclick="{toggleSection}"> <h3 class="panel-title"> <i class="fa fa-{opts.section.icon} section-icon" aria-hidden="true" if="{!opts.hideicon}"></i> {opts.section.display} <span class="section-item-count badge badge-muted" if="{opts.data.entries.length}">{opts.data.entries.length}</span> <span class="text-muted" if="{isEmpty()}">(empty)</span> <span class="pull-right"> <i class="fa fa-chevron-down {fa-rotate-180: opts.section.enabled}" aria-hidden="true"></i> </span> </h3> </div> <div class="panel-body"> </div> </div>', '', 'class="{opts.section.tagName}" class="{fade: isEmpty(), expanded: isEnabled(), collapsed: !isEnabled()}"', function(opts) {
+riot.tag2('panel', '<div class="panel panel-{opts.state ? opts.state : \'default\'}" id="{opts.section.key}"> <div class="panel-heading section-toggle" onclick="{toggleSection}"> <h3 class="panel-title"> <i class="fa fa-{opts.section.icon} section-icon" aria-hidden="true" if="{!opts.hideicon}"></i> {opts.section.display} <span class="section-item-count badge badge-muted" if="{opts.data.entries.length}">{opts.data.entries.length}</span> <span class="text-muted" if="{isEmpty()}">(empty)</span> <span class="pull-right"> <i class="fa fa-chevron-down {fa-rotate-180: opts.section.enabled}" aria-hidden="true"></i> </span> </h3> </div> <div class="panel-body"> <yield></yield> </div> </div>', '', 'class="{opts.section.tagName}" class="{fade: isEmpty(), expanded: isEnabled(), collapsed: !isEnabled()}"', function(opts) {
     var current;
 
     this.on('update', function() {
@@ -6031,10 +6031,10 @@ riot.tag2('panel', '<div class="panel panel-{opts.state ? opts.state : \'default
     data: opts.parent.data[opts.current.key]
   };
 
-  console.log("TagName:");
-  console.log(opts.current.tagName);
+  //console.log("TagName:");
+  //console.log(opts.current.tagName);
 
-  riot.mount(this.root, opts.current.tagName, options);
+  //riot.mount(this.root, opts.current.tagName, options);
   this.on('update', function() {
     options.data = opts.parent.data[opts.current.key];
   });
