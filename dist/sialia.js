@@ -297,12 +297,10 @@ __webpack_require__(47);
     var self = this;
     this.data = opts.data;
     this.pref = opts.pref;
-    this.sections = [opts.sections[0]];
-    console.log("Sections: ", this.sections);
+    this.sections = opts.sections;
     this.showPreferences = !opts.pref.isSet;
     this.showNonXml = self.data.document.type.nonXmlBody.type;
     this.documents = opts.documents;
-    console.log("Documents: ", this.documents);
     this.dictionary = this.sections.reduce(function(o, x){ o[x.key] = x; return o; }, {});
     this.on('update', function() {
 
@@ -6439,7 +6437,6 @@ exports.languages = {
     var riot = __webpack_require__(0)
     riot.tag2('immunization-declines', '<panel section="{opts.section}" data="{opts.data}"> <empty if="{!opts.data.entries.length}"></empty> </panel>', '', '', function(opts) {
   console.log("Declined Immunizations: ");
-  console.log(opts.data);
 });
 
     
