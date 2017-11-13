@@ -13,7 +13,7 @@
 
   //riot.mount(this.root, opts.current.tagName, options);
   var self = this;
-  this.data = opts.data;
+  this.data = self.parent.data[self.current.key];
   this.parent = opts.parent;
   this.current = opts.current;
   this.on('update', function() {
