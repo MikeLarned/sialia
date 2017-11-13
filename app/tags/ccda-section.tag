@@ -16,7 +16,7 @@
   self.data = opts.data;
   self.parent = opts.parent;
   self.current = opts.current;
-  this.on('update', function() {
-    self.data = self.parent.data[self.current.key];
-  });
+  //this.on('update', function() {
+    //self.data = self.parent.data[self.current.key];
+  //});
 </ccda-section>

@@ -6040,9 +6040,9 @@ riot.tag2('panel', '<div class="panel panel-{opts.state ? opts.state : \'default
   self.data = opts.data;
   self.parent = opts.parent;
   self.current = opts.current;
-  this.on('update', function() {
-    self.data = self.parent.data[self.current.key];
-  });
+  //this.on('update', function() {
+    //self.data = self.parent.data[self.current.key];
+  //});
 });
 
     
