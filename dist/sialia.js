@@ -6031,7 +6031,9 @@ riot.tag2('panel', '<div class="panel panel-{opts.state ? opts.state : \'default
     data: opts.parent.data[opts.current.key]
   };
 
-  riot.mount(this.content, opts.current.tagName, options);
+  console.log(opts.current);
+
+  riot.mount(this.content || this.root, opts.current.tagName, options);
   this.on('update', function() {
     options.data = opts.parent.data[opts.current.key];
   });
@@ -6436,7 +6438,6 @@ exports.languages = {
 
     var riot = __webpack_require__(0)
     riot.tag2('immunization-declines', '<panel section="{opts.section}" data="{opts.data}"> <empty if="{!opts.data.entries.length}"></empty> </panel>', '', '', function(opts) {
-  console.log("Declined Immunizations: ");
 });
 
     
