@@ -6025,7 +6025,7 @@ riot.tag2('panel', '<div class="panel panel-{opts.state ? opts.state : \'default
 
 
     var riot = __webpack_require__(0)
-    riot.tag2('ccda-section', '<allergies if="{opts.current.tagName == \'allergies\'}" section="{opts.current}" data="{opts.parent.data[opts.curent.key]}"></allergies>', '', '', function(opts) {
+    riot.tag2('ccda-section', '<allergies if="{opts.current.tagName == \'allergies\'}" section="{opts.current}" data="{opts.parent.data[opts.current.key]}"></allergies> <generic if="{opts.current.tagName == \'generic\'}" section="{opts.current}" data="{opts.parent.data[opts.current.key]}"></generic>', '', '', function(opts) {
 
   var options = {
     section: opts.current,

@@ -1,5 +1,6 @@
 <ccda-section>
-  <allergies if={ opts.current.tagName == 'allergies' } section={ opts.current } data={ opts.parent.data[opts.curent.key] } />
+  <allergies if={ opts.current.tagName == 'allergies' } section={ opts.current } data={ opts.parent.data[opts.current.key] } />
+  <generic if={opts.current.tagName == 'generic' } section={ opts.current } data={ opts.parent.data[opts.current.key] } />
   
   var options = {
     section: opts.current,
