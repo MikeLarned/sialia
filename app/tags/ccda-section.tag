@@ -14,7 +14,9 @@
   //riot.mount(this.root, opts.current.tagName, options);
   var self = this;
   self.data = opts.data;
+  self.parent = opts.parent;
+  self.current = opts.current;
   this.on('update', function() {
-    self.data = opts.parent.data[opts.current.key];
+    self.data = self.parent.data[self.current.key];
   });
 </ccda-section>
