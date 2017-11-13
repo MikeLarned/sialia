@@ -6036,9 +6036,10 @@ riot.tag2('panel', '<div class="panel panel-{opts.state ? opts.state : \'default
   //console.log(opts.current.tagName);
 
   //riot.mount(this.root, opts.current.tagName, options);
-  this.data = opts.data;
+  var self = this;
+  self.data = opts.data;
   this.on('update', function() {
-    this.data = opts.parent.data[opts.current.key];
+    self.data = opts.parent.data[opts.current.key];
   });
 });
 
