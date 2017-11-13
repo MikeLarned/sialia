@@ -1,5 +1,6 @@
 <ccda-section>
   <allergies if={ opts.current.tagName == 'allergies' } section={ opts.current } data={ data } />
+  <medications if={ opts.current.tagName == 'medications' } section={ opts.current } data={ data } />
   <generic if={opts.current.tagName == 'generic' } section={ opts.current } data={ data } />
   
   var options = {
