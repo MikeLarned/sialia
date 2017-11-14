@@ -6,7 +6,7 @@ import _ from 'lodash';
       <h3 class="panel-title">
         <i class="fa fa-{ opts.section.icon } section-icon" aria-hidden="true" if="{ !opts.hideicon }"></i>
         { opts.section.display }
-        <span class="section-item-count badge badge-muted" if={ opts.data.entries.length }>{ opts.data.entries.length }</span>
+        <span class="section-item-count badge badge-muted" if={ opts.data.entries && opts.data.entries.length }>{ opts.data.entries.length }</span>
         <span class="text-muted" if={ isEmpty() }>(empty)</span>
         <span class="pull-right">
           <i class="fa fa-chevron-down { fa-rotate-180: opts.section.enabled }" aria-hidden="true"></i>
