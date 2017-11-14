@@ -6062,7 +6062,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 riot.tag2('raw', '<span></span>', '', '', function(opts) {
 
   this.on('update', function() {
-    //this.root.innerHTML = bootstrapize(opts.content);
+    this.root.innerHTML = Object(__WEBPACK_IMPORTED_MODULE_0__utilities_htmlhelpers__["bootstrapize"])(opts.content);
   }.bind(this));
 });
 
@@ -6099,6 +6099,7 @@ riot.tag2('raw', '<span></span>', '', '', function(opts) {
 
     var riot = __webpack_require__(0)
     riot.tag2('generic', '<panel section="{opts.section}" data="{opts.data}"> <raw content="{opts.data.text}" if="{opts.data.text}"></raw> <empty if="{!opts.data.text}"></empty> </panel>', '', '', function(opts) {
+      console.log(opts.data.text);
 });
 
     
