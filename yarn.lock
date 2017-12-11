@@ -259,9 +259,9 @@ block-stream@*:
   dependencies:
     inherits "~2.0.0"
 
-"bluebutton@github:LucasObendorf/bluebutton.js#Webpack":
+"bluebutton@github:Royal-Jay/bluebutton.js":
   version "0.4.3"
-  resolved "https://codeload.github.com/LucasObendorf/bluebutton.js/tar.gz/64056a4811cc8f2f776d05a70e1dcef3fcc07bed"
+  resolved "https://codeload.github.com/Royal-Jay/bluebutton.js/tar.gz/115f13dc39bc5a2b8814ede2a5bb9faa6c0a6020"
   dependencies:
     lodash "^4.17.4"
     xmldom "~0.1.19"
