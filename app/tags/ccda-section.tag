@@ -8,10 +8,6 @@
     data: opts.parent.data[opts.current.key]
   };
 
-
-  //console.log("TagName:");
-  //console.log(opts.current.tagName);
-
   //riot.mount(this.root, opts.current.tagName, options);
   var self = this;
   this.parent = opts.parent;

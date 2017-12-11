@@ -6032,9 +6032,6 @@ riot.tag2('panel', '<div class="panel panel-{opts.state ? opts.state : \'default
     data: opts.parent.data[opts.current.key]
   };
 
-  //console.log("TagName:");
-  //console.log(opts.current.tagName);
-
   //riot.mount(this.root, opts.current.tagName, options);
   var self = this;
   this.parent = opts.parent;
@@ -6099,9 +6096,6 @@ riot.tag2('raw', '<span></span>', '', '', function(opts) {
 
     var riot = __webpack_require__(0)
     riot.tag2('generic', '<panel section="{opts.section}" data="{opts.data}"> <raw content="{opts.data.text}" if="{opts.data.text}"></raw> <empty if="{!opts.data.text}"></empty> </panel>', '', '', function(opts) {
-    console.log("Generic:");
-    console.log(opts.data.text);
-    console.log(opts.data);
 });
 
     
