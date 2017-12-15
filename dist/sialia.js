@@ -99,13 +99,15 @@ module.exports = require("lodash");
 
 "use strict";
 
+
 function __export(m) {
-    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
+    for (var p in m) {
+        if (!exports.hasOwnProperty(p)) exports[p] = m[p];
+    }
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 __export(__webpack_require__(7));
 __export(__webpack_require__(19));
-
 
 /***/ }),
 /* 3 */
@@ -113,15 +115,15 @@ __export(__webpack_require__(19));
 
 "use strict";
 
+
 Object.defineProperty(exports, "__esModule", { value: true });
-const lodash_1 = __webpack_require__(1);
+var lodash_1 = __webpack_require__(1);
 lodash_1.default.mixin({
-    move: function (array, fromIndex, toIndex) {
+    move: function move(array, fromIndex, toIndex) {
         array.splice(toIndex, 0, array.splice(fromIndex, 1)[0]);
         return array;
     }
 });
-
 
 /***/ }),
 /* 4 */
@@ -129,16 +131,16 @@ lodash_1.default.mixin({
 
 "use strict";
 
+
 Object.defineProperty(exports, "__esModule", { value: true });
-const lodash_1 = __webpack_require__(1);
+var lodash_1 = __webpack_require__(1);
 function updateSortOrder(sections) {
-    lodash_1.default.each(sections, (v, k) => {
+    lodash_1.default.each(sections, function (v, k) {
         v.sort = k;
     });
     return sections;
 }
 exports.updateSortOrder = updateSortOrder;
-
 
 /***/ }),
 /* 5 */
@@ -146,24 +148,23 @@ exports.updateSortOrder = updateSortOrder;
 
 "use strict";
 
+
 Object.defineProperty(exports, "__esModule", { value: true });
-const lodash = __webpack_require__(1);
-const jquery_1 = __webpack_require__(6);
+var lodash = __webpack_require__(1);
+var jquery_1 = __webpack_require__(6);
 function getElementIndex(node) {
-    let children = lodash.filter([].slice.call(node.parentNode.childNodes), { nodeType: 1 });
+    var children = lodash.filter([].slice.call(node.parentNode.childNodes), { nodeType: 1 });
     return Array.prototype.indexOf.call(children, node);
 }
 exports.getElementIndex = getElementIndex;
 function bootstrapize(html) {
-    let $html = jquery_1.default('<div />');
+    var $html = jquery_1.default('<div />');
     $html.html(html);
-    let $all = $html.find('*').removeAttr('width border xmlns');
-    $all.filter('table')
-        .addClass('table table-bordered table-striped');
+    var $all = $html.find('*').removeAttr('width border xmlns');
+    $all.filter('table').addClass('table table-bordered table-striped');
     return $html.html();
 }
 exports.bootstrapize = bootstrapize;
-
 
 /***/ }),
 /* 6 */
@@ -177,42 +178,63 @@ module.exports = require("jquery");
 
 "use strict";
 
-Object.defineProperty(exports, "__esModule", { value: true });
-const models_1 = __webpack_require__(15);
-const lodash_1 = __webpack_require__(1);
-class PreferencesService {
-    save(opts) {
-        let enabled = lodash_1.default.filter(opts.sections, (item) => {
-            return item.enabled;
-        });
-        let sortOrder = lodash_1.default.map(opts.sections, (item) => {
-            return item.key;
-        });
-        let pref = this.getPreferences(opts.pref.type);
-        pref.enabledSectionKeys = lodash_1.default.map(enabled, (item) => {
-            return item.key;
-        });
-        pref.sortedSectionKeys = sortOrder;
-        pref.isSet = true;
-        let storageId = 'doc_' + opts.pref.type.templateId;
-        localStorage.setItem(storageId, JSON.stringify(pref));
-    }
-    getPreferences(docType) {
-        let id = docType.templateId, storageId = 'doc_' + id, prefString = localStorage.getItem(storageId), pref = JSON.parse(prefString), isSet = pref !== null;
-        if (!isSet) {
-            pref = {
-                id: id,
-                isSet: isSet,
-                type: docType,
-                enabledSectionKeys: null,
-                sortedSectionKeys: null
-            };
-        }
-        return new models_1.Preferences(pref);
-    }
-}
-exports.PreferencesService = PreferencesService;
 
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var models_1 = __webpack_require__(15);
+var lodash_1 = __webpack_require__(1);
+
+var PreferencesService = function () {
+    function PreferencesService() {
+        _classCallCheck(this, PreferencesService);
+    }
+
+    _createClass(PreferencesService, [{
+        key: "save",
+        value: function save(opts) {
+            var enabled = lodash_1.default.filter(opts.sections, function (item) {
+                return item.enabled;
+            });
+            var sortOrder = lodash_1.default.map(opts.sections, function (item) {
+                return item.key;
+            });
+            var pref = this.getPreferences(opts.pref.type);
+            pref.enabledSectionKeys = lodash_1.default.map(enabled, function (item) {
+                return item.key;
+            });
+            pref.sortedSectionKeys = sortOrder;
+            pref.isSet = true;
+            var storageId = 'doc_' + opts.pref.type.templateId;
+            localStorage.setItem(storageId, JSON.stringify(pref));
+        }
+    }, {
+        key: "getPreferences",
+        value: function getPreferences(docType) {
+            var id = docType.templateId,
+                storageId = 'doc_' + id,
+                prefString = localStorage.getItem(storageId),
+                pref = JSON.parse(prefString),
+                isSet = pref !== null;
+            if (!isSet) {
+                pref = {
+                    id: id,
+                    isSet: isSet,
+                    type: docType,
+                    enabledSectionKeys: null,
+                    sortedSectionKeys: null
+                };
+            }
+            return new models_1.Preferences(pref);
+        }
+    }]);
+
+    return PreferencesService;
+}();
+
+exports.PreferencesService = PreferencesService;
 
 /***/ }),
 /* 8 */
@@ -226,25 +248,29 @@ module.exports = require("moment");
 
 "use strict";
 
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
 Object.defineProperty(exports, "__esModule", { value: true });
 __webpack_require__(10);
 __webpack_require__(11);
 __webpack_require__(48);
-const riot_1 = __webpack_require__(0);
-const services_1 = __webpack_require__(2);
-class App {
-    constructor(options) {
-        this.service = new services_1.DocumentsService();
-        let documents = options.docs;
-        this.service.fetch(documents[0].Url).subscribe((options) => {
-            options.documents = documents;
-            riot_1.default.mount('sialia', options);
-        });
-    }
-}
+var riot_1 = __webpack_require__(0);
+var services_1 = __webpack_require__(2);
+
+var App = function App(options) {
+    _classCallCheck(this, App);
+
+    this.service = new services_1.DocumentsService();
+    var documents = options.docs;
+    this.service.fetch(documents[0].Url).subscribe(function (options) {
+        options.documents = documents;
+        riot_1.default.mount('sialia', options);
+    });
+};
+
 exports.App = App;
 window['Sialia'] = App;
-
 
 /***/ }),
 /* 10 */
@@ -257,6 +283,7 @@ window['Sialia'] = App;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
+
 
 Object.defineProperty(exports, "__esModule", { value: true });
 __webpack_require__(12);
@@ -284,7 +311,6 @@ __webpack_require__(44);
 __webpack_require__(45);
 __webpack_require__(46);
 __webpack_require__(47);
-
 
 /***/ }),
 /* 12 */
@@ -403,8 +429,11 @@ module.exports = require("dragula");
 
 "use strict";
 
+
 function __export(m) {
-    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
+    for (var p in m) {
+        if (!exports.hasOwnProperty(p)) exports[p] = m[p];
+    }
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 __export(__webpack_require__(16));
@@ -412,18 +441,22 @@ __export(__webpack_require__(4));
 __export(__webpack_require__(17));
 __export(__webpack_require__(18));
 
-
 /***/ }),
 /* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
-Object.defineProperty(exports, "__esModule", { value: true });
-class Document {
-}
-exports.Document = Document;
 
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+Object.defineProperty(exports, "__esModule", { value: true });
+
+var Document = function Document() {
+  _classCallCheck(this, Document);
+};
+
+exports.Document = Document;
 
 /***/ }),
 /* 17 */
@@ -431,11 +464,16 @@ exports.Document = Document;
 
 "use strict";
 
-Object.defineProperty(exports, "__esModule", { value: true });
-class ViewerOptions {
-}
-exports.ViewerOptions = ViewerOptions;
 
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+Object.defineProperty(exports, "__esModule", { value: true });
+
+var ViewerOptions = function ViewerOptions() {
+  _classCallCheck(this, ViewerOptions);
+};
+
+exports.ViewerOptions = ViewerOptions;
 
 /***/ }),
 /* 18 */
@@ -443,27 +481,43 @@ exports.ViewerOptions = ViewerOptions;
 
 "use strict";
 
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
 Object.defineProperty(exports, "__esModule", { value: true });
-const lodash_1 = __webpack_require__(1);
-class Preferences {
-    constructor(pref) {
+var lodash_1 = __webpack_require__(1);
+
+var Preferences = function () {
+    function Preferences(pref) {
+        _classCallCheck(this, Preferences);
+
         this.id = pref.id;
         this.type = pref.type;
         this.enabledSectionKeys = pref.enabledSectionKeys || [];
         this.sortedSectionKeys = pref.sortedSectionKeys || [];
         this.isSet = pref.isSet;
     }
-    isSectionEnabled(key) {
-        return lodash_1.default.some(this.enabledSectionKeys, (k) => {
-            return k === key;
-        });
-    }
-    indexOfSection(key) {
-        return this.sortedSectionKeys.indexOf(key);
-    }
-}
-exports.Preferences = Preferences;
 
+    _createClass(Preferences, [{
+        key: "isSectionEnabled",
+        value: function isSectionEnabled(key) {
+            return lodash_1.default.some(this.enabledSectionKeys, function (k) {
+                return k === key;
+            });
+        }
+    }, {
+        key: "indexOfSection",
+        value: function indexOfSection(key) {
+            return this.sortedSectionKeys.indexOf(key);
+        }
+    }]);
+
+    return Preferences;
+}();
+
+exports.Preferences = Preferences;
 
 /***/ }),
 /* 19 */
@@ -471,65 +525,88 @@ exports.Preferences = Preferences;
 
 "use strict";
 
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
 Object.defineProperty(exports, "__esModule", { value: true });
-const jquery_1 = __webpack_require__(6);
-const lodash_1 = __webpack_require__(1);
-const bluebutton_1 = __webpack_require__(20);
-const Observable_1 = __webpack_require__(22);
-const config_1 = __webpack_require__(23);
-const preferences_service_1 = __webpack_require__(7);
-let viewer;
-class DocumentsService {
-    getSections(bb, sections, ignoreSections, pref) {
-        let allSections = [];
-        lodash_1.default.each(bb.data, (val, key) => {
-            if (lodash_1.default.includes(ignoreSections, key))
-                return;
-            let match = lodash_1.default.find(sections, s => s.key === key);
-            if (match) {
-                match.sort = pref.indexOfSection(key);
-                allSections.push(match);
-            }
-            else
-                allSections.push({
+var jquery_1 = __webpack_require__(6);
+var lodash_1 = __webpack_require__(1);
+var bluebutton_1 = __webpack_require__(20);
+var Observable_1 = __webpack_require__(22);
+var config_1 = __webpack_require__(23);
+var preferences_service_1 = __webpack_require__(7);
+var viewer = void 0;
+
+var DocumentsService = function () {
+    function DocumentsService() {
+        _classCallCheck(this, DocumentsService);
+    }
+
+    _createClass(DocumentsService, [{
+        key: "getSections",
+        value: function getSections(bb, sections, ignoreSections, pref) {
+            var allSections = [];
+            lodash_1.default.each(bb.data, function (val, key) {
+                if (lodash_1.default.includes(ignoreSections, key)) return;
+                var match = lodash_1.default.find(sections, function (s) {
+                    return s.key === key;
+                });
+                if (match) {
+                    match.sort = pref.indexOfSection(key);
+                    allSections.push(match);
+                } else allSections.push({
                     key: key,
                     display: val.displayName || key,
                     tagName: 'generic',
                     icon: 'asterisk',
                     sort: pref.indexOfSection(key)
                 });
-        });
-        // sort by name first, then by sort order
-        allSections = lodash_1.default.sortBy(allSections, s => s.display.toLowerCase());
-        allSections = lodash_1.default.sortBy(allSections, s => s.sort);
-        // init sort and enabled
-        lodash_1.default.each(allSections, (val, index) => {
-            val.enabled = pref.isSectionEnabled(val.key);
-        });
-        return allSections;
-    }
-    fetch(url) {
-        return Observable_1.Observable.create((observer) => {
-            jquery_1.default.get(url, (content) => {
-                observer.next(this.load(content));
-                observer.complete();
-            }, 'text');
-        });
-    }
-    load(data) {
-        let bb = bluebutton_1.bluebutton(data);
-        if (!bb.data)
-            throw 'BlueButton could not parse the file.';
-        let pref = new preferences_service_1.PreferencesService().getPreferences(bb.data.document.type);
-        return {
-            sections: this.getSections(bb, config_1.SECTIONS, config_1.IGNORE_SECTIONS, pref),
-            data: bb.data,
-            pref: pref,
-        };
-    }
-}
-exports.DocumentsService = DocumentsService;
+            });
+            // sort by name first, then by sort order
+            allSections = lodash_1.default.sortBy(allSections, function (s) {
+                return s.display.toLowerCase();
+            });
+            allSections = lodash_1.default.sortBy(allSections, function (s) {
+                return s.sort;
+            });
+            // init sort and enabled
+            lodash_1.default.each(allSections, function (val, index) {
+                val.enabled = pref.isSectionEnabled(val.key);
+            });
+            return allSections;
+        }
+    }, {
+        key: "fetch",
+        value: function fetch(url) {
+            var _this = this;
 
+            return Observable_1.Observable.create(function (observer) {
+                jquery_1.default.get(url, function (content) {
+                    observer.next(_this.load(content));
+                    observer.complete();
+                }, 'text');
+            });
+        }
+    }, {
+        key: "load",
+        value: function load(data) {
+            var bb = bluebutton_1.bluebutton(data);
+            if (!bb.data) throw 'BlueButton could not parse the file.';
+            var pref = new preferences_service_1.PreferencesService().getPreferences(bb.data.document.type);
+            return {
+                sections: this.getSections(bb, config_1.SECTIONS, config_1.IGNORE_SECTIONS, pref),
+                data: bb.data,
+                pref: pref
+            };
+        }
+    }]);
+
+    return DocumentsService;
+}();
+
+exports.DocumentsService = DocumentsService;
 
 /***/ }),
 /* 20 */
@@ -5873,46 +5950,19 @@ module.exports = require("rxjs/Observable");
 
 "use strict";
 
-Object.defineProperty(exports, "__esModule", { value: true });
-const lodash_1 = __webpack_require__(1);
-exports.SECTIONS = [
-    { key: 'allergies', display: 'Allergies', tagName: 'allergies', icon: 'pagelines' },
-    { key: 'care_plan', display: 'Care Plan', tagName: 'generic', icon: 'sticky-note-o' },
-    { key: 'chief_complaint', display: 'Chief Complaint', tagName: 'generic', icon: 'bullhorn' },
-    { key: 'encounters', display: 'Encounters', tagName: 'generic', icon: 'stethoscope' },
-    { key: 'functional_statuses', display: 'Functional Status', tagName: 'generic', icon: 'wheelchair' },
-    { key: 'immunization_declines', display: 'Declined Immunizations', tagName: 'generic', icon: 'ban' },
-    { key: 'immunizations', display: 'Immunization', tagName: 'generic', icon: 'eyedropper' },
-    { key: 'instructions', display: 'Patient Instructions', tagName: 'generic', icon: 'user-md' },
-    { key: 'medications', display: 'Medications', tagName: 'medications', icon: 'medkit' },
-    { key: 'problems', display: 'Problems', tagName: 'generic', icon: 'exclamation-triangle' },
-    { key: 'procedures', display: 'Procedures', tagName: 'generic', icon: 'hospital-o' },
-    { key: 'results', display: 'Results', tagName: 'generic', icon: 'flask' },
-    { key: 'smoking_status', display: 'Smoking Status', tagName: 'generic', icon: 'fire' },
-    { key: 'vitals', display: 'Vitals', tagName: 'generic', icon: 'heartbeat' },
-];
-exports.IGNORE_SECTIONS = ['document', 'demographics', 'json'];
-let root = 'https://raw.githubusercontent.com/dougludlow/ccdaview/develop/docs/';
-let fileNames = [
-    'C-CDA_R2-1_CCD.xml',
-    'C-CDA_R2_Care_Plan.xml',
-    'CCD 1.xml',
-    'Consult 1.xml',
-    'DIR.sample.xml',
-    'Discharge Summary 1.xml',
-    'Final_Task_Force_Full_Sample_R1.1.xml',
-    'HandP 1.xml',
-    'Op Note 1.xml',
-    'Proc Note 1.xml',
-    'Progress Note 1.xml',
-    'UD 1.xml',
-    'UD 2.xml',
-];
-exports.DOCUMENTS = lodash_1.default.map(fileNames, (name) => ({
-    name: name,
-    url: `${root}${name}`
-}));
 
+Object.defineProperty(exports, "__esModule", { value: true });
+var lodash_1 = __webpack_require__(1);
+exports.SECTIONS = [{ key: 'allergies', display: 'Allergies', tagName: 'allergies', icon: 'pagelines' }, { key: 'care_plan', display: 'Care Plan', tagName: 'generic', icon: 'sticky-note-o' }, { key: 'chief_complaint', display: 'Chief Complaint', tagName: 'generic', icon: 'bullhorn' }, { key: 'encounters', display: 'Encounters', tagName: 'generic', icon: 'stethoscope' }, { key: 'functional_statuses', display: 'Functional Status', tagName: 'generic', icon: 'wheelchair' }, { key: 'immunization_declines', display: 'Declined Immunizations', tagName: 'generic', icon: 'ban' }, { key: 'immunizations', display: 'Immunization', tagName: 'generic', icon: 'eyedropper' }, { key: 'instructions', display: 'Patient Instructions', tagName: 'generic', icon: 'user-md' }, { key: 'medications', display: 'Medications', tagName: 'medications', icon: 'medkit' }, { key: 'problems', display: 'Problems', tagName: 'generic', icon: 'exclamation-triangle' }, { key: 'procedures', display: 'Procedures', tagName: 'generic', icon: 'hospital-o' }, { key: 'results', display: 'Results', tagName: 'generic', icon: 'flask' }, { key: 'smoking_status', display: 'Smoking Status', tagName: 'generic', icon: 'fire' }, { key: 'vitals', display: 'Vitals', tagName: 'generic', icon: 'heartbeat' }];
+exports.IGNORE_SECTIONS = ['document', 'demographics', 'json'];
+var root = 'https://raw.githubusercontent.com/dougludlow/ccdaview/develop/docs/';
+var fileNames = ['C-CDA_R2-1_CCD.xml', 'C-CDA_R2_Care_Plan.xml', 'CCD 1.xml', 'Consult 1.xml', 'DIR.sample.xml', 'Discharge Summary 1.xml', 'Final_Task_Force_Full_Sample_R1.1.xml', 'HandP 1.xml', 'Op Note 1.xml', 'Proc Note 1.xml', 'Progress Note 1.xml', 'UD 1.xml', 'UD 2.xml'];
+exports.DOCUMENTS = lodash_1.default.map(fileNames, function (name) {
+    return {
+        name: name,
+        url: "" + root + name
+    };
+});
 
 /***/ }),
 /* 24 */
@@ -6187,6 +6237,7 @@ riot.tag2('demographics', '<div class="panel panel-default" id="demographics"> <
 
 "use strict";
 
+
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.languages = {
     'aa': 'Afar',
@@ -6370,9 +6421,8 @@ exports.languages = {
     // 'zh': 'Chinese (Simplified)',
     // 'zh': 'Chinese (Traditional)',
     'zh': 'Chinese',
-    'zu': 'Zulu',
+    'zu': 'Zulu'
 };
-
 
 /***/ }),
 /* 34 */
