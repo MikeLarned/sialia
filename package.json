@@ -1,152 +1,43 @@
 {
   "name": "ccdaview",
   "version": "1.0.0",
-  "description": "CCDA Rendering Tool",
-  "directories": {
-    "doc": "docs"
-  },
+  "main": "dist/sialia.js",
+  "module": "dist/sialia.js",
+  "license": "Apache-2.0",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "postinstall": "jspm install"
+    "build": "webpack"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/MikeLarned/ccdaview.git"
+  "dependencies": {
+    "bluebutton": "github:Royal-Jay/bluebutton.js",
+    "bootstrap": "github:twbs/bootstrap#v3.0.0",
+    "bootstrap-sass": ">=3.0.0",
+    "bootswatch": ">=3.0.0",
+    "dragula": "^3.7.2",
+    "font-awesome": "^4.7.0",
+    "jquery": "2.2.4",
+    "lodash": "^4.16.4",
+    "moment": "2.17.1",
+    "riot": "^3.7.0",
+    "rxjs": "^5.4.3"
   },
-  "keywords": [
-    "ccda",
-    "xml",
-    "json",
-    "viewer"
-  ],
-  "contributors": [
-    "Doug Ludlow <doug.ludlow@gmail.com>",
-    "Mike Larned <mike@riamobilesolutions.com>"
-  ],
-  "license": "Apache 2.0",
-  "bugs": {
-    "url": "https://github.com/MikeLarned/ccdaview/issues"
-  },
-  "homepage": "https://github.com/MikeLarned/ccdaview#readme",
   "devDependencies": {
-    "autoprefixer": "^6.3.6",
-    "browser-sync": "^2.12.8",
-    "gulp": "^3.9.1",
-    "gulp-postcss": "^6.1.1",
-    "gulp-sass": "^2.3.1",
-    "jspm": "^0.17.0-beta.14",
-    "postcss-clean": "^1.0.2",
-    "rxjs": "^5.0.0-beta.8",
-    "tslint": "^3.10.2",
-    "typings": "^1.0.4"
-  },
-  "dependencies": {},
-  "jspm": {
-    "dependencies": {
-      "bootstrap-sass": "github:twbs/bootstrap-sass@^3.3.6",
-      "bootswatch": "npm:bootswatch@^3.3.6",
-      "css": "github:systemjs/plugin-css@^0.1.21",
-      "dragula": "npm:dragula@^3.7.1",
-      "font-awesome": "npm:font-awesome@^4.6.1",
-      "jquery": "npm:jquery@^2.2.4",
-      "lodash": "npm:lodash@^4.12.0",
-      "moment": "npm:moment@^2.13.0",
-      "riot": "npm:riot@^2.4.0",
-      "rxjs": "npm:rxjs@^5.0.0-beta.8",
-      "tag": "github:dougludlow/systemjs-riot@master"
-    },
-    "devDependencies": {
-      "plugin-typescript": "github:frankwallis/plugin-typescript@^4.0.16"
-    },
-    "peerDependencies": {
-      "assert": "github:jspm/nodelibs-assert@^0.2.0-alpha",
-      "buffer": "github:jspm/nodelibs-buffer@^0.2.0-alpha",
-      "child_process": "github:jspm/nodelibs-child_process@^0.2.0-alpha",
-      "cluster": "github:jspm/nodelibs-cluster@^0.2.0-alpha",
-      "constants": "github:jspm/nodelibs-constants@^0.2.0-alpha",
-      "crypto": "github:jspm/nodelibs-crypto@^0.2.0-alpha",
-      "dgram": "github:jspm/nodelibs-dgram@^0.2.0-alpha",
-      "dns": "github:jspm/nodelibs-dns@^0.2.0-alpha",
-      "ecc-jsbn": "npm:ecc-jsbn@~0.1.1",
-      "events": "github:jspm/nodelibs-events@^0.2.0-alpha",
-      "fs": "github:jspm/nodelibs-fs@^0.2.0-alpha",
-      "fsevents": "npm:fsevents@^1.0.0",
-      "http": "github:jspm/nodelibs-http@^0.2.0-alpha",
-      "https": "github:jspm/nodelibs-https@^0.2.0-alpha",
-      "jodid25519": "npm:jodid25519@^1.0.0",
-      "jsbn": "npm:jsbn@0.1",
-      "module": "github:jspm/nodelibs-module@^0.2.0-alpha",
-      "net": "github:jspm/nodelibs-net@^0.2.0-alpha",
-      "os": "github:jspm/nodelibs-os@^0.2.0-alpha",
-      "path": "github:jspm/nodelibs-path@^0.2.0-alpha",
-      "process": "github:jspm/nodelibs-process@^0.2.0-alpha",
-      "punycode": "github:jspm/nodelibs-punycode@^0.2.0-alpha",
-      "querystring": "github:jspm/nodelibs-querystring@^0.2.0-alpha",
-      "stream": "github:jspm/nodelibs-stream@^0.2.0-alpha",
-      "string_decoder": "github:jspm/nodelibs-string_decoder@^0.2.0-alpha",
-      "tls": "github:jspm/nodelibs-tls@^0.2.0-alpha",
-      "tty": "github:jspm/nodelibs-tty@^0.2.0-alpha",
-      "tweetnacl": "npm:tweetnacl@0.13",
-      "url": "github:jspm/nodelibs-url@^0.2.0-alpha",
-      "util": "github:jspm/nodelibs-util@^0.2.0-alpha",
-      "vm": "github:jspm/nodelibs-vm@^0.2.0-alpha",
-      "zlib": "github:jspm/nodelibs-zlib@^0.2.0-alpha"
-    },
-    "overrides": {
-      "npm:browserify-zlib@0.1.4": {
-        "dependencies": {
-          "readable-stream": "^2.0.2",
-          "pako": "~0.2.0"
-        },
-        "map": {
-          "_stream_transform": "readable-stream/transform"
-        }
-      },
-      "npm:font-awesome@4.6.1": {
-        "main": "css/font-awesome.css!",
-        "jspmNodeConversion": false,
-        "registry": "jspm",
-        "dependencies": {
-          "css": "0.1"
-        }
-      },
-      "npm:inherits@2.0.1": {
-        "ignore": [
-          "test.js"
-        ]
-      },
-      "npm:jquery@2.2.4": {
-        "format": "amd"
-      },
-      "npm:moment@2.13.0": {
-        "jspmNodeConversion": false
-      },
-      "npm:readable-stream@1.1.14": {
-        "map": {
-          "stream": "stream-browserify/index"
-        },
-        "systemjs": {
-          "main": "readable.js"
-        },
-        "dependencies": {
-          "core-util-is": "~1.0.0",
-          "inherits": "~2.0.1",
-          "isarray": "0.0.1",
-          "string_decoder": "~0.10.0",
-          "stream-browserify": "^1.0.0"
-        }
-      },
-      "npm:typescript@1.8.10": {
-        "browser": {},
-        "map": {
-          "buffer": "@empty",
-          "child_process": "@empty",
-          "fs": "@empty",
-          "path": "@empty",
-          "process": "@empty",
-          "readline": "@empty"
-        }
-      }
-    }
+    "css-loader": "^0.28.7",
+    "extract-text-webpack-plugin": "^3.0.2",
+    "file-loader": "^0.11.2",
+    "node-sass": "^4.5.3",
+    "postcss-loader": "^2.0.6",
+    "precss": "^2.0.0",
+    "riot-tag-loader": "^1.0.0",
+    "sass-loader": "^6.0.6",
+    "style-loader": "^0.18.2",
+    "ts-loader": "^2.3.7",
+    "tslint": "^5.7.0",
+    "tslint-loader": "^3.5.3",
+    "typescript": "^2.5.2",
+    "typescript-simple": "^8.0.4",
+    "url-loader": "^0.5.9",
+    "webpack": "^3.5.6",
+    "webpack-fix-default-import-plugin": "^1.0.3",
+    "webpack-node-externals": "^1.6.0"
   }
 }
