@@ -701,7 +701,7 @@ block-stream@*:
 
 "bluebutton@github:Royal-Jay/bluebutton.js":
   version "0.4.3"
-  resolved "https://codeload.github.com/Royal-Jay/bluebutton.js/tar.gz/115f13dc39bc5a2b8814ede2a5bb9faa6c0a6020"
+  resolved "https://codeload.github.com/Royal-Jay/bluebutton.js/tar.gz/291e56f8c60b75a87961378714c4a62c5fa82413"
   dependencies:
     lodash "^4.17.4"
     xmldom "~0.1.19"
