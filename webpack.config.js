@@ -55,7 +55,14 @@ module.exports = {
                 enforce: "pre",
                 loader: 'tslint-loader'
             },
-            { test: /\.ts$/, use: ['ts-loader'], exclude: /dist/ },
+            { 
+                test: /\.ts(x?)$/,
+                exclude: /node_modules/,
+                use: [
+                    { loader: 'babel-loader?presets[]=env' },
+                    { loader: 'ts-loader' }
+                ],                 
+            },
             {
                 test: /\.(png|jpg|gif|svg|eot|ttf|woff|woff2)$/,
                 loader: 'url-loader',
