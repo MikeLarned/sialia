@@ -1,9 +1,9 @@
 {
   "name": "ccdaview",
-  "version": "1.0.0-rc.2",
+  "version": "1.0.0-rc.3",
   "main": "dist/sialia.js",
   "module": "dist/sialia.js",
-  "typings": "dist/sialia",
+  "typings": "dist/index",
   "files": [
     "dist/"
   ],
