@@ -1,11 +1,5 @@
-import '../styles/styles.scss';
-import 'bootstrap';
-import _ from 'lodash';
 import riot from 'riot';
-
-import './tags';
 import { DocumentsService } from './services';
-import { PreferencesService } from './services';
 
 export class Sialia {
 
@@ -21,5 +15,3 @@ export class Sialia {
     });
   }
 }
-
-window['Sialia'] = Sialia;
