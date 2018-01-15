@@ -6,7 +6,7 @@ const externals = {
     bluebutton: 'bluebutton',
     bootstrap: 'bootstrap',
     dragula: 'dragula',
-    jquery: 'jQuery',
+    jquery: 'jquery',
     lodash: 'lodash',
     moment: 'moment',
     riot: 'riot'

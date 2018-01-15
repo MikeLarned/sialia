@@ -169,7 +169,7 @@ exports.bootstrapize = bootstrapize;
 /* 6 */
 /***/ (function(module, exports) {
 
-module.exports = require("jQuery");
+module.exports = require("jquery");
 
 /***/ }),
 /* 7 */
