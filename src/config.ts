@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import { Section, Document } from './models';
 
 export const SECTIONS: Section[] = [

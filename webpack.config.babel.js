@@ -18,7 +18,7 @@ const extractCss = new ExtractTextPlugin({
 
 export default {
     entry: {
-        'sialia': './src/sialia.ts'
+        'sialia': './src/index.ts'
     },
     devtool: 'source-map',
     externals: externals,
