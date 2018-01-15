@@ -1,20 +1,23 @@
 {
     "compilerOptions": {
-        "allowSyntheticDefaultImports": true, 
-        "module": "commonjs",                 
-        "target": "es6",
+        "allowSyntheticDefaultImports": true,
+        "module": "commonjs",
+        "target": "es5",
         "noImplicitAny": false,
         "sourceMap": true,
         "declaration": true,
-        "outDir": "dist"
+        "outDir": ".",
+        "lib": [
+            "es2016",
+            "dom"
+        ],
     },
     "exclude": [
         "node_modules",
         "dist"
     ],
     "include": [
-        "dist/index.d.ts",
-        "app/**/*"
+        "src/**/*"
     ],
     // Atom settings
     "compileOnSave": false

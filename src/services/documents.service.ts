@@ -1,7 +1,6 @@
 import $ from 'jquery';
 import _ from 'lodash';
 import { bluebutton } from 'bluebutton';
-import { Observable } from 'rxjs/Observable';
 import { Section, ViewerOptions, Preferences } from '../models';
 import { SECTIONS, IGNORE_SECTIONS } from '../config';
 import { PreferencesService } from './preferences.service';
@@ -41,11 +40,10 @@ export class DocumentsService {
     return allSections;
   }
 
-  fetch(url: string): Observable<ViewerOptions> {
-    return Observable.create((observer) => {
+  fetch(url: string): Promise<ViewerOptions> {
+    return new Promise((resolve) => {
       $.get(url, (content) => {
-        observer.next(this.load(content));
-        observer.complete();
+        resolve(this.load(content));
       }, 'text');
     });
   }

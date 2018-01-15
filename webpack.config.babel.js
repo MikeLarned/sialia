@@ -1,36 +1,32 @@
-var webpack                 = require('webpack'),
-    path                    = require('path')
-    nodeExternals           = require('webpack-node-externals'),
-    FixDefaultImportPlugin  = require('webpack-fix-default-import-plugin'),
-    ExtractTextPlugin       = require('extract-text-webpack-plugin');
+import path from 'path';
+import FixDefaultImportPlugin from 'webpack-fix-default-import-plugin';
+import ExtractTextPlugin from 'extract-text-webpack-plugin';
 
-let excludes = nodeExternals({
-    whitelist: ["bluebutton"]
-});
+const externals = {
+    bluebutton: 'bluebutton',
+    bootstrap: 'bootstrap',
+    dragula: 'dragula',
+    jquery: 'jQuery',
+    lodash: 'lodash',
+    moment: 'moment',
+    riot: 'riot'
+}
 
 const extractCss = new ExtractTextPlugin({
     filename: '[name].css'
 });
 
-/*excludes.lodash = {
-    commonjs: 'lodash',
-    commonjs2: 'lodash',
-    amd: '_',
-    root: '_'
-};*/
-
-module.exports = {
+export default {
     entry: {
-        'sialia': "./app/app.ts"
+        'sialia': './src/sialia.ts'
     },
-    target: "node",
     devtool: 'source-map',
-    externals: [excludes],
+    externals: externals,
     output: {
-        path: path.resolve(__dirname, "dist"),
-        filename: "[name].js",
-        library: "ccdaview",
-        libraryTarget: "commonjs"
+        path: path.resolve(__dirname, 'dist'),
+        filename: '[name].js',
+        library: 'sialia',
+        libraryTarget: 'commonjs'
     },
     resolve: {
         extensions: ['.scss', '.ts', '.tsx', '.js']
@@ -41,10 +37,10 @@ module.exports = {
     ],
     module: {
         rules: [
-            { 
-                test: /\.tag$/, 
+            {
+                test: /\.tag$/,
                 loader: 'riot-tag-loader',
-                enforce: "pre",
+                enforce: 'pre',
                 query: {
                     type: 'none',
                     format: 'ems'
@@ -52,41 +48,38 @@ module.exports = {
             },
             {
                 test: /\.ts$/,
-                enforce: "pre",
+                enforce: 'pre',
                 loader: 'tslint-loader'
             },
-            { 
+            {
                 test: /\.ts(x?)$/,
                 exclude: /node_modules/,
-                use: [
-                    { loader: 'babel-loader?presets[]=env' },
-                    { loader: 'ts-loader' }
-                ],                 
+                use: 'ts-loader',
             },
             {
                 test: /\.(png|jpg|gif|svg|eot|ttf|woff|woff2)$/,
                 loader: 'url-loader',
                 exclude: /dist/
             },
-            { 
-                test: /\.scss$/, 
+            {
+                test: /\.scss$/,
                 exclude: /dist/,
                 use: extractCss.extract({
                     use: [
-                        { 
+                        {
                             loader: 'css-loader',
                             options: {
                                 importLoaders: 1
                             }
                         },
-                        { 
+                        {
                             loader: 'postcss-loader'
-                        }, 
+                        },
                         { loader: 'sass-loader' }
                     ],
                     fallback: 'style-loader'
                 }),
-            }            
+            }
         ]
     }
 }
