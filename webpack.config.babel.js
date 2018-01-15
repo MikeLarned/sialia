@@ -25,14 +25,12 @@ export default {
     output: {
         path: path.resolve(__dirname, 'dist'),
         filename: '[name].js',
-        library: 'sialia',
-        libraryTarget: 'commonjs'
     },
     resolve: {
         extensions: ['.scss', '.ts', '.tsx', '.js']
     },
     plugins: [
-        new FixDefaultImportPlugin(),
+        // new FixDefaultImportPlugin(),
         extractCss
     ],
     module: {

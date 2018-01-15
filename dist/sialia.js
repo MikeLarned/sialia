@@ -1,4 +1,3 @@
-exports["sialia"] =
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -24,23 +23,6 @@ exports["sialia"] =
 /******/ 		module.l = true;
 /******/
 /******/ 		// Return the exports of the module
-/******/ 		(function (module) {
-/******/ 		  if (module.exports
-/******/ 		    && !module.exports.__esModule
-/******/ 		    && module.exports.default === undefined
-/******/ 		  ) {
-/******/ 		    if (module.exports.headers
-/******/ 		      && module.exports.headers.common
-/******/ 		      && module.exports.headers.common.Accept
-/******/ 		      && module.exports.adapter
-/******/ 		      && module.exports.transformRequest
-/******/ 		      && module.exports.transformResponse
-/******/ 		    ) {
-/******/ 		      return;
-/******/ 		    }
-/******/ 		    module.exports.default = module.exports;
-/******/ 		  }
-/******/ 		})(module);
 /******/ 		return module.exports;
 /******/ 	}
 /******/
@@ -85,13 +67,13 @@ exports["sialia"] =
 /* 0 */
 /***/ (function(module, exports) {
 
-module.exports = require("riot");
+module.exports = riot;
 
 /***/ }),
 /* 1 */
 /***/ (function(module, exports) {
 
-module.exports = require("lodash");
+module.exports = lodash;
 
 /***/ }),
 /* 2 */
@@ -169,7 +151,7 @@ exports.bootstrapize = bootstrapize;
 /* 6 */
 /***/ (function(module, exports) {
 
-module.exports = require("jquery");
+module.exports = jquery;
 
 /***/ }),
 /* 7 */
@@ -221,7 +203,7 @@ exports.PreferencesService = PreferencesService;
 /* 8 */
 /***/ (function(module, exports) {
 
-module.exports = require("moment");
+module.exports = moment;
 
 /***/ }),
 /* 9 */
@@ -274,7 +256,7 @@ __export(__webpack_require__(9));
 /* 12 */
 /***/ (function(module, exports) {
 
-module.exports = require("bootstrap");
+module.exports = bootstrap;
 
 /***/ }),
 /* 13 */
@@ -419,7 +401,7 @@ riot.tag2('preference-section', '<li class="list-group-item preferences-section 
 /* 16 */
 /***/ (function(module, exports) {
 
-module.exports = require("dragula");
+module.exports = dragula;
 
 /***/ }),
 /* 17 */
@@ -568,7 +550,7 @@ exports.DocumentsService = DocumentsService;
 /* 22 */
 /***/ (function(module, exports) {
 
-module.exports = require("bluebutton");
+module.exports = bluebutton;
 
 /***/ }),
 /* 23 */
