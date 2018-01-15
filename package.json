@@ -1,6 +1,6 @@
 {
   "name": "ccdaview",
-  "version": "1.0.0-rc.5",
+  "version": "1.0.0-rc.6",
   "main": "dist/sialia.js",
   "module": "dist/sialia.js",
   "typings": "dist/index",
@@ -44,8 +44,6 @@
     "typescript": "^2.5.2",
     "typescript-simple": "^8.0.4",
     "url-loader": "^0.5.9",
-    "webpack": "^3.5.6",
-    "webpack-fix-default-import-plugin": "^1.0.3",
-    "webpack-node-externals": "^1.6.0"
+    "webpack": "^3.5.6"
   }
 }

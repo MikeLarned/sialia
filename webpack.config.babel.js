@@ -1,5 +1,4 @@
 import path from 'path';
-import FixDefaultImportPlugin from 'webpack-fix-default-import-plugin';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
 
 const externals = {
@@ -25,12 +24,13 @@ export default {
     output: {
         path: path.resolve(__dirname, 'dist'),
         filename: '[name].js',
+        library: 'sialia',
+        libraryTarget: 'umd'
     },
     resolve: {
         extensions: ['.scss', '.ts', '.tsx', '.js']
     },
     plugins: [
-        // new FixDefaultImportPlugin(),
         extractCss
     ],
     module: {

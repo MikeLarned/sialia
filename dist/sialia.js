@@ -1,4 +1,14 @@
-/******/ (function(modules) { // webpackBootstrap
+(function webpackUniversalModuleDefinition(root, factory) {
+	if(typeof exports === 'object' && typeof module === 'object')
+		module.exports = factory(require("bootstrap"), require("riot"), require("jquery"), require("lodash"), require("bluebutton"), require("moment"), require("dragula"));
+	else if(typeof define === 'function' && define.amd)
+		define(["bootstrap", "riot", "jquery", "lodash", "bluebutton", "moment", "dragula"], factory);
+	else if(typeof exports === 'object')
+		exports["sialia"] = factory(require("bootstrap"), require("riot"), require("jquery"), require("lodash"), require("bluebutton"), require("moment"), require("dragula"));
+	else
+		root["sialia"] = factory(root["bootstrap"], root["riot"], root["jquery"], root["lodash"], root["bluebutton"], root["moment"], root["dragula"]);
+})(typeof self !== 'undefined' ? self : this, function(__WEBPACK_EXTERNAL_MODULE_11__, __WEBPACK_EXTERNAL_MODULE_0__, __WEBPACK_EXTERNAL_MODULE_6__, __WEBPACK_EXTERNAL_MODULE_1__, __WEBPACK_EXTERNAL_MODULE_21__, __WEBPACK_EXTERNAL_MODULE_8__, __WEBPACK_EXTERNAL_MODULE_15__) {
+return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
 /******/
@@ -60,20 +70,20 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 10);
+/******/ 	return __webpack_require__(__webpack_require__.s = 9);
 /******/ })
 /************************************************************************/
 /******/ ([
 /* 0 */
 /***/ (function(module, exports) {
 
-module.exports = riot;
+module.exports = __WEBPACK_EXTERNAL_MODULE_0__;
 
 /***/ }),
 /* 1 */
 /***/ (function(module, exports) {
 
-module.exports = lodash;
+module.exports = __WEBPACK_EXTERNAL_MODULE_1__;
 
 /***/ }),
 /* 2 */
@@ -86,7 +96,7 @@ function __export(m) {
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 __export(__webpack_require__(7));
-__export(__webpack_require__(21));
+__export(__webpack_require__(20));
 
 
 /***/ }),
@@ -151,7 +161,7 @@ exports.bootstrapize = bootstrapize;
 /* 6 */
 /***/ (function(module, exports) {
 
-module.exports = jquery;
+module.exports = __WEBPACK_EXTERNAL_MODULE_6__;
 
 /***/ }),
 /* 7 */
@@ -160,7 +170,7 @@ module.exports = jquery;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var models_1 = __webpack_require__(17);
+var models_1 = __webpack_require__(16);
 var lodash_1 = __webpack_require__(1);
 var PreferencesService = /** @class */ (function () {
     function PreferencesService() {
@@ -203,33 +213,10 @@ exports.PreferencesService = PreferencesService;
 /* 8 */
 /***/ (function(module, exports) {
 
-module.exports = moment;
+module.exports = __WEBPACK_EXTERNAL_MODULE_8__;
 
 /***/ }),
 /* 9 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var riot_1 = __webpack_require__(0);
-var services_1 = __webpack_require__(2);
-var Sialia = /** @class */ (function () {
-    function Sialia(options) {
-        this.service = new services_1.DocumentsService();
-        var documents = options.docs;
-        this.service.fetch(documents[0].Url).then(function (options) {
-            options.documents = documents;
-            riot_1.default.mount('sialia', options);
-        });
-    }
-    return Sialia;
-}());
-exports.Sialia = Sialia;
-
-
-/***/ }),
-/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -238,35 +225,34 @@ function __export(m) {
     for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
 }
 Object.defineProperty(exports, "__esModule", { value: true });
+__webpack_require__(10);
 __webpack_require__(11);
 __webpack_require__(12);
-__webpack_require__(13);
-var sialia_1 = __webpack_require__(9);
-window['Sialia'] = sialia_1.Sialia;
-__export(__webpack_require__(9));
+__export(__webpack_require__(47));
 
 
 /***/ }),
-/* 11 */
+/* 10 */
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
 
 /***/ }),
-/* 12 */
+/* 11 */
 /***/ (function(module, exports) {
 
-module.exports = bootstrap;
+module.exports = __WEBPACK_EXTERNAL_MODULE_11__;
 
 /***/ }),
-/* 13 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+__webpack_require__(13);
 __webpack_require__(14);
-__webpack_require__(15);
+__webpack_require__(23);
 __webpack_require__(24);
 __webpack_require__(25);
 __webpack_require__(26);
@@ -275,7 +261,7 @@ __webpack_require__(28);
 __webpack_require__(29);
 __webpack_require__(30);
 __webpack_require__(31);
-__webpack_require__(32);
+__webpack_require__(33);
 __webpack_require__(34);
 __webpack_require__(35);
 __webpack_require__(36);
@@ -289,11 +275,10 @@ __webpack_require__(43);
 __webpack_require__(44);
 __webpack_require__(45);
 __webpack_require__(46);
-__webpack_require__(47);
 
 
 /***/ }),
-/* 14 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
@@ -320,12 +305,12 @@ __webpack_require__(47);
   
 
 /***/ }),
-/* 15 */
+/* 14 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_dragula__ = __webpack_require__(16);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_dragula__ = __webpack_require__(15);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_dragula___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_dragula__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_lodash__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_lodash___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_lodash__);
@@ -398,13 +383,13 @@ riot.tag2('preference-section', '<li class="list-group-item preferences-section 
   
 
 /***/ }),
-/* 16 */
+/* 15 */
 /***/ (function(module, exports) {
 
-module.exports = dragula;
+module.exports = __WEBPACK_EXTERNAL_MODULE_15__;
 
 /***/ }),
-/* 17 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -413,14 +398,14 @@ function __export(m) {
     for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-__export(__webpack_require__(18));
+__export(__webpack_require__(17));
 __export(__webpack_require__(4));
+__export(__webpack_require__(18));
 __export(__webpack_require__(19));
-__export(__webpack_require__(20));
 
 
 /***/ }),
-/* 18 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -435,7 +420,7 @@ exports.Document = Document;
 
 
 /***/ }),
-/* 19 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -450,7 +435,7 @@ exports.ViewerOptions = ViewerOptions;
 
 
 /***/ }),
-/* 20 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -479,7 +464,7 @@ exports.Preferences = Preferences;
 
 
 /***/ }),
-/* 21 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -487,8 +472,8 @@ exports.Preferences = Preferences;
 Object.defineProperty(exports, "__esModule", { value: true });
 var jquery_1 = __webpack_require__(6);
 var lodash_1 = __webpack_require__(1);
-var bluebutton_1 = __webpack_require__(22);
-var config_1 = __webpack_require__(23);
+var bluebutton_1 = __webpack_require__(21);
+var config_1 = __webpack_require__(22);
 var preferences_service_1 = __webpack_require__(7);
 var viewer;
 var DocumentsService = /** @class */ (function () {
@@ -547,13 +532,13 @@ exports.DocumentsService = DocumentsService;
 
 
 /***/ }),
-/* 22 */
+/* 21 */
 /***/ (function(module, exports) {
 
-module.exports = bluebutton;
+module.exports = __WEBPACK_EXTERNAL_MODULE_21__;
 
 /***/ }),
-/* 23 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -579,7 +564,7 @@ exports.IGNORE_SECTIONS = ['document', 'demographics', 'json'];
 
 
 /***/ }),
-/* 24 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
@@ -594,7 +579,7 @@ exports.IGNORE_SECTIONS = ['document', 'demographics', 'json'];
   
 
 /***/ }),
-/* 25 */
+/* 24 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -646,7 +631,7 @@ riot.tag2('header', '<nav class="navbar navbar-default navbar-fixed-top"> <div c
   
 
 /***/ }),
-/* 26 */
+/* 25 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -684,7 +669,7 @@ riot.tag2('panel', '<div class="panel panel-{opts.state ? opts.state : \'default
   
 
 /***/ }),
-/* 27 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
@@ -710,7 +695,7 @@ riot.tag2('panel', '<div class="panel panel-{opts.state ? opts.state : \'default
   
 
 /***/ }),
-/* 28 */
+/* 27 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -731,7 +716,7 @@ riot.tag2('raw', '<span></span>', '', '', function(opts) {
   
 
 /***/ }),
-/* 29 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
@@ -742,7 +727,7 @@ riot.tag2('raw', '<span></span>', '', '', function(opts) {
   
 
 /***/ }),
-/* 30 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
@@ -754,7 +739,7 @@ riot.tag2('raw', '<span></span>', '', '', function(opts) {
   
 
 /***/ }),
-/* 31 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
@@ -766,7 +751,7 @@ riot.tag2('raw', '<span></span>', '', '', function(opts) {
   
 
 /***/ }),
-/* 32 */
+/* 31 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -777,7 +762,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_lodash___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_lodash__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__utilities_lodashmixins__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__utilities_lodashmixins___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2__utilities_lodashmixins__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__utilities_lang__ = __webpack_require__(33);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__utilities_lang__ = __webpack_require__(32);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__utilities_lang___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3__utilities_lang__);
 
     var riot = __webpack_require__(0)
@@ -846,7 +831,7 @@ riot.tag2('demographics', '<div class="panel panel-default" id="demographics"> <
   
 
 /***/ }),
-/* 33 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1039,7 +1024,7 @@ exports.languages = {
 
 
 /***/ }),
-/* 34 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
@@ -1051,7 +1036,7 @@ exports.languages = {
   
 
 /***/ }),
-/* 35 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
@@ -1063,7 +1048,7 @@ exports.languages = {
   
 
 /***/ }),
-/* 36 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
@@ -1075,7 +1060,7 @@ exports.languages = {
   
 
 /***/ }),
-/* 37 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
@@ -1087,7 +1072,7 @@ exports.languages = {
   
 
 /***/ }),
-/* 38 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
@@ -1099,7 +1084,7 @@ exports.languages = {
   
 
 /***/ }),
-/* 39 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
@@ -1111,7 +1096,7 @@ exports.languages = {
   
 
 /***/ }),
-/* 40 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
@@ -1123,7 +1108,7 @@ exports.languages = {
   
 
 /***/ }),
-/* 41 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
@@ -1135,7 +1120,7 @@ exports.languages = {
   
 
 /***/ }),
-/* 42 */
+/* 41 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1161,7 +1146,7 @@ riot.tag2('medications', '<panel section="{opts.section}" data="{opts.data}"> <d
   
 
 /***/ }),
-/* 43 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
@@ -1173,7 +1158,7 @@ riot.tag2('medications', '<panel section="{opts.section}" data="{opts.data}"> <d
   
 
 /***/ }),
-/* 44 */
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
@@ -1185,7 +1170,7 @@ riot.tag2('medications', '<panel section="{opts.section}" data="{opts.data}"> <d
   
 
 /***/ }),
-/* 45 */
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
@@ -1197,7 +1182,7 @@ riot.tag2('medications', '<panel section="{opts.section}" data="{opts.data}"> <d
   
 
 /***/ }),
-/* 46 */
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
@@ -1209,7 +1194,7 @@ riot.tag2('medications', '<panel section="{opts.section}" data="{opts.data}"> <d
   
 
 /***/ }),
-/* 47 */
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
@@ -1220,6 +1205,30 @@ riot.tag2('medications', '<panel section="{opts.section}" data="{opts.data}"> <d
     
   
 
+/***/ }),
+/* 47 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var riot_1 = __webpack_require__(0);
+var services_1 = __webpack_require__(2);
+var Sialia = /** @class */ (function () {
+    function Sialia(options) {
+        this.service = new services_1.DocumentsService();
+        var documents = options.docs;
+        this.service.fetch(documents[0].Url).then(function (options) {
+            options.documents = documents;
+            riot_1.default.mount('sialia', options);
+        });
+    }
+    return Sialia;
+}());
+exports.Sialia = Sialia;
+
+
 /***/ })
 /******/ ]);
+});
 //# sourceMappingURL=sialia.js.map
