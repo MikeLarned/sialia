@@ -703,9 +703,9 @@ block-stream@*:
   dependencies:
     inherits "~2.0.0"
 
-"bluebutton@github:Royal-Jay/bluebutton.js":
-  version "0.4.3"
-  resolved "https://codeload.github.com/Royal-Jay/bluebutton.js/tar.gz/291e56f8c60b75a87961378714c4a62c5fa82413"
+"bluebutton@github:Royal-Jay/bluebutton.js#0.5.0-rc.2":
+  version "0.5.0-rc.2"
+  resolved "https://codeload.github.com/Royal-Jay/bluebutton.js/tar.gz/480bd4fd3866c0a990e88bbaa94384584a9c6569"
   dependencies:
     lodash "^4.17.4"
     xmldom "~0.1.19"

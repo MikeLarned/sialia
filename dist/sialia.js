@@ -472,7 +472,7 @@ exports.Preferences = Preferences;
 Object.defineProperty(exports, "__esModule", { value: true });
 var jquery_1 = __webpack_require__(6);
 var lodash_1 = __webpack_require__(1);
-var bluebutton_1 = __webpack_require__(21);
+var bluebutton = __webpack_require__(21);
 var config_1 = __webpack_require__(22);
 var preferences_service_1 = __webpack_require__(7);
 var viewer;
@@ -516,7 +516,7 @@ var DocumentsService = /** @class */ (function () {
         });
     };
     DocumentsService.prototype.load = function (data) {
-        var bb = bluebutton_1.bluebutton(data);
+        var bb = bluebutton(data);
         if (!bb.data)
             throw 'BlueButton could not parse the file.';
         var pref = new preferences_service_1.PreferencesService().getPreferences(bb.data.document.type);
