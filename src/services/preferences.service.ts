@@ -1,5 +1,5 @@
 import { ViewerOptions, Section, Preferences, DocType } from '../models';
-import _ from 'lodash';
+import * as _ from 'lodash';
 
 export class PreferencesService  {
 

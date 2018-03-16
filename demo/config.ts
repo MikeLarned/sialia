@@ -1,7 +1,6 @@
-import _ from 'lodash';
+import * as _ from 'lodash';
 import { Document } from '../src/models';
 
-const root: string = 'https://raw.githubusercontent.com/dougludlow/ccdaview/develop/docs/';
 const fileNames: string[] = [
   'C-CDA_R2-1_CCD.xml',
   'C-CDA_R2_Care_Plan.xml',
@@ -11,6 +10,7 @@ const fileNames: string[] = [
   'Discharge Summary 1.xml',
   'Final_Task_Force_Full_Sample_R1.1.xml',
   'HandP 1.xml',
+  'Myra Jones_CCD.xml',
   'Op Note 1.xml',
   'Proc Note 1.xml',
   'Progress Note 1.xml',
@@ -20,5 +20,5 @@ const fileNames: string[] = [
 
 export const DOCUMENTS: Document[] = _.map(fileNames, (name) => ({
   name: name,
-  url: `${root}${name}`
+  url: name
 }));

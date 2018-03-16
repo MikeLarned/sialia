@@ -1,8 +1,12 @@
 import { bootstrapize } from '../utilities/htmlhelpers';
+
 <raw>
   <span></span>
 
-  this.on('update', function() {
+  <script>
     this.root.innerHTML = bootstrapize(opts.content);
-  }.bind(this));
+    this.on('update', function() {
+      this.root.innerHTML = bootstrapize(opts.content);
+    }.bind(this));
+  </script>
 </raw>

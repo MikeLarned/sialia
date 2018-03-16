@@ -1,5 +1,5 @@
 import dragula from 'dragula';
-import _ from 'lodash';
+import * as _ from 'lodash';
 import '../utilities/lodashmixins';
 import { updateSortOrder } from '../models/section';
 import { getElementIndex } from '../utilities/htmlhelpers';

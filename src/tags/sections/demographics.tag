@@ -1,5 +1,5 @@
 import moment from 'moment';
-import _ from 'lodash';
+import * as _ from 'lodash';
 import '../../utilities/lodashmixins';
 import { languages } from '../../utilities/lang';
 

@@ -19,7 +19,6 @@
   </div>
 
   <script>
-
     var self = this;
     this.data = opts.data;
     this.pref = opts.pref;

@@ -7,9 +7,12 @@ export class Sialia {
 
   constructor(options: any) {
 
-    let documents = options.docs;
+    let documents = options.docs.map(x => ({
+      name: x.Name || x.name,
+      url: x.Url || x.name
+    }));
 
-    this.service.fetch(documents[0].Url).then((options) => {
+    this.service.fetch(documents[0].url).then((options) => {
       options.documents = documents;
       riot.mount('sialia', options);
     });

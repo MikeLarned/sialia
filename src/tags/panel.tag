@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import * as _ from 'lodash';
 
 <panel class={ opts.section.tagName } class={ fade: isEmpty(), expanded: isEnabled(), collapsed: !isEnabled() }>
   <div class="panel panel-{ opts.state ? opts.state : 'default' }" id={ opts.section.key }>

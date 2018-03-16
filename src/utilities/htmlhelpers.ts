@@ -1,5 +1,5 @@
 import * as lodash from 'lodash';
-import $ from 'jquery';
+import * as $ from 'jquery';
 
 export function getElementIndex(node: HTMLElement): number {
   let children = lodash.filter([].slice.call(node.parentNode.childNodes), { nodeType: 1 });
