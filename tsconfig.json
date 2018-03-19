@@ -1,12 +1,23 @@
 {
     "compilerOptions": {
-        "module": "system",
+        "allowSyntheticDefaultImports": true,
+        "module": "commonjs",
         "target": "es5",
         "noImplicitAny": false,
-        "sourceMap": false
+        "sourceMap": true,
+        "declaration": true,
+        "outDir": ".",
+        "lib": [
+            "es2016",
+            "dom"
+        ],
     },
     "exclude": [
-        "node_modules"
+        "node_modules",
+        "dist"
+    ],
+    "include": [
+        "src/**/*"
     ],
     // Atom settings
     "compileOnSave": false
