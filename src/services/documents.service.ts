@@ -1,5 +1,5 @@
-import $ from 'jquery';
-import _ from 'lodash';
+import * as $ from 'jquery';
+import * as _ from 'lodash';
 import * as bluebutton from 'bluebutton';
 import { Section, ViewerOptions, Preferences } from '../models';
 import { SECTIONS, IGNORE_SECTIONS } from '../config';

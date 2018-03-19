@@ -27,6 +27,9 @@ export default {
         library: 'sialia',
         libraryTarget: 'umd'
     },
+    optimization: {
+        minimize: false,
+    },
     resolve: {
         extensions: ['.scss', '.ts', '.tsx', '.js']
     },

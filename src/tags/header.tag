@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import * as _ from 'lodash';
 import { DocumentsService } from '../services';
 import { PreferencesService } from '../services';
 
@@ -40,7 +40,7 @@ import { PreferencesService } from '../services';
             <ul class="dropdown-menu" aria-labelledby="jump">
               <li each={ documents } class={ active: active }>
                 <a href="#" onclick={ load }>
-                  { Name }
+                  { name }
                 </a>
               </li>
             </ul>
@@ -75,23 +75,22 @@ import { PreferencesService } from '../services';
   </nav>
   
   <script>
-
-
+    var self = this;
     this.documents = this.opts.documents;
     this.service = new DocumentsService();
     this.documents[0].active = true;
 
     this.load = function(e) {
       this.toggleActive(e);
-      this.service.fetch(e.item.Url).subscribe(function(options) {
+      this.service.fetch(e.item.url).then(function(options) {
         if (!options) return;
         if(!options.pref.isSet) {
-          this.parent.showPreferences = true;
+          self.parent.showPreferences = true;
         };
-        
-        this.parent.update(options);
+
+        self.parent.update(options);
         riot.update();
-      }.bind(this));
+      });
     }
 
     this.showPreferences = function() {
