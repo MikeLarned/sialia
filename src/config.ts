@@ -1,7 +1,7 @@
 import { Section, Document } from './models';
 
 export const SECTIONS: Section[] = [
-  { key: 'allergies', display: 'Allergies', tagName: 'allergies', icon: 'pagelines' },
+  { key: 'allergies', display: 'Allergies', tagName: 'generic', icon: 'pagelines' },
   { key: 'care_plan', display: 'Care Plan', tagName: 'generic', icon: 'sticky-note-o' },
   { key: 'chief_complaint', display: 'Chief Complaint', tagName: 'generic', icon: 'bullhorn' },
   { key: 'encounters', display: 'Encounters', tagName: 'generic', icon: 'stethoscope' },
@@ -9,7 +9,7 @@ export const SECTIONS: Section[] = [
   { key: 'immunization_declines', display: 'Declined Immunizations', tagName: 'generic', icon: 'ban' },
   { key: 'immunizations', display: 'Immunization', tagName: 'generic', icon: 'eyedropper' },
   { key: 'instructions', display: 'Patient Instructions', tagName: 'generic', icon: 'user-md' },
-  { key: 'medications', display: 'Medications', tagName: 'medications', icon: 'medkit' },
+  { key: 'medications', display: 'Medications', tagName: 'generic', icon: 'medkit' },
   { key: 'problems', display: 'Problems', tagName: 'generic', icon: 'exclamation-triangle' },
   { key: 'procedures', display: 'Procedures', tagName: 'generic', icon: 'hospital-o' },
   { key: 'results', display: 'Results', tagName: 'generic', icon: 'flask' },
