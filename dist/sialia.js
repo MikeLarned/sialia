@@ -434,7 +434,7 @@ var Sialia = /** @class */ (function () {
         this.service = new services_1.DocumentsService();
         var documents = options.docs.map(function (x) { return ({
             name: x.Name || x.name,
-            url: x.Url || x.url
+            url: x.Url || x.name
         }); });
         this.service.fetch(documents[0].url).then(function (options) {
             options.documents = documents;
@@ -801,7 +801,7 @@ __webpack_require__.r(__webpack_exports__);
     var riot = __webpack_require__(0)
     
 
-riot.tag2('panel', '<div class="panel panel-{opts.state ? opts.state : \'default\'}" id="{opts.section.key}"> <div class="panel-heading section-toggle" onclick="{toggleSection}"> <h3 class="panel-title"> <i class="fa fa-{opts.section.icon} section-icon" aria-hidden="true" if="{!opts.hideicon}"></i> {opts.section.display} <span class="section-item-count badge badge-muted" if="{opts.data.entries && opts.data.entries.length}">{opts.data.entries.length}</span> <span class="text-muted" if="{isEmpty()}">(empty)</span> <span class="pull-right"> <i class="fa fa-chevron-down {fa-rotate-180: opts.section.enabled}" aria-hidden="true"></i> </span> </h3> </div> <div class="panel-body"> <yield></yield> </div> </div>', '', 'class="{opts.section.tagName}" class="{fade: isEmpty(), expanded: isEnabled(), collapsed: !isEnabled()}"', function(opts) {
+riot.tag2('panel', '<div class="panel panel-{opts.state ? opts.state : \'default\'}" id="{opts.section.key}"> <div class="panel-heading section-toggle" onclick="{toggleSection}"> <h3 class="panel-title"> <i class="fa fa-{opts.section.icon} section-icon" aria-hidden="true" if="{!opts.hideicon}"></i> {opts.section.display} <span class="text-muted" if="{isEmpty()}">(empty)</span> <span class="pull-right"> <i class="fa fa-chevron-down {fa-rotate-180: opts.section.enabled}" aria-hidden="true"></i> </span> </h3> </div> <div class="panel-body"> <yield></yield> </div> </div>', '', 'class="{opts.section.tagName}" class="{fade: isEmpty(), expanded: isEnabled(), collapsed: !isEnabled()}"', function(opts) {
     var current;
 
     this.on('update', function() {
@@ -812,7 +812,7 @@ riot.tag2('panel', '<div class="panel panel-{opts.state ? opts.state : \'default
     }.bind(this));
 
     this.isEmpty = function() {
-      return !lodash__WEBPACK_IMPORTED_MODULE_0__["get"](opts, 'data.entries.length') && !opts.data.text;
+      return !opts.data.text;
     }
 
     this.isEnabled = function() {
@@ -901,7 +901,7 @@ riot.tag2('header', '<nav class="navbar navbar-default navbar-fixed-top"> <div c
 
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SECTIONS = [
-    { key: 'allergies', display: 'Allergies', tagName: 'allergies', icon: 'pagelines' },
+    { key: 'allergies', display: 'Allergies', tagName: 'generic', icon: 'pagelines' },
     { key: 'care_plan', display: 'Care Plan', tagName: 'generic', icon: 'sticky-note-o' },
     { key: 'chief_complaint', display: 'Chief Complaint', tagName: 'generic', icon: 'bullhorn' },
     { key: 'encounters', display: 'Encounters', tagName: 'generic', icon: 'stethoscope' },
@@ -909,7 +909,7 @@ exports.SECTIONS = [
     { key: 'immunization_declines', display: 'Declined Immunizations', tagName: 'generic', icon: 'ban' },
     { key: 'immunizations', display: 'Immunization', tagName: 'generic', icon: 'eyedropper' },
     { key: 'instructions', display: 'Patient Instructions', tagName: 'generic', icon: 'user-md' },
-    { key: 'medications', display: 'Medications', tagName: 'medications', icon: 'medkit' },
+    { key: 'medications', display: 'Medications', tagName: 'generic', icon: 'medkit' },
     { key: 'problems', display: 'Problems', tagName: 'generic', icon: 'exclamation-triangle' },
     { key: 'procedures', display: 'Procedures', tagName: 'generic', icon: 'hospital-o' },
     { key: 'results', display: 'Results', tagName: 'generic', icon: 'flask' },
