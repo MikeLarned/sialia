@@ -12,13 +12,13 @@ import { PreferencesService } from '../services';
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
         </button>
-        <a class="navbar-brand" href="#" if={ opts.data }>
+        <span class="navbar-brand" if={ opts.data }>
           { opts.data.document.title } -
           <name name={ opts.data.demographics.name } class="text-muted"/>
-        </a>
-        <a class="navbar-brand" href="#" if={ !opts.data }>
+        </span>
+        <span class="navbar-brand" if={ !opts.data }>
           No Document Loaded
-        </a>
+        </span>
       </div>
 
       <div class="collapse navbar-collapse" id="navbar-collapse-1">
@@ -35,10 +35,10 @@ import { PreferencesService } from '../services';
         </form> -->
 
         <ul class="nav navbar-nav navbar-right" id="jump-nav">
-          <li if={ opts.documents && opts.documents.length === 1 }>
-            <a href="#">
+          <li if={ opts.documents && opts.documents.length === 1 && opts.documents[0].name }>
+            <span class="navbar-text">
               { opts.documents[0].name }
-            </a>
+            </span>
           </li>
           <li class="dropdown" if={ opts.documents && opts.documents.length > 1 }>
             <a href="#" class="dropdown-toggle" id="jump" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">

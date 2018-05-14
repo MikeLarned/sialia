@@ -1,5 +1,5 @@
 import riot from 'riot';
-import { Document } from './models';
+import { Document, isDocument } from './models';
 import { DocumentsService, PreferencesService } from './services';
 
 export class Sialia {
@@ -30,7 +30,14 @@ export class Sialia {
     }
   }
 
-  open(document?: Document): Promise<any> {
+  open(documentOrString?: Document | string): Promise<any> {
+
+    let document = documentOrString as Document;
+
+    if (!isDocument(documentOrString)) {
+      document = { url: documentOrString };
+    }
+
     if (document) {
       return this.documentService.open(document).then((options) => {
         options.documents = this.documents || [document];

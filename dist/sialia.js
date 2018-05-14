@@ -7,7 +7,7 @@
 		exports["sialia"] = factory(require("riot"), require("lodash"), require("moment"), require("jquery"), require("dragula"), require("bluebutton"), require("bootstrap"));
 	else
 		root["sialia"] = factory(root["riot"], root["lodash"], root["moment"], root["jquery"], root["dragula"], root["bluebutton"], root["bootstrap"]);
-})(window, function(__WEBPACK_EXTERNAL_MODULE__0__, __WEBPACK_EXTERNAL_MODULE__1__, __WEBPACK_EXTERNAL_MODULE__3__, __WEBPACK_EXTERNAL_MODULE__7__, __WEBPACK_EXTERNAL_MODULE__10__, __WEBPACK_EXTERNAL_MODULE__36__, __WEBPACK_EXTERNAL_MODULE__45__) {
+})(window, function(__WEBPACK_EXTERNAL_MODULE__0__, __WEBPACK_EXTERNAL_MODULE__1__, __WEBPACK_EXTERNAL_MODULE__3__, __WEBPACK_EXTERNAL_MODULE__8__, __WEBPACK_EXTERNAL_MODULE__11__, __WEBPACK_EXTERNAL_MODULE__37__, __WEBPACK_EXTERNAL_MODULE__45__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -101,8 +101,8 @@ function __export(m) {
     for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-__export(__webpack_require__(6));
-__export(__webpack_require__(37));
+__export(__webpack_require__(7));
+__export(__webpack_require__(38));
 
 
 /***/ }),
@@ -119,7 +119,7 @@ module.exports = __WEBPACK_EXTERNAL_MODULE__3__;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var lodash = __webpack_require__(1);
-var $ = __webpack_require__(7);
+var $ = __webpack_require__(8);
 function getElementIndex(node) {
     var children = lodash.filter([].slice.call(node.parentNode.childNodes), { nodeType: 1 });
     return Array.prototype.indexOf.call(children, node);
@@ -159,8 +159,24 @@ exports.updateSortOrder = updateSortOrder;
 
 "use strict";
 
+function __export(m) {
+    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
+}
 Object.defineProperty(exports, "__esModule", { value: true });
-var models_1 = __webpack_require__(41);
+__export(__webpack_require__(41));
+__export(__webpack_require__(5));
+__export(__webpack_require__(40));
+__export(__webpack_require__(39));
+
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var models_1 = __webpack_require__(6);
 var _ = __webpack_require__(1);
 var PreferencesService = /** @class */ (function () {
     function PreferencesService() {
@@ -200,13 +216,13 @@ exports.PreferencesService = PreferencesService;
 
 
 /***/ }),
-/* 7 */
+/* 8 */
 /***/ (function(module, exports) {
 
-module.exports = __WEBPACK_EXTERNAL_MODULE__7__;
+module.exports = __WEBPACK_EXTERNAL_MODULE__8__;
 
 /***/ }),
-/* 8 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -222,7 +238,7 @@ _.mixin({
 
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -415,13 +431,13 @@ exports.languages = {
 
 
 /***/ }),
-/* 10 */
+/* 11 */
 /***/ (function(module, exports) {
 
-module.exports = __WEBPACK_EXTERNAL_MODULE__10__;
+module.exports = __WEBPACK_EXTERNAL_MODULE__11__;
 
 /***/ }),
-/* 11 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -436,6 +452,7 @@ var __assign = (this && this.__assign) || Object.assign || function(t) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var riot_1 = __webpack_require__(0);
+var models_1 = __webpack_require__(6);
 var services_1 = __webpack_require__(2);
 var Sialia = /** @class */ (function () {
     function Sialia(config) {
@@ -455,8 +472,12 @@ var Sialia = /** @class */ (function () {
             this.open(this.documents[0]);
         }
     };
-    Sialia.prototype.open = function (document) {
+    Sialia.prototype.open = function (documentOrString) {
         var _this = this;
+        var document = documentOrString;
+        if (!models_1.isDocument(documentOrString)) {
+            document = { url: documentOrString };
+        }
         if (document) {
             return this.documentService.open(document).then(function (options) {
                 options.documents = _this.documents || [document];
@@ -477,7 +498,7 @@ exports.Sialia = Sialia;
 
 
 /***/ }),
-/* 12 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
@@ -489,7 +510,7 @@ exports.Sialia = Sialia;
   
 
 /***/ }),
-/* 13 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
@@ -501,7 +522,7 @@ exports.Sialia = Sialia;
   
 
 /***/ }),
-/* 14 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
@@ -513,7 +534,7 @@ exports.Sialia = Sialia;
   
 
 /***/ }),
-/* 15 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
@@ -525,7 +546,7 @@ exports.Sialia = Sialia;
   
 
 /***/ }),
-/* 16 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
@@ -537,7 +558,7 @@ exports.Sialia = Sialia;
   
 
 /***/ }),
-/* 17 */
+/* 18 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -563,7 +584,7 @@ riot.tag2('medications', '<panel section="{opts.section}" data="{opts.data}"> <d
   
 
 /***/ }),
-/* 18 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
@@ -575,7 +596,7 @@ riot.tag2('medications', '<panel section="{opts.section}" data="{opts.data}"> <d
   
 
 /***/ }),
-/* 19 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
@@ -587,7 +608,7 @@ riot.tag2('medications', '<panel section="{opts.section}" data="{opts.data}"> <d
   
 
 /***/ }),
-/* 20 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
@@ -599,7 +620,7 @@ riot.tag2('medications', '<panel section="{opts.section}" data="{opts.data}"> <d
   
 
 /***/ }),
-/* 21 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
@@ -611,7 +632,7 @@ riot.tag2('medications', '<panel section="{opts.section}" data="{opts.data}"> <d
   
 
 /***/ }),
-/* 22 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
@@ -623,7 +644,7 @@ riot.tag2('medications', '<panel section="{opts.section}" data="{opts.data}"> <d
   
 
 /***/ }),
-/* 23 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
@@ -635,7 +656,7 @@ riot.tag2('medications', '<panel section="{opts.section}" data="{opts.data}"> <d
   
 
 /***/ }),
-/* 24 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
@@ -647,7 +668,7 @@ riot.tag2('medications', '<panel section="{opts.section}" data="{opts.data}"> <d
   
 
 /***/ }),
-/* 25 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
@@ -659,7 +680,7 @@ riot.tag2('medications', '<panel section="{opts.section}" data="{opts.data}"> <d
   
 
 /***/ }),
-/* 26 */
+/* 27 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -668,9 +689,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(moment__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(1);
 /* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(lodash__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _utilities_lodashmixins__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(8);
+/* harmony import */ var _utilities_lodashmixins__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(9);
 /* harmony import */ var _utilities_lodashmixins__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_utilities_lodashmixins__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _utilities_lang__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(9);
+/* harmony import */ var _utilities_lang__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(10);
 /* harmony import */ var _utilities_lang__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_utilities_lang__WEBPACK_IMPORTED_MODULE_3__);
 
     var riot = __webpack_require__(0)
@@ -739,7 +760,7 @@ riot.tag2('demographics', '<div class="panel panel-default" id="demographics"> <
   
 
 /***/ }),
-/* 27 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
@@ -751,7 +772,7 @@ riot.tag2('demographics', '<div class="panel panel-default" id="demographics"> <
   
 
 /***/ }),
-/* 28 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
@@ -763,7 +784,7 @@ riot.tag2('demographics', '<div class="panel panel-default" id="demographics"> <
   
 
 /***/ }),
-/* 29 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
@@ -774,7 +795,7 @@ riot.tag2('demographics', '<div class="panel panel-default" id="demographics"> <
   
 
 /***/ }),
-/* 30 */
+/* 31 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -796,7 +817,7 @@ riot.tag2('raw', '<span></span>', '', '', function(opts) {
   
 
 /***/ }),
-/* 31 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
@@ -820,7 +841,7 @@ riot.tag2('raw', '<span></span>', '', '', function(opts) {
   
 
 /***/ }),
-/* 32 */
+/* 33 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -858,7 +879,7 @@ riot.tag2('panel', '<div class="panel panel-{opts.state ? opts.state : \'default
   
 
 /***/ }),
-/* 33 */
+/* 34 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -873,7 +894,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-riot.tag2('header', '<nav class="navbar navbar-default navbar-fixed-top"> <div class="container-fluid"> <div class="navbar-header"> <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse-1" aria-expanded="false"> <span class="sr-only">Toggle navigation</span> <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span> </button> <a class="navbar-brand" href="#" if="{opts.data}"> {opts.data.document.title} - <name name="{opts.data.demographics.name}" class="text-muted"></name> </a> <a class="navbar-brand" href="#" if="{!opts.data}"> No Document Loaded </a> </div> <div class="collapse navbar-collapse" id="navbar-collapse-1"> <ul class="nav navbar-nav navbar-right" id="jump-nav"> <li if="{opts.documents && opts.documents.length === 1}"> <a href="#"> {opts.documents[0].name} </a> </li> <li class="dropdown" if="{opts.documents && opts.documents.length > 1}"> <a href="#" class="dropdown-toggle" id="jump" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"> Documents <span class="caret"></span> </a> <ul class="dropdown-menu" aria-labelledby="jump"> <li each="{opts.documents}" class="{active: active}"> <a href="#" onclick="{load}"> {name} </a> </li> </ul> </li> <li class="dropdown" if="{opts.sections && opts.sections.length}"> <a href="#" class="dropdown-toggle" id="jump" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"> Jump to <span class="caret"></span> </a> <ul class="dropdown-menu" aria-labelledby="jump"> <li> <a href="#">Top</a> </li> <li role="separator" class="divider"></li> <li each="{opts.sections}"> <a href="#{key}"> <i class="fa fa-{icon}" aria-hidden="true"></i> {display} </a> </li> </ul> </li> <li class="{active: this.parent.showPreferences}" if="{opts.sections}"> <a href="#" onclick="{showPreferences}"> <i class="fa fa-lg fa-cog"></i> </a> </li> </ul> </div> </div> </nav>', '', '', function(opts) {
+riot.tag2('header', '<nav class="navbar navbar-default navbar-fixed-top"> <div class="container-fluid"> <div class="navbar-header"> <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse-1" aria-expanded="false"> <span class="sr-only">Toggle navigation</span> <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span> </button> <span class="navbar-brand" if="{opts.data}"> {opts.data.document.title} - <name name="{opts.data.demographics.name}" class="text-muted"></name> </span> <span class="navbar-brand" if="{!opts.data}"> No Document Loaded </span> </div> <div class="collapse navbar-collapse" id="navbar-collapse-1"> <ul class="nav navbar-nav navbar-right" id="jump-nav"> <li if="{opts.documents && opts.documents.length === 1 && opts.documents[0].name}"> <span class="navbar-text"> {opts.documents[0].name} </span> </li> <li class="dropdown" if="{opts.documents && opts.documents.length > 1}"> <a href="#" class="dropdown-toggle" id="jump" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"> Documents <span class="caret"></span> </a> <ul class="dropdown-menu" aria-labelledby="jump"> <li each="{opts.documents}" class="{active: active}"> <a href="#" onclick="{load}"> {name} </a> </li> </ul> </li> <li class="dropdown" if="{opts.sections && opts.sections.length}"> <a href="#" class="dropdown-toggle" id="jump" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"> Jump to <span class="caret"></span> </a> <ul class="dropdown-menu" aria-labelledby="jump"> <li> <a href="#">Top</a> </li> <li role="separator" class="divider"></li> <li each="{opts.sections}"> <a href="#{key}"> <i class="fa fa-{icon}" aria-hidden="true"></i> {display} </a> </li> </ul> </li> <li class="{active: this.parent.showPreferences}" if="{opts.sections}"> <a href="#" onclick="{showPreferences}"> <i class="fa fa-lg fa-cog"></i> </a> </li> </ul> </div> </div> </nav>', '', '', function(opts) {
     var self = this;
     self.service = new _services__WEBPACK_IMPORTED_MODULE_1__["DocumentsService"]();
 
@@ -913,7 +934,7 @@ riot.tag2('header', '<nav class="navbar navbar-default navbar-fixed-top"> <div c
   
 
 /***/ }),
-/* 34 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
@@ -928,7 +949,7 @@ riot.tag2('header', '<nav class="navbar navbar-default navbar-fixed-top"> <div c
   
 
 /***/ }),
-/* 35 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -954,23 +975,23 @@ exports.IGNORE_SECTIONS = ['document', 'demographics', 'json'];
 
 
 /***/ }),
-/* 36 */
+/* 37 */
 /***/ (function(module, exports) {
 
-module.exports = __WEBPACK_EXTERNAL_MODULE__36__;
+module.exports = __WEBPACK_EXTERNAL_MODULE__37__;
 
 /***/ }),
-/* 37 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var $ = __webpack_require__(7);
+var $ = __webpack_require__(8);
 var _ = __webpack_require__(1);
-var bluebutton = __webpack_require__(36);
-var config_1 = __webpack_require__(35);
-var preferences_service_1 = __webpack_require__(6);
+var bluebutton = __webpack_require__(37);
+var config_1 = __webpack_require__(36);
+var preferences_service_1 = __webpack_require__(7);
 var DocumentsService = /** @class */ (function () {
     function DocumentsService() {
         this.config = {};
@@ -1041,7 +1062,7 @@ exports.DocumentsService = DocumentsService;
 
 
 /***/ }),
-/* 38 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1070,7 +1091,7 @@ exports.Preferences = Preferences;
 
 
 /***/ }),
-/* 39 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1085,34 +1106,16 @@ exports.ViewerOptions = ViewerOptions;
 
 
 /***/ }),
-/* 40 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var Document = /** @class */ (function () {
-    function Document() {
-    }
-    return Document;
-}());
-exports.Document = Document;
-
-
-/***/ }),
 /* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
-function __export(m) {
-    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
-}
 Object.defineProperty(exports, "__esModule", { value: true });
-__export(__webpack_require__(40));
-__export(__webpack_require__(5));
-__export(__webpack_require__(39));
-__export(__webpack_require__(38));
+function isDocument(arg) {
+    return arg.url !== undefined;
+}
+exports.isDocument = isDocument;
 
 
 /***/ }),
@@ -1121,11 +1124,11 @@ __export(__webpack_require__(38));
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var dragula__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(10);
+/* harmony import */ var dragula__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(11);
 /* harmony import */ var dragula__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(dragula__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(1);
 /* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(lodash__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _utilities_lodashmixins__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(8);
+/* harmony import */ var _utilities_lodashmixins__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(9);
 /* harmony import */ var _utilities_lodashmixins__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_utilities_lodashmixins__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var _models_section__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(5);
 /* harmony import */ var _models_section__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_models_section__WEBPACK_IMPORTED_MODULE_3__);
@@ -1221,6 +1224,7 @@ riot.tag2('preference-section', '<li class="list-group-item preferences-section 
 Object.defineProperty(exports, "__esModule", { value: true });
 __webpack_require__(43);
 __webpack_require__(42);
+__webpack_require__(35);
 __webpack_require__(34);
 __webpack_require__(33);
 __webpack_require__(32);
@@ -1243,7 +1247,6 @@ __webpack_require__(16);
 __webpack_require__(15);
 __webpack_require__(14);
 __webpack_require__(13);
-__webpack_require__(12);
 
 
 /***/ }),
@@ -1265,7 +1268,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 __webpack_require__(57);
 __webpack_require__(45);
 __webpack_require__(44);
-__export(__webpack_require__(11));
+__export(__webpack_require__(12));
 
 
 /***/ }),
