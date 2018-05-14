@@ -22,7 +22,6 @@ export class PreferencesService  {
 
         let storageId = 'doc_' + opts.pref.type.templateId;
         localStorage.setItem(storageId, JSON.stringify(pref));
-
     }
 
     getPreferences(docType: DocType): Preferences {

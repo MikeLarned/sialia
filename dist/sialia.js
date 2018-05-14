@@ -426,21 +426,51 @@ module.exports = __WEBPACK_EXTERNAL_MODULE__10__;
 
 "use strict";
 
+var __assign = (this && this.__assign) || Object.assign || function(t) {
+    for (var s, i = 1, n = arguments.length; i < n; i++) {
+        s = arguments[i];
+        for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+            t[p] = s[p];
+    }
+    return t;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 var riot_1 = __webpack_require__(0);
 var services_1 = __webpack_require__(2);
 var Sialia = /** @class */ (function () {
-    function Sialia(options) {
-        this.service = new services_1.DocumentsService();
-        var documents = options.docs.map(function (x) { return ({
-            name: x.Name || x.name,
-            url: x.Url || x.name
-        }); });
-        this.service.fetch(documents[0].url).then(function (options) {
-            options.documents = documents;
-            riot_1.default.mount('sialia', options);
-        });
+    function Sialia(config) {
+        this.documentService = new services_1.DocumentsService();
+        this.instance = riot_1.default.mount('sialia')[0];
+        if (config)
+            this.configure(config);
     }
+    Sialia.prototype.configure = function (config) {
+        // backwards compatibility
+        this.documents = (config.docs || []).map(function (x) { return ({
+            name: x['Name'] || x.name,
+            url: x['Url'] || x.name
+        }); });
+        this.documentService.setHeaders(__assign({}, (config.headers || {})));
+        if (this.documents[0]) {
+            this.open(this.documents[0]);
+        }
+    };
+    Sialia.prototype.open = function (document) {
+        var _this = this;
+        if (document) {
+            return this.documentService.open(document).then(function (options) {
+                options.documents = _this.documents || [document];
+                _this.instance.opts = options;
+                _this.instance.update();
+            });
+        }
+        this.close();
+        return Promise.resolve();
+    };
+    Sialia.prototype.close = function () {
+        this.instance.opts = {};
+        this.instance.update();
+    };
     return Sialia;
 }());
 exports.Sialia = Sialia;
@@ -774,15 +804,15 @@ riot.tag2('raw', '<span></span>', '', '', function(opts) {
     riot.tag2('ccda-section', '<allergies if="{opts.current.tagName == \'allergies\'}" section="{opts.current}" data="{data}"></allergies> <medications if="{opts.current.tagName == \'medications\'}" section="{opts.current}" data="{data}"></medications> <generic if="{opts.current.tagName == \'generic\'}" section="{opts.current}" data="{data}"></generic>', '', '', function(opts) {
     var options = {
       section: opts.current,
-      data: opts.parent.data[opts.current.key]
+      data: opts.parent.opts.data[opts.current.key]
     };
 
     var self = this;
     this.parent = opts.parent;
     this.current = opts.current;
-    this.data = self.parent.data[self.current.key];
+    this.data = self.parent.opts.data[self.current.key];
     this.on('update', function() {
-      self.data = self.parent.data[self.current.key];
+      self.data = self.parent.opts.data[self.current.key];
     });
 });
 
@@ -843,36 +873,40 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-riot.tag2('header', '<nav class="navbar navbar-default navbar-fixed-top"> <div class="container-fluid"> <div class="navbar-header"> <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse-1" aria-expanded="false"> <span class="sr-only">Toggle navigation</span> <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span> </button> <a class="navbar-brand" href="#"> {opts.data.document.title} - <name name="{opts.data.demographics.name}" class="text-muted"></name> </a> </div> <div class="collapse navbar-collapse" id="navbar-collapse-1"> <ul class="nav navbar-nav navbar-right" id="jump-nav"> <li class="dropdown"> <a href="#" class="dropdown-toggle" id="jump" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"> Documents <span class="caret"></span> </a> <ul class="dropdown-menu" aria-labelledby="jump"> <li each="{documents}" class="{active: active}"> <a href="#" onclick="{load}"> {name} </a> </li> </ul> </li> <li class="dropdown"> <a href="#" class="dropdown-toggle" id="jump" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"> Jump to <span class="caret"></span> </a> <ul class="dropdown-menu" aria-labelledby="jump"> <li> <a href="#">Top</a> </li> <li role="separator" class="divider"></li> <li each="{opts.sections}"> <a href="#{key}"> <i class="fa fa-{icon}" aria-hidden="true"></i> {display} </a> </li> </ul> </li> <li class="{active: this.parent.showPreferences}"> <a href="#" onclick="{showPreferences}"> <i class="fa fa-lg fa-cog"></i> </a> </li> </ul> </div> </div> </nav>', '', '', function(opts) {
+riot.tag2('header', '<nav class="navbar navbar-default navbar-fixed-top"> <div class="container-fluid"> <div class="navbar-header"> <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse-1" aria-expanded="false"> <span class="sr-only">Toggle navigation</span> <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span> </button> <a class="navbar-brand" href="#" if="{opts.data}"> {opts.data.document.title} - <name name="{opts.data.demographics.name}" class="text-muted"></name> </a> <a class="navbar-brand" href="#" if="{!opts.data}"> No Document Loaded </a> </div> <div class="collapse navbar-collapse" id="navbar-collapse-1"> <ul class="nav navbar-nav navbar-right" id="jump-nav"> <li if="{opts.documents && opts.documents.length === 1}"> <a href="#"> {opts.documents[0].name} </a> </li> <li class="dropdown" if="{opts.documents && opts.documents.length > 1}"> <a href="#" class="dropdown-toggle" id="jump" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"> Documents <span class="caret"></span> </a> <ul class="dropdown-menu" aria-labelledby="jump"> <li each="{opts.documents}" class="{active: active}"> <a href="#" onclick="{load}"> {name} </a> </li> </ul> </li> <li class="dropdown" if="{opts.sections && opts.sections.length}"> <a href="#" class="dropdown-toggle" id="jump" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"> Jump to <span class="caret"></span> </a> <ul class="dropdown-menu" aria-labelledby="jump"> <li> <a href="#">Top</a> </li> <li role="separator" class="divider"></li> <li each="{opts.sections}"> <a href="#{key}"> <i class="fa fa-{icon}" aria-hidden="true"></i> {display} </a> </li> </ul> </li> <li class="{active: this.parent.showPreferences}" if="{opts.sections}"> <a href="#" onclick="{showPreferences}"> <i class="fa fa-lg fa-cog"></i> </a> </li> </ul> </div> </div> </nav>', '', '', function(opts) {
     var self = this;
-    this.documents = this.opts.documents;
-    this.service = new _services__WEBPACK_IMPORTED_MODULE_1__["DocumentsService"]();
-    this.documents[0].active = true;
+    self.service = new _services__WEBPACK_IMPORTED_MODULE_1__["DocumentsService"]();
 
-    this.load = function(e) {
-      this.toggleActive(e);
-      this.service.fetch(e.item.url).then(function(options) {
+    if (opts.documents && opts.documents.length)
+      opts.documents[0].active = true;
+
+    self.load = function(e) {
+      self.toggleActive(e.item);
+      self.service.open(e.item).then(function(options) {
         if (!options) return;
-        if(!options.pref.isSet) {
-          self.parent.showPreferences = true;
-        };
-
-        self.parent.update(options);
-        riot.update();
+        self.parent.showPreferences = !options.pref.isSet;
+        self.parent.opts = Object.assign(self.parent.opts, options);
+        self.parent.update();
       });
     }
 
-    this.showPreferences = function() {
-      this.parent.showPreferences = true;
-      this.parent.update();
+    self.showPreferences = function() {
+      self.parent.showPreferences = true;
+      self.parent.update();
     }
 
-    this.toggleActive = function(e) {
-      lodash__WEBPACK_IMPORTED_MODULE_0__["each"](this.documents, function(d) {
+    self.toggleActive = function(document) {
+      lodash__WEBPACK_IMPORTED_MODULE_0__["each"](self.opts.documents, function(d) {
         d.active = false;
       });
-      e.item.active = true;
+      document.active = true;
     }
+
+    self.on('update', function() {
+      var noneSelected = self.opts.documents && self.opts.documents.filter(x => x.active).length === 0;
+      if (noneSelected)
+        self.opts.documents[0].active = true;
+    });
 });
 
     
@@ -937,10 +971,13 @@ var _ = __webpack_require__(1);
 var bluebutton = __webpack_require__(36);
 var config_1 = __webpack_require__(35);
 var preferences_service_1 = __webpack_require__(6);
-var viewer;
 var DocumentsService = /** @class */ (function () {
     function DocumentsService() {
+        this.config = {};
     }
+    DocumentsService.prototype.setHeaders = function (headers) {
+        this.config.headers = headers;
+    };
     DocumentsService.prototype.getSections = function (bb, sections, ignoreSections, pref) {
         var allSections = [];
         _.each(bb.data, function (val, key) {
@@ -969,13 +1006,23 @@ var DocumentsService = /** @class */ (function () {
         });
         return allSections;
     };
-    DocumentsService.prototype.fetch = function (url) {
+    DocumentsService.prototype.fetch = function (document) {
         var _this = this;
-        return new Promise(function (resolve) {
-            $.get(url, function (content) {
-                resolve(_this.load(content));
-            }, 'text');
+        return new Promise(function (resolve, reject) {
+            $.get({
+                url: document.url,
+                headers: _this.config.headers || {},
+                dataType: 'text',
+                success: function (content) { return resolve(content); },
+                error: function (err) { return reject(err); }
+            });
         });
+    };
+    DocumentsService.prototype.open = function (document) {
+        var _this = this;
+        if (document.content)
+            return Promise.resolve(this.load(document.content));
+        return this.fetch(document).then(function (x) { return _this.load(x); });
     };
     DocumentsService.prototype.load = function (data) {
         var bb = bluebutton(data);
@@ -1152,20 +1199,13 @@ riot.tag2('preference-section', '<li class="list-group-item preferences-section 
 
 
     var riot = __webpack_require__(0)
-    riot.tag2('sialia', '<header data="{data}" sections="{sections}" documents="{documents}"></header> <div class="container-fluid sialia-body"> <div class="row"> <div class="col-lg-3 col-sm-4 hidden-xs" id="placeholder"></div> <div class="col-lg-3 col-sm-4" id="left"> <demographics demographics="{data.demographics}"></demographics> </div> <div class="col-lg-9 col-sm-8" id="right" if="{showPreferences && !showNonXml}"> <preferences sections="{sections}" pref="{pref}"></preferences> </div> <div class="col-lg-9 col-sm-8" id="right" if="{!showPreferences && !showNonXml}"> <ccda-section each="{section in sections}" current="{section}" parent="{parent}"></ccda-section> </div> <div class="col-lg-9 col-sm-8" id="right" if="{showNonXml}"> <nonxml nonxml="{data.document.type.nonXmlBody}"></nonxml> </div> </div> </div>', '', '', function(opts) {
+    riot.tag2('sialia', '<header data="{opts.data}" sections="{opts.sections}" documents="{opts.documents}"></header> <div class="container-fluid sialia-body" if="{opts.data}"> <div class="row"> <div class="col-lg-3 col-sm-4 hidden-xs" id="placeholder"></div> <div class="col-lg-3 col-sm-4" id="left"> <demographics demographics="{opts.data.demographics}"></demographics> </div> <div class="col-lg-9 col-sm-8" id="right" if="{showPreferences && !showNonXml}"> <preferences sections="{opts.sections}" pref="{opts.pref}"></preferences> </div> <div class="col-lg-9 col-sm-8" id="right" if="{!showPreferences && !showNonXml}"> <ccda-section each="{section in opts.sections}" current="{section}" parent="{parent}"></ccda-section> </div> <div class="col-lg-9 col-sm-8" id="right" if="{showNonXml}"> <nonxml nonxml="{data.document.type.nonXmlBody}"></nonxml> </div> </div> </div>', '', '', function(opts) {
     var self = this;
-    this.data = opts.data;
-    this.pref = opts.pref;
-    this.sections = opts.sections;
-    this.showPreferences = !opts.pref.isSet;
-    this.showNonXml = self.data.document.type.nonXmlBody.type;
-    this.documents = opts.documents;
-    this.dictionary = this.sections.reduce(function(o, x){ o[x.key] = x; return o; }, {});
-    this.on('update', function() {
 
-        // ML - Not showing preferences when the body type is nonXmL.  We just want to show
-        // a link to the document.
-        self.showNonXml = self.data.document.type.nonXmlBody.type !== "";
+    this.on('update', function() {
+      // ML - Not showing preferences when the body type is nonXmL.  We just want to show
+      // a link to the document.
+      self.showNonXml = self.data && self.data.document.type.nonXmlBody.type;
     });
 });
 

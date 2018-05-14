@@ -1,13 +1,21 @@
 import * as $ from 'jquery';
 import * as _ from 'lodash';
 import * as bluebutton from 'bluebutton';
-import { Section, ViewerOptions, Preferences } from '../models';
+import { Document, Section, ViewerOptions, Preferences } from '../models';
 import { SECTIONS, IGNORE_SECTIONS } from '../config';
 import { PreferencesService } from './preferences.service';
 
-let viewer: any;
+export interface DocumentsServiceConfig {
+  headers?: { [key: string]: string };
+}
 
 export class DocumentsService {
+
+  config: DocumentsServiceConfig = {};
+
+  setHeaders(headers: { [key: string]: string }) {
+    this.config.headers = headers;
+  }
 
   getSections(bb: any, sections: Section[], ignoreSections: string[], pref: Preferences): Section[] {
 
@@ -40,12 +48,22 @@ export class DocumentsService {
     return allSections;
   }
 
-  fetch(url: string): Promise<ViewerOptions> {
-    return new Promise((resolve) => {
-      $.get(url, (content) => {
-        resolve(this.load(content));
-      }, 'text');
+  fetch(document: Document): Promise<string> {
+    return new Promise((resolve, reject) => {
+      $.get({
+        url: document.url,
+        headers: this.config.headers || {},
+        dataType: 'text',
+        success: (content) => resolve(content),
+        error: (err) => reject(err)
+      });
     });
+  }
+
+  open(document: Document): Promise<ViewerOptions> {
+    if (document.content)
+      return Promise.resolve(this.load(document.content));
+    return this.fetch(document).then(x => this.load(x));
   }
 
   load(data: any): ViewerOptions {
