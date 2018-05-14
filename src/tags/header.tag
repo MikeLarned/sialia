@@ -12,9 +12,12 @@ import { PreferencesService } from '../services';
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
         </button>
-        <a class="navbar-brand" href="#">
+        <a class="navbar-brand" href="#" if={ opts.data }>
           { opts.data.document.title } -
           <name name={ opts.data.demographics.name } class="text-muted"/>
+        </a>
+        <a class="navbar-brand" href="#" if={ !opts.data }>
+          No Document Loaded
         </a>
       </div>
 
@@ -32,20 +35,25 @@ import { PreferencesService } from '../services';
         </form> -->
 
         <ul class="nav navbar-nav navbar-right" id="jump-nav">
-          <li class="dropdown">
+          <li if={ opts.documents && opts.documents.length === 1 }>
+            <a href="#">
+              { opts.documents[0].name }
+            </a>
+          </li>
+          <li class="dropdown" if={ opts.documents && opts.documents.length > 1 }>
             <a href="#" class="dropdown-toggle" id="jump" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
               Documents
               <span class="caret"></span>
             </a>
             <ul class="dropdown-menu" aria-labelledby="jump">
-              <li each={ documents } class={ active: active }>
+              <li each={ opts.documents } class={ active: active }>
                 <a href="#" onclick={ load }>
                   { name }
                 </a>
               </li>
             </ul>
           </li>
-          <li class="dropdown">
+          <li class="dropdown" if={ opts.sections && opts.sections.length }>
             <a href="#" class="dropdown-toggle" id="jump" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
               Jump to
               <span class="caret"></span>
@@ -63,7 +71,7 @@ import { PreferencesService } from '../services';
               </li>
             </ul>
           </li>
-          <li class={ active: this.parent.showPreferences }>
+          <li class={ active: this.parent.showPreferences } if={ opts.sections }>
             <a href="#" onclick={ showPreferences }>
               <i class="fa fa-lg fa-cog"></i>
             </a>
@@ -76,33 +84,37 @@ import { PreferencesService } from '../services';
   
   <script>
     var self = this;
-    this.documents = this.opts.documents;
-    this.service = new DocumentsService();
-    this.documents[0].active = true;
+    self.service = new DocumentsService();
 
-    this.load = function(e) {
-      this.toggleActive(e);
-      this.service.fetch(e.item.url).then(function(options) {
+    if (opts.documents && opts.documents.length)
+      opts.documents[0].active = true;
+
+    self.load = function(e) {
+      self.toggleActive(e.item);
+      self.service.open(e.item).then(function(options) {
         if (!options) return;
-        if(!options.pref.isSet) {
-          self.parent.showPreferences = true;
-        };
-
-        self.parent.update(options);
-        riot.update();
+        self.parent.showPreferences = !options.pref.isSet;
+        self.parent.opts = Object.assign(self.parent.opts, options);
+        self.parent.update();
       });
     }
 
-    this.showPreferences = function() {
-      this.parent.showPreferences = true;
-      this.parent.update();
+    self.showPreferences = function() {
+      self.parent.showPreferences = true;
+      self.parent.update();
     }
     
-    this.toggleActive = function(e) {
-      _.each(this.documents, function(d) {
+    self.toggleActive = function(document) {
+      _.each(self.opts.documents, function(d) {
         d.active = false;
       });
-      e.item.active = true;
+      document.active = true;
     }
+
+    self.on('update', function() {
+      var noneSelected = self.opts.documents && self.opts.documents.filter(x => x.active).length === 0;
+      if (noneSelected)
+        self.opts.documents[0].active = true;
+    });
   </script>
 </header>
