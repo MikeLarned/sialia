@@ -40,19 +40,22 @@ import { PreferencesService } from '../services';
       self.update();
     }
 
-    this.enableAll = function() {
+    this.enableAll = function(e) {
+      e.preventDefault();
       _.each(opts.sections, function(s) {
         s.enabled = true;
       });
     }
 
-    this.disableAll = function() {
+    this.disableAll = function(e) {
+      e.preventDefault();
       _.each(opts.sections, function(s) {
         s.enabled = false;
       });
     }
 
-    this.save = function() {
+    this.save = function(e) {
+      e.preventDefault();
       this.parent.showPreferences = false;
       this.preferencesService.save(opts);
       riot.update();
