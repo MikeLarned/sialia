@@ -35,7 +35,8 @@ import * as _ from 'lodash';
       return opts.section.enabled || opts.enabled;
     }
   
-    this.toggleSection = function() {
+    this.toggleSection = function(e) {
+      e.preventDefault();
       opts.section.enabled = !opts.section.enabled;
     }
   </script>

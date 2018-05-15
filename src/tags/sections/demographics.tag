@@ -25,21 +25,22 @@ import { languages } from '../../utilities/lang';
     <div class="panel-body" show={ visible }>
       <ul class="fa-ul">
         <li class="narrative">
-          <i class="fa fa-li fa-female" title="Demographics"></i>
+          <i class="fa fa-li" class={ 'fa-female': opts.demographics.gender === 'female', 'fa-male': opts.demographics.gender === 'male' } title="Demographics"></i>
           <p>
             <strong>{ opts.demographics.name.given[0] }</strong> is a
             <strong>{ opts.demographics.marital_status } { opts.demographics.race } { opts.demographics.gender }</strong> whose religion is
             <strong>{ opts.demographics.religion || 'unspecified' }</strong> and speaks <strong>{ formatLanguage(opts.demographics.language) }</strong>.
             </p>
         </li>
-        <li>
+        <li if={ addressNotEmpty(opts.demographics.address) }>
           <i class="fa fa-li fa-map-marker" title="Address"></i>
           <address class="address">
-            { opts.demographics.address.street[0] }<br>
-            { opts.demographics.address.city }, { opts.demographics.address.state } { opts.demographics.address.zip }
+            <span if={ opts.demographics.address.street[0] }>{ opts.demographics.address.street[0] }<br><span>
+            <span if={ opts.demographics.address.city }>{ opts.demographics.address.city },</span>
+            { opts.demographics.address.state } { opts.demographics.address.zip }
           </address>
         </li>
-        <li>
+        <li if={ opts.demographics.phone }>
           <i class="fa fa-li fa-phone" title="Phone"></i>
           <address class="phone"> { formatPhone(opts.demographics.phone) }</address>
         </li>
@@ -54,13 +55,21 @@ import { languages } from '../../utilities/lang';
   <script>
     this.visible = true;
 
-    this.toggle = function() {
+    this.toggle = function(e) {
+      e.preventDefault();
       this.visible = !this.visible;
     }
 
+    this.addressNotEmpty = function(address) {
+      return opts.demographics.address.street[0] 
+        || opts.demographics.address.city
+        || opts.demographics.address.state
+        || opts.demographics.address.zip;
+    };
+
     this.formatDate = function(date) {
       return moment(date).format('MMM D, YYYY');
-    }
+    };
 
     this.formatPhone = function(phone) {
 
@@ -98,11 +107,11 @@ import { languages } from '../../utilities/lang';
         pretty = '(' + c[0] + c[1] + c[2] + ') ' + c[3] + c[4] + c[5] + '-' + c[6] + c[7] + c[8] + c[9];
       }
       return pretty;
-    }
+    };
 
     this.formatLanguage = function(languageCode) {
-      return languageCode && languages[languageCode.toLowerCase()] || 'an uknown language';
-    }
+      return languageCode && languages[languageCode.toLowerCase()] || 'an unknown language';
+    };
 
     // religion: http://www.hl7.org/documentcenter/public_temp_44EED454-1C23-BA17-0CCDE88B4D98F6FD/standards/vocabulary/vocabulary_tables/infrastructure/vocabulary/ReligiousAffiliation.html
   </script>

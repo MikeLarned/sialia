@@ -90,6 +90,7 @@ import { PreferencesService } from '../services';
       opts.documents[0].active = true;
 
     self.load = function(e) {
+      e.preventDefault();
       self.toggleActive(e.item);
       self.service.open(e.item).then(function(options) {
         if (!options) return;
@@ -99,7 +100,8 @@ import { PreferencesService } from '../services';
       });
     }
 
-    self.showPreferences = function() {
+    self.showPreferences = function(e) {
+      e.preventDefault();
       self.parent.showPreferences = true;
       self.parent.update();
     }
@@ -113,7 +115,7 @@ import { PreferencesService } from '../services';
 
     self.on('update', function() {
       var noneSelected = self.opts.documents && self.opts.documents.filter(x => x.active).length === 0;
-      if (noneSelected)
+      if (noneSelected && self.opts.documents.length)
         self.opts.documents[0].active = true;
     });
   </script>

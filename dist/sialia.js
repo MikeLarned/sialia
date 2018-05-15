@@ -700,16 +700,24 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-riot.tag2('demographics', '<div class="panel panel-default" id="demographics"> <div class="panel-heading"> <h2><name name="{opts.demographics.name}"></name></h2> <a href="#" class="toggle-body" onclick="{toggle}"> <i class="fa fa-chevron-down {fa-rotate-180: visible}" title="Show/hide"></i> </a> <ul class="fa-ul"> <li class="dob"> <i class="fa fa-li fa-birthday-cake" title="DOB"></i> <p>{formatDate(opts.demographics.dob)}</p> </li> <li class="guardian" if="{opts.demographics.guardian.name.family}"> <i class="fa fa-li fa-child" title="Guardian"></i> <name name="{opts.demographics.guardian.name}"></name> <span class="text-muted">(guardian)</span> </li> </ul> </div> <div class="panel-body" show="{visible}"> <ul class="fa-ul"> <li class="narrative"> <i class="fa fa-li fa-female" title="Demographics"></i> <p> <strong>{opts.demographics.name.given[0]}</strong> is a <strong>{opts.demographics.marital_status} {opts.demographics.race} {opts.demographics.gender}</strong> whose religion is <strong>{opts.demographics.religion || \'unspecified\'}</strong> and speaks <strong>{formatLanguage(opts.demographics.language)}</strong>. </p> </li> <li> <i class="fa fa-li fa-map-marker" title="Address"></i> <address class="address"> {opts.demographics.address.street[0]}<br> {opts.demographics.address.city}, {opts.demographics.address.state} {opts.demographics.address.zip} </address> </li> <li> <i class="fa fa-li fa-phone" title="Phone"></i> <address class="phone"> {formatPhone(opts.demographics.phone)}</address> </li> <li if="{opts.demographics.provider.organization}"> <i class="fa fa-li fa-building" title="Provider"></i> <p>{opts.demographics.provider.organization}</p> </li> </ul> </div> </div>', '', '', function(opts) {
+riot.tag2('demographics', '<div class="panel panel-default" id="demographics"> <div class="panel-heading"> <h2><name name="{opts.demographics.name}"></name></h2> <a href="#" class="toggle-body" onclick="{toggle}"> <i class="fa fa-chevron-down {fa-rotate-180: visible}" title="Show/hide"></i> </a> <ul class="fa-ul"> <li class="dob"> <i class="fa fa-li fa-birthday-cake" title="DOB"></i> <p>{formatDate(opts.demographics.dob)}</p> </li> <li class="guardian" if="{opts.demographics.guardian.name.family}"> <i class="fa fa-li fa-child" title="Guardian"></i> <name name="{opts.demographics.guardian.name}"></name> <span class="text-muted">(guardian)</span> </li> </ul> </div> <div class="panel-body" show="{visible}"> <ul class="fa-ul"> <li class="narrative"> <i class="fa fa-li" class="{\'fa-female\': opts.demographics.gender === \'female\', \'fa-male\': opts.demographics.gender === \'male\'}" title="Demographics"></i> <p> <strong>{opts.demographics.name.given[0]}</strong> is a <strong>{opts.demographics.marital_status} {opts.demographics.race} {opts.demographics.gender}</strong> whose religion is <strong>{opts.demographics.religion || \'unspecified\'}</strong> and speaks <strong>{formatLanguage(opts.demographics.language)}</strong>. </p> </li> <li if="{addressNotEmpty(opts.demographics.address)}"> <i class="fa fa-li fa-map-marker" title="Address"></i> <address class="address"> <span if="{opts.demographics.address.street[0]}">{opts.demographics.address.street[0]}<br><span> <span if="{opts.demographics.address.city}">{opts.demographics.address.city},</span> {opts.demographics.address.state} {opts.demographics.address.zip} </address> </li> <li if="{opts.demographics.phone}"> <i class="fa fa-li fa-phone" title="Phone"></i> <address class="phone"> {formatPhone(opts.demographics.phone)}</address> </li> <li if="{opts.demographics.provider.organization}"> <i class="fa fa-li fa-building" title="Provider"></i> <p>{opts.demographics.provider.organization}</p> </li> </ul> </div> </div>', '', '', function(opts) {
     this.visible = true;
 
-    this.toggle = function() {
+    this.toggle = function(e) {
+      e.preventDefault();
       this.visible = !this.visible;
     }
 
+    this.addressNotEmpty = function(address) {
+      return opts.demographics.address.street[0]
+        || opts.demographics.address.city
+        || opts.demographics.address.state
+        || opts.demographics.address.zip;
+    };
+
     this.formatDate = function(date) {
       return moment__WEBPACK_IMPORTED_MODULE_0___default()(date).format('MMM D, YYYY');
-    }
+    };
 
     this.formatPhone = function(phone) {
 
@@ -747,11 +755,11 @@ riot.tag2('demographics', '<div class="panel panel-default" id="demographics"> <
         pretty = '(' + c[0] + c[1] + c[2] + ') ' + c[3] + c[4] + c[5] + '-' + c[6] + c[7] + c[8] + c[9];
       }
       return pretty;
-    }
+    };
 
     this.formatLanguage = function(languageCode) {
-      return languageCode && _utilities_lang__WEBPACK_IMPORTED_MODULE_3__["languages"][languageCode.toLowerCase()] || 'an uknown language';
-    }
+      return languageCode && _utilities_lang__WEBPACK_IMPORTED_MODULE_3__["languages"][languageCode.toLowerCase()] || 'an unknown language';
+    };
 
     // religion: http://www.hl7.org/documentcenter/public_temp_44EED454-1C23-BA17-0CCDE88B4D98F6FD/standards/vocabulary/vocabulary_tables/infrastructure/vocabulary/ReligiousAffiliation.html
 });
@@ -870,7 +878,8 @@ riot.tag2('panel', '<div class="panel panel-{opts.state ? opts.state : \'default
       return opts.section.enabled || opts.enabled;
     }
 
-    this.toggleSection = function() {
+    this.toggleSection = function(e) {
+      e.preventDefault();
       opts.section.enabled = !opts.section.enabled;
     }
 });
@@ -902,6 +911,7 @@ riot.tag2('header', '<nav class="navbar navbar-default navbar-fixed-top"> <div c
       opts.documents[0].active = true;
 
     self.load = function(e) {
+      e.preventDefault();
       self.toggleActive(e.item);
       self.service.open(e.item).then(function(options) {
         if (!options) return;
@@ -911,7 +921,8 @@ riot.tag2('header', '<nav class="navbar navbar-default navbar-fixed-top"> <div c
       });
     }
 
-    self.showPreferences = function() {
+    self.showPreferences = function(e) {
+      e.preventDefault();
       self.parent.showPreferences = true;
       self.parent.update();
     }
@@ -925,7 +936,7 @@ riot.tag2('header', '<nav class="navbar navbar-default navbar-fixed-top"> <div c
 
     self.on('update', function() {
       var noneSelected = self.opts.documents && self.opts.documents.filter(x => x.active).length === 0;
-      if (noneSelected)
+      if (noneSelected && self.opts.documents.length)
         self.opts.documents[0].active = true;
     });
 });
@@ -1164,19 +1175,22 @@ riot.tag2('preferences', '<h2> <button class="btn btn-primary pull-right" type="
       self.update();
     }
 
-    this.enableAll = function() {
+    this.enableAll = function(e) {
+      e.preventDefault();
       lodash__WEBPACK_IMPORTED_MODULE_1__["each"](opts.sections, function(s) {
         s.enabled = true;
       });
     }
 
-    this.disableAll = function() {
+    this.disableAll = function(e) {
+      e.preventDefault();
       lodash__WEBPACK_IMPORTED_MODULE_1__["each"](opts.sections, function(s) {
         s.enabled = false;
       });
     }
 
-    this.save = function() {
+    this.save = function(e) {
+      e.preventDefault();
       this.parent.showPreferences = false;
       this.preferencesService.save(opts);
       riot.update();
