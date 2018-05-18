@@ -935,7 +935,7 @@ riot.tag2('header', '<nav class="navbar navbar-default navbar-fixed-top"> <div c
     }
 
     self.on('update', function() {
-      var noneSelected = self.opts.documents && self.opts.documents.filter(x => x.active).length === 0;
+      var noneSelected = self.opts.documents && self.opts.documents.filter(function(x) { return x.active; }).length === 0;
       if (noneSelected && self.opts.documents.length)
         self.opts.documents[0].active = true;
     });
