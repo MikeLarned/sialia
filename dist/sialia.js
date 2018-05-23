@@ -603,7 +603,6 @@ riot.tag2('medications', '<panel section="{opts.section}" data="{opts.data}"> <d
     var riot = __webpack_require__(0)
     riot.tag2('immunizations', '<panel section="{opts.section}" data="{opts.data}"> <empty if="{!opts.data.entries.length}"></empty> </panel>', '', '', function(opts) {
 });
-
     
   
 
@@ -972,8 +971,7 @@ exports.SECTIONS = [
     { key: 'chief_complaint', display: 'Chief Complaint', tagName: 'generic', icon: 'bullhorn' },
     { key: 'encounters', display: 'Encounters', tagName: 'generic', icon: 'stethoscope' },
     { key: 'functional_statuses', display: 'Functional Status', tagName: 'generic', icon: 'wheelchair' },
-    { key: 'immunization_declines', display: 'Declined Immunizations', tagName: 'generic', icon: 'ban' },
-    { key: 'immunizations', display: 'Immunization', tagName: 'generic', icon: 'eyedropper' },
+    { key: 'immunizations', display: 'Immunizations', tagName: 'generic', icon: 'eyedropper' },
     { key: 'instructions', display: 'Patient Instructions', tagName: 'generic', icon: 'user-md' },
     { key: 'medications', display: 'Medications', tagName: 'generic', icon: 'medkit' },
     { key: 'problems', display: 'Problems', tagName: 'generic', icon: 'exclamation-triangle' },
@@ -982,7 +980,7 @@ exports.SECTIONS = [
     { key: 'smoking_status', display: 'Smoking Status', tagName: 'generic', icon: 'fire' },
     { key: 'vitals', display: 'Vitals', tagName: 'generic', icon: 'heartbeat' },
 ];
-exports.IGNORE_SECTIONS = ['document', 'demographics', 'json'];
+exports.IGNORE_SECTIONS = ['document', 'demographics', 'json', 'immunization_declines'];
 
 
 /***/ }),
