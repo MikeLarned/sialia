@@ -1017,9 +1017,9 @@ bluebird@^3.5.1:
   version "3.5.1"
   resolved "https://registry.yarnpkg.com/bluebird/-/bluebird-3.5.1.tgz#d9551f9de98f1fcda1e683d17ee91a0602ee2eb9"
 
-"bluebutton@github:Royal-Jay/bluebutton.js#0.5.0-rc.5":
+"bluebutton@github:Royal-Jay/bluebutton.js#0.5.0-rc.6":
   version "0.5.0-rc.5"
-  resolved "https://codeload.github.com/Royal-Jay/bluebutton.js/tar.gz/b72b965cae4d76c6c7bd102d5af49c5cf37130ae"
+  resolved "https://codeload.github.com/Royal-Jay/bluebutton.js/tar.gz/1eab3c70d8daa0e5cfb473d95f447a85d401f1eb"
   dependencies:
     lodash "^4.17.5"
     xmldom "~0.1.19"
