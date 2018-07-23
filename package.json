@@ -13,7 +13,7 @@
     "build": "webpack --mode production"
   },
   "dependencies": {
-    "bluebutton": "github:Royal-Jay/bluebutton.js#0.5.0-rc.5",
+    "bluebutton": "github:Royal-Jay/bluebutton.js#0.5.0-rc.6",
     "bootstrap": ">=3.0.0",
     "core-js": "^2.5.7",
     "dragula": "^3.7.2",
