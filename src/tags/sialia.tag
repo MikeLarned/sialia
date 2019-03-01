@@ -2,17 +2,16 @@
   <header data={ opts.data } sections={ opts.sections } documents={ opts.documents }/>
   <div class="container-fluid sialia-body" if={ opts.data }>
     <div class="row">
-      <div class="col-lg-3 col-sm-4 hidden-xs" id="placeholder"></div>
-      <div class="col-lg-3 col-sm-4" id="left">
+      <div class="col-lg-4 col-sm-4">
         <demographics demographics={ opts.data.demographics }/>
       </div>
-      <div class="col-lg-9 col-sm-8" id="right" if={ showPreferences && !showNonXml}>
+      <div class="col-lg-8 col-sm-8" id="right" if={ showPreferences && !showNonXml}>
         <preferences sections={ opts.sections } pref={ opts.pref } />
       </div>
-      <div class="col-lg-9 col-sm-8" id="right" if={ !showPreferences && !showNonXml }>
+      <div class="col-lg-8 col-sm-8" id="right" if={ !showPreferences && !showNonXml }>
         <ccda-section each={ section in opts.sections } current={ section } parent={ parent }/>
       </div>
-        <div class="col-lg-9 col-sm-8" id="right" if={ showNonXml }>
+        <div class="col-lg-8 col-sm-8" id="right" if={ showNonXml }>
             <nonxml nonxml={ data.document.type.nonXmlBody } />
         </div>
     </div>
